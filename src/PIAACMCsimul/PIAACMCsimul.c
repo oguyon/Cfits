@@ -44,6 +44,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 //   core modules
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
+#include "COREMOD_tools/COREMOD_tools.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_arith/COREMOD_arith.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
@@ -5188,6 +5189,8 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
     float avpeak;
 
     double *eval_contrastCurve;
+    double *eval_COHcontrastCurve;
+    double *eval_INCcontrastCurve;
     double *eval_contrastCurve_cnt;
     double eval_sepstepld = 0.2; // in l/D
     double eval_sepmaxld = 20.0; // in l/D
@@ -5195,7 +5198,9 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
     double focscale;
     double xc, yc, rc;
     long ri;
-    long IDps;
+    long IDre, IDim;
+    long IDps, IDps_re, IDps_im;
+    long IDps_COH, IDps_INC;
     double xld, stepld;
     double ldoffset;
 
@@ -5213,6 +5218,8 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
     struct stat buf;
 
     double aveC;
+    double aveC_COH;
+    double aveC_INC;
     long aveCcnt;
 
     double alphareg;
@@ -5262,6 +5269,15 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 	long IDpsfi0;
 	long sizecrop;
 	long jj1;
+	
+	long IDrc;
+	float *rcarray;
+	float drc;
+	long rcbin;
+	long rcbinmax;
+	float rcmin, rcmax;
+	long rc_cnt;
+	float p50, p20;
 
 
 	#ifdef PIAASIMUL_LOGFUNC0
@@ -6819,39 +6835,74 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 
         // measure pointing sensitivity
         IDps = create_3Dimage_ID("starim", piaacmc[0].size, piaacmc[0].size, zsize);
+
+		IDps_re = create_3Dimage_ID("starim_re", piaacmc[0].size, piaacmc[0].size, zsize);
+		IDps_im = create_3Dimage_ID("starim_im", piaacmc[0].size, piaacmc[0].size, zsize);		
+		
+		IDps_COH = create_3Dimage_ID("starimCOH", piaacmc[0].size, piaacmc[0].size, zsize);
+		IDps_INC = create_3Dimage_ID("starimINC", piaacmc[0].size, piaacmc[0].size, zsize);
+		
 		NBpt = 0;
 		
         valref = 0.25*PIAACMCsimul_computePSF(ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_p0.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
-        for(ii=0; ii<xsize*ysize*zsize; ii++)
+        IDre = image_ID("psfre0");
+        IDim = image_ID("psfim0");
+        for(ii=0; ii<xsize*ysize*zsize; ii++){
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+			data.image[IDps_re].array.F[ii] += data.image[IDre].array.F[ii];
+			data.image[IDps_im].array.F[ii] += data.image[IDim].array.F[ii];
+		}
 		NBpt++;
-
+		delete_image_ID("psfre0");
+		delete_image_ID("psfim0");
+		
         valref += 0.25*PIAACMCsimul_computePSF(-ldoffset, 0.0, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_m0.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
-        for(ii=0; ii<xsize*ysize*zsize; ii++)
+        IDre = image_ID("psfre0");
+        IDim = image_ID("psfim0");
+        for(ii=0; ii<xsize*ysize*zsize; ii++){
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+			data.image[IDps_re].array.F[ii] += data.image[IDre].array.F[ii];
+			data.image[IDps_im].array.F[ii] += data.image[IDim].array.F[ii];
+		}
 		NBpt++;
+		delete_image_ID("psfre0");
+		delete_image_ID("psfim0");
 
         valref += 0.25*PIAACMCsimul_computePSF(0.0, ldoffset, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_0p.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
-        for(ii=0; ii<xsize*ysize*zsize; ii++)
+        IDre = image_ID("psfre0");
+        IDim = image_ID("psfim0");
+        for(ii=0; ii<xsize*ysize*zsize; ii++){
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+			data.image[IDps_re].array.F[ii] += data.image[IDre].array.F[ii];
+			data.image[IDps_im].array.F[ii] += data.image[IDim].array.F[ii];
+		}
 		NBpt++;
+		delete_image_ID("psfre0");
+		delete_image_ID("psfim0");
 
         valref += 0.25*PIAACMCsimul_computePSF(0.0, -ldoffset, 0, optsyst[0].NBelem, 0, 0, 0, 0);
         sprintf(fname,"!%s/psfi0_0m.fits", piaacmcconfdir);
         save_fits("psfi0", fname);
         ID = image_ID("psfi0");
-        for(ii=0; ii<xsize*ysize*zsize; ii++)
+        IDre = image_ID("psfre0");
+        IDim = image_ID("psfim0");
+        for(ii=0; ii<xsize*ysize*zsize; ii++){
             data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+			data.image[IDps_re].array.F[ii] += data.image[IDre].array.F[ii];
+			data.image[IDps_im].array.F[ii] += data.image[IDim].array.F[ii];
+		}
 		NBpt++;
+		delete_image_ID("psfre0");
+		delete_image_ID("psfim0");
 
       
 	
@@ -6874,14 +6925,32 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 			save_fits("psfi0", fname);
 			delete_image_ID("opderr");
 			ID = image_ID("psfi0");
-			for(ii=0; ii<xsize*ysize*zsize; ii++)
+			IDre = image_ID("psfre0");
+			IDim = image_ID("psfim0");
+			for(ii=0; ii<xsize*ysize*zsize; ii++){
 				data.image[IDps].array.F[ii] += data.image[ID].array.F[ii];
+				data.image[IDps_re].array.F[ii] += data.image[IDre].array.F[ii];
+				data.image[IDps_im].array.F[ii] += data.image[IDim].array.F[ii];
+			}
 			NBpt++;
+			delete_image_ID("psfre0");
+			delete_image_ID("psfim0");
 		}
 		
 		
-		for(ii=0; ii<xsize*ysize*zsize; ii++)
+		for(ii=0; ii<xsize*ysize*zsize; ii++){
             data.image[IDps].array.F[ii] /= NBpt;
+			data.image[IDps_re].array.F[ii] /= NBpt; // average re
+			data.image[IDps_im].array.F[ii] /= NBpt; // average im
+		}
+		
+		
+		for(ii=0; ii<xsize*ysize*zsize; ii++){
+			data.image[IDps_COH].array.F[ii] = data.image[IDps_re].array.F[ii]*data.image[IDps_re].array.F[ii] + data.image[IDps_im].array.F[ii]*data.image[IDps_im].array.F[ii];
+			data.image[IDps_INC].array.F[ii] = data.image[IDps].array.F[ii] - data.image[IDps_COH].array.F[ii];
+		}
+
+
 
         sprintf(fname, "!%s/psfi0_starim.fits", piaacmcconfdir);
         save_fits("starim", fname);
@@ -6890,8 +6959,14 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 
 
         sprintf(fname, "!%s/psfi0_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
-
         save_fits("starim", fname);
+
+        sprintf(fname, "!%s/psfi0INC_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+        save_fits("starimINC", fname);
+
+        sprintf(fname, "!%s/psfi0COH_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.fits", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+        save_fits("starimCOH", fname);
+
 
 
 
@@ -6901,15 +6976,26 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
         printf("focscale = %f\n", focscale);
         eval_sepNBpt = (long) (eval_sepmaxld/eval_sepstepld);
         eval_contrastCurve = (double*) malloc(sizeof(double)*eval_sepNBpt);
+        eval_COHcontrastCurve = (double*) malloc(sizeof(double)*eval_sepNBpt);
+        eval_INCcontrastCurve = (double*) malloc(sizeof(double)*eval_sepNBpt);
         eval_contrastCurve_cnt = (double*) malloc(sizeof(double)*eval_sepNBpt);
         for(ri=0; ri<eval_sepNBpt; ri++)
         {
             eval_contrastCurve[ri] = 0.0;
+            eval_COHcontrastCurve[ri] = 0.0;
+            eval_INCcontrastCurve[ri] = 0.0;
             eval_contrastCurve_cnt[ri] = 0.0;
         }
 
         aveC = 0.0;
+        aveC_INC = 0.0;
+        aveC_COH = 0.0;
         aveCcnt = 0;
+
+
+		IDrc = create_3Dimage_ID("_tmp_rc", xsize, ysize, zsize);
+		rcarray = (float*) malloc(sizeof(float)*xsize*ysize*zsize);
+		
 
         for(kk=0; kk<zsize; kk++)
             for(ii=0; ii<xsize; ii++)
@@ -6920,20 +7006,65 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
                     xc *= focscale;
                     yc *= focscale;
                     rc = sqrt(xc*xc+yc*yc);
+                    data.image[IDrc].array.F[kk*xsize*ysize+jj*xsize+ii] = rc;
+                    
                     ri = (long) (rc/eval_sepstepld-0.5);
                     if(ri<0)
                         ri = 0;
                     if(ri<eval_sepNBpt)
                     {
                         eval_contrastCurve[ri] += data.image[IDps].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
+                        eval_COHcontrastCurve[ri] += data.image[IDps_COH].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
+                        eval_INCcontrastCurve[ri] += data.image[IDps_INC].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
                         eval_contrastCurve_cnt[ri] += 1.0;
                     }
                     if((rc>2.0)&&(rc<6.0))
                     {
                         aveC += data.image[IDps].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
+                        aveC_COH += data.image[IDps_COH].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
+                        aveC_INC += data.image[IDps_INC].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
                         aveCcnt++;
                     }
                 }
+
+		sprintf(fname, "%s/ContrastCurveP_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
+
+		fp = fopen(fname, "w");
+		drc = 0.2;
+		rcbinmax = 100;
+		for(rcbin=0;rcbin<rcbinmax;rcbin++)
+			{
+				rcmin = drc * rcbin;
+				rcmax = drc * (rcbin+1);
+				
+				rc_cnt = 0;
+				
+				for(kk=0; kk<zsize; kk++)
+				for(ii=0; ii<xsize; ii++)
+                for(jj=0; jj<ysize; jj++)
+				{
+				rc = data.image[IDrc].array.F[kk*xsize*ysize+jj*xsize+ii];
+				if((rc>rcmin)&&(rc<rcmax))
+					{
+						rcarray[rc_cnt] = data.image[IDps].array.F[kk*xsize*ysize+jj*xsize+ii]/avpeak;
+						rc_cnt++;
+					}
+				}
+				quick_sort_float(rcarray, rc_cnt);
+			
+				p50 = rcarray[(long) (0.5*rc_cnt)];
+				p20 = rcarray[(long) (0.2*rc_cnt)];
+				fprintf(fp, "%5.2f %12g %12g\n", drc*(rcbin+0.5), p50, p20);
+			}
+
+
+		free(rcarray);
+		delete_image_ID("_tmp_rc");
+		fclose(fp);
+		
+		delete_image_ID("starimINC");
+		delete_image_ID("starimCOH");
+
 
         sprintf(fname, "%s/ContrastCurve_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
 
@@ -6942,11 +7073,15 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
         for(ri=0; ri<eval_sepNBpt; ri++)
         {
             eval_contrastCurve[ri] /= eval_contrastCurve_cnt[ri]+0.000001;
-            fprintf(fp, "%10f %10g %10g\n", eval_sepstepld*ri, eval_contrastCurve[ri], eval_contrastCurve_cnt[ri]);
+            eval_COHcontrastCurve[ri] /= eval_contrastCurve_cnt[ri]+0.000001;
+            eval_INCcontrastCurve[ri] /= eval_contrastCurve_cnt[ri]+0.000001;
+            fprintf(fp, "%10f %10g %10g %10g %10g\n", eval_sepstepld*ri, eval_contrastCurve[ri], eval_contrastCurve_cnt[ri], eval_COHcontrastCurve[ri], eval_INCcontrastCurve[ri]);
         }
         fclose(fp);
 
         free(eval_contrastCurve);
+        free(eval_COHcontrastCurve);
+        free(eval_INCcontrastCurve);
         free(eval_contrastCurve_cnt);
 
         sprintf(fname, "%s/ContrastVal_extsrc%2ld_sm%d_s%d_l%04ld_sr%02ld_nbr%03ld_mr%03ld_minsag%06ld_maxsag%06ld_fpmreg%06ld_ssr%02d_ssm%d_%s_wb%02d.txt", piaacmcconfdir, (long) (-log10(ldoffset)*10.0+0.1), SCORINGMASKTYPE, PIAACMC_FPMsectors, (long) (1.0e9*piaacmc[0].lambda + 0.1), (long) (1.0*piaacmc[0].lambdaB + 0.1), piaacmc[0].NBrings, (long) (100.0*PIAACMC_MASKRADLD+0.1), (long) (1.0e9*piaacmc[0].fpmminsag - 0.1), (long) (1.0e9*piaacmc[0].fpmmaxsag + 0.1), (long) (1000.0*piaacmc[0].fpmsagreg_coeff+0.1), computePSF_ResolvedTarget, computePSF_ResolvedTarget_mode, piaacmc[0].fpmmaterial_name, piaacmc[0].nblambda);
@@ -8336,6 +8471,9 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 ///
 /// PSF is held in shared memory by default
 ///
+/// 
+
+
 
 double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endelem, int savepsf, int sourcesize, int extmode, int outsave)
 {
@@ -8849,14 +8987,27 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
            
            
             save_fits("imvect", "!test_imvect.fits");
+            
+            
             // extract amplitude and phase for diagnostics
-            mk_amph_from_complex("psfc0", "psfc0a", "psfc0p", 0);
-            save_fits("psfc0a", "!test_psfc0a.fits");
-            list_image_ID();
-            delete_image_ID("psfc0a");
-            delete_image_ID("psfc0p");
-            printf("saved -> test_psfc0a.fits\n");
-            fflush(stdout);
+            //mk_amph_from_complex("psfc0", "psfc0a", "psfc0p", 0);
+            //save_fits("psfc0a", "!test_psfc0a.fits");
+            //list_image_ID();            
+            //delete_image_ID("psfc0a");
+            //delete_image_ID("psfc0p");
+            //printf("saved -> test_psfc0a.fits\n");
+            //fflush(stdout);
+            
+           // if(savepsf==2)
+			//	{	
+				//	mk_reim_from_complex("psfc0", "psfc0re", "psfc0im", 0);		
+/*					save_fits("psfi0", "!test_psfi0.fits");
+					save_fits("psfc0re", "!test_psfc0re.fits");
+					save_fits("psfc0im", "!test_psfc0im.fits");
+					sleep(100000);*/
+
+			//	}
+            
             // compute average contrast
             value = 0.0;
             peakcontrast = 0.0;
@@ -8956,6 +9107,8 @@ double PIAACMCsimul_computePSF(float xld, float yld, long startelem, long endele
 
     return(avContrast);
 }
+
+
 
 
 ///

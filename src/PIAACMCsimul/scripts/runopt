@@ -220,7 +220,7 @@ fi
 
 if [ $1 == "optsingle" ]; then
 	echo "optimize single configuration"
-	searchtime=72000.0
+	searchtime=7200.0
 	computecontrast=0
 	inputmode=2
 fi
@@ -228,7 +228,7 @@ fi
 
 if [ $1 == "optloop" ]; then
 	echo "optimize single configuration (loop)"
-	searchtime=72000.0
+	searchtime=7200.0
 	computecontrast=0
 	inputmode=2
 	optimizeloop=1
