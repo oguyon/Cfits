@@ -1,3 +1,20 @@
+/**
+ * @file    AOloopControl.c
+ * @brief   Adaptive Optics Control loop engine
+ * 
+ * AO engine uses stream data structure
+ *  
+ * @author  O. Guyon
+ * @date    17 Jun 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ * @see http://www.
+ */
+
+
+
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
@@ -363,8 +380,7 @@ NOTATIONS:
 /* =============================================================================================== */
 /*                    LOGGING ACCESS TO FUNCTIONS                                                  */
 /* =============================================================================================== */
-/// logfuncMODE = 0   Enter function
-/// lonfuncMODE = 1   Exit function
+
 static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *FunctionName, const long line, char *comments)
 {
 	FILE *fp;

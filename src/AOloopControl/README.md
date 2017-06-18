@@ -1,4 +1,5 @@
-# AO loop control 
+# AO loop control {#AOloopControl}
+
 
 This module allows control of adaptive optics (AO) control loops.
 
