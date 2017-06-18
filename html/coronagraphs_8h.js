@@ -1,0 +1,28 @@
+var coronagraphs_8h =
+[
+    [ "CORONAGRAPHS_ARRAYSIZE", "coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48", null ],
+    [ "coronagraph_APLCapo_compile", "coronagraphs_8h.html#a8421a0785911fa323571185293257481", null ],
+    [ "coronagraph_compute_limitcoeff", "coronagraphs_8h.html#aec284ddf288ce2f45a596cd819be5e0e", null ],
+    [ "coronagraph_init_PIAA", "coronagraphs_8h.html#abf3219f1093d9605a7b5384021aaddad", null ],
+    [ "coronagraph_make_2Dprolate", "coronagraphs_8h.html#a6f72711fad7497102cc810136cfdba94", null ],
+    [ "coronagraph_make_2Dprolate_CS", "coronagraphs_8h.html#aec20522bde17d6c077515bd7cde09c84", null ],
+    [ "coronagraph_make_2Dprolateld", "coronagraphs_8h.html#a9ab4bef4ce362bbcd4f28e29482d3e48", null ],
+    [ "coronagraph_simul_4QPM", "coronagraphs_8h.html#a5ec823e3d4ff599f35af1b8097b7427d", null ],
+    [ "coronagraph_simul_AIC", "coronagraphs_8h.html#af579e4839eca1a76f78425290f974afa", null ],
+    [ "coronagraph_simul_AIC_PIAAC", "coronagraphs_8h.html#a42ee88d1ff3573276371d86c5b2d4d76", null ],
+    [ "coronagraph_simul_BL8", "coronagraphs_8h.html#ac2197b80d59bedd982d94b6e0fe65e12", null ],
+    [ "coronagraph_simul_CPA", "coronagraphs_8h.html#ac82b5cbe11cdd858284d90c28cd3e3d1", null ],
+    [ "coronagraph_simul_MULTISTEP_APLC", "coronagraphs_8h.html#a66dac77d55addb4f0065e9e0316cf1b5", null ],
+    [ "coronagraph_simul_OVC", "coronagraphs_8h.html#aa71d2fdcae9aaa971e26570ef0ad8f30", null ],
+    [ "coronagraph_simul_PIAA", "coronagraphs_8h.html#a84479eb71246195f268762d3de192562", null ],
+    [ "coronagraph_simul_PIAAC", "coronagraphs_8h.html#aca829a7a25778fb7dd20931fc4d6529f", null ],
+    [ "coronagraph_simul_RRPM", "coronagraphs_8h.html#a5e4fb0945289736b81f9ee4963e0a495", null ],
+    [ "coronagraph_simulPSF", "coronagraphs_8h.html#aa8f418a5737a896e122d53d65366fc69", null ],
+    [ "coronagraph_transm", "coronagraphs_8h.html#a48b82b99995b741adc60ddff6ad70168", null ],
+    [ "coronagraph_update_2Dprolate", "coronagraphs_8h.html#a2e85fc32c6d56f6cc4a53eb29446fad4", null ],
+    [ "coronagraph_userfunc", "coronagraphs_8h.html#a154bfa745162da53b32fd0e3fb2b1cb8", null ],
+    [ "coronagraphs_make_SUBARU_pupil", "coronagraphs_8h.html#aaca30c5eac0da61c035190be4091c6ba", null ],
+    [ "coronagraphs_PIAA_apodize_beam", "coronagraphs_8h.html#ae950fb58d6c1c70c1e8a271747f3e6ec", null ],
+    [ "CORONAGRAPHS_scanPIAACMC_centObs_perf", "coronagraphs_8h.html#a77a379c222270dbf475f7b126f65d1ad", null ],
+    [ "init_coronagraphs", "coronagraphs_8h.html#aaf49bbcd9901bb89df61e1d8dde48f78", null ]
+];
