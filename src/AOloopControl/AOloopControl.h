@@ -122,8 +122,8 @@ typedef struct
     uint_fast32_t sizexDM;
     uint_fast32_t sizeyDM;
     uint_fast32_t sizeDM;
-    uint_fast32_t activeDMcnt; // number of active actuators
-    uint_fast32_t sizeDM_active; // only takes into account DM actuators that are active/in use
+    uint_fast32_t activeDMcnt;    /**< number of active actuators */
+    uint_fast32_t sizeDM_active;  /**< only takes into account DM actuators that are active/in use */
     ///@}
     /* =============================================================================================== */
 
@@ -334,7 +334,9 @@ int_fast8_t init_AOloopControl();
 
 static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level);
 
-// initialize memory - function called within C code only (no CLI call)
+/**
+ * @brief Initialize memory - function called within C code only (no CLI call)
+ */
 static int_fast8_t AOloopControl_InitializeMemory();
 
 ///@}
