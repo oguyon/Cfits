@@ -229,8 +229,10 @@ typedef struct
 
 
 
-
-
+/* =============================================================================================== */
+/*                    LOGGING ACCESS TO FUNCTIONS                                                  */
+/* =============================================================================================== */
+static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *FunctionName, const long line, char *comments);
 
 
 
@@ -238,6 +240,7 @@ typedef struct
 
 
 int_fast8_t init_AOloopControl();
+
 
 
 /* =============================================================================================== */

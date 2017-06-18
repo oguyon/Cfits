@@ -352,7 +352,7 @@ int_fast8_t init_PIAACMCsimul()
 // first argument should be "PIAACMCsimul.fcall.log"
 // second argument should be __FUNCTION__
 // PIAACMCsimul_logFunctionCall("PIAACMCsimul.fcall.log", __FUNCTION__, "");
-void PIAACMCsimul_logFunctionCall(char *LogFileName, const char *FunctionName, long line, char *comments)
+static void PIAACMCsimul_logFunctionCall(char *LogFileName, const char *FunctionName, long line, char *comments)
 {
 	FILE *fp;
 	time_t tnow;
