@@ -17,7 +17,7 @@ var searchData=
   ['fitapon',['fitapoN',['../coronagraphs_8c.html#a3c3bd45ef6fd06ca859d3b49a99fd0e8',1,'coronagraphs.c']]],
   ['fitsio_5fstatus',['FITSIO_status',['../COREMOD__iofits_8c.html#a6c2cc8d105d4821fd2f03c00125c9e86',1,'COREMOD_iofits.c']]],
   ['floatarray',['FLOATARRAY',['../structDATA.html#a58210ca81311d78d220027755351f8b8',1,'DATA']]],
-  ['flogcomment',['flogcomment',['../AOloopControl_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;AOloopControl.c'],['../PIAACMCsimul_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;PIAACMCsimul.c']]],
+  ['flogcomment',['flogcomment',['../AOloopControl_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;AOloopControl.c'],['../AOsystSim_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;AOsystSim.c'],['../PIAACMCsimul_8c.html#aaf62be8fade5b52943c9ee593a5414c7',1,'flogcomment():&#160;PIAACMCsimul.c']]],
   ['flux',['flux',['../structOPTSYST.html#a50cc581680a3ba2856a0ba03f1ea97c0',1,'OPTSYST']]],
   ['fluxfactor',['FLUXFACTOR',['../image__format_8c.html#a7628212b40e2db5559a6a46417b2c7ca',1,'image_format.c']]],
   ['fminit',['fmInit',['../linopt__imtools_8c.html#a867bce46990afb113a1ab42430a9e888',1,'linopt_imtools.c']]],

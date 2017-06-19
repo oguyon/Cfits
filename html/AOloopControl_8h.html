@@ -146,6 +146,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a365d8d6964d35b903928ae33966f2b72"><td class="memItemLeft" align="right" valign="top">static int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a365d8d6964d35b903928ae33966f2b72">AOloopControl_loadconfigure</a> (long loop, int mode, int level)</td></tr>
 <tr class="separator:a365d8d6964d35b903928ae33966f2b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00f88e3ff7676af9ffc3d9835f336055"><td class="memItemLeft" align="right" valign="top">static int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a00f88e3ff7676af9ffc3d9835f336055">AOloopControl_InitializeMemory</a> ()</td></tr>
+<tr class="memdesc:a00f88e3ff7676af9ffc3d9835f336055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize memory - function called within C code only (no CLI call)  <a href="#a00f88e3ff7676af9ffc3d9835f336055">More...</a><br /></td></tr>
 <tr class="separator:a00f88e3ff7676af9ffc3d9835f336055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">- 2.1. LOAD DATA STREAMS</div></td></tr>
 <tr class="memitem:a119111bd69fc11e62f5911d6daf16427"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a119111bd69fc11e62f5911d6daf16427">AOloopControl_2Dloadcreate_shmim</a> (const char *name, const char *fname, long xsize, long ysize)</td></tr>
@@ -181,7 +182,7 @@ Functions</h2></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Measure system response </p>
 </div></td></tr>
 <tr class="memitem:ab6baed05afd1b77dbd32314daa67db8f"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ab6baed05afd1b77dbd32314daa67db8f">AOloopControl_Measure_WFSrespC</a> (long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDoutC_name, int normalize, int AOinitMode, long NBcycle)</td></tr>
-<tr class="memdesc:ab6baed05afd1b77dbd32314daa67db8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Measures WFS image response to a series of DM patterns.  <a href="#ab6baed05afd1b77dbd32314daa67db8f">More...</a><br /></td></tr>
+<tr class="memdesc:ab6baed05afd1b77dbd32314daa67db8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acquire WFS response to a series of DM pattern.  <a href="#ab6baed05afd1b77dbd32314daa67db8f">More...</a><br /></td></tr>
 <tr class="separator:ab6baed05afd1b77dbd32314daa67db8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65793b504cc7620823608ab97fdc9f2c"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a65793b504cc7620823608ab97fdc9f2c">AOloopControl_Measure_WFS_linResponse</a> (long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDrespC_name, const char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)</td></tr>
 <tr class="separator:a65793b504cc7620823608ab97fdc9f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1523,6 +1524,8 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Initialize memory - function called within C code only (no CLI call) </p>
+
 </div>
 </div>
 <a class="anchor" id="a75fd4a66a5158dc2dd447d550bf2efc5"></a>
@@ -1667,7 +1670,7 @@ Functions</h2></td></tr>
  it is incremented when entering a function <br />
  decremented when exiting a function</p>
 <p>Variable AOLOOPCONTROL_logfunc_level_max sets the max depth of logging</p>
-<pre class="fragment">like this</pre><p>At the beginning of each function, insert this code: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
+<p>At the beginning of each function, insert this code: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, &quot;&quot;);</div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;#endif</div>
 </div><!-- fragment --><p> and at the end of each function: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
@@ -1677,11 +1680,11 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">logfuncMODE</td><td>Log mode, 0:entering function, 1:exiting function </td></tr>
     <tr><td class="paramname">FunctionName</td><td>Name of function, usually <b>FUNCTION</b> so that preprocessor fills this parameter. </td></tr>
-    <tr><td class="paramname">line</td><td>Line in cource code, usually <b>LINE</b> so that preprocessor fills this parameter. </td></tr>
+    <tr><td class="paramname">line</td><td>Line in cource code, usually <b>LINE</b> so that preprocessor fills this parameter.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>This function does not return anything.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>void</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Carefully set depth value to avoid large output file. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>May slow down code. Only use for debugging. Output file may grow very quickly. </dd></dl>
 
@@ -2041,10 +2044,26 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Measures WFS image response to a series of DM patterns. </p>
+<p>Acquire WFS response to a series of DM pattern. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">loop</td><td>Loop index </td></tr>
+    <tr><td class="paramname">delayfr</td><td>Integer delay [frame] </td></tr>
+    <tr><td class="paramname">delayRM1us</td><td>Fractional delay [us] </td></tr>
+    <tr><td class="paramname">NBave</td><td>Number of frames averaged per DM state </td></tr>
+    <tr><td class="paramname">NBexcl</td><td>Number of frames excluded </td></tr>
+    <tr><td class="paramname">IDpokeC_name</td><td>Poke pattern </td></tr>
+    <tr><td class="paramname">IDoutC_name</td><td>Output cube </td></tr>
+    <tr><td class="paramname">normalize</td><td>Normalize flag </td></tr>
+    <tr><td class="paramname">AOinitMode</td><td>AO structure initialization flag </td></tr>
+    <tr><td class="paramname">NBcycle</td><td>Number of cycles averaged</td></tr>
+  </table>
+  </dd>
+</dl>
 <p>AOinitMode = 0: create AO shared mem struct AOinitMode = 1: connect only to AO shared mem struct</p>
 <p>INPUT : DMpoke_name : set of DM patterns OUTPUT : WFSmap_name : WFS response maps</p>
-<p>USR1 signal will stop acquisition immediately USR2 signal completes current cycles and stops acquisition </p>
+<p>USR1 signal will stop acquisition immediately USR2 signal completes current cycles and stops acquisition</p>
+<dl class="section return"><dt>Returns</dt><dd>IDoutC </dd></dl>
 
 </div>
 </div>
@@ -4202,7 +4221,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8h.html">AOloopControl.h</a></li>
-    <li class="footer">Generated on Sun Jun 18 2017 02:35:53 for cfitsTK by
+    <li class="footer">Generated on Mon Jun 19 2017 03:11:06 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

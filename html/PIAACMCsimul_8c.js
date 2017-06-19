@@ -1,7 +1,6 @@
 var PIAACMCsimul_8c =
 [
     [ "NBLAMBDA", "PIAACMCsimul_8c.html#a672ba4c64d52df8e71a76d289326fcc6", null ],
-    [ "PIAASIMUL_LOGFUNC0", "PIAACMCsimul_8c.html#a8f669fce98da7cd4f4c2ce1f3812b35d", null ],
     [ "SBUFFERSIZE", "PIAACMCsimul_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
     [ "f_evalmask", "PIAACMCsimul_8c.html#a0e22011c66e5dac07abcf37233ac03c0", null ],
     [ "init_PIAACMCsimul", "PIAACMCsimul_8c.html#afbe4dce014fddfe2292d9128df375bed", null ],

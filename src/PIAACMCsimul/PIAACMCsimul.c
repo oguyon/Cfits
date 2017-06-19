@@ -1,3 +1,18 @@
+/**
+ * @file    PIAAACMCsimul.c
+ * @brief   PIAA-type coronagraph design
+ * 
+ * Can design both APLCMC and PIAACMC coronagraphs
+ *  
+ * @author  O. Guyon
+ * @date    17 Jun 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
 // System include
 
 #include <stdint.h>
@@ -202,7 +217,7 @@ static double f_evalmask (const gsl_vector *v, void *params);
 
 // for testing
 static char flogcomment[200];
-#define PIAASIMUL_LOGFUNC0 // top level
+//#define PIAASIMUL_LOGFUNC0 // top level
 //#define PIAASIMUL_LOGFUNC1 // lower level
 
 

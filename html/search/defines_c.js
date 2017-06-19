@@ -6,6 +6,5 @@ var searchData=
   ['piaaconfnbr1fr0_5fpts',['piaaconfNBr1fr0_pts',['../coronagraphs_8c.html#a1e9bd48bf0734ea2dc783a3c0f7477cc',1,'coronagraphs.c']]],
   ['piaaconfnpupfilesize',['piaaconfNPUPFILESIZE',['../coronagraphs_8c.html#a187d2c9447b716414f374031a6c810fd',1,'coronagraphs.c']]],
   ['piaacppmaskrad1',['PIAACPPMASKRAD1',['../coronagraphs_8c.html#aa5e7f9d796175368e70bcf29f2d7abe7',1,'coronagraphs.c']]],
-  ['piaappmaskrad',['PIAAPPMASKRAD',['../coronagraphs_8c.html#a2a01e43b0d2160a5c634d18a4a5cbfdc',1,'coronagraphs.c']]],
-  ['piaasimul_5flogfunc0',['PIAASIMUL_LOGFUNC0',['../PIAACMCsimul_8c.html#a8f669fce98da7cd4f4c2ce1f3812b35d',1,'PIAACMCsimul.c']]]
+  ['piaappmaskrad',['PIAAPPMASKRAD',['../coronagraphs_8c.html#a2a01e43b0d2160a5c634d18a4a5cbfdc',1,'coronagraphs.c']]]
 ];

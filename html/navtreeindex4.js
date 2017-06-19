@@ -1,5 +1,15 @@
 var NAVTREEINDEX4 =
 {
+"CLIcore_8h.html#a9ebc4d9af3d9a26f49cccce824a976eb":[7,0,0,38,40],
+"CLIcore_8h.html#aadfaed58c87f621d2863f9f598db072e":[7,0,0,38,49],
+"CLIcore_8h.html#aae1051a1affafcf6ce277414adabc2d3":[7,0,0,38,18],
+"CLIcore_8h.html#ab0fa6bd9911ebb72f34711131116e04d":[7,0,0,38,13],
+"CLIcore_8h.html#ac1e95f322b4a1be93e0cb56968a1f595":[7,0,0,38,30],
+"CLIcore_8h.html#ac3e78a1257c6b5e478a52bf5b478014b":[7,0,0,38,39],
+"CLIcore_8h.html#ac4fdaeb876357d26a97d5ab491cff1b4":[7,0,0,38,23],
+"CLIcore_8h.html#acaa7b8a7167a8214f499c71c413ddcca":[7,0,0,38,21],
+"CLIcore_8h.html#acfa3a12412c06fe66437c5f77f066fa0":[7,0,0,38,35],
+"CLIcore_8h.html#ad49060c0e2f0e4ea39439adba9c2f317":[7,0,0,38,12],
 "CLIcore_8h.html#ae7dd36021572b75c72bd53ee795339f8":[7,0,0,38,24],
 "CLIcore_8h.html#ae8690abbffa85934d64d545920e2b108":[7,0,0,38,19],
 "CLIcore_8h.html#aea50feaf24fd53b7ffab0e9b62ff30a6":[7,0,0,38,34],
@@ -239,15 +249,5 @@ var NAVTREEINDEX4 =
 "COREMOD__arith_8c.html#afaa9116b5520dcceef7e0c7cadc0e68f":[7,0,0,6,0,99],
 "COREMOD__arith_8c.html#afb8d200751705ebe76198b233f5b4b5e":[7,0,0,6,0,27],
 "COREMOD__arith_8c.html#afba241e53c997b952b8f25eca8c32650":[7,0,0,6,0,12],
-"COREMOD__arith_8c.html#afc19e93ea279d87da973a97323f4ec3f":[7,0,0,6,0,69],
-"COREMOD__arith_8c.html#aff217ae31bbb8145fd9196b7131932e6":[7,0,0,6,0,187],
-"COREMOD__arith_8h.html":[7,0,0,6,1],
-"COREMOD__arith_8h.html#a0365dc0a3b51428e06215c6423d92205":[7,0,0,6,1,107],
-"COREMOD__arith_8h.html#a08d4a2b612d647f6d9554632f19cb343":[7,0,0,6,1,151],
-"COREMOD__arith_8h.html#a0d2feed4cc52e61d381015684af75308":[7,0,0,6,1,81],
-"COREMOD__arith_8h.html#a0d50e1a8240d8b0c3f9f743d8300d878":[7,0,0,6,1,136],
-"COREMOD__arith_8h.html#a0d6a644f2fb0ebbdd307e405146315c4":[7,0,0,6,1,119],
-"COREMOD__arith_8h.html#a10881ca4cce31334393436659b9fc6e3":[7,0,0,6,1,87],
-"COREMOD__arith_8h.html#a11fc8044b617ffd9667c96137b34dc71":[7,0,0,6,1,115],
-"COREMOD__arith_8h.html#a13eb4715a1635f951a6d95dda9a9f81a":[7,0,0,6,1,37]
+"COREMOD__arith_8c.html#afc19e93ea279d87da973a97323f4ec3f":[7,0,0,6,0,69]
 };
