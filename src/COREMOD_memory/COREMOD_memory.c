@@ -4753,6 +4753,9 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
     long IDsync;
     long long cntsync;
     long pcnt = 0;
+    long offsetfr = 0;
+    long offsetfrcnt = 0;
+    int cntDelayMode = 0;
     
     long IDout;
     long kk;
@@ -4805,6 +4808,8 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 		}
 	}
 
+	offsetfr = (long) ( 0.5 + 1.0*offsetus/usperiod );
+
 
     printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
@@ -4839,6 +4844,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 	
    twait1 = usperiod;
 	kk = 0;
+	cntDelayMode = 0;
 	
 	while(1)
     {
@@ -4853,8 +4859,22 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 		if(pcnt==period)
 		{
 			pcnt = 0;
-			cubeindex++;
-			kk = 0;
+			offsetfrcnt = 0;
+			cntDelayMode = 1;
+		}
+		
+		if(cntDelayMode == 1)
+		{
+			if(offsetfrcnt < offsetfr)
+			{
+				offsetfrcnt++;
+			}
+			else
+			{
+				cntDelayMode = 0;
+				cubeindex++;
+				kk = 0;
+			}
 		}
 		if(cubeindex==NBcubes)
 			cubeindex = 0;
