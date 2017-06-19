@@ -4806,10 +4806,10 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 			sprintf(imname, "%s_%03ld", IDinname, cubeindex);
 			IDin[cubeindex] = image_ID(imname);
 		}
+		offsetfr = (long) ( 0.5 + 1.0*offsetus/usperiod );
+	
+		printf("FRAMES OFFSET = %ld\n", offsetfr);
 	}
-
-	offsetfr = (long) ( 0.5 + 1.0*offsetus/usperiod );
-
 
     printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
