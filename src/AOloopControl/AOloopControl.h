@@ -287,7 +287,6 @@ typedef struct
  * 
  * Variable AOLOOPCONTROL_logfunc_level_max sets the max depth of logging
  * 
- * @verbatim like this@endverbatim
  * 
  * At the beginning of each function, insert this code:
  * @code
@@ -302,10 +301,11 @@ typedef struct
  * #endif
  * @endcode
  * 
- * @param logfuncMODE Log mode, 0:entering function, 1:exiting function
- * @param FunctionName Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
- * @param line Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
- * @return This function does not return anything.
+ * @param logfuncMODE       Log mode, 0:entering function, 1:exiting function
+ * @param FunctionName      Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
+ * @param line              Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
+ *
+ * @return void
  * 
  * @note Carefully set depth value to avoid large output file.
  * @warning May slow down code. Only use for debugging. Output file may grow very quickly.
@@ -429,17 +429,52 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/**
+ * @brief Acquire WFS response to a series of DM pattern.
+ *
+ * 
+ * @param loop            Loop index
+ * @param delayfr         Integer delay [frame]
+ * @param delayRM1us      Fractional delay [us]
+ * @param NBave           Number of frames averaged per DM state
+ * @param NBexcl          Number of frames excluded
+ * @param IDpokeC_name    Poke pattern
+ * @param IDoutC_name     Output cube
+ * @param normalize       Normalize flag
+ * @param AOinitMode      AO structure initialization flag
+ * @param NBcycle         Number of cycles averaged
+ * 
+ * AOinitMode = 0:  create AO shared mem struct
+ * AOinitMode = 1:  connect only to AO shared mem struct
+ * 
+ * INPUT : DMpoke_name : set of DM patterns
+ * OUTPUT : WFSmap_name : WFS response maps
+ * 
+ * USR1 signal will stop acquisition immediately
+ * USR2 signal completes current cycles and stops acquisition
+ * 
+ * @return IDoutC
+ * 
+ */
 long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDoutC_name, int normalize, int AOinitMode, long NBcycle);
+
 
 long AOloopControl_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDrespC_name, const char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle);
 
+
 long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *zrespm_name, const char *WFSref_name, const char *WFSmap_name, const char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle);
 
+
 int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter);
+
 
 long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_name, const char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, const char *outname);
 
 ///@}
+
+
+
+
 
 /* =============================================================================================== */
 /* =============================================================================================== */

@@ -1,3 +1,20 @@
+/**
+ * @file    COREMOD_memory.c
+ * @brief   cfitsTK memory functions
+ * 
+ * Functions to handle images and streams
+ *  
+ * @author  O. Guyon
+ * @date    18 Jun 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ * @see https://github.com/oguyon/Cfits
+ */
+
+
+
 #define _GNU_SOURCE
 
 #include <stdint.h>
@@ -636,9 +653,9 @@ int_fast8_t COREMOD_MEMORY_stream_halfimDiff_cli()
 
 int_fast8_t COREMOD_MEMORY_image_streamupdateloop_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)==0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,5)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0)
     {
-        COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        COREMOD_MEMORY_image_streamupdateloop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
         return 0;
     }
     else
@@ -1085,9 +1102,9 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_cli;
     strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]>");
-    strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod)");
+    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]> <NBcubes> <period> <offsetus> <sync stream name> <semtrig> <timing mode>");
+    strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000 3 3 154 ircam1 3 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"creaimstreamstrig");
@@ -4727,8 +4744,8 @@ long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDs
 
 
 
-// takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us
-long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod)
+// takes a 3Dimage(s) (circular buffer(s)) and writes slices to a 2D image with time interval specified in us
+long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)
 {
     long IDin;
     long IDout;
@@ -4860,6 +4877,9 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 
     return(IDout);
 }
+
+
+
 
 
 // takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
