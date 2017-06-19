@@ -4750,6 +4750,9 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
     long *IDin;
     long cubeindex;
     char imname[200]; 
+    long IDsync;
+    long long cntsync;
+    long pcnt = 0;
     
     long IDout;
     long kk;
@@ -4786,12 +4789,15 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 		return(-1);
 	}
 		
+	
 
 	IDin = (long*) malloc(sizeof(long)*NBcubes);
 	if(NBcubes==1)
 		IDin[0] = image_ID(IDinname);
 	else
 	{
+		IDsync = image_ID(IDsync_name);
+		
 		for(cubeindex=0; cubeindex<NBcubes; cubeindex++)
 		{
 			sprintf(imname, "%s_%03ld", IDinname, cubeindex);
@@ -4827,6 +4833,32 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 	}
 	
 	cubeindex = 0;
+	pcnt = 0;
+	if(NBcubes>1)
+		cntsync = data.image[IDsync].md[0].cnt0;
+	
+   twait1 = usperiod;
+	kk = 0;
+	
+	while(1)
+    {
+	
+	if(NBcubes>1)
+	{
+		if(cntsync != data.image[IDsync].md[0].cnt0)
+		{
+			pcnt++;
+			cntsync = data.image[IDsync].md[0].cnt0;
+		}
+		if(pcnt==period)
+		{
+			pcnt = 0;
+			cubeindex++;
+			kk = 0;
+		}
+		if(cubeindex==NBcubes)
+			cubeindex = 0;
+	}
 	
 	
     switch ( atype ) {
@@ -4863,10 +4895,8 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
     }
 
 
-    twait1 = usperiod;
-    kk = 0;
-    while(1)
-    {
+
+  
 		clock_gettime(CLOCK_REALTIME, &t0);
 		
         ptr0 = ptr0s + kk*framesize;
