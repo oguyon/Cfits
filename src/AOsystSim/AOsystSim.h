@@ -21,10 +21,39 @@
 
 
 
-
+/** @brief Module initialization
+ * 
+ * Registers command line interface commands
+ */
 int init_AOsystSim();
 
+
+
+
+/** @brief Run AO system simulation
+ * 
+ * @param syncmode
+ * @param DMindex
+ * @param delayus
+ */
+ 
+ 
+
+/** @brief simplified AO system simulator (DM command -> WFS image part)
+ *
+ * Creates a DM map(s) and a WF error input
+ * When either DM map or WF error input changes, compute intensity outputs (images)
+ *
+ * @param syncmode    Synchronization mode. 0: sync to turbulence. 1: sync to DM. 2: sync to both, >2, use delayus
+ * @param DMindex     DM used for simulation
+ * @param delayus     Delay between loop iterations if syncmode>2
+ * 
+ *
+ */ 
 int AOsystSim_run(int syncmode, long DMindex, long delayus);
+
+
+
 
 
 
@@ -38,7 +67,7 @@ int AOsystSim_run(int syncmode, long DMindex, long delayus);
 /* =============================================================================================== */
 
 typedef struct {
-    double alpha; // angle
+    double alpha;         /**< On-sky angular separation [rad] */
     double alpha_ld;
     double alpha_arcsec;
     double lambda0; // wavelength at seeing measurement [m]

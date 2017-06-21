@@ -13,8 +13,8 @@
  * @see http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html
  */
 
-// System include
 
+/// System includes
 #include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
@@ -24,8 +24,7 @@
 #include <math.h>
 
 
-// External libraries
-
+/// External libraries
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
 
@@ -65,7 +64,7 @@ extern DATA data;
 //#define AOSYSTSIM_LOGFUNC
 static int AOSYSTSIM_logfunc_level = 0;
 static int AOSYSTSIM_logfunc_level_max = 2; // log all levels below this number
-static char AOSYSTSIM_logfunc_fname[] = "AOloopControl.fcall.log";
+static char AOSYSTSIM_logfunc_fname[] = "AOsystSim.fcall.log";
 static char flogcomment[200];
 
 
@@ -293,20 +292,6 @@ int init_AOsystSim()
 
 
 
-
-
-/** \brief simplified AO system simulator (DM command -> WFS image part)
- *
- * creates a DM map(s) and a WF error input
- * When either DM map or WF error input changes, compute intensity outputs (images)
- *
- * syncmode:
- * 0: sync to turbulence
- * 1: sync to DM
- * 2: sync to both
- * default: use delayus
- *
- */
 
 int AOsystSim_run(int syncmode, long DMindex, long delayus)
 {
@@ -1757,6 +1742,7 @@ int AOsystSim_mkWF_mkCONF(const char *fname)
     fprintf(fp, "PIXSCALECUSTOM        0.1              # custom pixel size\n");
     fprintf(fp, "PIXBINFACTOR          4                # bin factor\n");
     fprintf(fp, "PUPDIAMM              8                # Pupil diameter [m]\n");
+    fprintf(fp, "PUPILFILE    aohardsim/tpup.fits.gz    # Pupil file (optional), full image size is pupil diam\n");
     fprintf(fp, "\n");
     fprintf(fp, "# ============== POST-PROCESSING =============================\n");
 	fprintf(fp, "DM0MODE               1                # 0 if no DM0, 1 if OPD DMn\n");
@@ -1814,6 +1800,9 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
     float PIXSCALE;
     int PIXBINFACTOR;
     float PUPDIAM;
+	char PUPILFILE[200];
+	long IDpupil, pupilsize;
+	float x, y;
 
     int DM0MODE;
     char DM0NAME[200];
@@ -1883,7 +1872,7 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 	
 	
     // INPUT WF
-	if((fp=fopen(CONF_FNAME,"r"))==NULL)
+	if((fp=fopen(CONF_FNAME, "r"))==NULL)
     {
         sprintf(fname, "%s.default", CONF_FNAME);
         printf("configuration file %s not found. Creating default template as %s\n", CONF_FNAME, fname);
@@ -1938,6 +1927,7 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
     PIXSCALECUSTOM =  read_config_parameter_float(CONF_FNAME, "PIXSCALECUSTOM");
     PIXBINFACTOR =  read_config_parameter_long(CONF_FNAME, "PIXBINFACTOR");
     PUPDIAM =  read_config_parameter_float(CONF_FNAME, "PUPDIAMM");
+	read_config_parameter(CONF_FNAME, "PUPILFILE", PUPILFILE);
 
     // OUTPUT STREAM 1
     DM0MODE =  read_config_parameter_long(CONF_FNAME, "DM0MODE");
@@ -2088,6 +2078,29 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
 
 
     IDampmask = make_disk("pupmask", ARRAYSIZE, ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*ARRAYSIZE, 0.5*PUPDIAM/pupscale);
+    IDpupil = load_fits(PUPILFILE, "pupilgeom", 0);
+    
+    if(IDpupil != -1)
+    {
+		printf("LOADED %s\n", PUPILFILE);
+		pupilsize = data.image[IDpupil].md[0].size[0];
+		for(ii=0; ii<ARRAYSIZE; ii++)
+			for(jj=0; jj<ARRAYSIZE; jj++)
+			{
+				x = (1.0*ii-0.5*ARRAYSIZE) / (0.5*PUPDIAM/pupscale);
+				y = (1.0*jj-0.5*ARRAYSIZE) / (0.5*PUPDIAM/pupscale);
+				ii1 = (long) (0.5*x*pupilsize + 0.5*pupilsize);
+				jj1 = (long) (0.5*y*pupilsize + 0.5*pupilsize);
+				if((ii1>-1)&&(ii1<pupilsize)&&(jj1>-1)&&(jj1<pupilsize))
+				{
+					data.image[IDampmask].array.F[jj*ARRAYSIZE+ii] *= data.image[IDpupil].array.F[jj1*pupilsize+ii1];
+				}
+			}
+	}
+	else
+		printf("COULD NOT FIND %s\n", PUPILFILE);
+  
+    
     for(ii=0; ii<ARRAYSIZE*ARRAYSIZE; ii++)
         data.image[IDamp0].array.F[ii] = data.image[IDampmask].array.F[ii];
     ii1start0 = ARRAYSIZE;
@@ -2778,7 +2791,8 @@ int AOsystSim_PyrWFS_mkCONF(const char *fname)
     fp = fopen(fname, "w");
     fprintf(fp, "\n");
     fprintf(fp, "LAMBDANM                 800              # wavelength [nm]\n");
-    fprintf(fp, "WFSFLUX                 2000              # flux per frame [photon]\n");    
+    fprintf(fp, "WFSFLUX              150000.0              # flux per frame [photon]\n");    
+    fprintf(fp, "WFSCAMRON                1.0               # WFS camera RON [e-]\n"); 
     fprintf(fp, "\n");
     fprintf(fp, "# ============== INPUT TYPE (OPD unit = um) ====================\n");
     fprintf(fp, "INMODE                   0                 # 0:stream, 1:file system (FITS)\n");
@@ -2824,6 +2838,8 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
 
     float LAMBDA;                   /**<  WFS wavelength */
     float WFSFLUX;                  /**<  WFS flux [ph/frame] */
+    float WFSCAMRON;                /**<  WFS camera RON [e-] */
+
     int INMODE;
     char INSTREAMNAMEOPD[200];
     char INSTREAMNAMEAMP[200];
@@ -2870,7 +2886,7 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     long IDoutinst;
 
 	double TotalFlux = 0.0;
-
+	double tmpval;
 
 
 	if(WDIR_INIT==0)
@@ -2894,8 +2910,11 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     else
         fclose(fp);
 
+
+
     LAMBDA = 1.0e-9*read_config_parameter_float(CONF_FNAME, "LAMBDANM");
 	WFSFLUX = read_config_parameter_float(CONF_FNAME, "WFSFLUX");
+	WFSCAMRON = read_config_parameter_float(CONF_FNAME, "WFSCAMRON");
 
     INMODE = read_config_parameter_long(CONF_FNAME, "INMODE");
     read_config_parameter(CONF_FNAME, "INSTREAMNAMEOPD", INSTREAMNAMEOPD);
@@ -3104,21 +3123,24 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
             outoffset = (ARRAYSIZE-OUTBINFACT*OUTARRAYSIZE)/2;
 
             data.image[IDout].md[0].write = 1;
-            for(ii=0; ii<OUTARRAYSIZE*OUTARRAYSIZE; ii++)
-                data.image[IDout].array.F[ii] = 0.0;
+
 
             for(ii=0; ii<OUTARRAYSIZE; ii++)
                 for(jj=0; jj<OUTARRAYSIZE; jj++)
                 {
+					tmpval = 0.0;
                     for(i=0; i<OUTBINFACT; i++)
                         for(j=0; j<OUTBINFACT; j++)
                         {
                             ii1 = ii*OUTBINFACT+i + outoffset;
                             jj1 = jj*OUTBINFACT+j + outoffset;
-                            data.image[IDout].array.F[jj*OUTARRAYSIZE+ii] += data.image[IDpyrpupi].array.F[jj1*ARRAYSIZE+ii1];
+                            tmpval += data.image[IDpyrpupi].array.F[jj1*ARRAYSIZE+ii1];
                         }
+                    data.image[IDout].array.F[jj*OUTARRAYSIZE+ii] = fast_poisson(tmpval) + WFSCAMRON*gauss();
                 }
-
+			
+			
+					
 
             data.image[IDout].md[0].cnt0++;
             data.image[IDout].md[0].write = 0;

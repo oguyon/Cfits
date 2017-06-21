@@ -26,7 +26,7 @@
 
 
 /**
- * @brief Main AOloopControl structure. 
+ * Main AOloopControl structure. 
  *
  * Holds key parameters for the AO engine
  */
@@ -34,22 +34,22 @@ typedef struct
 {
 	
     /* =============================================================================================== */
-	/** @name TIMING 
+	/** @name AOLOOPCONTROL_CONF: TIMING 
 	 * LOOP Timing info
 	 */
 	///@{  
 
 	float loopfrequ;                /**< Loop frequency [Hz] */
 
-	/// Hardware latency = time from DM command issued to WFS response changed 
+	// Hardware latency = time from DM command issued to WFS response changed 
 	float hardwlatency;            /**< hardware latency between DM command and WFS response [sec] */ 
 	float hardwlatency_frame;      /**< hardware latency between DM command and WFS response */
 
-	/// computation time for direct WFS->DM mode through single matrix multiplication
+	// Computation time for direct WFS->DM mode through single matrix multiplication
 	float complatency;             /**< Computation latency */
 	float complatency_frame;       /**< Computation latency (main loop) from WFS image reception to DM command output */
 
-	/// computation time for full computation including open loop computation
+	// Computation time for full computation including open loop computation
 	float wfsmextrlatency;         /**< WFS mode extraction latency [sec] */ 
 	float wfsmextrlatency_frame;   /**< WFS mode extraction latency [frame] */
 
@@ -66,7 +66,7 @@ typedef struct
 
 
     /* =============================================================================================== */
-	/** @name SETUP & INITIALIZATION STATE 
+	/** @name AOLOOPCONTROL_CONF: SETUP & INITIALIZATION STATE 
 	 * 
 	 */
 	///@{  
@@ -89,7 +89,7 @@ typedef struct
 
 
     /* =============================================================================================== */
-	/** @name WFS CAMERA
+	/** @name AOLOOPCONTROL_CONF: WFS CAMERA
 	 * 
 	 */
 	///@{  
@@ -112,7 +112,7 @@ typedef struct
 
 
     /* =============================================================================================== */
-	/** @name DEFORMABLE MIRROR
+	/** @name AOLOOPCONTROL_CONF: DEFORMABLE MIRROR
 	 * 
 	 */
 	///@{  
@@ -130,7 +130,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
-	/** @name CONTROL MODES 
+	/** @name AOLOOPCONTROL_CONF: CONTROL MODES 
 	 * 
 	 */
 	///@{  
@@ -153,7 +153,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
-	/** @name LOOP CONTROL
+	/** @name AOLOOPCONTROL_CONF: LOOP CONTROL
 	 * 
 	 */
 	///@{  	
@@ -179,7 +179,7 @@ typedef struct
  
  
 	/* =============================================================================================== */
-	/** @name PREDICTICE CONTROL
+	/** @name AOLOOPCONTROL_CONF: PREDICTIVE CONTROL
 	 * 
 	 */
 	///@{  	
@@ -191,7 +191,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
- 	/** @name COMPUTATION MODE 
+ 	/** @name AOLOOPCONTROL_CONF: COMPUTATION MODE 
 	 * 
 	 */
 	///@{  	
@@ -207,7 +207,7 @@ typedef struct
 
 
 	/* =============================================================================================== */
- 	/** @name  LOOP TELEMETRY AND PERFORMANCE
+ 	/** @name AOLOOPCONTROL_CONF: LOOP TELEMETRY AND PERFORMANCE
 	 * 
 	 */
 	///@{  	
