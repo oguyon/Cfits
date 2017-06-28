@@ -7624,6 +7624,7 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
             data.image[IDstatus].array.U[0] = 10;
             printf("Iteration %ld/%ld\n", iter, NBiter);
             fflush(stdout);
+         
             // array for collecting dark hole mode derivatives
             // stores derivative of output vector against input parameters
             IDmodes = create_3Dimage_ID("DHmodes", size1Dvec, 1, NBparam);
@@ -7638,7 +7639,9 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
             // for state tracking and statistics
             data.image[IDstatus].array.U[0] = 11;
 
-            // compute local derivatives of output vector against input focal plane mask zones (sags)
+            printf("Compute local derivatives of output vector against input focal plane mask zones (sags)\n");
+            fflush(stdout);
+            
             if(PIAACMC_FPM_FASTDERIVATIVES == 1) // TO BE USED ONLY FOR FOCAL PLANE MASK OPTIMIZATION
             { // this only happens in mode 13
                 // the fast derivative mode only works for focal plane mask optimization, for which derivatives against sag values can be comptuted by simple rotation of pre-computed vectors from mode 11
@@ -7646,8 +7649,13 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
                 data.image[IDstatus].array.U[0] = 12;
                 optsyst[0].FOCMASKarray[0].mode = 1; // use 1-fpm
                 //				ID = create_2Dimage_ID("DHmodes2Dtest", size1Dvec, NBparam);
+            
+				printf("Computing %ld derivatives ", data.image[piaacmc[0].zonezID].md[0].size[0]);
+				fflush(stdout);
                 for(mz=0; mz<data.image[piaacmc[0].zonezID].md[0].size[0]; mz++) // loop over mask zones
                 {
+					printf(" %ld", mz);
+                    fflush(stdout);
                     // actually compute the derivative
                     // fpmresp_array is results from mode 11
                     // from mode 13 above:
@@ -7676,6 +7684,9 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
 
                 // for state tracking and statistics
                 data.image[IDstatus].array.U[0] = 13;
+            
+				printf("Done computing derivatives (FAST MODE)\n");
+				fflush(stdout);
             }
             else // ONLY FOR PIAA SHAPES OPTIMIZATION
             {
@@ -7836,9 +7847,24 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
             //
             // use three cutoff values to give three options for future evaluation
             // smallest cutoff values produce the largest changes (are least well conditioned)
+            printf("ref = 0.1   ");
+            fflush(stdout);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.1, "optcoeff0", 0);
+            printf("- DONE\n");
+            fflush(stdout);            
+            
+            printf("ref = 0.01  ");
+            fflush(stdout);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.01, "optcoeff1", 0);
+            printf("- DONE\n");
+            fflush(stdout);    
+            
+            printf("ref = 0.001 ");
+            fflush(stdout);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.001, "optcoeff2", 0);
+            printf("- DONE\n");
+            fflush(stdout);                
+            
             // for state tracking and statistics
             data.image[IDstatus].array.U[0] = 18;
 
