@@ -7847,19 +7847,19 @@ int PIAACMCsimul_exec(const char *confindex, long mode)
             //
             // use three cutoff values to give three options for future evaluation
             // smallest cutoff values produce the largest changes (are least well conditioned)
-            printf("ref = 0.1   ");
+            printf("ref = 0.1   -- ");
             fflush(stdout);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.1, "optcoeff0", 0);
             printf("- DONE\n");
             fflush(stdout);            
             
-            printf("ref = 0.01  ");
+            printf("ref = 0.01  -- ");
             fflush(stdout);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.01, "optcoeff1", 0);
             printf("- DONE\n");
             fflush(stdout);    
             
-            printf("ref = 0.001 ");
+            printf("ref = 0.001 -- ");
             fflush(stdout);
             linopt_imtools_image_fitModes("vecDHref1D", "DHmodes", "DHmask", 0.001, "optcoeff2", 0);
             printf("- DONE\n");
