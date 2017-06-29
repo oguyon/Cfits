@@ -1747,7 +1747,7 @@ long linopt_imtools_image_fitModes(const char *ID_name, const char *IDmodes_name
 
     IDcoeff = create_2Dimage_ID(IDcoeff_name, m, 1);
 
-	printff(" -> Entering cblas_sgemv \n");
+	printf(" -> Entering cblas_sgemv \n");
 	fflush(stdout);
     cblas_sgemv (CblasRowMajor, CblasNoTrans, m, n, 1.0,  data.image[IDrecm].array.F, n, data.image[IDmvec].array.F, 1, 0.0, data.image[IDcoeff].array.F, 1);
 	printf(" -> Exiting cblas_sgemv \n");
