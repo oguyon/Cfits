@@ -1792,6 +1792,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
     long ID_Cmatrix;
 
+	int VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse = 1;
+
 
 
     int MAGMAfloat = 0; // 1 if single precision
@@ -1815,15 +1817,21 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     {
         n = data.image[ID_Rmatrix].md[0].size[0]*data.image[ID_Rmatrix].md[0].size[1];
         m = data.image[ID_Rmatrix].md[0].size[2];
-       // printf("3D image -> %ld %ld\n", n, m);
-       // fflush(stdout);
+        if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+        {
+			printf("3D image -> %ld %ld\n", n, m);
+			fflush(stdout);
+		}
     }
     else
     {
         n = data.image[ID_Rmatrix].md[0].size[0];
         m = data.image[ID_Rmatrix].md[0].size[1];
-      //  printf("2D image -> %ld %ld\n", n, m);
-       // fflush(stdout);
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("2D image -> %ld %ld\n", n, m);
+			fflush(stdout);
+		}
     }
 
     M = n;
@@ -1837,15 +1845,19 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
     /* in this procedure, m=number of actuators/modes, n=number of WFS elements */
 
-
-   // printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
-  //  fflush(stdout);
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("magma :    M = %ld , N = %ld\n", (long) M, (long) N);
+		fflush(stdout);
+	}
 
     if(INIT_MAGMA==0)
     {
-        printf("INITIALIZE MAGMA\n");
-        fflush(stdout);
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("INITIALIZE MAGMA\n");
+			fflush(stdout);
+        }
         magma_init(); // initialize Magma
         //flops_init();
         magma_print_environment();
@@ -1885,10 +1897,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-
-    //printf("MAGMA READY\n");
-    //fflush(stdout);
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA READY\n");
+		fflush(stdout);
+	}
 
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t1);
@@ -1943,6 +1956,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
 
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA: CREATE QUEUE\n");
+		fflush(stdout);
+	}
+	
     if(MAGMAloop_iter == 0)
         magma_queue_create(0, &magmaqueue);
 
@@ -1964,7 +1984,14 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t2);
 
-    // COMPUTE trans(A) x A
+
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA: COMPUTE trans(A) x A\n");
+		fflush(stdout);
+    }
+    
+    
     if(MAGMAfloat==1)
         magma_sgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magmaf_d_A, M, magmaf_d_A, M, 0.0,  magmaf_d_AtA, N, magmaqueue);
     else
@@ -1999,8 +2026,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t3);
 
-    // COMPUTE eigenvalues and eigenvectors of trans(A) x A
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("COMPUTE eigenvalues and eigenvectors of trans(A) x A\n");
+		fflush(stdout);
+	}
+	
     if(MAGMAloop_iter==0)
     {
         // get workspace size
@@ -2025,8 +2056,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t4);
 
-
-    // allocate & compute
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("MAGMA: allocate & compute\n");
+		fflush(stdout);
+    }
+    
+    
     if(MAGMAloop_iter == 0)
     {
         if(MAGMAfloat==1)
@@ -2048,10 +2084,41 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
     // THIS ROUTINE IS GOOD TO EIGENVALUES ABOUT 1e-6 OF PEAK EIGENVALUE IF USING FLOAT, MUCH BETTER WITH DOUBLE
+    
+    
+    
     if(MAGMAfloat==1)
-        magma_ssyevd_gpu( MagmaVec, MagmaLower, N, magmaf_d_AtA, N, magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_ssyevd_gpu -> ");
+			fflush(stdout);
+		}
+		
+		magma_ssyevd_gpu( MagmaVec, MagmaLower, N, magmaf_d_AtA, N, magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" DONE\n");
+			fflush(stdout);
+		}
+	}
     else
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_dsyevd_gpu -> ");
+			fflush(stdout);
+        }
+        
         magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" DONE\n");
+			fflush(stdout);
+		}
+	}
 
     if(LOOPmode == 0)
     {
@@ -2075,8 +2142,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         clock_gettime(CLOCK_REALTIME, &t5);
 
 
-
-    // Write eigenvalues
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("Write eigenvalues\n");
+		fflush(stdout);
+    }
+    
     sprintf(fname, "eigenv.dat");
     if((fp=fopen(fname, "w"))==NULL)
     {
@@ -2120,8 +2191,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 			mode++;
 	}
 	
-//    printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("Keeping %ld modes  (SVDeps = %g -> %g, MaxNBmodes = %ld -> %ld)\n", mode, SVDeps, egvlim, MaxNBmodes, MaxNBmodes1);
+		fflush(stdout);
+	}
+	
     fp = fopen("SVDmodes.log", "w");
     fprintf(fp, "%6ld %6ld\n", mode, MaxNBmodes1);
     fclose(fp);
@@ -2198,11 +2273,44 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(timing==1)
         clock_gettime(CLOCK_REALTIME, &t6);
 
-    // compute M2 = VT1 VT
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+    {
+		printf("compute M2 = VT1 VT\n");
+		fflush(stdout);
+    }
+    
     if(MAGMAfloat==1)
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_sgemm ");
+			fflush(stdout);
+        }
+        
         magma_sgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magmaf_d_VT1, N, magmaf_d_AtA, N, 0.0,  magmaf_d_M2, N, magmaqueue);
+
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);
+		}
+    }
     else
-        magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magma_d_VT1, N, magma_d_AtA, N, 0.0,  magma_d_M2, N, magmaqueue);
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_dgemm ");
+			fflush(stdout);
+        }
+        
+	    magma_dgemm(  MagmaTrans, MagmaTrans, N, N, N, 1.0, magma_d_VT1, N, magma_d_AtA, N, 0.0,  magma_d_M2, N, magmaqueue);
+
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);
+		}
+	}
 
     if(testmode == 1)
     {
@@ -2267,10 +2375,37 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
     if(MAGMAfloat==1)
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_sgemm ");
+			fflush(stdout);
+        }
+        
         magma_sgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magmaf_d_A, M, magmaf_d_M2, N, 0.0, magmaf_d_Ainv, M, magmaqueue);
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);
+		}
+    }
     else
+    {
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf(" -> magma_dgemm ");
+			fflush(stdout);
+        }
+        
         magma_dgemm(  MagmaNoTrans, MagmaNoTrans, M, N, N, 1.0, magma_d_A, M, magma_d_M2, N, 0.0, magma_d_Ainv, M, magmaqueue);
-
+		
+		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+		{
+			printf("-> DONE\n");
+			fflush(stdout);	
+		}
+	}
 
     if(LOOPmode==0)
     {
@@ -2312,10 +2447,13 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         clock_gettime(CLOCK_REALTIME, &t7);
 
     if(MAGMAfloat==1)
+    {		
         magma_sgetmatrix( M, N, magmaf_d_Ainv, M, magmaf_h_Ainv, M, magmaqueue);
+    }
     else
+    {
         magma_dgetmatrix( M, N, magma_d_Ainv, M, magma_h_Ainv, M, magmaqueue);
-
+	}
 
 
     if(testmode == 1)
@@ -2362,7 +2500,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     else
         ID_Cmatrix = image_ID(ID_Cmatrix_name);
 
-    /* write result */
+	
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("write result\n");
+		fflush(stdout);
+    }
     // 	M = n;
     //	N = m;
     if(atype==FLOAT)
@@ -2458,25 +2601,30 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         tdiff = info_time_diff(t0, t9);
         t09d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-
-      //  printf("%6ld  Timing info: \n", MAGMAloop_iter);
-      //  printf("  0-1	%12.3f ms\n", t01d*1000.0);
-      //  printf("  1-2	%12.3f ms\n", t12d*1000.0);
-      //  printf("  2-3	%12.3f ms\n", t23d*1000.0);
-      //  printf("  3-4	%12.3f ms\n", t34d*1000.0);
-      //  printf("  4-5	%12.3f ms\n", t45d*1000.0);
-      //  printf("  5-6	%12.3f ms\n", t56d*1000.0);
-      //  printf("  6-7	%12.3f ms\n", t67d*1000.0);
-      //  printf("  7-8	%12.3f ms\n", t78d*1000.0);
-      //  printf("  8-9	%12.3f ms\n", t89d*1000.0);
-      //  printf("\n");
-      //  printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+      printf("%6ld  Timing info: \n", MAGMAloop_iter);
+      printf("  0-1	%12.3f ms\n", t01d*1000.0);
+      printf("  1-2	%12.3f ms\n", t12d*1000.0);
+      printf("  2-3	%12.3f ms\n", t23d*1000.0);
+      printf("  3-4	%12.3f ms\n", t34d*1000.0);
+      printf("  4-5	%12.3f ms\n", t45d*1000.0);
+      printf("  5-6	%12.3f ms\n", t56d*1000.0);
+      printf("  6-7	%12.3f ms\n", t67d*1000.0);
+      printf("  7-8	%12.3f ms\n", t78d*1000.0);
+      printf("  8-9	%12.3f ms\n", t89d*1000.0);
+      printf("\n");
+      printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
+		fflush(stdout);
+    }
     }
 
 
-
-   // printf("\n\n");
-
+	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
+	{
+		printf("\n\n");
+		fflush(stdout);
+	}
 
     if(LOOPmode == 1)
         MAGMAloop_iter++;
