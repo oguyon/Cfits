@@ -1,6 +1,5 @@
 var coronagraphs_8h =
 [
-    [ "CORONAGRAPHS_ARRAYSIZE", "coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48", null ],
     [ "coronagraph_APLCapo_compile", "coronagraphs_8h.html#a8421a0785911fa323571185293257481", null ],
     [ "coronagraph_compute_limitcoeff", "coronagraphs_8h.html#aec284ddf288ce2f45a596cd819be5e0e", null ],
     [ "coronagraph_init_PIAA", "coronagraphs_8h.html#abf3219f1093d9605a7b5384021aaddad", null ],

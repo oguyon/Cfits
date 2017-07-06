@@ -1,14 +1,12 @@
 var COREMOD__memory_8c =
 [
     [ "savethreadmsg", "structsavethreadmsg.html", "structsavethreadmsg" ],
-    [ "_GNU_SOURCE", "COREMOD__memory_8c.html#a369266c24eacffb87046522897a570d5", null ],
-    [ "SBUFFERSIZE", "COREMOD__memory_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
-    [ "STYPESIZE", "COREMOD__memory_8c.html#a0eac07b0c4ebaac544936481f2c6e649", null ],
     [ "check_2Dsize", "COREMOD__memory_8c.html#acc721e4a70f77c1c96f24c20edf43a9b", null ],
     [ "check_3Dsize", "COREMOD__memory_8c.html#aaafbab4ae99ac2b0f10d9a16fded2d1d", null ],
     [ "chname_image_ID", "COREMOD__memory_8c.html#a3101e27f0b2d7a3a38619969e00d7981", null ],
     [ "chname_image_ID_cli", "COREMOD__memory_8c.html#aeeb733b938bdd215e86e5ae05e90a72a", null ],
     [ "clearall", "COREMOD__memory_8c.html#adfa9e91be46df5329679b8330b8db494", null ],
+    [ "clock_gettime", "COREMOD__memory_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6", null ],
     [ "close_list_image_ID_ncurses", "COREMOD__memory_8c.html#aa5bd7036ad8ad25fa6ed8093a3ebe208", null ],
     [ "compute_image_memory", "COREMOD__memory_8c.html#a5696509ead81f9b911ede55bd616b722", null ],
     [ "compute_nb_image", "COREMOD__memory_8c.html#a4914da7cc39c9d6f3f449bba3a4e5b50", null ],
@@ -130,6 +128,7 @@ var COREMOD__memory_8c =
     [ "read_sharedmem_image_cli", "COREMOD__memory_8c.html#a21efc5fc8cd19e204541b27f4f6ffbf2", null ],
     [ "read_sharedmem_image_size", "COREMOD__memory_8c.html#a98cd70b4acfd1b31d2399985bb8e7a99", null ],
     [ "read_sharedmem_image_size_cli", "COREMOD__memory_8c.html#a982579a26c8cc27d68b63d68c2c5e7a9", null ],
+    [ "read_sharedmem_image_toIMAGE", "COREMOD__memory_8c.html#a81eddd18e37ff6a9fcb888b9ccb47e08", null ],
     [ "rotate_cube", "COREMOD__memory_8c.html#a6ec74f3a91aa2fb625947bfecdda0419", null ],
     [ "save_fits_function", "COREMOD__memory_8c.html#ae1b0a2a5c4a3c31d996df61a2223d669", null ],
     [ "variable_ID", "COREMOD__memory_8c.html#a6c8a58000943870cafcc9e4c9665bab5", null ],

@@ -2,10 +2,6 @@ var COREMOD__memory_8h =
 [
     [ "LOGSHIM_CONF", "structLOGSHIM__CONF.html", "structLOGSHIM__CONF" ],
     [ "TCP_BUFFER_METADATA", "structTCP__BUFFER__METADATA.html", "structTCP__BUFFER__METADATA" ],
-    [ "NB_IMAGES_BUFFER", "COREMOD__memory_8h.html#a6a516b2b630eaf25a5e3163827f28a76", null ],
-    [ "NB_IMAGES_BUFFER_REALLOC", "COREMOD__memory_8h.html#a30544d5f3ad71b12abb61b553bbe8edb", null ],
-    [ "NB_VARIABLES_BUFFER", "COREMOD__memory_8h.html#a7c73c51a8d86c7a3509901d402cb72c0", null ],
-    [ "NB_VARIABLES_BUFFER_REALLOC", "COREMOD__memory_8h.html#a89506b6cabee1cb5f607d5dfcea35096", null ],
     [ "check_2Dsize", "COREMOD__memory_8h.html#acc721e4a70f77c1c96f24c20edf43a9b", null ],
     [ "check_3Dsize", "COREMOD__memory_8h.html#aaafbab4ae99ac2b0f10d9a16fded2d1d", null ],
     [ "chname_image_ID", "COREMOD__memory_8h.html#a3101e27f0b2d7a3a38619969e00d7981", null ],

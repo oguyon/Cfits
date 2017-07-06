@@ -1,8 +1,12 @@
 var NAVTREEINDEX17 =
 {
+"structVARIABLE.html#a33fcb1d4034cdf238453dc4ac3f17290":[6,0,41,6],
+"structVARIABLE.html#a40d583ae511f61e22f3ade6f130a7d58":[6,0,41,3],
+"structVARIABLE.html#a63e49f4cf699d62212a55d257d0d87f7":[6,0,41,4],
+"structVARIABLE.html#a681a0cb52e89855a9cf7f1bd908ba6ee":[6,0,41,0],
 "structVARIABLE.html#a84814331e54156c3ac9fbe6d2b851daf":[6,0,41,5],
 "structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878":[6,0,41,2],
-"structVARIABLE.html#ac78c074d5d0c437357a205d97ee58c70":[6,0,41,7],
+"structVARIABLE.html#ad7e8abd9c114ebdee993748b595c1142":[6,0,41,7],
 "structVARIABLE.html#af31bb248155770bb6d7080aa50bdb4fd":[6,0,41,1],
 "structZERNIKE.html":[6,0,46],
 "structZERNIKE.html#a2c37fde142f459b1374da2472151ee29":[6,0,46,4],

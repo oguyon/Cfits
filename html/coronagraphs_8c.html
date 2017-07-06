@@ -104,75 +104,13 @@ $(document).ready(function(){initNavTree('coronagraphs_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">coronagraphs.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;malloc.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;sys/stat.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="00CORE_8h_source.html">00CORE/00CORE.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__iofits_8h_source.html">COREMOD_iofits/COREMOD_iofits.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__arith_8h_source.html">COREMOD_arith/COREMOD_arith.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__tools_8h_source.html">COREMOD_tools/COREMOD_tools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="info_8h_source.html">info/info.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="fft_8h_source.html">fft/fft.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="WFpropagate_8h_source.html">WFpropagate/WFpropagate.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ZernikePolyn_8h_source.html">ZernikePolyn/ZernikePolyn.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__gen_8h_source.html">image_gen/image_gen.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="coronagraphs_8h_source.html">coronagraphs/coronagraphs.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="statistic_8h_source.html">statistic/statistic.h</a>&quot;</code><br />
-<code>#include &lt;gsl/gsl_math.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_multimin.h&gt;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a5d9d454d4b9f2ff8106d5199ac0d0186"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">SWAP</a>(x,  y)&#160;&#160;&#160;tmp=(x);x=(y);y=tmp;</td></tr>
-<tr class="separator:a5d9d454d4b9f2ff8106d5199ac0d0186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a598a3330b3c21701223ee0ca14316eca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a598a3330b3c21701223ee0ca14316eca">PI</a>&#160;&#160;&#160;3.14159265358979323846264338328</td></tr>
-<tr class="separator:a598a3330b3c21701223ee0ca14316eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a829e77b97c4b98d6229e876e4da64852"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a829e77b97c4b98d6229e876e4da64852">CORONAGRAPHSDATALOCAL</a>&#160;&#160;&#160;&quot;/CfitsDev/<a class="el" href="ZernikePolyn_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a>/coronagraphs&quot;</td></tr>
-<tr class="separator:a829e77b97c4b98d6229e876e4da64852"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a0c7d1017e1d0aeaa2637aa08047c9c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a2a0c7d1017e1d0aeaa2637aa08047c9c">CORONAGRAPHS_PSCALE</a>&#160;&#160;&#160;0.006</td></tr>
-<tr class="separator:a2a0c7d1017e1d0aeaa2637aa08047c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaa315345d2940a94666b07b9e83eed4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#acaa315345d2940a94666b07b9e83eed4">CORONAGRAPHS_TDIAM</a>&#160;&#160;&#160;2.4 /* telescope diameter, in meter */</td></tr>
-<tr class="separator:acaa315345d2940a94666b07b9e83eed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2908dd608420598a33ebe19f7021083f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a2908dd608420598a33ebe19f7021083f">CORONAGRAPHS_LAMBDA</a>&#160;&#160;&#160;0.0000005 /* m */</td></tr>
-<tr class="separator:a2908dd608420598a33ebe19f7021083f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08a15c0b3303c0f61aa95cf6895dd9ac"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a08a15c0b3303c0f61aa95cf6895dd9ac">BL8MASK_NBSTEP</a>&#160;&#160;&#160;100000 /* number of points over which the BL mask is computed */</td></tr>
-<tr class="separator:a08a15c0b3303c0f61aa95cf6895dd9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81c27539aa13fb42ff2d32eb24627e9f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a81c27539aa13fb42ff2d32eb24627e9f">BL8MASK_STEP</a>&#160;&#160;&#160;0.01  /* lambda/d per step */</td></tr>
-<tr class="separator:a81c27539aa13fb42ff2d32eb24627e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42a151e3ac18d94d821a0800c087ea6c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a42a151e3ac18d94d821a0800c087ea6c">CPAAPO_NBPOINTS</a>&#160;&#160;&#160;1930</td></tr>
-<tr class="separator:a42a151e3ac18d94d821a0800c087ea6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d336d643ce0710fd3ee9732d88ab4db"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a8d336d643ce0710fd3ee9732d88ab4db">CPAAPO_FNAME</a>&#160;&#160;&#160;&quot;pup_10.411256_2.0&quot;</td></tr>
-<tr class="separator:a8d336d643ce0710fd3ee9732d88ab4db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2fa9f48b4ee92004cc76fe5fb92773b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#ac2fa9f48b4ee92004cc76fe5fb92773b">CPAFPMASKRAD</a>&#160;&#160;&#160;0.0 /*4.4*/ /* in l/d */</td></tr>
-<tr class="separator:ac2fa9f48b4ee92004cc76fe5fb92773b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aceb8dc94eec66ddfb81e5dab6cb993c3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#aceb8dc94eec66ddfb81e5dab6cb993c3">CPAPPMASKRAD</a>&#160;&#160;&#160;1.0 /* in pupil unit */</td></tr>
-<tr class="separator:aceb8dc94eec66ddfb81e5dab6cb993c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a01e43b0d2160a5c634d18a4a5cbfdc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a2a01e43b0d2160a5c634d18a4a5cbfdc">PIAAPPMASKRAD</a>&#160;&#160;&#160;1.0 /* in pupil unit */</td></tr>
-<tr class="separator:a2a01e43b0d2160a5c634d18a4a5cbfdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5e7f9d796175368e70bcf29f2d7abe7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#aa5e7f9d796175368e70bcf29f2d7abe7">PIAACPPMASKRAD1</a>&#160;&#160;&#160;1.0 /* in pupil unit */</td></tr>
-<tr class="separator:aa5e7f9d796175368e70bcf29f2d7abe7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39a2a2f629136e1f6268072c537f9604"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a39a2a2f629136e1f6268072c537f9604">PIAA_HYBRID_CST</a>&#160;&#160;&#160;0.00000001 /* relative to peak */</td></tr>
-<tr class="separator:a39a2a2f629136e1f6268072c537f9604"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a187d2c9447b716414f374031a6c810fd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a187d2c9447b716414f374031a6c810fd">piaaconfNPUPFILESIZE</a>&#160;&#160;&#160;200000</td></tr>
-<tr class="separator:a187d2c9447b716414f374031a6c810fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e9bd48bf0734ea2dc783a3c0f7477cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a1e9bd48bf0734ea2dc783a3c0f7477cc">piaaconfNBr1fr0_pts</a>&#160;&#160;&#160;20000</td></tr>
-<tr class="separator:a1e9bd48bf0734ea2dc783a3c0f7477cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaad0f3efacda39e83ab5099a2824e064"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#aaad0f3efacda39e83ab5099a2824e064">PIAAAIC_FIELDLIMIT</a>&#160;&#160;&#160;15.0 /* in l/d */</td></tr>
-<tr class="separator:aaad0f3efacda39e83ab5099a2824e064"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a95643d8c938b00b27317e344aeb388a5"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a95643d8c938b00b27317e344aeb388a5">coronagraph_make_2Dprolate_cli</a> ()</td></tr>
@@ -293,7 +231,7 @@ Variables</h2></td></tr>
 <tr class="separator:ae72e98daac2fe7eb073889e402a42acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a961aed922b6ce308b2690c51cf704999"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a961aed922b6ce308b2690c51cf704999">DFTZFACTOR</a> = 8.0</td></tr>
 <tr class="separator:a961aed922b6ce308b2690c51cf704999"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc53d0aefc00fea6140b26cfaeeaf9cd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#abc53d0aefc00fea6140b26cfaeeaf9cd">CORONAGRAPHS_PIXSCALE</a> = <a class="el" href="coronagraphs_8c.html#acaa315345d2940a94666b07b9e83eed4">CORONAGRAPHS_TDIAM</a>/<a class="el" href="coronagraphs_8c.html#a2a0c7d1017e1d0aeaa2637aa08047c9c">CORONAGRAPHS_PSCALE</a>/<a class="el" href="coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48">CORONAGRAPHS_ARRAYSIZE</a></td></tr>
+<tr class="memitem:abc53d0aefc00fea6140b26cfaeeaf9cd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#abc53d0aefc00fea6140b26cfaeeaf9cd">CORONAGRAPHS_PIXSCALE</a> = CORONAGRAPHS_TDIAM/CORONAGRAPHS_PSCALE/CORONAGRAPHS_ARRAYSIZE</td></tr>
 <tr class="separator:abc53d0aefc00fea6140b26cfaeeaf9cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f99b3f1988f04e814203d69650de7eb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a3f99b3f1988f04e814203d69650de7eb">COROTMP1</a></td></tr>
 <tr class="separator:a3f99b3f1988f04e814203d69650de7eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -311,7 +249,7 @@ Variables</h2></td></tr>
 <tr class="separator:a29eac85450b4bb79aa0be69aa01a8fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbfbb89ad309a709faf9e9cd94fd8b25"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#adbfbb89ad309a709faf9e9cd94fd8b25">FPM_TRANSM2</a> = 1.0</td></tr>
 <tr class="separator:adbfbb89ad309a709faf9e9cd94fd8b25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc5d597b9c41a67de364133408731523"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#acc5d597b9c41a67de364133408731523">BL8MASK</a> [<a class="el" href="coronagraphs_8c.html#a08a15c0b3303c0f61aa95cf6895dd9ac">BL8MASK_NBSTEP</a>]</td></tr>
+<tr class="memitem:acc5d597b9c41a67de364133408731523"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#acc5d597b9c41a67de364133408731523">BL8MASK</a> [BL8MASK_NBSTEP]</td></tr>
 <tr class="separator:acc5d597b9c41a67de364133408731523"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c3688abf95f52f3494889fea4f2a6ae"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a9c3688abf95f52f3494889fea4f2a6ae">BL8MASK_m</a> = 1.0</td></tr>
 <tr class="separator:a9c3688abf95f52f3494889fea4f2a6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -341,7 +279,7 @@ Variables</h2></td></tr>
 <tr class="separator:ae847e6a7190847b09eee9fcafc2d93bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af39ae729c13bfaa6936e2291bd6b4e20"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#af39ae729c13bfaa6936e2291bd6b4e20">RRPM_PIAA</a> = 1</td></tr>
 <tr class="separator:af39ae729c13bfaa6936e2291bd6b4e20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42b92e1e05e44244587d0af268015390"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a42b92e1e05e44244587d0af268015390">CPAAPO</a> [<a class="el" href="coronagraphs_8c.html#a42a151e3ac18d94d821a0800c087ea6c">CPAAPO_NBPOINTS</a>]</td></tr>
+<tr class="memitem:a42b92e1e05e44244587d0af268015390"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a42b92e1e05e44244587d0af268015390">CPAAPO</a> [CPAAPO_NBPOINTS]</td></tr>
 <tr class="separator:a42b92e1e05e44244587d0af268015390"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1a8dca6fc3711e093c7238af0fa54e9"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#af1a8dca6fc3711e093c7238af0fa54e9">PIAACENTOBS</a> = 0.0</td></tr>
 <tr class="separator:af1a8dca6fc3711e093c7238af0fa54e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -351,7 +289,7 @@ Variables</h2></td></tr>
 <tr class="separator:ab6fb815f3e1c21b4d15d9c51844cb671"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac742735ea991bb36ec3af548a1858d00"><td class="memItemLeft" align="right" valign="top">static double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#ac742735ea991bb36ec3af548a1858d00">PIAA_HYBRID_CPAAPO</a></td></tr>
 <tr class="separator:ac742735ea991bb36ec3af548a1858d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a873d171ffd9537e4e7b48d9251137421"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a873d171ffd9537e4e7b48d9251137421">PIAAAPO2D</a> [<a class="el" href="coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48">CORONAGRAPHS_ARRAYSIZE</a> *<a class="el" href="coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48">CORONAGRAPHS_ARRAYSIZE</a>]</td></tr>
+<tr class="memitem:a873d171ffd9537e4e7b48d9251137421"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a873d171ffd9537e4e7b48d9251137421">PIAAAPO2D</a> [CORONAGRAPHS_ARRAYSIZE *CORONAGRAPHS_ARRAYSIZE]</td></tr>
 <tr class="separator:a873d171ffd9537e4e7b48d9251137421"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0be8aaa4bb8a511345fa4e625811017a"><td class="memItemLeft" align="right" valign="top">static char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a0be8aaa4bb8a511345fa4e625811017a">PIAAAPO_FNAME</a> [400] =&quot;pup_10.411256_2.0&quot;</td></tr>
 <tr class="separator:a0be8aaa4bb8a511345fa4e625811017a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -468,237 +406,6 @@ Variables</h2></td></tr>
 <tr class="memitem:a693dd4f044c33ba9aacca51aad18248d"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coronagraphs_8c.html#a693dd4f044c33ba9aacca51aad18248d">APLCapo_FPMRAD_STEP</a> = 0.001</td></tr>
 <tr class="separator:a693dd4f044c33ba9aacca51aad18248d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a08a15c0b3303c0f61aa95cf6895dd9ac"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define BL8MASK_NBSTEP&#160;&#160;&#160;100000 /* number of points over which the BL mask is computed */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a81c27539aa13fb42ff2d32eb24627e9f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define BL8MASK_STEP&#160;&#160;&#160;0.01  /* lambda/d per step */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a2908dd608420598a33ebe19f7021083f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CORONAGRAPHS_LAMBDA&#160;&#160;&#160;0.0000005 /* m */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a2a0c7d1017e1d0aeaa2637aa08047c9c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CORONAGRAPHS_PSCALE&#160;&#160;&#160;0.006</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="acaa315345d2940a94666b07b9e83eed4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CORONAGRAPHS_TDIAM&#160;&#160;&#160;2.4 /* telescope diameter, in meter */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a829e77b97c4b98d6229e876e4da64852"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CORONAGRAPHSDATALOCAL&#160;&#160;&#160;&quot;/CfitsDev/<a class="el" href="ZernikePolyn_8c.html#a9842752e03b4de9b4593f1a3b34364ab">data</a>/coronagraphs&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a8d336d643ce0710fd3ee9732d88ab4db"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CPAAPO_FNAME&#160;&#160;&#160;&quot;pup_10.411256_2.0&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a42a151e3ac18d94d821a0800c087ea6c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CPAAPO_NBPOINTS&#160;&#160;&#160;1930</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="ac2fa9f48b4ee92004cc76fe5fb92773b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CPAFPMASKRAD&#160;&#160;&#160;0.0 /*4.4*/ /* in l/d */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aceb8dc94eec66ddfb81e5dab6cb993c3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CPAPPMASKRAD&#160;&#160;&#160;1.0 /* in pupil unit */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a598a3330b3c21701223ee0ca14316eca"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PI&#160;&#160;&#160;3.14159265358979323846264338328</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a39a2a2f629136e1f6268072c537f9604"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PIAA_HYBRID_CST&#160;&#160;&#160;0.00000001 /* relative to peak */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aaad0f3efacda39e83ab5099a2824e064"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PIAAAIC_FIELDLIMIT&#160;&#160;&#160;15.0 /* in l/d */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a1e9bd48bf0734ea2dc783a3c0f7477cc"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define piaaconfNBr1fr0_pts&#160;&#160;&#160;20000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a187d2c9447b716414f374031a6c810fd"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define piaaconfNPUPFILESIZE&#160;&#160;&#160;200000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aa5e7f9d796175368e70bcf29f2d7abe7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PIAACPPMASKRAD1&#160;&#160;&#160;1.0 /* in pupil unit */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a2a01e43b0d2160a5c634d18a4a5cbfdc"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PIAAPPMASKRAD&#160;&#160;&#160;1.0 /* in pupil unit */</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a5d9d454d4b9f2ff8106d5199ac0d0186"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SWAP</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">y&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;tmp=(x);x=(y);y=tmp;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a8421a0785911fa323571185293257481"></a>
 <div class="memitem">
@@ -2474,7 +2181,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double BL8MASK[<a class="el" href="coronagraphs_8c.html#a08a15c0b3303c0f61aa95cf6895dd9ac">BL8MASK_NBSTEP</a>]</td>
+          <td class="memname">double BL8MASK[BL8MASK_NBSTEP]</td>
         </tr>
       </table>
   </td>
@@ -2571,7 +2278,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double CORONAGRAPHS_PIXSCALE = <a class="el" href="coronagraphs_8c.html#acaa315345d2940a94666b07b9e83eed4">CORONAGRAPHS_TDIAM</a>/<a class="el" href="coronagraphs_8c.html#a2a0c7d1017e1d0aeaa2637aa08047c9c">CORONAGRAPHS_PSCALE</a>/<a class="el" href="coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48">CORONAGRAPHS_ARRAYSIZE</a></td>
+          <td class="memname">double CORONAGRAPHS_PIXSCALE = CORONAGRAPHS_TDIAM/CORONAGRAPHS_PSCALE/CORONAGRAPHS_ARRAYSIZE</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2598,7 +2305,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double CPAAPO[<a class="el" href="coronagraphs_8c.html#a42a151e3ac18d94d821a0800c087ea6c">CPAAPO_NBPOINTS</a>]</td>
+          <td class="memname">double CPAAPO[CPAAPO_NBPOINTS]</td>
         </tr>
       </table>
   </td>
@@ -3305,7 +3012,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double PIAAAPO2D[<a class="el" href="coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48">CORONAGRAPHS_ARRAYSIZE</a> *<a class="el" href="coronagraphs_8h.html#aeec929551ce70a93ed5dbe975c621c48">CORONAGRAPHS_ARRAYSIZE</a>]</td>
+          <td class="memname">double PIAAAPO2D[CORONAGRAPHS_ARRAYSIZE *CORONAGRAPHS_ARRAYSIZE]</td>
         </tr>
       </table>
   </td>
@@ -3903,7 +3610,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_4f0335b5b113a303a029a7cd754eef60.html">coronagraphs</a></li><li class="navelem"><a class="el" href="coronagraphs_8c.html">coronagraphs.c</a></li>
-    <li class="footer">Generated on Mon Jun 19 2017 20:45:59 for cfitsTK by
+    <li class="footer">Generated on Wed Jul 5 2017 16:09:13 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -6,6 +6,7 @@ var searchData=
   ['r_5farray',['R_array',['../structZERNIKE.html#ab54550ba1f67c3f7d31c9079dace1aa8',1,'ZERNIKE']]],
   ['re',['re',['../structcomplex__float.html#a170e8285dc5452b1c27d6a97590509dd',1,'complex_float::re()'],['../structcomplex__double.html#af3466e0949b17c561569ba827aa878f4',1,'complex_double::re()'],['../AtmosphereModel_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f',1,'re():&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f',1,'re():&#160;nrlmsise-00.c']]],
   ['rect',['rect',['../structkdtree.html#aad2df600bbe8cf682fe61ac6847f5e18',1,'kdtree']]],
+  ['refwfsinit',['refWFSinit',['../structGPUMATMULTCONF.html#a7b47c71769f2b07d492f7d4b13ce7c8b',1,'GPUMATMULTCONF']]],
   ['respmname',['respMname',['../structAOLOOPCONTROL__CONF.html#ad1af43c9e7a9ed5002376c32fd69e16a',1,'AOLOOPCONTROL_CONF']]],
   ['result',['result',['../structTHDATA__IMTOTAL.html#a9e7c01abf8aad470594aa818ef3335d8',1,'THDATA_IMTOTAL']]],
   ['rgbblue',['rgbBlue',['../structRGBQUAD.html#a26981c44b82baaabb9cdf9147c13b84b',1,'RGBQUAD']]],

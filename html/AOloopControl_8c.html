@@ -104,7 +104,6 @@ $(document).ready(function(){initNavTree('AOloopControl_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
@@ -114,59 +113,11 @@ $(document).ready(function(){initNavTree('AOloopControl_8c.html','');});
 
 <p>Adaptive Optics Control loop engine.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;unistd.h&gt;</code><br />
-<code>#include &lt;malloc.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;limits.h&gt;</code><br />
-<code>#include &lt;sys/types.h&gt;</code><br />
-<code>#include &lt;sys/stat.h&gt;</code><br />
-<code>#include &lt;sys/syscall.h&gt;</code><br />
-<code>#include &lt;time.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;sys/file.h&gt;</code><br />
-<code>#include &lt;sys/mman.h&gt;</code><br />
-<code>#include &lt;err.h&gt;</code><br />
-<code>#include &lt;fcntl.h&gt;</code><br />
-<code>#include &lt;sched.h&gt;</code><br />
-<code>#include &lt;ncurses.h&gt;</code><br />
-<code>#include &lt;semaphore.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_matrix.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_math.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_eigen.h&gt;</code><br />
-<code>#include &lt;gsl/gsl_blas.h&gt;</code><br />
-<code>#include &lt;pthread.h&gt;</code><br />
-<code>#include &lt;fitsio.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="00CORE_8h_source.html">00CORE/00CORE.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__iofits_8h_source.html">COREMOD_iofits/COREMOD_iofits.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__tools_8h_source.html">COREMOD_tools/COREMOD_tools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__arith_8h_source.html">COREMOD_arith/COREMOD_arith.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="linopt__imtools_8h_source.html">linopt_imtools/linopt_imtools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="AOloopControl_8h_source.html">AOloopControl/AOloopControl.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__filter_8h_source.html">image_filter/image_filter.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="info_8h_source.html">info/info.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ZernikePolyn_8h_source.html">ZernikePolyn/ZernikePolyn.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="image__gen_8h_source.html">image_gen/image_gen.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="statistic_8h_source.html">statistic/statistic.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="fft_8h_source.html">fft/fft.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a369266c24eacffb87046522897a570d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a369266c24eacffb87046522897a570d5">_GNU_SOURCE</a></td></tr>
-<tr class="separator:a369266c24eacffb87046522897a570d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74ab1a4f2b0dd3db2eb5408bb3c5f721"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a74ab1a4f2b0dd3db2eb5408bb3c5f721">MAX_MBLOCK</a>&#160;&#160;&#160;20</td></tr>
-<tr class="separator:a74ab1a4f2b0dd3db2eb5408bb3c5f721"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c5d5a91e62278861bc96ab43c9c44d9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a6c5d5a91e62278861bc96ab43c9c44d9">NB_AOloopcontrol</a>&#160;&#160;&#160;10</td></tr>
-<tr class="separator:a6c5d5a91e62278861bc96ab43c9c44d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d4ac22ab7ffd78896c076c09870ff9c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a3d4ac22ab7ffd78896c076c09870ff9c">AOconfname</a>&#160;&#160;&#160;&quot;/tmp/AOconf.shm&quot;</td></tr>
-<tr class="separator:a3d4ac22ab7ffd78896c076c09870ff9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a4686db64ee8970c84b269e0425519dec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a4686db64ee8970c84b269e0425519dec">clock_gettime</a> (int clk_id, struct mach_timespec *t)</td></tr>
+<tr class="separator:a4686db64ee8970c84b269e0425519dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf02c7b987ff57fa38605aafc2df2c2e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#abf02c7b987ff57fa38605aafc2df2c2e">AOloopControl_logFunctionCall</a> (const int logfuncMODE, const char *FunctionName, const long <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *comments)</td></tr>
 <tr class="separator:abf02c7b987ff57fa38605aafc2df2c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a070111113671a8c8e0ba5b5898accd58"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8c.html#a070111113671a8c8e0ba5b5898accd58">AOloopControl_loadconfigure_cli</a> ()</td></tr>
@@ -721,56 +672,7 @@ Variables</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>17 Jun 2017</dd></dl>
 <dl class="bug"><dt><b><a class="el" href="bug.html#_bug000001">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a href="http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html">http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html</a> </dd></dl>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a369266c24eacffb87046522897a570d5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define _GNU_SOURCE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a3d4ac22ab7ffd78896c076c09870ff9c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define AOconfname&#160;&#160;&#160;&quot;/tmp/AOconf.shm&quot;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a74ab1a4f2b0dd3db2eb5408bb3c5f721"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX_MBLOCK&#160;&#160;&#160;20</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a6c5d5a91e62278861bc96ab43c9c44d9"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define NB_AOloopcontrol&#160;&#160;&#160;10</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a19a66458a8453e9f5e6ec19a93c3e70a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2762,23 +2664,19 @@ Variables</h2></td></tr>
 <p>Acquire WFS response to a series of DM pattern. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">loop</td><td>Loop index </td></tr>
-    <tr><td class="paramname">delayfr</td><td>Integer delay [frame] </td></tr>
-    <tr><td class="paramname">delayRM1us</td><td>Fractional delay [us] </td></tr>
-    <tr><td class="paramname">NBave</td><td>Number of frames averaged per DM state </td></tr>
-    <tr><td class="paramname">NBexcl</td><td>Number of frames excluded </td></tr>
-    <tr><td class="paramname">IDpokeC_name</td><td>Poke pattern </td></tr>
-    <tr><td class="paramname">IDoutC_name</td><td>Output cube </td></tr>
-    <tr><td class="paramname">normalize</td><td>Normalize flag </td></tr>
-    <tr><td class="paramname">AOinitMode</td><td>AO structure initialization flag </td></tr>
-    <tr><td class="paramname">NBcycle</td><td>Number of cycles averaged</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">loop</td><td>Loop index </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">delayfr</td><td>Integer delay [frame] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">delayRM1us</td><td>Fractional delay [us] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NBave</td><td>Number of frames averaged per DM state </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NBexcl</td><td>Number of frames excluded </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">IDpokeC_name</td><td>Poke pattern </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">IDoutC_name</td><td>Output cube </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">normalize</td><td>Normalize flag </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">AOinitMode</td><td>AO structure initialization flag </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname"></td><td></td></tr>
   </table>
   </dd>
 </dl>
-<p>AOinitMode = 0: create AO shared mem struct AOinitMode = 1: connect only to AO shared mem struct</p>
-<p>INPUT : DMpoke_name : set of DM patterns OUTPUT : WFSmap_name : WFS response maps</p>
-<p>USR1 signal will stop acquisition immediately USR2 signal completes current cycles and stops acquisition</p>
-<dl class="section return"><dt>Returns</dt><dd>IDoutC </dd></dl>
 
 </div>
 </div>
@@ -5290,6 +5188,32 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a4686db64ee8970c84b269e0425519dec"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int clock_gettime </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>clk_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct mach_timespec *&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="ab38b851c264f398e041901b46fe0379c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -7414,7 +7338,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8c.html">AOloopControl.c</a></li>
-    <li class="footer">Generated on Mon Jun 19 2017 20:45:59 for cfitsTK by
+    <li class="footer">Generated on Wed Jul 5 2017 16:09:13 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

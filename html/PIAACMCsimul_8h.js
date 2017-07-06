@@ -1,7 +1,6 @@
 var PIAACMCsimul_8h =
 [
     [ "OPTPIAACMCDESIGN", "structOPTPIAACMCDESIGN.html", "structOPTPIAACMCDESIGN" ],
-    [ "ApoFitCosFact", "PIAACMCsimul_8h.html#ab28e3377bbf4615c6d24f6d4b7e5f6f8", null ],
     [ "init_PIAACMCsimul", "PIAACMCsimul_8h.html#afbe4dce014fddfe2292d9128df375bed", null ],
     [ "PIAACMC_FPM_process", "PIAACMCsimul_8h.html#a41f1961ee151a53e40ea4151a3417d3e", null ],
     [ "PIAACMC_FPMresp_resample", "PIAACMCsimul_8h.html#a59c17a3a1e1e374eb9d837e418bd158e", null ],

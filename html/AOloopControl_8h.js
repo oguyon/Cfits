@@ -2,8 +2,6 @@ var AOloopControl_8h =
 [
     [ "AOLOOPCONTROL_CONF", "structAOLOOPCONTROL__CONF.html", "structAOLOOPCONTROL__CONF" ],
     [ "THDATA_IMTOTAL", "structTHDATA__IMTOTAL.html", "structTHDATA__IMTOTAL" ],
-    [ "MAX_NUMBER_TIMER", "AOloopControl_8h.html#a545b173d2890751a42402351faf60149", null ],
-    [ "maxNBMB", "AOloopControl_8h.html#a1607e57c6edf0fe69d995ec9b00b2d2d", null ],
     [ "AOcompute", "AOloopControl_8h.html#a19a66458a8453e9f5e6ec19a93c3e70a", null ],
     [ "AOcontrolLoop_TestDMSpeed", "AOloopControl_8h.html#ac3f68a9b79e43a57e11d85517a9627d1", null ],
     [ "AOcontrolLoop_TestSystemLatency", "AOloopControl_8h.html#a9ebac7ca5867f9ed5ec5e47a66144c69", null ],

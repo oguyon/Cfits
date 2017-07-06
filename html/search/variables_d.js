@@ -7,6 +7,7 @@ var searchData=
   ['optsystinit',['optsystinit',['../PIAACMCsimul_8c.html#ab07fce0d221214a8ba8f71bb7ad5cfdd',1,'PIAACMCsimul.c']]],
   ['optsystsim',['optsystsim',['../AOsystSim_8c.html#acde65e62970671cd323e4c409a5dcd41',1,'AOsystSim.c']]],
   ['optval0',['optval0',['../coronagraphs_8c.html#ad85356b6d80dbe50ca4030334af4287f',1,'coronagraphs.c']]],
+  ['orientation',['orientation',['../structGPUMATMULTCONF.html#a8f02a724d8da4661da6e3462e7c37f77',1,'GPUMATMULTCONF']]],
   ['outtmp_5farray',['outtmp_array',['../PIAACMCsimul_8c.html#a25bcb59481afd08467dfce3d613ca37e',1,'PIAACMCsimul.c']]],
   ['ovc_5fcharge',['OVC_CHARGE',['../coronagraphs_8c.html#ad41f75f5bb645dedf53c6536835501ec',1,'coronagraphs.c']]],
   ['overwrite',['overwrite',['../structDATA.html#a600cb8c85d463a76ca1dfe9d0097c8f3',1,'DATA']]]

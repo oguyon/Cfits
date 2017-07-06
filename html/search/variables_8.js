@@ -9,6 +9,7 @@ var searchData=
   ['id_5fwfsref_5frespmat',['ID_wfsref_RespMat',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#ac622fc22d1767ee12ace71eea44ae383',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['iddisp',['IDdisp',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#ab151828b7348a78c72d11f086a4b97dd',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['idlyotstop',['IDLyotStop',['../structOPTPIAACMCDESIGN.html#a58b78571969e6a7a7d33a1439f264889',1,'OPTPIAACMCDESIGN']]],
+  ['idout',['IDout',['../structGPUMATMULTCONF.html#a6cf23fda023217581ed02fd1a1f5f9c5',1,'GPUMATMULTCONF']]],
   ['idpa',['IDPA',['../PIAACMCsimul_8c.html#a26d22afd21e23f4f8a948cdbef674f9f',1,'PIAACMCsimul.c']]],
   ['idprol_5fffrac',['IDprol_ffrac',['../coronagraphs_8c.html#a21f470d640a2ac358415b9a6ba4e43ac',1,'coronagraphs.c']]],
   ['idprol_5ffitapo_5fa',['IDprol_fitapo_a',['../coronagraphs_8c.html#a77954ce241e9dd4b71af46e3eb711ea7',1,'coronagraphs.c']]],
@@ -34,9 +35,10 @@ var searchData=
   ['iname',['iname',['../structsavethreadmsg.html#acd2174c7310a13ba8b782fe91b6bc3ab',1,'savethreadmsg']]],
   ['indexmaxmb',['indexmaxMB',['../structAOLOOPCONTROL__CONF.html#a653c264056f8a5a4d3821bcaffaef342',1,'AOLOOPCONTROL_CONF']]],
   ['info',['info',['../structCMD.html#a008f20bb66a74f15dc4e9536ca19dd9a',1,'CMD::info()'],['../structMODULE.html#a8e21f2da9fe77d9781fc77e712d9e40c',1,'MODULE::info()']]],
-  ['init',['init',['../structAOLOOPCONTROL__CONF.html#a02784d9e824c73ced85f57691d6c0834',1,'AOLOOPCONTROL_CONF::init()'],['../structASPHSURFR.html#ae2386c06994cf2b5a8090bbdee2a7957',1,'ASPHSURFR::init()'],['../structZERNIKE.html#aac9ea666bbfdae8b71b4bff01617b2c2',1,'ZERNIKE::init()']]],
+  ['init',['init',['../structAOLOOPCONTROL__CONF.html#a02784d9e824c73ced85f57691d6c0834',1,'AOLOOPCONTROL_CONF::init()'],['../structGPUMATMULTCONF.html#a872ce9085af234f6c02def1c8974148c',1,'GPUMATMULTCONF::init()'],['../structASPHSURFR.html#ae2386c06994cf2b5a8090bbdee2a7957',1,'ASPHSURFR::init()'],['../structZERNIKE.html#aac9ea666bbfdae8b71b4bff01617b2c2',1,'ZERNIKE::init()']]],
   ['init_5fcm',['init_CM',['../structAOLOOPCONTROL__CONF.html#a28afa60e8c9affb521ebce6ad4907308',1,'AOLOOPCONTROL_CONF']]],
   ['init_5fcmc',['init_CMc',['../structAOLOOPCONTROL__CONF.html#a20a14b04e23d2db6946fdc635916fcd2',1,'AOLOOPCONTROL_CONF']]],
+  ['init_5fmagma',['INIT_MAGMA',['../cudacomp_8c.html#ad80326b6b9db96e7c4cec646f7cb575e',1,'cudacomp.c']]],
   ['init_5frm',['init_RM',['../structAOLOOPCONTROL__CONF.html#a3c07d8fa8eadc3d4318c9c0d211cd03f',1,'AOLOOPCONTROL_CONF']]],
   ['init_5fwfsref0',['init_wfsref0',['../structAOLOOPCONTROL__CONF.html#a2c9630b83c5b053ab8335710e5fa8954',1,'AOLOOPCONTROL_CONF']]],
   ['initatmospheremodel',['initAtmosphereModel',['../AtmosphereModel_8c.html#accddb11f40eb70f10f1f0dddd96e4f42',1,'AtmosphereModel.c']]],
@@ -61,5 +63,6 @@ var searchData=
   ['interval',['interval',['../structLOGSHIM__CONF.html#af4a9410a1d66d15e10df76223aeccb50',1,'LOGSHIM_CONF']]],
   ['invpiaamode',['invPIAAmode',['../structOPTPIAACMCDESIGN.html#adaa80b18e792715b3aaa88cc278a878c',1,'OPTPIAACMCDESIGN']]],
   ['invrandmax',['INVRANDMAX',['../structDATA.html#aa17d253cb7412ac4cbc8f034dfe78308',1,'DATA']]],
+  ['iret',['iret',['../structGPUMATMULTCONF.html#a7c04efa136738d3bad279a7341b0e5bc',1,'GPUMATMULTCONF']]],
   ['item',['item',['../structres__node.html#a6d1e853ec1f48f263c277344f37f8cc3',1,'res_node']]]
 ];

@@ -1,3 +1,18 @@
+/**
+ * @file    linARfilterPred.c
+ * @brief   linear auto-regressive predictive filter
+ * 
+ * Implements Empirical Orthogonal Functions
+ *  
+ * @author  O. Guyon
+ * @date    5 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
@@ -250,6 +265,32 @@ int_fast8_t init_linARfilterPred()
 
 
 
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. INITIALIZATION                                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. I/O TOOLS                                                                                    */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
 int NBwords(const char sentence[ ])
 {
     int counted = 0; // result
@@ -272,16 +313,20 @@ int NBwords(const char sentence[ ])
 
 
 
-//
-// load ascii file(s) into image cube
-// resamples sequence(s) of data points
-//
-// INPUT FILES HAVE TO BE NAMED seq000.dat, seq001.dat etc...
-//
-// file starts at tstart, sampling = dt 
-// NBpt per file
-// NBfr files
-//
+
+
+
+/**
+ * @brief load ascii file(s) into image cube
+ * 
+ *  resamples sequence(s) of data points
+ * INPUT FILES HAVE TO BE NAMED seq000.dat, seq001.dat etc...
+ * 
+ * file starts at tstart, sampling = dt 
+ * NBpt per file
+ * NBfr files
+*/
+
 long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NBfr, const char *IDoutname)
 {
 	FILE *fp;
@@ -459,11 +504,6 @@ long LINARFILTERPRED_LoadASCIIfiles(double tstart, double dt, long NBpt, long NB
 
 
 
-
-
-
-
-
 // select block on first dimension 
 long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name, long blkNB, const char *IDout_name)
 {
@@ -553,23 +593,32 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
 
 
 
-//
-// IDin_name is a 2D or 3D image
-//
-// optional: inmask selects input pixels to be used
-//           outmask selects output pixel(s) to be used
-// default: use all channels as both input and output
-//
-// Note: if atmospheric wavefronts, data should be piston-free
-//
-// outMode
-//	0: do not write individual filters
-//	1: write individual filters
-// (note: output filter cube always written)
-//
-//
-// if LOOPmode = 1, operate in a loop, and re-run filter computation everytime IDin_name changes
-//
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. BUILD PREDICTIVE FILTER                                                                      */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+
+
+
+/** @brief Build predictive filter
+ * 
+ * IDin_name is a 2D or 3D image
+ * 
+ * Optional input and output pixel masks select active input & output
+ * 
+ */
 
 long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, const char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain)
 {
@@ -590,12 +639,12 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
 
     double *ave_inarray;
-    int REG = 0;  // 1 if regularization
+    int REG = 0;                                                          /**< 1 if regularization             */
     long m, m1, pix, k0, dt;
     int Save = 1;
     long xysize;
     long IDmatC;
-    int use_magma = 1; // use MAGMA library if available
+    int use_magma = 1;                                                    /**< use MAGMA library if available  */
     int magmacomp = 0;
 
     long IDfiltC;
@@ -614,7 +663,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
     long NB_SVD_Modes;
 
-    int DC_MODE = 0; // 1 if average value of each mode is removed
+    int DC_MODE = 0;                                                      /**< 1 if average value of each mode is removed  */
 
 
 
@@ -747,7 +796,12 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
 
     // ===================== BUILD DATA MATRIX ============================
-    // build data matrix
+    //
+    // NBmvec is the number of telemetry vectors (each corresponding to a different time)
+    // mvecsize is the size of each vector, equal to NBpixin times PForder
+    //
+    // Data matrix is stored as image of size NBmvec x mvecsize, to be fed to routine compute_SVDpseudoInverse in linopt_imtools (CPU mode) or in cudacomp (GPU mode)
+    //
     NBmvec = nbspl - PForder - (int) (PFlag) - 1;
     mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
 
@@ -1045,8 +1099,6 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
 
 
-
-
     free(valfarray);
 
     free(pixarray_x);
@@ -1067,6 +1119,16 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
 
 
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. APPLY PREDICTIVE FILTER                                                                      */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
@@ -1273,175 +1335,6 @@ long LINARFILTERPRED_Apply_LinPredictor(const char *IDfilt_name, const char *IDi
 	return(IDout);
 }
 
-
-
-//
-// IDin_name is a 2 or 3D image, open-loop disturbance
-// last axis is time (step)
-// this optimization asssumes no correlation in noise
-//
-float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag)
-{
-	float gain;
-	float gainmax = 1.1;
-	float residual;
-	float optgainblock;
-	float residualblock;
-	float residualblock0;
-	float gainstep = 0.01;
-	long IDin;
-	
-	long nbstep;
-	long step, step0, step1;
-	
-	long framelag0;
-	long framelag1;
-	float alpha;
-	
-	float *actval_array; // actuator value
-	float actval;
-	
-	long nbvar;
-	long axis, naxis;
-	
-	double *errval;
-	double errvaltot;
-	long cnt;
-	
-	FILE *fp;
-	char fname[200];
-	float mval;
-	long ii;
-	float tmpv;
-	
-	int TEST = 0;
-	float TESTperiod = 20.0;
-	
-	// results
-	float *optgain;
-	float *optres;
-	float *res0;
-	int optinit = 0;
-	
-	
-	if(framelag<1.00000001)
-		{
-			printf("ERROR: framelag should be be > 1\n");
-			exit(0);
-		}
-	
-	IDin = image_ID(IDin_name);
-	naxis = data.image[IDin].md[0].naxis;
-
-	nbvar = 1;
-	for(axis=0;axis<naxis-1;axis++)
-		nbvar *= data.image[IDin].md[0].size[axis];
-	errval = (double*) malloc(sizeof(double)*nbvar);
-	
-	nbstep = data.image[IDin].md[0].size[naxis-1];
-
-	framelag0 = (long) framelag;
-	framelag1 = framelag0+1;
-	alpha = framelag-framelag0;
-
-	printf("alpha = %f    nbvar = %ld\n", alpha, nbvar);
-	
-	list_image_ID();
-	if(TEST==1)
-		{
-			for(ii=0;ii<nbvar;ii++)
-			for(step=0;step<nbstep;step++)
-				data.image[IDin].array.F[step*nbvar+ii] = 1.0*sin(2.0*M_PI*step/TESTperiod);
-		}
-	
-	
-	actval_array = (float*) malloc(sizeof(float)*nbstep);
-	
-	
-	optgain = (float*) malloc(sizeof(float)*nbvar);
-	optres = (float*) malloc(sizeof(float)*nbvar);
-	res0 = (float*) malloc(sizeof(float)*nbvar);
-	
-	sprintf(fname, "gainscan.txt");
-	
-	gain = 0.2;
-	ii = 0;
-	fp = fopen(fname, "w");
-	residualblock = 1.0e20;
-	optgainblock = 0.0;
-	for(gain=0;gain<gainmax;gain+=gainstep)
-		{
-			fprintf(fp, "%5.3f", gain);
-		
-			errvaltot = 0.0;
-			for(ii=0;ii<nbvar;ii++)
-			{
-				errval[ii] = 0.0;
-				cnt = 0.0;
-				for(step=0;step<framelag1+2;step++)
-					actval_array[step] = 0.0;
-				for(step=framelag1; step<nbstep; step++)
-					{
-						step0 = step - framelag0;
-						step1 = step - framelag1;
-
-						actval = (1.0-alpha)*actval_array[step0] + alpha*actval_array[step1];
-						mval = ((1.0-alpha)*data.image[IDin].array.F[step0*nbvar+ii] + alpha*data.image[IDin].array.F[step1*nbvar+ii]) - actval;
-						actval_array[step] = multfact*(actval_array[step-1] + gain * mval);						
-						tmpv = data.image[IDin].array.F[step*nbvar+ii] - actval_array[step];
-						errval[ii] += tmpv*tmpv;
-						cnt++;		
-					}
-				errval[ii] = sqrt(errval[ii]/cnt);
-				fprintf(fp, " %10f", errval[ii]);
-				errvaltot += errval[ii]*errval[ii];
-			
-				if(optinit==0)
-				{
-					optgain[ii] = gain;
-					optres[ii] = errval[ii];
-					res0[ii] = errval[ii];
-				}
-				else
-				{
-					if(errval[ii]<optres[ii])
-						{
-							optres[ii] = errval[ii];
-							optgain[ii] = gain;
-						}
-				}
-			}
-			
-			if(optinit==0)
-				residualblock0 = errvaltot;
-			
-			optinit = 1;
-			fprintf(fp, "%10f\n", errvaltot);	
-			
-			if(errvaltot < residualblock)
-			{
-				residualblock = errvaltot;
-				optgainblock = gain;
-			}
-			
-		}
-	fclose(fp);
-	
-	free(actval_array);
-	free(errval);
-	
-	for(ii=0;ii<nbvar;ii++)
-		printf("MODE %4ld    optimal gain = %5.2f     residual = %.6f -> %.6f \n", ii, optgain[ii], res0[ii], optres[ii]);
-	
-	printf("\noptimal block gain = %f     residual = %.6f -> %.6f\n\n", optgainblock, sqrt(residualblock0), sqrt(residualblock));
-	printf("RMS per mode = %f -> %f\n", sqrt(residualblock0/nbvar), sqrt(residualblock/nbvar));
-	
-	free(optgain);
-	free(optres);
-	free(res0);
-	
-	return(optgainblock);
-}
 
 
 
@@ -1923,6 +1816,184 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 }
 
 
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. MISC TOOLS, DIAGNOSTICS                                                                      */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+//
+// IDin_name is a 2 or 3D image, open-loop disturbance
+// last axis is time (step)
+// this optimization asssumes no correlation in noise
+//
+float LINARFILTERPRED_ScanGain(char* IDin_name, float multfact, float framelag)
+{
+	float gain;
+	float gainmax = 1.1;
+	float residual;
+	float optgainblock;
+	float residualblock;
+	float residualblock0;
+	float gainstep = 0.01;
+	long IDin;
+	
+	long nbstep;
+	long step, step0, step1;
+	
+	long framelag0;
+	long framelag1;
+	float alpha;
+	
+	float *actval_array; // actuator value
+	float actval;
+	
+	long nbvar;
+	long axis, naxis;
+	
+	double *errval;
+	double errvaltot;
+	long cnt;
+	
+	FILE *fp;
+	char fname[200];
+	float mval;
+	long ii;
+	float tmpv;
+	
+	int TEST = 0;
+	float TESTperiod = 20.0;
+	
+	// results
+	float *optgain;
+	float *optres;
+	float *res0;
+	int optinit = 0;
+	
+	
+	if(framelag<1.00000001)
+		{
+			printf("ERROR: framelag should be be > 1\n");
+			exit(0);
+		}
+	
+	IDin = image_ID(IDin_name);
+	naxis = data.image[IDin].md[0].naxis;
+
+	nbvar = 1;
+	for(axis=0;axis<naxis-1;axis++)
+		nbvar *= data.image[IDin].md[0].size[axis];
+	errval = (double*) malloc(sizeof(double)*nbvar);
+	
+	nbstep = data.image[IDin].md[0].size[naxis-1];
+
+	framelag0 = (long) framelag;
+	framelag1 = framelag0+1;
+	alpha = framelag-framelag0;
+
+	printf("alpha = %f    nbvar = %ld\n", alpha, nbvar);
+	
+	list_image_ID();
+	if(TEST==1)
+		{
+			for(ii=0;ii<nbvar;ii++)
+			for(step=0;step<nbstep;step++)
+				data.image[IDin].array.F[step*nbvar+ii] = 1.0*sin(2.0*M_PI*step/TESTperiod);
+		}
+	
+	
+	actval_array = (float*) malloc(sizeof(float)*nbstep);
+	
+	
+	optgain = (float*) malloc(sizeof(float)*nbvar);
+	optres = (float*) malloc(sizeof(float)*nbvar);
+	res0 = (float*) malloc(sizeof(float)*nbvar);
+	
+	sprintf(fname, "gainscan.txt");
+	
+	gain = 0.2;
+	ii = 0;
+	fp = fopen(fname, "w");
+	residualblock = 1.0e20;
+	optgainblock = 0.0;
+	for(gain=0;gain<gainmax;gain+=gainstep)
+		{
+			fprintf(fp, "%5.3f", gain);
+		
+			errvaltot = 0.0;
+			for(ii=0;ii<nbvar;ii++)
+			{
+				errval[ii] = 0.0;
+				cnt = 0.0;
+				for(step=0;step<framelag1+2;step++)
+					actval_array[step] = 0.0;
+				for(step=framelag1; step<nbstep; step++)
+					{
+						step0 = step - framelag0;
+						step1 = step - framelag1;
+
+						actval = (1.0-alpha)*actval_array[step0] + alpha*actval_array[step1];
+						mval = ((1.0-alpha)*data.image[IDin].array.F[step0*nbvar+ii] + alpha*data.image[IDin].array.F[step1*nbvar+ii]) - actval;
+						actval_array[step] = multfact*(actval_array[step-1] + gain * mval);						
+						tmpv = data.image[IDin].array.F[step*nbvar+ii] - actval_array[step];
+						errval[ii] += tmpv*tmpv;
+						cnt++;		
+					}
+				errval[ii] = sqrt(errval[ii]/cnt);
+				fprintf(fp, " %10f", errval[ii]);
+				errvaltot += errval[ii]*errval[ii];
+			
+				if(optinit==0)
+				{
+					optgain[ii] = gain;
+					optres[ii] = errval[ii];
+					res0[ii] = errval[ii];
+				}
+				else
+				{
+					if(errval[ii]<optres[ii])
+						{
+							optres[ii] = errval[ii];
+							optgain[ii] = gain;
+						}
+				}
+			}
+			
+			if(optinit==0)
+				residualblock0 = errvaltot;
+			
+			optinit = 1;
+			fprintf(fp, "%10f\n", errvaltot);	
+			
+			if(errvaltot < residualblock)
+			{
+				residualblock = errvaltot;
+				optgainblock = gain;
+			}
+			
+		}
+	fclose(fp);
+	
+	free(actval_array);
+	free(errval);
+	
+	for(ii=0;ii<nbvar;ii++)
+		printf("MODE %4ld    optimal gain = %5.2f     residual = %.6f -> %.6f \n", ii, optgain[ii], res0[ii], optres[ii]);
+	
+	printf("\noptimal block gain = %f     residual = %.6f -> %.6f\n\n", optgainblock, sqrt(residualblock0), sqrt(residualblock));
+	printf("RMS per mode = %f -> %f\n", sqrt(residualblock0/nbvar), sqrt(residualblock/nbvar));
+	
+	free(optgain);
+	free(optres);
+	free(res0);
+	
+	return(optgainblock);
+}
 
 
 

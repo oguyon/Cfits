@@ -1,7 +1,6 @@
 var SCExAO__DM_8c =
 [
-    [ "DMSTROKE100", "SCExAO__DM_8c.html#aaea5d76f4f649e59810aa4b88e44e8ad", null ],
-    [ "NBact", "SCExAO__DM_8c.html#a25607f62d39112e158cac8d432488695", null ],
+    [ "clock_gettime", "SCExAO__DM_8c.html#a4686db64ee8970c84b269e0425519dec", null ],
     [ "init_SCExAO_DM", "SCExAO__DM_8c.html#af3e2da325226a75b1758ac89ae9ff12a", null ],
     [ "SCExAO_DM_CombineChannels", "SCExAO__DM_8c.html#a4acd1f8b2e2ab9eee0e83484a19ed25c", null ],
     [ "SCExAO_DM_CombineChannels_cli", "SCExAO__DM_8c.html#ae6c313cd3fa693d572d8c6fbb171d1a1", null ],

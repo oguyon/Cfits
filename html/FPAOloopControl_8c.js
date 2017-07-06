@@ -1,7 +1,6 @@
 var FPAOloopControl_8c =
 [
-    [ "_GNU_SOURCE", "FPAOloopControl_8c.html#a369266c24eacffb87046522897a570d5", null ],
-    [ "FPAOconfname", "FPAOloopControl_8c.html#a315edaa82c488ece3d7b895bb3aa8974", null ],
+    [ "clock_gettime", "FPAOloopControl_8c.html#a4686db64ee8970c84b269e0425519dec", null ],
     [ "FPAO_Measure_WFSrespC", "FPAOloopControl_8c.html#a63686d7e9997643d115ab9e81c84d47d", null ],
     [ "FPAOloopControl_InitializeMemory", "FPAOloopControl_8c.html#a89334ec8cf4db6240c053b931293c8c6", null ],
     [ "FPAOloopControl_loadconfigure", "FPAOloopControl_8c.html#a46177cd1ce7bc6278075b3ce75ebdadf", null ],

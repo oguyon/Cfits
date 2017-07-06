@@ -2,8 +2,6 @@ var SCExAO__DM_8h =
 [
     [ "SCEXAO_DISPCOMB_CONF", "structSCEXAO__DISPCOMB__CONF.html", "structSCEXAO__DISPCOMB__CONF" ],
     [ "SCEXAO_DMTURBCONF", "structSCEXAO__DMTURBCONF.html", "structSCEXAO__DMTURBCONF" ],
-    [ "DISPCOMB_FILENAME_CONF", "SCExAO__DM_8h.html#a3a582ea1ddd59cc7730a495c0d0d110d", null ],
-    [ "DMTURBCONF_FILENAME", "SCExAO__DM_8h.html#ade5d421b07d86c3588490f79d0416243", null ],
     [ "init_AOsystSim", "SCExAO__DM_8h.html#ad63110c83cfc65f22a044cb57709d6f6", null ],
     [ "SCExAO_DM_CombineChannels", "SCExAO__DM_8h.html#a4acd1f8b2e2ab9eee0e83484a19ed25c", null ],
     [ "SCEXAO_DM_createconf", "SCExAO__DM_8h.html#a82c6c2af5fe43677be6a664d8255a66a", null ],

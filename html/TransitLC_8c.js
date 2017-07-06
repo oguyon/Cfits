@@ -1,6 +1,5 @@
 var TransitLC_8c =
 [
-    [ "SBUFFERSIZE", "TransitLC_8c.html#a856e9c763f542a6a0b78587b2989c159", null ],
     [ "init_TransitLC", "TransitLC_8c.html#a710c029d7952cca597e698b17ca42e09", null ],
     [ "TransitLC_EdgeDetect", "TransitLC_8c.html#a3b567cf5b8a607f60dd304073fe2584d", null ],
     [ "TransitLC_mkLC", "TransitLC_8c.html#a3499e660dac9cd7842416be9e1e90da5", null ],

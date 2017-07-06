@@ -9,7 +9,6 @@
  *
  * @bug No known bugs. 
  * 
- * @see http://www.
  */
 
 #ifndef _AOLOOPCONTROL_H
@@ -432,16 +431,16 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
  * @brief Acquire WFS response to a series of DM pattern.
  *
  * 
- * @param loop            Loop index
- * @param delayfr         Integer delay [frame]
- * @param delayRM1us      Fractional delay [us]
- * @param NBave           Number of frames averaged per DM state
- * @param NBexcl          Number of frames excluded
- * @param IDpokeC_name    Poke pattern
- * @param IDoutC_name     Output cube
- * @param normalize       Normalize flag
- * @param AOinitMode      AO structure initialization flag
- * @param NBcycle         Number of cycles averaged
+ * @param[in]  loop            Loop index
+ * @param[in]  delayfr         Integer delay [frame]
+ * @param[in]  delayRM1us      Fractional delay [us]
+ * @param[in]  NBave           Number of frames averaged per DM state
+ * @param[in]  NBexcl          Number of frames excluded
+ * @param[in]  IDpokeC_name    Poke pattern
+ * @param[out] IDoutC_name     Output cube
+ * @param[in]  normalize       Normalize flag
+ * @param[in]  AOinitMode      AO structure initialization flag
+ * @param[in\  NBcycle         Number of cycles averaged
  * 
  * AOinitMode = 0:  create AO shared mem struct
  * AOinitMode = 1:  connect only to AO shared mem struct

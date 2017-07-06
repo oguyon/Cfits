@@ -104,43 +104,17 @@ $(document).ready(function(){initNavTree('fft_8c.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">fft.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
-<code>#include &lt;string.h&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
-<code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;time.h&gt;</code><br />
-<code>#include &lt;fftw3.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="CLIcore_8h_source.html">CLIcore.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="00CORE_8h_source.html">00CORE/00CORE.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__memory_8h_source.html">COREMOD_memory/COREMOD_memory.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__iofits_8h_source.html">COREMOD_iofits/COREMOD_iofits.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__arith_8h_source.html">COREMOD_arith/COREMOD_arith.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="COREMOD__tools_8h_source.html">COREMOD_tools/COREMOD_tools.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="fft_8h_source.html">fft/fft.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:a598a3330b3c21701223ee0ca14316eca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a598a3330b3c21701223ee0ca14316eca">PI</a>&#160;&#160;&#160;3.14159265358979323846264338328</td></tr>
-<tr class="separator:a598a3330b3c21701223ee0ca14316eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d9d454d4b9f2ff8106d5199ac0d0186"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a5d9d454d4b9f2ff8106d5199ac0d0186">SWAP</a>(x,  y)&#160;&#160;&#160;tmp=(x);x=(y);y=tmp;</td></tr>
-<tr class="separator:a5d9d454d4b9f2ff8106d5199ac0d0186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18cf66b4ff69fd69cf3b8291c629e80b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a18cf66b4ff69fd69cf3b8291c629e80b">CSWAP</a>(x,  y)&#160;&#160;&#160;tmp=(<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">x.re</a>);<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">x.re</a>=(<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">y.re</a>);<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">y.re</a>=tmp;tmp=(x.im);x.im=(y.im);y.im=tmp;</td></tr>
-<tr class="separator:a18cf66b4ff69fd69cf3b8291c629e80b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a856e9c763f542a6a0b78587b2989c159"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a856e9c763f542a6a0b78587b2989c159">SBUFFERSIZE</a>&#160;&#160;&#160;1000</td></tr>
-<tr class="separator:a856e9c763f542a6a0b78587b2989c159"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c59fbcd70b859f0821a9aa93a141b00"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a1c59fbcd70b859f0821a9aa93a141b00">FFTWOPTMODE</a>&#160;&#160;&#160;FFTW_ESTIMATE</td></tr>
-<tr class="separator:a1c59fbcd70b859f0821a9aa93a141b00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6">clock_gettime</a> (int clk_id, struct mach_timespec *t)</td></tr>
+<tr class="separator:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7069b9e13085029927c28b50e905867b"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a7069b9e13085029927c28b50e905867b">fft_permut_cli</a> ()</td></tr>
 <tr class="separator:a7069b9e13085029927c28b50e905867b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99afbc730a6cce05e05ca4525918eae6"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fft_8c.html#a99afbc730a6cce05e05ca4525918eae6">fft_do1dfft_cli</a> ()</td></tr>
@@ -222,95 +196,6 @@ Variables</h2></td></tr>
 <tr class="memdesc:a9842752e03b4de9b4593f1a3b34364ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">System includes.  <a href="#a9842752e03b4de9b4593f1a3b34364ab">More...</a><br /></td></tr>
 <tr class="separator:a9842752e03b4de9b4593f1a3b34364ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a18cf66b4ff69fd69cf3b8291c629e80b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define CSWAP</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">y&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;tmp=(<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">x.re</a>);<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">x.re</a>=(<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">y.re</a>);<a class="el" href="nrlmsise-00_8c.html#a5a6fce2fc5cae153945fea2c45beeb4f">y.re</a>=tmp;tmp=(x.im);x.im=(y.im);y.im=tmp;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a1c59fbcd70b859f0821a9aa93a141b00"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define FFTWOPTMODE&#160;&#160;&#160;FFTW_ESTIMATE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a598a3330b3c21701223ee0ca14316eca"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define PI&#160;&#160;&#160;3.14159265358979323846264338328</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a856e9c763f542a6a0b78587b2989c159"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SBUFFERSIZE&#160;&#160;&#160;1000</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a5d9d454d4b9f2ff8106d5199ac0d0186"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SWAP</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">y&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td>&#160;&#160;&#160;tmp=(x);x=(y);y=tmp;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="aef49f9202a140629a5d2986860de2a9a"></a>
 <div class="memitem">
@@ -350,6 +235,40 @@ Variables</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a65786e09c3bd4c1f8f8f311e91c672c6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static int clock_gettime </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>clk_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct mach_timespec *&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -1228,7 +1147,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_1fbe5abfc91f031908f9b0fcd26c05f0.html">fft</a></li><li class="navelem"><a class="el" href="fft_8c.html">fft.c</a></li>
-    <li class="footer">Generated on Mon Jun 19 2017 20:45:59 for cfitsTK by
+    <li class="footer">Generated on Wed Jul 5 2017 16:09:13 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -39,6 +39,13 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "calc_flex.c", "calc__flex_8c.html", "calc__flex_8c" ],
     [ "CLIcore.c", "CLIcore_8c.html", "CLIcore_8c" ],
     [ "CLIcore.h", "CLIcore_8h.html", "CLIcore_8h" ],
+    [ "ImageStruct.h", "ImageStruct_8h.html", [
+      [ "complex_float", "structcomplex__float.html", "structcomplex__float" ],
+      [ "complex_double", "structcomplex__double.html", "structcomplex__double" ],
+      [ "IMAGE_KEYWORD", "structIMAGE__KEYWORD.html", "structIMAGE__KEYWORD" ],
+      [ "IMAGE_METADATA", "structIMAGE__METADATA.html", "structIMAGE__METADATA" ],
+      [ "IMAGE", "structIMAGE.html", "structIMAGE" ]
+    ] ],
     [ "initmodules.c", "initmodules_8c.html", "initmodules_8c" ],
     [ "initmodules.h", "initmodules_8h.html", "initmodules_8h" ]
 ];

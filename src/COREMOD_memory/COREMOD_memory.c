@@ -5109,7 +5109,11 @@ long COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname, const c
 
 
 
-
+/** 
+ * 
+ * IDout_name is a time-delayed copy of IDin_name
+ * 
+ */ 
 
 long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, long delayus, long dtus)
 {
@@ -5133,6 +5137,8 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 	xsize = data.image[IDin].md[0].size[0];
 	ysize = data.image[IDin].md[0].size[1];
 	zsize = (long) (delayus/dtus);
+	if(zsize<1)
+		zsize = 1;
 	xysize = xsize*ysize;
 	
 	t0array = (struct timespec*) malloc(sizeof(struct timespec)*zsize);
@@ -5185,8 +5191,9 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 		cntskip = 0;
 		tdiff = info_time_diff(t0array[kkout], tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-		//printf("tdiff = %f us   ", tdiffv*1e6);
-		//fflush(stdout);
+		
+	//	printf("tdiff = %f us   ", tdiffv*1e6);
+	//	fflush(stdout);
 		while((tdiffv>1.0e-6*delayus)&&(cntskip<zsize))
 			{
 				cntskip++;				
@@ -5196,11 +5203,13 @@ long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, l
 				tdiff = info_time_diff(t0array[kkout], tnow);
 				tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 			}
-		//printf("cntskip = %ld\n", cntskip);
-		//fflush(stdout);
+	//	printf("cntskip = %ld\n", cntskip);
+	//	fflush(stdout);
 		
 		if(cntskip>0)
 		{
+		//	printf("Updating %s  %ld\n", IDout_name, IDout);
+			
 			data.image[IDout].md[0].write = 1;
 			for(ii=0;ii<xysize;ii++)
 				data.image[IDout].array.F[ii] = data.image[IDimc].array.F[kkout*xysize+ii];	
