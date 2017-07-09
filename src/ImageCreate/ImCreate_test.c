@@ -15,7 +15,8 @@
  * (no argument)
  * 
  * Creates an image imtest00 in shared memory
- * Updates the image every second, forever...
+ * Updates the image every ~ 10ms, forever...
+ * A square is rotating around the center of the image
  * 
  */
 
