@@ -168,3 +168,6 @@ SUBDIRS += 00CORE
 cfitsTK_LDADD += 00CORE/lib00core.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/00CORE
 
+SUBDIRS += ImageCreate
+cfitsTK_LDADD += ImageCreate/libimagecreate.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/ImageCreate
