@@ -99,7 +99,7 @@ var searchData=
   ['arrayutmp',['arrayutmp',['../AOloopControl_8c.html#ac39858ce68e2199bae5b1e5669cd12f6',1,'arrayutmp():&#160;AOloopControl.c'],['../FPAOloopControl_8c.html#ac39858ce68e2199bae5b1e5669cd12f6',1,'arrayutmp():&#160;FPAOloopControl.c']]],
   ['asphsurfmarray',['ASPHSURFMarray',['../structOPTSYST.html#ab559d2b56f4502be6cc1ea69f5b55f7d',1,'OPTSYST']]],
   ['asphsurfrarray',['ASPHSURFRarray',['../structOPTSYST.html#aa6ed8c7ac4cc2c0aa47af3b4a585e774',1,'OPTSYST']]],
-  ['atype',['atype',['../structIMAGE__METADATA.html#ab9ae57f187d56602aa371ab7a7778f93',1,'IMAGE_METADATA']]],
+  ['atype',['atype',['../structIMAGE__METADATA.html#a05878f4f96b09402f031aeb6d0817416',1,'IMAGE_METADATA']]],
   ['autopiaacmask',['AUTOPIAACMASK',['../coronagraphs_8c.html#afad8554aa8456b1da893a50c7fc01ea2',1,'coronagraphs.c']]],
   ['autotune_5fgains_5fgain',['AUTOTUNE_GAINS_gain',['../structAOLOOPCONTROL__CONF.html#a3c66f11135ea8339f28acc18e6e03726',1,'AOLOOPCONTROL_CONF']]],
   ['autotune_5fgains_5fon',['AUTOTUNE_GAINS_ON',['../structAOLOOPCONTROL__CONF.html#ad4368b30a7fb6681bd9a0debc7eb97d5',1,'AOLOOPCONTROL_CONF']]],

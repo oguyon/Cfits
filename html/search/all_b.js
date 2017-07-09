@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['l',['l',['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE::l()'],['../structIMAGE.html#aa8880295748522b823bef4732f5df685',1,'IMAGE::L()']]],
+  ['l',['L',['../structIMAGE.html#af5ec4b345ce46b8802625a8428f159a1',1,'IMAGE::L()'],['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE::l()']]],
   ['lambda',['lambda',['../structOPTPIAACMCDESIGN.html#a64a6567f44c2102f913d378930c2c5f7',1,'OPTPIAACMCDESIGN']]],
   ['lambda0',['lambda0',['../structEXAOSIMCONF.html#abd69ae77c2826dccf9c85a599c07fe77',1,'EXAOSIMCONF']]],
   ['lambdaarray',['lambdaarray',['../structOPTSYST.html#affffe3221582de4166398a84debc5257',1,'OPTSYST::lambdaarray()'],['../structOPTPIAACMCDESIGN.html#ae7e05c68253c7a637f90597b0be9bec7',1,'OPTPIAACMCDESIGN::lambdaarray()']]],

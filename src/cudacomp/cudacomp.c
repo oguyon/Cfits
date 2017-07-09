@@ -503,9 +503,9 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     long ID_contrM;
     long ID_WFS;
     long ID_cmd_modes;
-    long *cmsize;
-    long *wfssize;
-    long *cmdmodessize;
+    uint32_t *cmsize;
+    uint32_t *wfssize;
+    uint32_t *cmdmodessize;
     int_fast8_t status;
     int_fast8_t GPUstatus[100];
     long iter;
@@ -517,7 +517,7 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     double SVDeps = 0.1;
 
     long n, m;
-    long *arraysizetmp;
+    uint32_t *arraysizetmp;
     long ID, ID_R, ID_C;
     long ii, jj;
     float val;
@@ -584,21 +584,21 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 
         //    GPUstatus = (int*) malloc(sizeof(int)*100);
 
-        cmsize = (long*) malloc(sizeof(long)*3);
+        cmsize = (uint32_t*) malloc(sizeof(uint32_t)*3);
         cmsize[0] = WFSsize;
         cmsize[1] = WFSsize;
         cmsize[2] = NBmodes;
-        ID_contrM = create_image_ID("cudatestcm", 3, cmsize, FLOAT, 1, 0);
+        ID_contrM = create_image_ID("cudatestcm", 3, cmsize, _DATATYPE_FLOAT, 1, 0);
 
-        wfssize = (long*) malloc(sizeof(long)*2);
+        wfssize = (uint32_t*) malloc(sizeof(uint32_t)*2);
         wfssize[0] = WFSsize;
         wfssize[1] = WFSsize;
-        ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, FLOAT, 1, 0);
+        ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, _DATATYPE_FLOAT, 1, 0);
 
-        cmdmodessize = (long*) malloc(sizeof(long)*2);
+        cmdmodessize = (uint32_t*) malloc(sizeof(uint32_t)*2);
         cmdmodessize[0] = NBmodes;
         cmdmodessize[1] = 1;
-        ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, FLOAT, 1, 0);
+        ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, _DATATYPE_FLOAT, 1, 0);
 
         GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
 
@@ -1064,7 +1064,7 @@ int GPUloadCmat(int index)
 int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb)
 {
     long IDcontrM, IDwfsim, IDwfsref;
-    long *sizearraytmp;
+    uint32_t *sizearraytmp;
     int device;
     struct cudaDeviceProp deviceProp;
     int n, m;
@@ -1187,11 +1187,11 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         if(orientation == 0)
         {            
-            printf("[0] Input vector size: %ld %ld\n", data.image[IDwfsim].md[0].size[0], data.image[IDwfsim].md[0].size[1]);
+            printf("[0] Input vector size: %ld %ld\n", (long) data.image[IDwfsim].md[0].size[0], (long) data.image[IDwfsim].md[0].size[1]);
             
             if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1] != (int) gpumatmultconf[index].N)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1], (int) gpumatmultconf[index].N);
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", (long) (data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1]), (int) gpumatmultconf[index].N);
                 fflush(stdout);
                 sleep(2);
                 exit(0);
@@ -1199,10 +1199,10 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         }
         else
         {
-            printf("[1] Input vector size: %ld \n", data.image[IDwfsim].md[0].size[0]);
+            printf("[1] Input vector size: %ld \n", (long) data.image[IDwfsim].md[0].size[0]);
             if(data.image[IDwfsim].md[0].size[0] != (int) gpumatmultconf[index].N)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[IDwfsim].md[0].size[0], (int) gpumatmultconf[index].N);
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", (long) data.image[IDwfsim].md[0].size[0], (int) gpumatmultconf[index].N);
                 fflush(stdout);
                 sleep(2);
                 exit(0);
@@ -1215,17 +1215,17 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 		
         if((gpumatmultconf[index].IDout = image_ID(IDoutdmmodes_name)) == -1)
         {
-            sizearraytmp = (long*) malloc(sizeof(long)*2);
+            sizearraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearraytmp[0] = gpumatmultconf[index].M;
             sizearraytmp[1] = 1;
-            gpumatmultconf[index].IDout = create_image_ID(IDoutdmmodes_name, 2, sizearraytmp, FLOAT, 1, 10);
+            gpumatmultconf[index].IDout = create_image_ID(IDoutdmmodes_name, 2, sizearraytmp, _DATATYPE_FLOAT, 1, 10);
             free(sizearraytmp);
         }
         else
         {
             if(data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1] != (int) gpumatmultconf[index].M)
             {
-                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1], (int) gpumatmultconf[index].M);
+                printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", (long) (data.image[gpumatmultconf[index].IDout].md[0].size[0] * data.image[gpumatmultconf[index].IDout].md[0].size[1]), (int) gpumatmultconf[index].M);
                 printf("gpumatmultconf[index].IDout = %ld\n", gpumatmultconf[index].IDout);
                 list_image_ID();
                 fflush(stdout);
@@ -1563,7 +1563,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1;  // ->7
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1615,7 +1615,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1;  // -> 8
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1654,7 +1654,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1;  // -> 9
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1699,7 +1699,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1; // -> 10
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1860,8 +1860,8 @@ long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *
 	float *magmaf_d_AinvA;
 	float *magmaf_h_AinvA;
 
-	long *arraysizetmp;
-	int atype;
+	uint32_t *arraysizetmp;
+	uint8_t atype;
 	magma_int_t M, N;
 	
 
@@ -1890,7 +1890,7 @@ long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *
 	///
 	
 	
-	arraysizetmp = (long*) malloc(sizeof(long)*3);
+	arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
     IDmatA = image_ID(IDmatA_name);
     IDmatAinv = image_ID(IDmatAinv_name);
@@ -1948,7 +1948,7 @@ long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *
 	
 	arraysizetmp[0] = N;
 	arraysizetmp[1] = N;
-	IDmatOut = create_image_ID(IDmatOut_name, 2, arraysizetmp, FLOAT, 0, 0);
+	IDmatOut = create_image_ID(IDmatOut_name, 2, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
        
 
     for(ii=0; ii<N*N; ii++)
@@ -1987,12 +1987,12 @@ long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *
 //   n: number of sensors  
 int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name) 
 {
-	long *arraysizetmp;
+	uint32_t *arraysizetmp;
 	magma_int_t M, N, min_mn;
 	long m, n, ii, jj, k;
 	long ID_Rmatrix;
 	long ID_Cmatrix;
-	int atype;
+	uint8_t atype;
 	
 	magma_int_t lda, ldu, ldv;
 	float dummy[1];
@@ -2013,7 +2013,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, con
 	long maxMode, MaxNBmodes1, mode;
 
 	
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
     atype = data.image[ID_Rmatrix].md[0].atype;
@@ -2069,7 +2069,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, con
 
 	
 	// write input h_R matrix
-	 if(atype==FLOAT)
+	 if(atype==_DATATYPE_FLOAT)
     {
         for(k=0; k<m; k++)
             for(ii=0; ii<n; ii++)
@@ -2123,16 +2123,16 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, con
     // Write rotation matrix 
     arraysizetmp[0] = m;
     arraysizetmp[1] = m;
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
-        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, FLOAT, 0, 0);
+        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
         for(ii=0; ii<m; ii++) // modes
             for(k=0; k<m; k++) // modes
                 data.image[ID_VTmatrix].array.F[k*m+ii] = (float) VT[k*m+ii];
     }
     else
     {
-        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, DOUBLE, 0, 0);
+        ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, _DATATYPE_DOUBLE, 0, 0);
         for(ii=0; ii<m; ii++) // modes
             for(k=0; k<m; k++) // modes
                 data.image[ID_VTmatrix].array.D[k*m+ii] = (double) VT[k*m+ii];
@@ -2151,10 +2151,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, con
         arraysizetmp[1] = m;
     }
     
-    if(atype==FLOAT)
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+    if(atype==_DATATYPE_FLOAT)
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
     else
-        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
+        ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_DOUBLE, 0, 0);
 
    // compute pseudo-inverse
    // M+ = V Sig^-1 UT
@@ -2269,8 +2269,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, con
 int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, double SVDeps, long MaxNBmodes, const char *ID_VTmatrix_name, int LOOPmode) 
 {
     long ID_Rmatrix;
-    int atype;
-    long *arraysizetmp;
+    uint8_t atype;
+    uint32_t *arraysizetmp;
     int size; // variable for memory allocations
     long N, M;
     long ii, jj, k;
@@ -2343,7 +2343,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	///
 	
 	
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
     atype = data.image[ID_Rmatrix].md[0].atype;
@@ -2451,7 +2451,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	// STEP 1 :   Fill input data into magmaf_h_A on host   
 	// ****************************************************
 	
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         if(MAGMAfloat==1)
         {
@@ -3091,10 +3091,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             arraysizetmp[1] = N;
         }
 
-        if(atype==FLOAT)
-            ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+        if(atype==_DATATYPE_FLOAT)
+            ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
         else
-            ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, DOUBLE, 0, 0);
+            ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_DOUBLE, 0, 0);
     }
     else
         ID_Cmatrix = image_ID(ID_Cmatrix_name);
@@ -3106,7 +3106,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		fflush(stdout);
     }
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         if(MAGMAfloat==1)
         {
@@ -3262,10 +3262,10 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     int k;
 
     long ID_Rmatrix, ID_Cmatrix, ID_VTmatrix;
-    int atype;
+    uint8_t atype;
     int m;
     int n;
-    long *arraysizetmp;
+    uint32_t *arraysizetmp;
     int lda, ldu, ldvt;
     
 
@@ -3365,11 +3365,11 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
 
     list_image_ID();
 
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
 
     atype = data.image[ID_Rmatrix].md[0].atype;
-    if(atype!=FLOAT)
+    if(atype!=_DATATYPE_FLOAT)
     {
         printf("wrong type\n");
         exit(0);
@@ -3601,7 +3601,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     }
 
     
-    ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, FLOAT, 0, 0);
+    ID_Cmatrix = create_image_ID(ID_Cmatrix_name, data.image[ID_Rmatrix].md[0].naxis, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
     
     
  //   cudaStat = cudaMemcpy(data.image[ID_Cmatrix].array.F, d_M, sizeof(float)*m*n, cudaMemcpyDeviceToHost);
@@ -3994,7 +3994,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     struct cudaDeviceProp deviceProp;
     int m, n;
     int k;
-    long *arraytmp;
+    uint32_t *arraytmp;
 
     float *d_modes = NULL; // linear memory of GPU
     float *d_in = NULL;
@@ -4015,7 +4015,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     float *normcoeff;
 
     long IDoutact;
-    long *sizearraytmp;
+    uint32_t *sizearraytmp;
 
     long ID_modeval_mult;
     int imOK;
@@ -4113,7 +4113,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
         printf("NBmodes = %ld\n", NBmodes);
         fflush(stdout);
 
-        printf("creating _tmpmodes  %ld %ld %ld\n", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], NBmodes);
+        printf("creating _tmpmodes  %ld %ld %ld\n", (long) data.image[IDin].md[0].size[0], (long) data.image[IDin].md[0].size[1], NBmodes);
         fflush(stdout);
 
 
@@ -4153,7 +4153,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     modevalarrayref = (float*) malloc(sizeof(float)*n);
 
 
-    arraytmp = (long*) malloc(sizeof(long)*2);
+    arraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
 
     IDrefout = image_ID(IDrefout_name);
     if(IDrefout==-1)
@@ -4174,7 +4174,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
     ID_modeval = image_ID(IDmodes_val_name);
     if(ID_modeval==-1) // CREATE IT
     {
-        ID_modeval = create_image_ID(IDmodes_val_name, 2, arraytmp, FLOAT, 1, 0);
+        ID_modeval = create_image_ID(IDmodes_val_name, 2, arraytmp, _DATATYPE_FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(IDmodes_val_name, 10);
         MODEVALCOMPUTE = 1;
     }
@@ -4306,7 +4306,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
     if(TRACEMODE==1)
     {
-        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sizearraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
         sprintf(traceim_name, "%s_trace", IDmodes_val_name);
         sizearraytmp[0] = TRACEsize;
         sizearraytmp[1] = NBmodes;
@@ -4323,7 +4323,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
             }
         }
         if(imOK==0)
-            IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, FLOAT, 1, 0);
+            IDtrace = create_image_ID(traceim_name, 2, sizearraytmp, _DATATYPE_FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(traceim_name, 10);
         free(sizearraytmp);
     }
@@ -4334,7 +4334,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
     if(PROCESS==1)
     {
-        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sizearraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
         sprintf(process_ave_name, "%s_ave", IDmodes_val_name);
         sizearraytmp[0] = NBmodes;
         sizearraytmp[1] = NBaveSTEP;
@@ -4351,11 +4351,11 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
             }
         }
         if(imOK==0)
-            IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, FLOAT, 1, 0);
+            IDprocave = create_image_ID(process_ave_name, 2, sizearraytmp, _DATATYPE_FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(process_ave_name, 10);
         free(sizearraytmp);
 
-        sizearraytmp = (long*) malloc(sizeof(long)*2);
+        sizearraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
         sprintf(process_rms_name, "%s_rms", IDmodes_val_name);
         sizearraytmp[0] = NBmodes;
         sizearraytmp[1] = NBaveSTEP;
@@ -4372,7 +4372,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
             }
         }
         if(imOK==0)
-            IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, FLOAT, 1, 0);
+            IDprocrms = create_image_ID(process_rms_name, 2, sizearraytmp, _DATATYPE_FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(process_rms_name, 10);
         free(sizearraytmp);
     }
@@ -4719,7 +4719,7 @@ int CUDACOMP_createModesLoop(const char *DMmodeval_stream, const char *DMmodes, 
     arraytmp = (long*) malloc(sizeof(long)*2);
     arraytmp[0] = NBmodes;
     arraytmp[1] = 1;
-    ID_modeval = create_image_ID(DMmodes_val, 2, arraytmp, FLOAT, 1, 0);
+    ID_modeval = create_image_ID(DMmodes_val, 2, arraytmp, _DATATYPE_FLOAT, 1, 0);
     free(arraytmp);
     COREMOD_MEMORY_image_set_createsem(DMmodes_val, 2);
 

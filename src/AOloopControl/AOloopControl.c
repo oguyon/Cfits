@@ -190,7 +190,7 @@ static int wcol, wrow; // window size
 /* =============================================================================================== */
 
 static long aoconfID_wfsim = -1;
-static int WFSatype;
+static uint8_t WFSatype;
 static long aoconfID_wfsdark = -1;
 static long aoconfID_imWFS0 = -1;
 static long aoconfID_imWFS0tot = -1;
@@ -241,7 +241,7 @@ static long aoconfID_pixstream_wfspixindex; // index of WFS pixels
 static long aoconfID_looptiming = -1; // control loop timing data. Pixel values correspond to time offset 
 // currently has 20 timing slots
 // beginning of iteration is defined when entering "wait for image"
-// md[0].wtime is absolute time at beginning of iteration
+// md[0].atime is absolute time at beginning of iteration
 //
 // pixel 0 is dt since last iteration
 //
@@ -1578,7 +1578,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     char name1[200];
     char fname[200];
     long ID;
-    long *sizearray;
+    uint32_t *sizearray;
     int vOK;
     int kw;
     long k;
@@ -1655,7 +1655,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
 
     // READ LOOP NAME
@@ -2039,12 +2039,12 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 				}
 				if(data.image[ID1tmp].md[0].size[0] != AOconf[loop].sizexDM)
 				{
-					printf("ERROR: File \"%s\" has wrong x size: should be %ld, is %ld\n", fname, AOconf[loop].sizexDM, data.image[ID1tmp].md[0].size[0]);
+					printf("ERROR: File \"%s\" has wrong x size: should be %ld, is %ld\n", fname, AOconf[loop].sizexDM, (long) data.image[ID1tmp].md[0].size[0]);
 					exit(0);
 				}
 				if(data.image[ID1tmp].md[0].size[1] != AOconf[loop].sizeyDM)
 				{
-					printf("ERROR: File \"%s\" has wrong y size: should be %ld, is %ld\n", fname, AOconf[loop].sizeyDM, data.image[ID1tmp].md[0].size[1]);
+					printf("ERROR: File \"%s\" has wrong y size: should be %ld, is %ld\n", fname, AOconf[loop].sizeyDM, (long) data.image[ID1tmp].md[0].size[1]);
 					exit(0);
 				}
 				AOconf[loop].NBDMmodes = data.image[ID1tmp].md[0].size[2];
@@ -2064,17 +2064,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 }
                 if(data.image[ID2tmp].md[0].size[0] != AOconf[loop].sizexDM)
                 {
-                    printf("ERROR: Shared memory File %s has wrong x size: should be %ld, is %ld\n", AOconf[loop].DMmodesname, AOconf[loop].sizexDM, data.image[ID2tmp].md[0].size[0]);
+                    printf("ERROR: Shared memory File %s has wrong x size: should be %ld, is %ld\n", AOconf[loop].DMmodesname, AOconf[loop].sizexDM, (long) data.image[ID2tmp].md[0].size[0]);
                     vOK = 0;
                 }
                 if(data.image[ID2tmp].md[0].size[1] != AOconf[loop].sizeyDM)
                 {
-                    printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMmodesname, AOconf[loop].sizeyDM, data.image[ID2tmp].md[0].size[1]);
+                    printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMmodesname, AOconf[loop].sizeyDM, (long) data.image[ID2tmp].md[0].size[1]);
                     vOK = 0;
                 }
                 if(data.image[ID2tmp].md[0].size[2] != AOconf[loop].NBDMmodes)
                 {
-                    printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMmodesname, AOconf[loop].NBDMmodes, data.image[ID2tmp].md[0].size[2]);
+                    printf("ERROR: Shared memory File %s has wrong y size: should be %ld, is %ld\n", AOconf[loop].DMmodesname, AOconf[loop].NBDMmodes, (long) data.image[ID2tmp].md[0].size[2]);
                     vOK = 0;
                 }
 
@@ -2094,18 +2094,18 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 sizearray[0] = AOconf[loop].sizexDM;
                 sizearray[1] = AOconf[loop].sizeyDM;
                 sizearray[2] = AOconf[loop].NBDMmodes;
-                printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].DMmodesname, sizearray[0], sizearray[1], sizearray[2]);
+                printf("Creating %s   [%ld x %ld x %ld]\n", AOconf[loop].DMmodesname, (long) sizearray[0], (long) sizearray[1], (long) sizearray[2]);
                 fflush(stdout);
-                aoconfID_DMmodes = create_image_ID(AOconf[loop].DMmodesname, 3, sizearray, FLOAT, 1, 0);
+                aoconfID_DMmodes = create_image_ID(AOconf[loop].DMmodesname, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
             }
 
             // put modes into shared memory
 
             switch (data.image[ID1tmp].md[0].atype) {
-            case FLOAT :
+            case _DATATYPE_FLOAT :
                 memcpy(data.image[aoconfID_DMmodes].array.F, data.image[ID1tmp].array.F, sizeof(float)*AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes);
                 break;
-            case DOUBLE :
+            case _DATATYPE_DOUBLE :
                 for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM*AOconf[loop].NBDMmodes; ii++)
                     data.image[aoconfID_DMmodes].array.F[ii] = data.image[ID1tmp].array.D[ii];
                 break;
@@ -2416,7 +2416,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
     int create = 0;
     int result;
     long loop;
-    long *sizearray;
+    uint32_t *sizearray;
     char cntname[200];
     int k;
     FILE *fp;
@@ -2503,10 +2503,10 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
         if((aoconfIDlogdata = image_ID(cntname))==-1)
         {
-            sizearray = (long*) malloc(sizeof(long)*2);
+            sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearray[0] = 1;
             sizearray[1] = 1;
-            aoconfIDlogdata = create_image_ID(cntname, 2, sizearray, FLOAT, 1, 0);
+            aoconfIDlogdata = create_image_ID(cntname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
             free(sizearray);
         }
     }
@@ -2632,7 +2632,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     long ID;
     int CreateSMim = 0;
     int sizeOK;
-    long *sizearray;
+    uint32_t *sizearray;
     char command[500];
     int r;
     long ID1;
@@ -2654,7 +2654,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
     ID = image_ID(name);
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 
     if(ID==-1) // if <name> is not loaded in memory
     {
@@ -2684,7 +2684,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
             sizearray[0] =  xsize;
             sizearray[1] =  ysize;
             if(xsize*ysize>0)
-                ID = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+                ID = create_image_ID(name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
         }
     }
     free(sizearray);
@@ -2709,7 +2709,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
             }
             else
             {
-                printf("File \"%s\" has wrong size (should be 2-D %ld x %ld,  is %ld-D %ld x %ld): ignoring\n", fname, xsize, ysize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1]);
+                printf("File \"%s\" has wrong size (should be 2-D %ld x %ld,  is %d-D %ld x %ld): ignoring\n", fname, xsize, ysize, (int) data.image[ID1].md[0].naxis, (long) data.image[ID1].md[0].size[0], (long) data.image[ID1].md[0].size[1]);
                 loadcreatestatus = 3;
             }
             delete_image_ID("tmp2Dim");
@@ -2767,7 +2767,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
     long ID;
     int CreateSMim;
     int sizeOK;
-    long *sizearray;
+    uint32_t *sizearray;
     char command[500];
     int r;
     long ID1;
@@ -2792,7 +2792,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
     ID = image_ID(name);
-    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
 	//printf("============== %ld  %ld  %ld ===== %ld ======\n", xsize, ysize, zsize, ID);
 
@@ -2832,7 +2832,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
             sizearray[2] = zsize;
             if(xsize*ysize*zsize>0)
             {
-                ID = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
+                ID = create_image_ID(name, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
                 creashmimfromFITS = 0;
             }
             else
@@ -2864,13 +2864,13 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
                 sizearray[0] = xsize1;
                 sizearray[1] = ysize1;
                 sizearray[2] = zsize1;
-                ID = create_image_ID(name, 3, sizearray, FLOAT, 1, 0);
+                ID = create_image_ID(name, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
                 memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize1*ysize1*zsize1);
                 loadcreatestatus = 1;
             }
             else
             {
-                printf("File \"%s\" has wrong size (should be 3-D %ld x %ld, x %ld  is %ld-D %ld x %ld x %ld): ignoring\n", fname, xsize, ysize, zsize, data.image[ID1].md[0].naxis, data.image[ID1].md[0].size[0], data.image[ID1].md[0].size[1], data.image[ID1].md[0].size[2]);
+                printf("File \"%s\" has wrong size (should be 3-D %ld x %ld, x %ld  is %d-D %ld x %ld x %ld): ignoring\n", fname, xsize, ysize, zsize, (int) data.image[ID1].md[0].naxis, (long) data.image[ID1].md[0].size[0], (long) data.image[ID1].md[0].size[1], (long) data.image[ID1].md[0].size[2]);
                 loadcreatestatus = 3;
             }
         }
@@ -2946,7 +2946,7 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
     long IDout_ave;
     long IDout_AC, IDout_RMS;
     long xsize, ysize;
-    long *sizearray;
+    uint32_t *sizearray;
     long cnt0old;
     long delayus = 100;
     int OKloop;
@@ -2963,17 +2963,17 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
     xsize = data.image[IDin].md[0].size[0];
     ysize = data.image[IDin].md[0].size[1];
     
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = xsize;
     sizearray[1] = ysize;
     
-    IDout_ave = create_image_ID(IDname_out_ave, 2, sizearray, FLOAT, 1, 0);
+    IDout_ave = create_image_ID(IDname_out_ave, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 10);
 
-    IDout_AC = create_image_ID(IDname_out_AC, 2, sizearray, FLOAT, 1, 0);
+    IDout_AC = create_image_ID(IDname_out_AC, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_ave, 10);
    
-    IDout_RMS = create_image_ID(IDname_out_RMS, 2, sizearray, FLOAT, 1, 0);
+    IDout_RMS = create_image_ID(IDname_out_RMS, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDname_out_RMS, 10);
  
      
@@ -3029,7 +3029,7 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 	long xysize;
 	float eps=1.0e-8;
 	long ii, jj, kk, k1;
-	long *sizearray;
+	uint32_t *sizearray;
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -3060,10 +3060,10 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 	IDbuff = create_3Dimage_ID("_tmpbuff", xsize, ysize, ksize);
 	kindex = 0;
 	
-	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sizearray[0] = xsize;
 	sizearray[1] = ysize;
-	IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+	IDout = create_image_ID(IDout_name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
     free(sizearray);
 
@@ -3143,8 +3143,8 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	uint_fast16_t Xindex, Yindex;
 	uint_fast16_t iioffset, jjoffset;
 	long long cnt;
-	long *sizearray;
-	int atype;
+	uint32_t *sizearray;
+	uint8_t atype;
 	char out0name[200]; // noise-free image, in contrast
 	long IDout0;
 	
@@ -3178,8 +3178,8 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	
 	sprintf(out0name, "%sc", out_name);
 	
-	atype = FLOAT;
-	sizearray = (long*) malloc(sizeof(long)*2);
+	atype = _DATATYPE_FLOAT;
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sizearray[0] = xsize1;
 	sizearray[1] = ysize1;
     IDout = create_image_ID(out_name, 2, sizearray, atype, 1, 0);
@@ -3400,11 +3400,11 @@ static void *compute_function_dark_subtract( void *ptr )
         sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_sem_name[threadindex]);
 
         switch ( WFSatype ) {
-        case USHORT :
+        case _DATATYPE_UINT16 :
             for(ii=iistart; ii<iiend; ii++)
                 data.image[aoconfID_imWFS0].array.F[ii] = ((float) arrayutmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
             break;
-        case FLOAT :
+        case _DATATYPE_FLOAT :
             for(ii=iistart; ii<iiend; ii++)
                 data.image[aoconfID_imWFS0].array.F[ii] = ((float) arrayftmp[ii]) - data.image[Average_cam_frames_IDdark].array.F[ii];
             break;
@@ -3547,8 +3547,8 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
 {
     long iiin,jjin, iiout, jjout;
     long IDin, IDout;
-    int atype;
-    long *sizeout;
+    uint8_t atype;
+    uint32_t *sizeout;
     long long cnt0;
     long IDmask;
     long sizeoutxy;
@@ -3560,7 +3560,7 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
 	#endif
 
 
-    sizeout = (long*) malloc(sizeof(long)*2);
+    sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizeout[0] = size_x;
     sizeout[1] = size_y;
     sizeoutxy = size_x*size_y;
@@ -3584,7 +3584,7 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
     cnt0 = -1;
 
     switch (atype) {
-    case USHORT :
+    case _DATATYPE_UINT16 :
         while(1)
         {
             usleep(10); // OK FOR NOW (NOT USED BY FAST WFS)
@@ -3597,18 +3597,18 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
                     {
                         iiin = xstart + iiout;
                         jjin = ystart + jjout;
-                        data.image[IDout].array.U[jjout*size_x+iiout] = data.image[IDin].array.U[jjin*data.image[IDin].md[0].size[0]+iiin];
+                        data.image[IDout].array.UI16[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
                     }
                 if(IDmask!=-1)
                     for(ii=0; ii<sizeoutxy; ii++)
-                        data.image[IDout].array.U[ii] *= (int) data.image[IDmask].array.F[ii];
+                        data.image[IDout].array.UI16[ii] *= (int) data.image[IDmask].array.F[ii];
 
                 data.image[IDout].md[0].cnt0 = cnt0;
                 data.image[IDout].md[0].write = 0;
             }
         }
         break;
-    case FLOAT :
+    case _DATATYPE_FLOAT :
         while(1)
         {
             usleep(50); // OK FOR NOW (NOT USED BY FAST WFS)
@@ -3735,7 +3735,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     {
         AOconf[loop].status = 20;  // 020: WAIT FOR IMAGE
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[20] = tdiffv;
     }
@@ -3793,13 +3793,13 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     }
 
     switch (WFSatype) {
-    case FLOAT :
+    case _DATATYPE_FLOAT :
         ptrv = (char*) data.image[aoconfID_wfsim].array.F;
         ptrv += sizeof(float)*slice* AOconf[loop].sizeWFS;
         memcpy(arrayftmp, ptrv,  sizeof(float)*AOconf[loop].sizeWFS);
         break;
-    case USHORT :
-        ptrv = (char*) data.image[aoconfID_wfsim].array.U;
+    case _DATATYPE_UINT16 :
+        ptrv = (char*) data.image[aoconfID_wfsim].array.UI16;
         ptrv += sizeof(unsigned short)*slice* AOconf[loop].sizeWFS;
         memcpy (arrayutmp, ptrv, sizeof(unsigned short)*AOconf[loop].sizeWFS);
         break;
@@ -3823,11 +3823,11 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     {
         AOconf[loop].status = 1;  // 3->001: DARK SUBTRACT
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[0] = tdiffv;
 
-        data.image[aoconfID_looptiming].md[0].wtime = tnow;
+        data.image[aoconfID_looptiming].md[0].atime = tnow;
     }
 
 	#ifdef _PRINT_TEST 
@@ -3840,7 +3840,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     if((loop==0)||(RM == 1)) // single thread, in CPU
     {
         switch ( WFSatype ) {
-        case USHORT :
+        case _DATATYPE_UINT16 :
 # ifdef _OPENMP
             #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
         {
@@ -3855,7 +3855,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         }
 # endif
         break;
-        case FLOAT :
+        case _DATATYPE_FLOAT :
 # ifdef _OPENMP
             #pragma omp parallel num_threads(8) if (Average_cam_frames_nelem>OMP_NELEMENT_LIMIT)
         {
@@ -3948,7 +3948,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     {
         AOconf[loop].status = 2; // 4 -> 002 : COMPUTE TOTAL OF IMAGE
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[2] = tdiffv;
     }
@@ -4011,7 +4011,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     {
         AOconf[loop].status = 3;  // 5 -> 003: NORMALIZE WFS IMAGE
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[3] = tdiffv;
     }
@@ -4096,7 +4096,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     char fname[200];
     char name[200];
     char command[200];
-    long *sizearray;
+    uint32_t *sizearray;
 	long IDoutC;
 
     long NBiter = 10000; // runs until USR1 signal received
@@ -4146,7 +4146,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 		
 		
 
-    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 	
 	
 	printf("INITIALIZE MEMORY (mode %d, meminit = %d)....\n", AOinitMode, AOloopcontrol_meminit);
@@ -4194,7 +4194,7 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     sizearray[1] = AOconf[loop].sizeyWFS;
     printf("WFS size = %ld %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     fflush(stdout);
-    aoconfID_imWFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+    aoconfID_imWFS1 = create_image_ID(name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 
 
 
@@ -4533,7 +4533,7 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
     char command[200];
     long IDpos, IDneg;
     float tot, v1, rms;
-    long *sizearray;
+    uint32_t *sizearray;
 
     long NBiter = LONG_MAX; // runs until USR1 signal received
     long iter;
@@ -4581,7 +4581,7 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
 		
 	
     arraypix = (float*) malloc(sizeof(float)*NBiter);
-    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 	
 	
 	
@@ -4625,14 +4625,14 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
     sizearray[1] = AOconf[loop].sizeyWFS;
     printf("WFS size = %ld %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
     fflush(stdout);
-    aoconfID_imWFS1 = create_image_ID(name, 2, sizearray, FLOAT, 1, 0);
+    aoconfID_imWFS1 = create_image_ID(name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 
 
     arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
 
     sizearray[0] = AOconf[loop].sizexDM;
     sizearray[1] = AOconf[loop].sizeyDM;
-    ID_DMmap = create_image_ID(DMmap_name, 2, sizearray, FLOAT, 1, 5);
+    ID_DMmap = create_image_ID(DMmap_name, 2, sizearray, _DATATYPE_FLOAT, 1, 5);
 
 
     IDpos = create_2Dimage_ID("wfsposim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
@@ -4676,26 +4676,26 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
 
     actarray = (long*) malloc(sizeof(long)*NBpoke);
 
-    ID_WFSmap = create_image_ID(WFSmap_name, 2, sizearray, FLOAT, 1, 5);
-    ID_WFSref0 = create_image_ID("tmpwfsref0", 2, sizearray, FLOAT, 1, 5);
-    ID_WFSref2 = create_image_ID("tmpwfsref2", 2, sizearray, FLOAT, 1, 5);
-    ID_WFSref0n = create_image_ID(WFSref0_name, 2, sizearray, FLOAT, 1, 5);
-    ID_WFSref2n = create_image_ID("tmpwfsimrms", 2, sizearray, FLOAT, 1, 5);
-    IDzrespm = create_image_ID("zrespm", 3, sizearray, FLOAT, 0, 5); // Zonal response matrix
-    IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, FLOAT, 0, 5); // Zonal response matrix normalized
+    ID_WFSmap = create_image_ID(WFSmap_name, 2, sizearray, _DATATYPE_FLOAT, 1, 5);
+    ID_WFSref0 = create_image_ID("tmpwfsref0", 2, sizearray, _DATATYPE_FLOAT, 1, 5);
+    ID_WFSref2 = create_image_ID("tmpwfsref2", 2, sizearray, _DATATYPE_FLOAT, 1, 5);
+    ID_WFSref0n = create_image_ID(WFSref0_name, 2, sizearray, _DATATYPE_FLOAT, 1, 5);
+    ID_WFSref2n = create_image_ID("tmpwfsimrms", 2, sizearray, _DATATYPE_FLOAT, 1, 5);
+    IDzrespm = create_image_ID("zrespm", 3, sizearray, _DATATYPE_FLOAT, 0, 5); // Zonal response matrix
+    IDzrespmn = create_image_ID(zrespm_name, 3, sizearray, _DATATYPE_FLOAT, 0, 5); // Zonal response matrix normalized
 
-    IDzrespfp = create_image_ID("zrespfp", 3, sizearray, FLOAT, 0, 5); // positive poke image
-    IDzrespfm = create_image_ID("zrespfm", 3, sizearray, FLOAT, 0, 5); // negative poke image
+    IDzrespfp = create_image_ID("zrespfp", 3, sizearray, _DATATYPE_FLOAT, 0, 5); // positive poke image
+    IDzrespfm = create_image_ID("zrespfm", 3, sizearray, _DATATYPE_FLOAT, 0, 5); // negative poke image
 
     if(mode>0)
     {
         sizearray[0] = AOconf[loop].sizexWFS;
         sizearray[1] = AOconf[loop].sizeyWFS;
-        ID_WFSmask = create_image_ID("wfsmask", 2, sizearray, FLOAT, 1, 5);
+        ID_WFSmask = create_image_ID("wfsmask", 2, sizearray, _DATATYPE_FLOAT, 1, 5);
 
         sizearray[0] = AOconf[loop].sizexDM;
         sizearray[1] = AOconf[loop].sizeyDM;
-        ID_DMmask = create_image_ID("dmmask", 2, sizearray, FLOAT, 1, 5);
+        ID_DMmask = create_image_ID("dmmask", 2, sizearray, _DATATYPE_FLOAT, 1, 5);
     }
 
 
@@ -5089,7 +5089,7 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
     long IDrefi;
     long IDrefcumul;
 
-    long *sizearray;
+    uint32_t *sizearray;
 
     long IDrespM;
     long IDwfsref0;
@@ -5123,7 +5123,7 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
 
     printf("ACQUIRE RESPONSE MATRIX - loop = %ld, NbAve = %ld, amp = %f, nbloop = %ld, fDelay = %ld, NBiter = %ld\n", loop, NbAve, amp, nbloop, fDelay, NBiter);
 
-    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
   
   
@@ -5678,7 +5678,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
     int *Hmat;
     long k, ii, jj, n, n2, i, j;
     long IDindex;
-    long *sizearray;
+    uint32_t *sizearray;
     
     long IDmask;
 
@@ -5692,10 +5692,10 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
     ysize = data.image[IDmask].md[0].size[1];
     xysize = xsize*ysize;
 
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = xsize;
     sizearray[1] = ysize;
-    IDindex = create_image_ID("Hpixindex", 2, sizearray, FLOAT, 0, 0);
+    IDindex = create_image_ID("Hpixindex", 2, sizearray, _DATATYPE_FLOAT, 0, 0);
     free(sizearray);
 
 	cnt = 0;
@@ -5799,7 +5799,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
     long IDin, IDhad, IDout, IDindex;
     long NBact, NBframes, sizexwfs, sizeywfs, sizewfs;
     long kk, kk0, kk1, ii;
-    long zsizeout;
+    uint32_t zsizeout;
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -5820,7 +5820,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
     IDhad = image_ID(Hmatname);
     if((data.image[IDhad].md[0].size[0]!=NBframes)||(data.image[IDhad].md[0].size[1]!=NBframes))
     {
-        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames\n", data.image[IDhad].md[0].size[0], data.image[IDhad].md[0].size[1]);
+        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames\n", (long) data.image[IDhad].md[0].size[0], (long) data.image[IDhad].md[0].size[1]);
         exit(0);
     }
 
@@ -5976,7 +5976,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     totm = arith_image_total("dmmask");
     if((msizex != data.image[IDmask].md[0].size[0])||(msizey != data.image[IDmask].md[0].size[1]))
     {
-        printf("ERROR: file dmmask size (%ld %ld) does not match expected size (%ld %ld)\n", data.image[IDmask].md[0].size[0], data.image[IDmask].md[0].size[1], msizex, msizey);
+        printf("ERROR: file dmmask size (%ld %ld) does not match expected size (%ld %ld)\n", (long) data.image[IDmask].md[0].size[0], (long) data.image[IDmask].md[0].size[1], (long) msizex, (long) msizey);
         exit(0);
     }
 
@@ -5997,7 +5997,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
 
 	
 
-    printf("  %ld %ld %ld\n", msizex, msizey, data.image[ID0].md[0].size[2]-1 );
+    printf("  %ld %ld %ld\n", msizex, msizey, (long) data.image[ID0].md[0].size[2]-1 );
     ID = create_3Dimage_ID(ID_name, msizex, msizey, data.image[ID0].md[0].size[2]-1+NBZ);
 
 
@@ -6580,7 +6580,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     if(NBmat<NBmatlim)
         {
             printf("ERROR: insufficient number of input matrixes:\n");
-            printf(" NBmat = %ld, should be at least %ld\n", NBmat, NBmatlim);
+            printf(" NBmat = %ld, should be at least %ld\n", (long) NBmat, (long) NBmatlim);
             exit(0);
         }
     else
@@ -6693,7 +6693,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     
         if((pixvalarray = (float*) malloc(sizeof(float)*NBmat))==NULL)
         {
-             printf("ERROR: cannot allocate pixvalarray, size = %ld\n", NBmat);
+             printf("ERROR: cannot allocate pixvalarray, size = %ld\n", (long) NBmat);
             exit(0); 
         }
      
@@ -6729,7 +6729,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
         fflush(stdout);
         if((pixvalarray = (float*) malloc(sizeof(float)*NBmat*NBpoke))==NULL)
             {
-                printf("ERROR: cannot allocate pixvalarray, size = %ld x %ld\n", NBmat, NBpoke);
+                printf("ERROR: cannot allocate pixvalarray, size = %ld x %ld\n", (long) NBmat, (long) NBpoke);
                 exit(0);
             }
         
@@ -7521,7 +7521,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         totm = arith_image_total("dmmaskRM");
         if((msizex != data.image[IDmaskRM].md[0].size[0])||(msizey != data.image[IDmaskRM].md[0].size[1]))
         {
-            printf("ERROR: file dmmaskRM size (%ld %ld) does not match expected size (%ld %ld)\n", data.image[IDmaskRM].md[0].size[0], data.image[IDmaskRM].md[0].size[1], msizex, msizey);
+            printf("ERROR: file dmmaskRM size (%ld %ld) does not match expected size (%ld %ld)\n", (long) data.image[IDmaskRM].md[0].size[0], (long) data.image[IDmaskRM].md[0].size[1], (long) msizex, (long) msizey);
             exit(0);
         }
     }
@@ -7560,7 +7560,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-            printf("  %ld %ld %ld\n", msizex, msizey, data.image[ID0].md[0].size[2]-1 );
+            printf("  %ld %ld %ld\n", msizex, msizey, (long) (data.image[ID0].md[0].size[2]-1) );
             ID = create_3Dimage_ID(ID_name, msizex, msizey, data.image[ID0].md[0].size[2]-1+NBZ);
 
             IDmfcpa = create_2Dimage_ID("modesfreqcpa", data.image[ID0].md[0].size[2]-1+NBZ, 1);
@@ -7857,7 +7857,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits(ID_name, "!_test_name.fits");
         if(data.image[IDzrespM].md[0].size[2]!=msizexy)
         {
-            printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
+            printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", (long) data.image[IDzrespM].md[0].size[2], (long) msizexy);
             exit(0);
         }
 
@@ -7866,7 +7866,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         wfssize = wfsxsize*wfsysize;
         IDm = create_3Dimage_ID("fmodesWFS00all", wfsxsize, wfsysize, data.image[ID].md[0].size[2]);
 
-        printf("size: %ld %ld %ld\n", data.image[ID].md[0].size[2], msizexy, wfssize);
+        printf("size: %ld %ld %ld\n", (long) data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
 
 
@@ -7878,7 +7878,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {
             m1 = m*wfssize;
 
-            printf("\r %5ld / %5ld   ", m, data.image[ID].md[0].size[2]);
+            printf("\r %5ld / %5ld   ", m, (long) data.image[ID].md[0].size[2]);
             fflush(stdout);
             for(act=0; act<msizexy; act++)
             {
@@ -8137,7 +8137,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             sprintf(imname, "fmodes0_%02ld", mblock);
             
-            printf("SVD decomp ... (%ld) .... ", data.image[image_ID(imname)].md[0].size[2]);
+            printf("SVD decomp ... (%ld) .... ", (long) data.image[image_ID(imname)].md[0].size[2]);
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
             printf("DONE\n");
@@ -8439,7 +8439,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {   // check size
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
             {
-                printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", data.image[IDzrespM].md[0].size[2], msizexy);
+                printf("ERROR: zrespM has wrong z size : %ld, should be %ld\n", (long) data.image[IDzrespM].md[0].size[2], (long) msizexy);
                 exit(0);
             }
 
@@ -8729,13 +8729,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     {
                         if(mok[m]==1)
                         {
-                            printf("writing %ld / %ld  ->  %ld / %ld        \n", m, data.image[IDmwfs].md[0].size[2], m1, data.image[IDm].md[0].size[2]);
+                            printf("writing %ld / %ld  ->  %ld / %ld        \n", m, (long) data.image[IDmwfs].md[0].size[2], m1, (long) data.image[IDm].md[0].size[2]);
 
-                            printf("max index IDmwfs1 %ld  = %ld / %ld    [ %ld %ld %ld ]\n", m1, m1*wfssize+wfssize-1, data.image[IDmwfs1].md[0].size[0]*data.image[IDmwfs1].md[0].size[1]*data.image[IDmwfs1].md[0].size[2], data.image[IDmwfs1].md[0].size[0], data.image[IDmwfs1].md[0].size[1], data.image[IDmwfs1].md[0].size[2]);
-                            printf("max index IDmwfs  %ld  = %ld / %ld    [ %ld %ld %ld ]\n", m, m*wfssize+wfssize-1, data.image[IDmwfs].md[0].size[0]*data.image[IDmwfs].md[0].size[1]*data.image[IDmwfs].md[0].size[2], data.image[IDmwfs].md[0].size[0], data.image[IDmwfs].md[0].size[1], data.image[IDmwfs].md[0].size[2]);
+                            printf("max index IDmwfs1 %ld  = %ld / %ld    [ %ld %ld %ld ]\n", (long) m1, (long) (m1*wfssize+wfssize-1), (long) (data.image[IDmwfs1].md[0].size[0]*data.image[IDmwfs1].md[0].size[1]*data.image[IDmwfs1].md[0].size[2]), (long) data.image[IDmwfs1].md[0].size[0], (long) data.image[IDmwfs1].md[0].size[1], (long) data.image[IDmwfs1].md[0].size[2]);
+                            printf("max index IDmwfs  %ld  = %ld / %ld    [ %ld %ld %ld ]\n", (long) m, (long) (m*wfssize+wfssize-1), (long) (data.image[IDmwfs].md[0].size[0]*data.image[IDmwfs].md[0].size[1]*data.image[IDmwfs].md[0].size[2]), (long) data.image[IDmwfs].md[0].size[0], (long) data.image[IDmwfs].md[0].size[1], (long) data.image[IDmwfs].md[0].size[2]);
 
-                            printf("max index IDmdm1  %ld  = %ld / %ld    [ %ld %ld %ld ]\n", m1, m1*msizexy+msizexy-1, data.image[IDmdm1].md[0].size[0]*data.image[IDmdm1].md[0].size[1]*data.image[IDmdm1].md[0].size[2], data.image[IDmdm1].md[0].size[0], data.image[IDmdm1].md[0].size[1], data.image[IDmdm1].md[0].size[2]);
-                            printf("max index IDmdm   %ld  = %ld / %ld    [ %ld %ld %ld ]\n", m, m*msizexy+msizexy-1, data.image[IDmdm].md[0].size[0]*data.image[IDmdm].md[0].size[1]*data.image[IDmdm].md[0].size[2], data.image[IDmdm].md[0].size[0], data.image[IDmdm].md[0].size[1], data.image[IDmdm].md[0].size[2]);
+                            printf("max index IDmdm1  %ld  = %ld / %ld    [ %ld %ld %ld ]\n", (long) m1, (long) (m1*msizexy+msizexy-1), (long) (data.image[IDmdm1].md[0].size[0]*data.image[IDmdm1].md[0].size[1]*data.image[IDmdm1].md[0].size[2]), (long) data.image[IDmdm1].md[0].size[0], (long) data.image[IDmdm1].md[0].size[1], (long) data.image[IDmdm1].md[0].size[2]);
+                            printf("max index IDmdm   %ld  = %ld / %ld    [ %ld %ld %ld ]\n", (long) m, (long) (m*msizexy+msizexy-1), (long) (data.image[IDmdm].md[0].size[0]*data.image[IDmdm].md[0].size[1]*data.image[IDmdm].md[0].size[2]), (long) data.image[IDmdm].md[0].size[0], (long) data.image[IDmdm].md[0].size[1], (long) data.image[IDmdm].md[0].size[2]);
 
 
                             fflush(stdout);//TEST
@@ -8748,7 +8748,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         }
                         else
                         {
-                            printf("Skipping %ld / %ld\n", m, data.image[IDmwfs].md[0].size[2]);
+                            printf("Skipping %ld / %ld\n", m, (long) data.image[IDmwfs].md[0].size[2]);
                             fflush(stdout);
                         }
                     }
@@ -8880,7 +8880,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 ID = load_fits(fname1, imname1, 1);
                 if((data.image[ID].md[0].size[0] != msizex) && (msizey != data.image[ID].md[0].size[0]))
                 {
-                    printf("ERROR: file dmmaskRM size (%ld %ld) does not match expected size (%ld %ld)\n", data.image[IDmask].md[0].size[0], data.image[IDmask].md[0].size[1], msizex, msizey);
+                    printf("ERROR: file dmmaskRM size (%ld %ld) does not match expected size (%ld %ld)\n", (long) data.image[IDmask].md[0].size[0], (long) data.image[IDmask].md[0].size[1], (long) msizex, (long) msizey);
                     exit(0);
                 }
                 msizexy = data.image[ID].md[0].size[0]*data.image[ID].md[0].size[1];
@@ -9476,10 +9476,10 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     long m;
     long n;
     long ID_Rmatrix, ID_Cmatrix, ID_VTmatrix;
-    long *arraysizetmp;
+    uint32_t *arraysizetmp;
 
     long IDmodes, IDeigenmodes;
-    long xsize_modes, ysize_modes, zsize_modes;
+    uint32_t xsize_modes, ysize_modes, zsize_modes;
     long IDeigenmodesResp;
     long kk, kk1;
     long ID_RMmask;
@@ -9510,7 +9510,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
         AOloopControl_InitializeMemory(1);
 
 
-    arraysizetmp = (long*) malloc(sizeof(long)*3);
+    arraysizetmp = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
 
     ID_Rmatrix = image_ID(ID_Rmatrix_name);
@@ -9626,7 +9626,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     /** Write rotation matrix to go from DM modes to eigenmodes */
     arraysizetmp[0] = m;
     arraysizetmp[1] = m;
-    ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, FLOAT, 0, 0);
+    ID_VTmatrix = create_image_ID(ID_VTmatrix_name, 2, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
     for(ii=0; ii<m; ii++) // modes
         for(k=0; k<m; k++) // modes
             data.image[ID_VTmatrix].array.F[k*m+ii] = (float) gsl_matrix_get( matrix_DtraD_evec, k, ii);
@@ -9658,7 +9658,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
         ysize_modes = data.image[IDmodes].md[0].size[1];
         zsize_modes = data.image[IDmodes].md[0].size[2];
         if(zsize_modes != m)
-            printf("ERROR: zsize (%ld) of modesM does not match expected size (%ld)\n", zsize_modes, m);
+            printf("ERROR: zsize (%ld) of modesM does not match expected size (%ld)\n", (long) zsize_modes, (long) m);
         else
         {
             IDeigenmodes = create_3Dimage_ID("eigenmodesM", xsize_modes, ysize_modes, m);
@@ -9688,7 +9688,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     arraysizetmp[0] = AOconf[loop].sizexWFS;
     arraysizetmp[1] = AOconf[loop].sizeyWFS;
     arraysizetmp[2] = m;
-    ID_Cmatrix = create_image_ID(ID_Cmatrix_name, 3, arraysizetmp, FLOAT, 0, 0);
+    ID_Cmatrix = create_image_ID(ID_Cmatrix_name, 3, arraysizetmp, _DATATYPE_FLOAT, 0, 0);
 
     printf("COMPUTING CMAT .... \n");
 
@@ -9810,7 +9810,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
     long ii, ii1;
     long sizexDM, sizeyDM;
     long sizeDM_active;
-    long *sizearray;
+    uint32_t *sizearray;
     long IDcmat;
     long IDcmatc;
     long IDmodes;
@@ -9859,14 +9859,14 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
 
 
     // allocate array for combined matrix
-    sizearray = (long*) malloc(sizeof(long)*3);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
     sizearray[0] = sizexWFS;
     sizearray[1] = sizeyWFS;
     sizearray[2] = sizeDM;
     
     printf("Creating 3D image : %ld %ld %ld\n", sizexWFS, sizeyWFS, sizeDM);
     fflush(stdout);
-    IDcmatc = create_image_ID(IDcmatc_name, 3, sizearray, FLOAT, 0, 0);
+    IDcmatc = create_image_ID(IDcmatc_name, 3, sizearray, _DATATYPE_FLOAT, 0, 0);
     free(sizearray);
 
 
@@ -9932,7 +9932,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
                 }
                 else
                 {
-                    if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii]==slice+1)
+                    if(data.image[aoconfID_pixstream_wfspixindex].array.UI16[ii]==slice+1)
                     {
                         WFS_active_map[slice*sizeWFS+ii1] = ii;
                         ii1++;
@@ -10045,7 +10045,7 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
             printf("Control matrix has wrong dimension\n");
             vOK = 0;
         }
-        if(data.image[ID].md[0].atype!=FLOAT)
+        if(data.image[ID].md[0].atype!=_DATATYPE_FLOAT)
         {
             printf("Control matrix has wrong type\n");
             vOK = 0;
@@ -10054,7 +10054,7 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
         {
             if(data.image[ID].md[0].size[0]!=AOconf[loop].sizexWFS)
             {
-                printf("Control matrix has wrong x size : is %ld, should be %ld\n", data.image[ID].md[0].size[0], AOconf[loop].sizexWFS);
+                printf("Control matrix has wrong x size : is %ld, should be %ld\n", (long) data.image[ID].md[0].size[0], (long) AOconf[loop].sizexWFS);
                 vOK = 0;
             }
             if(data.image[ID].md[0].size[1]!=AOconf[loop].sizeyWFS)
@@ -10126,7 +10126,7 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
 int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *IDzrespM_name, const char *IDwfszp_name)
 {
     long IDzpdm, IDzrespM, IDwfszp;
-    long dmxsize, dmysize, dmxysize;
+    uint32_t dmxsize, dmysize, dmxysize;
     long wfsxsize, wfsysize, wfsxysize;
     long IDtmp;
     long elem, act;
@@ -10166,17 +10166,17 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
     // verify zrespM 
     if(data.image[IDzrespM].md[0].size[0]!=wfsxsize)
         {
-            printf("ERROR: zrespM xsize %ld does not match wfsxsize %ld\n", data.image[IDzrespM].md[0].size[0], wfsxsize);
+            printf("ERROR: zrespM xsize %ld does not match wfsxsize %ld\n", (long) data.image[IDzrespM].md[0].size[0], (long) wfsxsize);
             exit(0);
         }
     if(data.image[IDzrespM].md[0].size[1]!=wfsysize)
         {
-            printf("ERROR: zrespM ysize %ld does not match wfsysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsysize);
+            printf("ERROR: zrespM ysize %ld does not match wfsysize %ld\n", (long) data.image[IDzrespM].md[0].size[1], (long) wfsysize);
             exit(0);
         }
      if(data.image[IDzrespM].md[0].size[2]!=dmxysize)
         {
-            printf("ERROR: zrespM zsize %ld does not match wfsxysize %ld\n", data.image[IDzrespM].md[0].size[1], wfsxysize);
+            printf("ERROR: zrespM zsize %ld does not match wfsxysize %ld\n", (long) data.image[IDzrespM].md[0].size[1], (long) wfsxysize);
             exit(0);
         }
     
@@ -10454,7 +10454,7 @@ int_fast8_t AOloopControl_run()
     {
         printf("Testing data type\n");
         fflush(stdout);
-        if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != USHORT)
+        if(data.image[aoconfID_pixstream_wfspixindex].md[0].atype != _DATATYPE_UINT16)
             COMPUTE_PIXELSTREAMING = 0;
     }
 
@@ -10464,8 +10464,8 @@ int_fast8_t AOloopControl_run()
         ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
         PIXSTREAM_NBSLICES = 0;
         for(ii=0; ii<xsize*ysize; ii++)
-            if(data.image[aoconfID_pixstream_wfspixindex].array.U[ii] > PIXSTREAM_NBSLICES)
-                PIXSTREAM_NBSLICES = data.image[aoconfID_pixstream_wfspixindex].array.U[ii];
+            if(data.image[aoconfID_pixstream_wfspixindex].array.UI16[ii] > PIXSTREAM_NBSLICES)
+                PIXSTREAM_NBSLICES = data.image[aoconfID_pixstream_wfspixindex].array.UI16[ii];
         PIXSTREAM_NBSLICES++;
         printf("PIXEL STREAMING:   %d image slices\n", PIXSTREAM_NBSLICES);
     }
@@ -10566,7 +10566,7 @@ int_fast8_t AOloopControl_run()
 
                 AOconf[loop].status = 12; // 12
                 clock_gettime(CLOCK_REALTIME, &tnow);
-                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
@@ -10614,7 +10614,7 @@ int_fast8_t AOloopControl_run()
 
                         AOconf[loop].status = 13; // enforce limits
                         clock_gettime(CLOCK_REALTIME, &tnow);
-                        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
                         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                         data.image[aoconfID_looptiming].array.F[13] = tdiffv;
 
@@ -10634,7 +10634,7 @@ int_fast8_t AOloopControl_run()
 
                         AOconf[loop].status = 14; // write to DM
                         clock_gettime(CLOCK_REALTIME, &tnow);
-                        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
                         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                         data.image[aoconfID_looptiming].array.F[14] = tdiffv;
 
@@ -10663,7 +10663,7 @@ int_fast8_t AOloopControl_run()
 
                 AOconf[loop].status = 18; // 18
                 clock_gettime(CLOCK_REALTIME, &tnow);
-                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[18] = tdiffv;
 
@@ -10764,7 +10764,7 @@ int_fast8_t set_DM_modes(long loop)
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);        
         AOconf[loop].status = 12; 
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
@@ -10846,7 +10846,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     // long long wcntmax;
     long cnttest;
     double a;
-    long *sizearray;
+    uint32_t *sizearray;
 
     float *matrix_cmp;
     long wfselem, act, mode;
@@ -10880,13 +10880,13 @@ int_fast8_t AOcompute(long loop, int normalize)
     // waiting for dark-subtracted image
     AOconf[loop].status = 19;  //  19: WAITING FOR IMAGE
     clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[aoconfID_looptiming].array.F[19] = tdiffv;//TBM
 
 
 
-    // md[0].wtime is absolute time at beginning of iteration
+    // md[0].atime is absolute time at beginning of iteration
     //
     // pixel 0 is dt since last iteration
     //
@@ -10907,7 +10907,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
     AOconf[loop].status = 4;  // 4: REMOVING REF
     clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[aoconfID_looptiming].array.F[4] = tdiffv;
 
@@ -10926,7 +10926,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
     AOconf[loop].status = 5; // 5 MULTIPLYING BY CONTROL MATRIX -> MODE VALUES
     clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[aoconfID_looptiming].array.F[5] = tdiffv;
 
@@ -10956,7 +10956,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                             WFS_active_map[slice*AOconf[loop].sizeWFS+ii1] = ii;
                             ii1++;
                         }
-                        else if (data.image[aoconfID_pixstream_wfspixindex].array.U[ii]==slice+1)
+                        else if (data.image[aoconfID_pixstream_wfspixindex].array.UI16[ii]==slice+1)
                         {
                             WFS_active_map[slice*AOconf[loop].sizeWFS+ii1] = ii;
                             ii1++;
@@ -10964,10 +10964,10 @@ int_fast8_t AOcompute(long loop, int normalize)
                     }
                 AOconf[loop].sizeWFS_active[slice] = ii1;
                 sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice);
-                sizearray = (long*) malloc(sizeof(long)*2);
+                sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 				sizearray[0] =  AOconf[loop].sizeWFS_active[slice];
 				sizearray[1] =  1;
-				aoconfID_imWFS2_active[slice] = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+				aoconfID_imWFS2_active[slice] = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 				free(sizearray);
                 //aoconfID_imWFS2_active[slice] = create_2Dimage_ID(imname, AOconf[loop].sizeWFS_active[slice], 1);
             }
@@ -10998,22 +10998,22 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 
-        sizearray = (long*) malloc(sizeof(long)*2);
+        sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
         sizearray[0] = AOconf[loop].sizeDM_active;
         sizearray[1] = 1;
         sprintf(imname, "aol%ld_meas_act_active", LOOPNUMBER);
-        aoconfID_meas_act_active = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+        aoconfID_meas_act_active = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
         free(sizearray);
 
 
 
         if(aoconfID_meas_act==-1)
         {
-            sizearray = (long*) malloc(sizeof(long)*2);
+            sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearray[0] = AOconf[loop].sizexDM;
             sizearray[1] = AOconf[loop].sizeyDM;
             sprintf(imname, "aol%ld_meas_act", LOOPNUMBER);
-            aoconfID_meas_act = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+            aoconfID_meas_act = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
             COREMOD_MEMORY_image_set_createsem(imname, 10);
             free(sizearray);
         }
@@ -11105,7 +11105,7 @@ int_fast8_t AOcompute(long loop, int normalize)
             AOconf[loop].status = 6; // 6 execute
 
             clock_gettime(CLOCK_REALTIME, &tnow);
-            tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+            tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
             data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
@@ -11126,7 +11126,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
-                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
@@ -11205,7 +11205,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 initcontrMcact_GPU[PIXSTREAM_SLICE] = 1;
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
-                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+                tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
                 data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
@@ -11235,7 +11235,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
     AOconf[loop].status = 11; // 11 MULTIPLYING BY GAINS
     clock_gettime(CLOCK_REALTIME, &tnow);
-    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].wtime, tnow);
+    tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime, tnow);
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[aoconfID_looptiming].array.F[11] = tdiffv;
 
@@ -11295,7 +11295,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     long iter;
     long NBiter=100;
     long NBmodes;
-    long *sizearray;
+    uint32_t *sizearray;
     long initWFSref = 0;
     
     long ID_WFSim;
@@ -11330,19 +11330,19 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     ID_WFSref = image_ID(ID_WFSref_name);
      
     
-    sizearray = (long*) malloc(sizeof(long)*2);    
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);    
     sizearray[0] = NBmodes;
     sizearray[1] = 1;
 
-    ID_coeff = create_image_ID(ID_coeff_name, 2, sizearray, FLOAT, 1, 0);
+    ID_coeff = create_image_ID(ID_coeff_name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(ID_coeff_name, 10);
     data.image[ID_coeff].md[0].cnt0 = 0;
    
-    ID_coefft = create_image_ID("coefftmp", 2, sizearray, FLOAT, 1, 0);
+    ID_coefft = create_image_ID("coefftmp", 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem("coefftmp", 10);
     
   
-    IDcoeff0 = create_image_ID("coeff0", 2, sizearray, FLOAT, 1, 0);
+    IDcoeff0 = create_image_ID("coeff0", 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     ID_WFSim_n = create_2Dimage_ID("wfsim_n", wfsxsize, wfsysize);
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 10);
     
@@ -11429,7 +11429,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 	float x, x2, x4, x8;
 	float gamma;
 	
-	long *sizearray;
+	uint32_t *sizearray;
 	char imnamecorr[200];
 	long IDmodesC;
 
@@ -11469,11 +11469,11 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 	NBmodes = data.image[IDmodecoeffs].md[0].size[0];
 
 
-	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sprintf(imnamecorr, "aol%ld_mode_limcorr", loop);
 	sizearray[0] = NBmodes;
 	sizearray[1] = 1;
-	IDmodesC = create_image_ID(imnamecorr, 2, sizearray, FLOAT, 1, 0);
+	IDmodesC = create_image_ID(imnamecorr, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imnamecorr, 10);
 	free(sizearray);
 
@@ -11634,7 +11634,7 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 {
 	long IDimWFS0, IDwfsref, IDwfsmask, IDtot, IDout, IDoutave, IDoutm, IDoutmave, IDoutrms;
 	char imname[200];
-	long *sizearray;
+	uint32_t *sizearray;
 	long wfsxsize, wfsysize, wfsxysize;
 	long cnt;
 	long ii;
@@ -11659,32 +11659,32 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 	wfsysize = data.image[IDimWFS0].md[0].size[1];
 	wfsxysize = wfsxsize*wfsysize;
 	
-	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sizearray[0] = wfsxsize;
 	sizearray[1] = wfsysize;
 	
 	sprintf(imname, "aol%ld_wfsres", loop);
-	IDout = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+	IDout = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 
 	sprintf(imname, "aol%ld_wfsres_ave", loop);
-	IDoutave = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+	IDoutave = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 	for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutave].array.F[ii] = 0.0;
 
 	sprintf(imname, "aol%ld_wfsresm", loop);
-	IDoutm = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+	IDoutm = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 
 	sprintf(imname, "aol%ld_wfsresm_ave", loop);
-	IDoutmave = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+	IDoutmave = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 	for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutave].array.F[ii] = 0.0;
 
 	sprintf(imname, "aol%ld_wfsres_rms", loop);
-	IDoutrms = create_image_ID(imname, 2, sizearray, FLOAT, 1, 0);
+	IDoutrms = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(imname, 10);
 	for(ii=0;ii<wfsxysize;ii++)
 			data.image[IDoutrms].array.F[ii] = 0.0;
@@ -11786,7 +11786,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long *modeblock;
 	long i, n, ID, m, blk, NBmodes;
 	unsigned int blockNBmodes[100];
-	long *sizeout;
+	uint32_t *sizeout;
 	float framelatency = 2.8;
 	long framelatency0, framelatency1;
 	long IDgainb;
@@ -11923,33 +11923,33 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 	// OUPUT
-	sizeout = (long*) malloc(sizeof(long)*2);
+	sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizeout[0] = NBmodes;
     sizeout[1] = 1;
 	sprintf(imname, "aol%ld_modeval_ol", loop);
-   	IDout = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+   	IDout = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
 	sprintf(imname, "aol%ld_mode_blknb", loop); // block indices
-   	IDblknb = create_image_ID(imname, 2, sizeout, USHORT, 1, 0);
+   	IDblknb = create_image_ID(imname, 2, sizeout, _DATATYPE_UINT16, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
  	sprintf(imname, "aol%ld_modeval_dm_now", loop); // current modal DM correction 
-   	IDmodevalDMnow = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+   	IDmodevalDMnow = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
 	sprintf(imname, "aol%ld_modeval_dm_now_filt", loop); // current modal DM correction, filtered 
-   	IDmodevalDMnowfilt = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+   	IDmodevalDMnowfilt = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
  
  
 	sprintf(imname, "aol%ld_modeval_dm", loop); // modal DM correction at time of currently available WFS measurement
-   	IDmodevalDM = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+   	IDmodevalDM = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
   	sizeout[1] = modevalDM_bsize;
  	sprintf(imname, "aol%ld_modeval_dm_C", loop); // modal DM correction, circular buffer
-   	IDmodevalDM_C = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+   	IDmodevalDM_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);     
 
 
@@ -11958,7 +11958,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	sizeout[0] = AOconf[loop].DMmodesNBblock;
 	sizeout[1] = 1;
 	sprintf(imname, "aol%ld_autotune_lim_bcoeff", loop);
-    IDatlimbcoeff = create_image_ID(imname, 2, sizeout, FLOAT, 1, 0);
+    IDatlimbcoeff = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
     free(sizeout);
@@ -11979,7 +11979,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			for(i=0;i<n;i++)
 				{
 					modeblock[m] = blk;
-					data.image[IDblknb].array.U[m] = blk;
+					data.image[IDblknb].array.UI16[m] = blk;
 					m++;
 				}
 			blk++;
@@ -12128,7 +12128,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[aoconfID_limitb].md[0].write = 1;
 				for(m=0; m<NBmodes; m++)
 					{
-						block = data.image[IDblknb].array.U[m];	
+						block = data.image[IDblknb].array.UI16[m];	
 						
 						if( fabs(AOconf[loop].AUTOTUNE_LIMITS_mcoeff*data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m]) 
 							data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 + AOconf[loop].AUTOTUNE_LIMITS_delta);
@@ -12173,7 +12173,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		{			
 			for(m=0;m<NBmodes;m++)
 			{
-				block = data.image[IDblknb].array.U[m];	
+				block = data.image[IDblknb].array.UI16[m];	
 				
 				if(data.image[IDmodevalDMnowfilt].array.F[m] > modelimit[m])
 					{
@@ -12264,7 +12264,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		// TELEMETRY
 		for(m=0;m<NBmodes;m++)
 		{
-			block = data.image[IDblknb].array.U[m];
+			block = data.image[IDblknb].array.UI16[m];
 			
 			blockaveOLrms[block] += data.image[IDout].array.F[m]*data.image[IDout].array.F[m];
 			blockaveCrms[block] += data.image[IDmodevalDMnow].array.F[m]*data.image[IDmodevalDMnow].array.F[m];
@@ -12378,7 +12378,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 
 	long IDout;
-	long *sizearray;
+	uint32_t *sizearray;
 
 	float gain0; // corresponds to evolution timescale
 	long cntstart;
@@ -12489,7 +12489,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	// write gain, mult into arrays
 	for(m=0;m<NBmodes;m++)
 		{
-			block = data.image[IDblk].array.U[m];
+			block = data.image[IDblk].array.UI16[m];
 			modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[block] * data.image[aoconfID_GAIN_modes].array.F[m];
 			modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[block] * data.image[aoconfID_MULTF_modes].array.F[m];
 			NOISEfactor[m] = 1.0 + modemult[m]*modemult[m]*modegain[m]*modegain[m]/(1.0-modemult[m]*modemult[m]);
@@ -12500,10 +12500,10 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 
 
-	sizearray = (long*) malloc(sizeof(long)*3);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
     sizearray[0] = NBmodes;
     sizearray[1] = 1;
-    IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+    IDout = create_image_ID(IDout_name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
 	free(sizearray);
 
@@ -13035,8 +13035,8 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	int cube;
 	
 	long IDout;
-	long *imsizearray;
-	int atype;
+	uint32_t *imsizearray;
+	uint8_t atype;
 	char imnameout[500];
 	long ii, kk;
 	long ave;
@@ -13103,7 +13103,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 	
 	printf("Create aol%ld_modevalol_PFb%ld  : %ld x 1 x %ld\n", loop, PFblock, PFblockSize, zsize);
 	fflush(stdout);
-	imsizearray = (long*) malloc(sizeof(long)*3);
+	imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 	imsizearray[0] = PFblockSize;
 	imsizearray[1] = 1;
 	imsizearray[2] = zsize;
@@ -14194,7 +14194,7 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
         printw("%4ld ", k);
         attroff(A_BOLD);
 
-        printw("[%5.3f %8.4f %5.3f] ", AOconf[loop].gain * data.image[aoconfID_gainb].array.F[data.image[IDblknb].array.U[k]] * data.image[aoconfID_GAIN_modes].array.F[k], 1000.0 * data.image[aoconfID_limitb].array.F[data.image[IDblknb].array.U[k]] * data.image[aoconfID_LIMIT_modes].array.F[k], AOconf[loop].mult * data.image[aoconfID_multfb].array.F[data.image[IDblknb].array.U[k]] * data.image[aoconfID_MULTF_modes].array.F[k]);
+        printw("[%5.3f %8.4f %5.3f] ", AOconf[loop].gain * data.image[aoconfID_gainb].array.F[data.image[IDblknb].array.UI16[k]] * data.image[aoconfID_GAIN_modes].array.F[k], 1000.0 * data.image[aoconfID_limitb].array.F[data.image[IDblknb].array.UI16[k]] * data.image[aoconfID_LIMIT_modes].array.F[k], AOconf[loop].mult * data.image[aoconfID_multfb].array.F[data.image[IDblknb].array.UI16[k]] * data.image[aoconfID_MULTF_modes].array.F[k]);
 
         // print current value on DM
         val = data.image[IDmodeval_dm].array.F[k];
@@ -14930,8 +14930,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     float minlatency, maxlatency;
 	double wfsdt;
 	
-	int atype;
-    long naxes[3];
+	uint8_t atype;
+    uint32_t naxes[3];
     
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -15065,7 +15065,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
             printf("[%8ld]  %f  %f\n", wfsframe, dt, dtmax);
             fflush(stdout);
             
-            if(atype == FLOAT)
+            if(atype == _DATATYPE_FLOAT)
             {
 				// copy image to cube slice
 				ptr = (char*) data.image[IDwfsc].array.F;
@@ -15073,12 +15073,12 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 				memcpy(ptr, data.image[IDwfs].array.F, sizeof(float)*wfssize);
 			}
 			
-			if(atype == USHORT)
+			if(atype == _DATATYPE_UINT16)
 			{
 				// copy image to cube slice
-				ptr = (char*) data.image[IDwfsc].array.U;
+				ptr = (char*) data.image[IDwfsc].array.UI16;
 				ptr += sizeof(short)*wfsframe*wfssize;
-				memcpy(ptr, data.image[IDwfs].array.U, sizeof(short)*wfssize);
+				memcpy(ptr, data.image[IDwfs].array.UI16, sizeof(short)*wfssize);
 			}
 			
             clock_gettime(CLOCK_REALTIME, &tarray[wfsframe]);
@@ -15119,16 +15119,16 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         for(kk=1; kk<NBwfsframe; kk++)
         {
             valarray[kk] = 0.0;
-            if(atype == FLOAT)
+            if(atype == _DATATYPE_FLOAT)
 				for(ii=0; ii<wfssize; ii++)
 				{
                 tmp = data.image[IDwfsc].array.F[kk*wfssize+ii] - data.image[IDwfsc].array.F[(kk-1)*wfssize+ii];
                 valarray[kk] += tmp*tmp;
 				}
-			if(atype == USHORT)
+			if(atype == _DATATYPE_UINT16)
 				for(ii=0; ii<wfssize; ii++)
 				{
-                tmp = data.image[IDwfsc].array.U[kk*wfssize+ii] - data.image[IDwfsc].array.U[(kk-1)*wfssize+ii];
+                tmp = data.image[IDwfsc].array.UI16[kk*wfssize+ii] - data.image[IDwfsc].array.UI16[(kk-1)*wfssize+ii];
                 valarray[kk] += 1.0*tmp*tmp;
 				}
             if(valarray[kk]>valmax)
@@ -15227,7 +15227,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 long AOloopControl_blockstats(long loop, const char *IDout_name)
 {
 	long IDout;
-	long *sizeout;
+	uint32_t *sizeout;
 	long NBmodes;
 	char fname[200];
 	long IDmodeval, ID;
@@ -15250,10 +15250,10 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	IDmodeval = read_sharedmem_image(fname);
 	NBmodes = data.image[IDmodeval].md[0].size[0];
 
-	sizeout = (long*) malloc(sizeof(long)*2);
+	sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizeout[0] = NBmodes;
     sizeout[1] = 1;
-   	IDout = create_image_ID(IDout_name, 2, sizeout, FLOAT, 1, 0);
+   	IDout = create_image_ID(IDout_name, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
        	
 	printf("%ld modes\n", NBmodes);
@@ -15287,11 +15287,11 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	sizeout[0] = NBblock;
 	sizeout[1] = 1;
 	sprintf(fname, "aol%ld_blockRMS", loop);
-	IDblockRMS = create_image_ID(fname, 2, sizeout, FLOAT, 1, 0);
+	IDblockRMS = create_image_ID(fname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(fname, 10);
 
 	sprintf(fname, "aol%ld_blockRMS_ave", loop);
-	IDblockRMS_ave = create_image_ID(fname, 2, sizeout, FLOAT, 1, 0);
+	IDblockRMS_ave = create_image_ID(fname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
 	COREMOD_MEMORY_image_set_createsem(fname, 10);
 	
 	
@@ -15446,37 +15446,37 @@ long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float am
     
     if(data.image[IDdmin].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_in_name, (long) data.image[IDdmin].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
     
     if(data.image[IDdmin].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_in_name, (long) data.image[IDdmin].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
     if(data.image[IDdmout].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, (long) data.image[IDdmout].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
     if(data.image[IDdmout].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_out_name, (long) data.image[IDdmout].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
    if(data.image[IDdmmask].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, (long) data.image[IDdmmask].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
     if(data.image[IDdmmask].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMmask_name, (long) data.image[IDdmmask].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
@@ -15656,49 +15656,49 @@ long AOloopControl_TestDMmodes_Recovery(const char *DMmodes_name, float ampl, co
 	//
     if(data.image[IDdmin].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: x size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_in_name, (long) data.image[IDdmin].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
     
     if(data.image[IDdmin].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_in_name, data.image[IDdmin].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_in_name, (long) data.image[IDdmin].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
     if(data.image[IDdmout].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_out_name, (long) data.image[IDdmout].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
     if(data.image[IDdmout].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_out_name, data.image[IDdmout].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_out_name, (long) data.image[IDdmout].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
     if(data.image[IDmeasout].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_meas_name, data.image[IDmeasout].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMstream_meas_name, (long) data.image[IDmeasout].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
     if(data.image[IDmeasout].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_meas_name, data.image[IDmeasout].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMstream_meas_name, (long) data.image[IDmeasout].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
    if(data.image[IDdmmask].md[0].size[0]!=data.image[IDmodes].md[0].size[0])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[0], DMmodes_name, data.image[IDmodes].md[0].size[0]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match x size of \"%s\" (%ld)\n", DMmask_name, (long) data.image[IDdmmask].md[0].size[0], DMmodes_name, (long) data.image[IDmodes].md[0].size[0]);
             exit(0);
         }
 
     if(data.image[IDdmmask].md[0].size[1]!=data.image[IDmodes].md[0].size[1])
         {
-            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMmask_name, data.image[IDdmmask].md[0].size[1], DMmodes_name, data.image[IDmodes].md[0].size[1]);
+            printf("ERROR: y size of \"%s\"  (%ld) does not match y size of \"%s\" (%ld)\n", DMmask_name, (long) data.image[IDdmmask].md[0].size[1], DMmodes_name, (long) data.image[IDmodes].md[0].size[1]);
             exit(0);
         }
 
@@ -16645,7 +16645,7 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
     
     if(dmsize != data.image[IDzrmin].md[0].size[2])
         {
-            printf("ERROR: total number of DM actuators (%ld) does not match zsize of RM (%ld)\n", dmsize, data.image[IDzrmin].md[0].size[2]);
+            printf("ERROR: total number of DM actuators (%ld) does not match zsize of RM (%ld)\n", dmsize, (long) data.image[IDzrmin].md[0].size[2]);
             exit(0);
         }
     
@@ -16656,7 +16656,7 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
     IDwfsin = image_ID(WFSinCname);
     if((data.image[IDwfsin].md[0].size[0] != wfsxsize) || (data.image[IDwfsin].md[0].size[1] != wfsysize) || (data.image[IDwfsin].md[0].size[2] != NBframes))
         {
-            printf("ERROR: size of WFS mask image \"%s\" (%ld %ld %ld) does not match expected size (%ld %ld %ld)\n", WFSmaskname, data.image[IDwfsin].md[0].size[0], data.image[IDwfsin].md[0].size[1], data.image[IDwfsin].md[0].size[2], wfsxsize, wfsysize, NBframes);
+            printf("ERROR: size of WFS mask image \"%s\" (%ld %ld %ld) does not match expected size (%ld %ld %ld)\n", WFSmaskname, (long) data.image[IDwfsin].md[0].size[0], (long) data.image[IDwfsin].md[0].size[1], (long) data.image[IDwfsin].md[0].size[2], wfsxsize, wfsysize, NBframes);
             exit(0);
         }
     
@@ -16664,7 +16664,7 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
     IDdmmask = image_ID(DMmaskname);
     if((data.image[IDdmmask].md[0].size[0] != dmxsize) || (data.image[IDdmmask].md[0].size[1] != dmysize))
     {
-        printf("ERROR: size of DM mask image \"%s\" (%ld %ld) does not match expected size (%ld %ld)\n", DMmaskname, data.image[IDdmmask].md[0].size[0], data.image[IDdmmask].md[0].size[1], dmxsize, dmysize);
+        printf("ERROR: size of DM mask image \"%s\" (%ld %ld) does not match expected size (%ld %ld)\n", DMmaskname, (long) data.image[IDdmmask].md[0].size[0], (long) data.image[IDdmmask].md[0].size[1], dmxsize, dmysize);
         exit(0);
     } 
     

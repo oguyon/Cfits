@@ -299,9 +299,9 @@ typedef struct
  * #endif
  * @endcode
  * 
- * @param logfuncMODE       Log mode, 0:entering function, 1:exiting function
- * @param FunctionName      Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
- * @param line              Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
+ * @param[in] logfuncMODE       Log mode, 0:entering function, 1:exiting function
+ * @param[in] FunctionName      Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
+ * @param[in] line              Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
  *
  * @return void
  * 

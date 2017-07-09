@@ -1,3 +1,17 @@
+/**
+ * @file    img_reduce.c
+ * @brief   Image analysis functions
+ * 
+ * Misc image analysis functions
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
 #include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
@@ -446,7 +460,7 @@ long IMG_REDUCE_cleanbadpix_fast_precompute(const char *IDmask_name)
 long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, const char *IDoutname)
 {
     long ID;
-    long *sizearray;
+    uint32_t *sizearray;
     long k;
     long xysize;
     long IDout;
@@ -454,7 +468,7 @@ long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, 
     long ii;
 
     ID = image_ID(IDname);
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = data.image[ID].md[0].size[0];
     sizearray[1] = data.image[ID].md[0].size[1];
     xysize = sizearray[0]*sizearray[1];
@@ -467,7 +481,7 @@ long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, 
     {
         printf("Creating output image\n");
         fflush(stdout);
-        IDout = create_image_ID(IDoutname, 2, sizearray, FLOAT, 1, 0);
+        IDout = create_image_ID(IDoutname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
         COREMOD_MEMORY_image_set_createsem(IDoutname, 2);
     }
     COREMOD_MEMORY_image_set_createsem(IDoutname, 2);

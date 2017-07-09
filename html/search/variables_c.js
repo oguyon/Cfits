@@ -2,7 +2,7 @@ var searchData=
 [
   ['n',['N',['../structGPUMATMULTCONF.html#addca9603324e5bd4b945f78efb755fb1',1,'GPUMATMULTCONF']]],
   ['name',['name',['../structAOLOOPCONTROL__CONF.html#a89011839e5092011c81356159f76b9ac',1,'AOLOOPCONTROL_CONF::name()'],['../structsymrec.html#a13b3ddedd56ed8a393dfd4b266bb81e1',1,'symrec::name()'],['../structMODULE.html#adecbd02b92ae79ddaaff7be512380dea',1,'MODULE::name()'],['../structVARIABLE.html#a40d583ae511f61e22f3ade6f130a7d58',1,'VARIABLE::name()'],['../structFPAOLOOPCONTROL__CONF.html#a86550778c9cc23e1f22d759b2acd0b1c',1,'FPAOLOOPCONTROL_CONF::name()'],['../structIMAGE__KEYWORD.html#aa0fef8b5fce4b24d792d0fc01df9dd8a',1,'IMAGE_KEYWORD::name()'],['../structIMAGE__METADATA.html#acf8d6cd7523aacfacb7639e83496a7b8',1,'IMAGE_METADATA::name()'],['../structIMAGE.html#ab141d7fe6a4c6c197f0200599f69b1f7',1,'IMAGE::name()'],['../structMaterialIndex.html#a9a1c2042061f01de2a32002bd779a630',1,'MaterialIndex::name()'],['../structOPTSYST.html#a34aa88e64500d7284c204080a5bad111',1,'OPTSYST::name()']]],
-  ['naxis',['naxis',['../structIMAGE__METADATA.html#a03a561578b6eab9c6566d5961944fb8e',1,'IMAGE_METADATA']]],
+  ['naxis',['naxis',['../structIMAGE__METADATA.html#a5585158d61a83d01513f928a497fb4f2',1,'IMAGE_METADATA']]],
   ['nb_5faplc_5fstep',['NB_APLC_STEP',['../coronagraphs_8c.html#a0fccf9c2adadd0a03307e7ac0032d693',1,'coronagraphs.c']]],
   ['nb_5fasphsurfm',['NB_asphsurfm',['../structOPTSYST.html#a42bf1a88cf3bc234c3ff551f7094be9e',1,'OPTSYST']]],
   ['nb_5fasphsurfr',['NB_asphsurfr',['../structOPTSYST.html#a1d1453dfab2f1a7d2cbd8c1a0f6b0174',1,'OPTSYST']]],
@@ -25,7 +25,7 @@ var searchData=
   ['nbelem',['NBelem',['../structOPTSYST.html#ab9532e90f1fa8a506d6316eac6dfd5ce',1,'OPTSYST']]],
   ['nbfmodes',['NBFmodes',['../structOPTPIAACMCDESIGN.html#ac46c632c680659b8c588701a497dbb4b',1,'OPTPIAACMCDESIGN']]],
   ['nbkeword_5fdft',['NBKEWORD_DFT',['../structDATA.html#aece2a33a30b5f15d8250cee2a8f0aa02',1,'DATA']]],
-  ['nbkw',['NBkw',['../structIMAGE__METADATA.html#a12440681e0015873b3c2534b710450e2',1,'IMAGE_METADATA']]],
+  ['nbkw',['NBkw',['../structIMAGE__METADATA.html#af514179095cc9d164f72753c6b33fb3b',1,'IMAGE_METADATA']]],
   ['nblambda',['nblambda',['../structOPTSYST.html#a984f1bc6e335c6ca935a7a4abc960351',1,'OPTSYST::nblambda()'],['../structOPTPIAACMCDESIGN.html#a02144a94930448a77754dee947a8600e',1,'OPTPIAACMCDESIGN::nblambda()']]],
   ['nblyotstop',['NBLyotStop',['../structOPTPIAACMCDESIGN.html#aacf0223dec146b41ded13305b83c8ba6',1,'OPTPIAACMCDESIGN']]],
   ['nbmodes_5fblock',['NBmodes_block',['../structAOLOOPCONTROL__CONF.html#a48ff0726345a4a682293cf1acddbd568',1,'AOLOOPCONTROL_CONF']]],
@@ -42,7 +42,7 @@ var searchData=
   ['nbtimers',['NBtimers',['../AOloopControl_8c.html#a6ddeb5df9aea7a9591c8e8fce7da51d8',1,'AOloopControl.c']]],
   ['ncoeff',['ncoeff',['../structASPHSURFR.html#a06a64705ac7cbc0d7e54467d9b91c039',1,'ASPHSURFR']]],
   ['nelem',['nelem',['../structTHDATA__IMTOTAL.html#a76ddea2173c5446db1f3af1494aaf696',1,'THDATA_IMTOTAL']]],
-  ['nelement',['nelement',['../structIMAGE__METADATA.html#af8b9bb6de5ffd1524a738b661ab566a9',1,'IMAGE_METADATA']]],
+  ['nelement',['nelement',['../structIMAGE__METADATA.html#a59e37101927d24d70d9e208de7a239ba',1,'IMAGE_METADATA']]],
   ['next',['next',['../structsymrec.html#a799aa9b5b3ee76aa0634b0ad96f80ea1',1,'symrec::next()'],['../structres__node.html#a218ec7f9710d71366f6ee1bcd647897b',1,'res_node::next()']]],
   ['noffset',['Noffset',['../structGPUMATMULTCONF.html#aa40dc58c23b77d4060e1d33030cd52f8',1,'GPUMATMULTCONF']]],
   ['normfloorcoeff',['normfloorcoeff',['../AOloopControl_8c.html#af07b9dabb5773557e308701892461165',1,'AOloopControl.c']]],
@@ -51,6 +51,6 @@ var searchData=
   ['nsecwait',['nsecwait',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#ab9dec2433b76227ace8aca7fc7663a7f',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['nsize',['Nsize',['../structGPUMATMULTCONF.html#af18ce43d7587a1d9c2ee3959a7034faf',1,'GPUMATMULTCONF']]],
   ['numf',['numf',['../structCMDARGTOKEN.html#a8f29c19d721dbe26248fc92c01c0e497',1,'CMDARGTOKEN::numf()'],['../structIMAGE__KEYWORD.html#ac90e9ede78d5bc3173c2a0adc0a5b0c5',1,'IMAGE_KEYWORD::numf()']]],
-  ['numl',['numl',['../structCMDARGTOKEN.html#a8ef8bd8dde032f117c7c316dee08a7c9',1,'CMDARGTOKEN::numl()'],['../structIMAGE__KEYWORD.html#a6b685359dddb142ca90215549108055d',1,'IMAGE_KEYWORD::numl()']]],
+  ['numl',['numl',['../structCMDARGTOKEN.html#a8ef8bd8dde032f117c7c316dee08a7c9',1,'CMDARGTOKEN::numl()'],['../structIMAGE__KEYWORD.html#aa2392d8778919d235b310bc09e6fde5c',1,'IMAGE_KEYWORD::numl()']]],
   ['numl0',['numl0',['../structTHDATA.html#a709f677a62df7e59ecb8969b5ab1f478',1,'THDATA']]]
 ];

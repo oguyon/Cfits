@@ -1,3 +1,19 @@
+/**
+ * @file    image_format.c
+ * @brief   Convert between image formats
+ * 
+ * read and write images other than FITS
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
+
 #include <stdint.h>
 #include <math.h>
 #include <stdio.h>
@@ -317,16 +333,16 @@ int IMAGE_FORMAT_im_to_ASCII(const char *IDname, const char *foutname)
         for(k=0; k<naxis; k++)
             fprintf(fpout, "%4ld ", coord[k]);
         switch ( data.image[ID].md[0].atype ) {
-        case CHAR:
-            fprintf(fpout, " %5d\n", data.image[ID].array.C[ii]);
+        case _DATATYPE_UINT8:
+            fprintf(fpout, " %5d\n", data.image[ID].array.UI8[ii]);
             break;
-        case INT:
-            fprintf(fpout, " %5d\n", data.image[ID].array.I[ii]);
+        case _DATATYPE_INT16:
+            fprintf(fpout, " %5d\n", data.image[ID].array.SI16[ii]);
             break;
-        case FLOAT:
+        case _DATATYPE_FLOAT:
             fprintf(fpout, " %f\n", data.image[ID].array.F[ii]);
             break;
-        case DOUBLE:
+        case _DATATYPE_DOUBLE:
             fprintf(fpout, " %lf\n", data.image[ID].array.D[ii]);
             break;
         }
@@ -2616,13 +2632,13 @@ long IMAGE_FORMAT_FITS_to_ushortintbin_lock( const char *IDname, const char *fna
 
   valarray = (unsigned short int*) malloc(sizeof(unsigned short int)*xsize*ysize);
 
-  if(data.image[ID].md[0].atype == FLOAT)
+  if(data.image[ID].md[0].atype == _DATATYPE_FLOAT)
     {
       printf("float -> unsigned short int array\n");
       for(ii=0;ii<xsize*ysize;ii++)
 	valarray[ii] = (unsigned short int) data.image[ID].array.F[ii];
     }
-  if(data.image[ID].md[0].atype == DOUBLE)
+  if(data.image[ID].md[0].atype == _DATATYPE_DOUBLE)
     {
       printf("double -> unsigned short int array\n");
       for(ii=0;ii<xsize*ysize;ii++)
@@ -2661,13 +2677,13 @@ long IMAGE_FORMAT_FITS_to_floatbin_lock(  const char *IDname, const char *fname 
 
   valarray = (float*) malloc(sizeof(float)*xsize*ysize);
 
-  if(data.image[ID].md[0].atype == FLOAT)
+  if(data.image[ID].md[0].atype == _DATATYPE_FLOAT)
     {
       printf("WRITING float array\n");
       for(ii=0;ii<xsize*ysize;ii++)
 	valarray[ii] = data.image[ID].array.F[ii];
     }
-  if(data.image[ID].md[0].atype == DOUBLE)
+  if(data.image[ID].md[0].atype == _DATATYPE_DOUBLE)
     {
       printf("WRITING double array\n");
       for(ii=0;ii<xsize*ysize;ii++)

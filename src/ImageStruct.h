@@ -1,12 +1,12 @@
 /**
  * @file    ImageStruct.h
- * @brief   Image structure definition
+ * @brief   Image structure definition 
  * 
  * The IMAGE structure is defined here
  * Supports shared memory, low latency IPC through semaphores
  * 
  * @author  O. Guyon
- * @date    24 Jun 2017
+ * @date    7 Jul 2017
  *
  * @bug No known bugs. 
  * 
@@ -24,14 +24,12 @@
 #include <semaphore.h>
 
 
-#define SHAREDMEMDIR "/tmp"        /**< loaction of file mapped semaphores */
+#define SHAREDMEMDIR "/tmp"        /**< location of file mapped semaphores */
 
 
-#define SEMAPHORE_MAX       1000   /**< maximum number of semaphores */
+//#define NB_SEMAPHORE_MAX    32     /**< maximum number of semaphores supported by IMAGE structure */
+
 #define SEMAPHORE_MAXVAL    10 	   /**< maximum value for each of the semaphore, mitigates warm-up time when processes catch up with data that has accumulated */
-
-
-
 
 
 
@@ -52,38 +50,104 @@ typedef struct
 
 
 
-/// Data types
-
-#define CHAR             1
-#define INT              2
-#define FLOAT            3
-#define DOUBLE           4
-#define COMPLEX_FLOAT    5
-#define COMPLEX_DOUBLE   6
-#define USHORT           7
-#define LONG             8
-
-/// default data type for float and complex float
-#define Dtype            3  
-#define CDtype           5
 
 
 
-
-
-/** The IMAGE structure includes :
- *   - an array of IMAGE_KEWORD structures
- *   - an array of IMAGE_METADATA structures (usually only 1 element)
+/** @brief Photon detection events
+ * 
+ * Log individual photon events on a 2D camera
+ * Timing resolution = 1us
+ * 
+ * Max detector size 256 x 256 pix
+ * Max "exposure" time is 2^16 us = 65.535 ms (15.28 Hz)
+ * Wavelength resolution set by keywords in frame:
+ *   LAMBDA_MIN, LAMBDA_MAX
+ * lambda = LAMBDA_MIN + (LAMBDA_MAX-LAMBDA_MIN)/256*lambda_index
+ *   
  */
-
-
 typedef struct
 {
-    char name[16];         /**< keyword name */
-    char type;             /**< N: unused, L: long, D: double, S: 16-char string */
+	uint8_t xpix;
+
+	uint8_t ypix;
+	
+	/** @brief Detection time since beginning of "exposure" [us] 
+	 *
+	 * Beginning of exposure is written to md[0].wtime
+	 *  */
+	uint16_t dtus;               
+	
+	uint8_t lambda_index;  
+
+} EVENT_UI8_UI8_UI16_UI8;
+
+
+
+
+
+// Data types are defined as machine-independent types for portability
+
+#define _DATATYPE_UINT8                                1  /**< uint8_t       = char */
+#define SIZEOF_DATATYPE_UINT8	                       1
+
+#define _DATATYPE_INT8                                 2  /**< int8_t   */
+#define SIZEOF_DATATYPE_INT8	                       1
+
+#define _DATATYPE_UINT16                               3  /**< uint16_t      usually = unsigned short int */
+#define SIZEOF_DATATYPE_UINT16	                       2
+
+#define _DATATYPE_INT16                                4  /**< int16_t       usually = short int          */
+#define SIZEOF_DATATYPE_INT16	                       2
+
+#define _DATATYPE_UINT32                               5  /**< uint32_t      usually = unsigned int       */
+#define SIZEOF_DATATYPE_UINT32	                       4
+
+#define _DATATYPE_INT32                                6  /**< int32_t       usually = int                */
+#define SIZEOF_DATATYPE_INT32	                       4
+
+#define _DATATYPE_UINT64                               7  /**< uint64_t      usually = unsigned long      */
+#define SIZEOF_DATATYPE_UINT64	                       8
+
+#define _DATATYPE_INT64                                8  /**< int64_t       usually = long               */
+#define SIZEOF_DATATYPE_INT64	                       8
+
+#define _DATATYPE_FLOAT                                9  /**< IEEE 754 single-precision binary floating-point format: binary32 */
+#define SIZEOF_DATATYPE_FLOAT	                       4
+
+#define _DATATYPE_DOUBLE                              10 /**< IEEE 754 double-precision binary floating-point format: binary64 */
+#define SIZEOF_DATATYPE_DOUBLE	                       8
+
+#define _DATATYPE_COMPLEX_FLOAT                       11  /**< complex_float  */
+#define SIZEOF_DATATYPE_COMPLEX_FLOAT	               8
+
+#define _DATATYPE_COMPLEX_DOUBLE                      12  /**< complex double */
+#define SIZEOF_DATATYPE_COMPLEX_DOUBLE	              16
+
+#define _DATATYPE_EVENT_UI8_UI8_UI16_UI8              20
+#define SIZEOF_DATATYPE_EVENT_UI8_UI8_UI16_UI8         5
+
+
+
+
+#define Dtype                                 9   /**< default data type for floating point */
+#define CDtype                               11  /**< default data type for complex */
+
+
+
+
+/** @brief  Keyword
+ * The IMAGE_KEYWORD structure includes :
+ * 	- name
+ * 	- type
+ * 	- value
+ */
+typedef struct
+{
+    char name[16];         /**< keyword name                                                   */
+    char type;             /**< N: unused, L: long, D: double, S: 16-char string               */
 
     union {
-        long numl;
+        int64_t numl;
         double numf;
         char valstr[16];
     } value;
@@ -95,65 +159,133 @@ typedef struct
 
 
 
+
 typedef struct
 {
-    char name[80];              /**< image name */
+    /** @brief Image Name */
+    char name[80];   
 
-    long naxis;                 /**< number of axis */
-    long size[3];               /**< image size */
-    long nelement;              /**< number of elements in image */
-    int atype;                  /**< data type code */
+	/** @brief Number of axis
+	 * 
+	 * @warning 1, 2 or 3. Values above 3 not allowed.   
+	 */
+    uint8_t naxis;                
+    
+    /** @brief Image size along each axis 
+     * 
+     *  If naxis = 1 (1D image), size[1] and size[2] are irrelevant
+     */
+    uint32_t size[3];               
 
-    double creation_time;       /**< creation time (since program start) */
-    double last_access;         /**< last time the image was accessed  (since program start) */
-    struct timespec wtime;
+	/** @brief Number of elements in image
+	 * 
+	 * This is computed upon image creation 
+	 */ 
+    uint64_t nelement;             
+    
+    /** @brief Data type
+     * 
+     * Encoded according to data type defines.
+     *  - 1: uint8_t
+     * 	- 2: int8_t
+     * 	- 3: uint16_t
+     * 	- 4: int16_t
+     * 	- 5: uint32_t
+     * 	- 6: int32_t
+     * 	- 7: uint64_t
+     * 	- 8: int64_t
+     * 	- 9: IEEE 754 single-precision binary floating-point format: binary32
+     *  - 10: IEEE 754 double-precision binary floating-point format: binary64
+     *  - 11: complex_float
+     *  - 12: complex double
+     * 
+     */
+    uint8_t atype;                 
 
-    int shared;                 /**< 1 if in shared memory */
+    double creation_time;           /**< creation time (since program start)                                          */
+    double last_access;             /**< last time the image was accessed  (since program start)                      */
+    struct timespec atime;          /**< Acquisition time (beginning of exposure                                      */
 
-    int write;               	/**< 1 if image is being written */
-    int status;              	/**< 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) */
-    long cnt0;               	/**< counter (incremented if image is updated) */
-    long cnt1;               	/**< in 3D rolling buffer image, this is the last slice written */
+    uint8_t shared;                 /**< 1 if in shared memory                                                        */
 
-    long NBkw;                  /**< number of keywords */
+    uint8_t  write;               	/**< 1 if image is being written                                                  */
+    uint8_t  status;              	/**< 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) */
+    uint64_t cnt0;               	/**< counter (incremented if image is updated)                                    */
+    uint64_t cnt1;               	/**< in 3D rolling buffer image, this is the last slice written                   */
 
+    uint16_t NBkw;                  /**< number of keywords (max: 65536)                                              */
+    
 } IMAGE_METADATA;
 
 
 
+ 
 
-
-
-typedef struct          		/**< structure used to store data arrays */
+/** @brief  
+ * The IMAGE structure includes :
+ *   - an array of IMAGE_KEWORD structures
+ *   - an array of IMAGE_METADATA structures (usually only 1 element)
+ */
+typedef struct          		/**< structure used to store data arrays                      */
 {
-    int used;
-    int shmfd;		 			/**< if shared memory, file descriptor */
-    size_t memsize; 			/**< total size in memory if shared */
+    char name[80]; 				/**< local name (can be different from name in shared memory) */
+    
+    /** @brief Image usage flag
+     * 
+     * 1 if image is used, 0 otherwise. \n
+     * This flag is used when an array of IMAGE type is held in memory as a way to store multiple images. \n
+     * When an image is freed, the corresponding memory (in array) is freed and this flag set to zero. \n
+     * The active images can be listed by looking for IMAGE[i].used==1 entries.\n
+     * 
+     */
+    uint8_t used;              
+    
+    int32_t shmfd;		     	        /**< if shared memory, file descriptor */
+    uint64_t memsize; 			        /**< total size in memory if shared    */
+
+	uint8_t logflag;                    /**< set to 1 to start logging         */
+    sem_t *semlog; 				        /**< pointer to semaphore for logging  (8 bytes on 64-bit system) */
+
+
 
     IMAGE_METADATA *md;			
 
+
+	/** @brief data storage array
+	 * 
+	 * The array is declared as a union, so that multiple data types can be supported \n
+	 * 
+	 * @note Up to this point, all members of the structure have a fixed memory offset to the start point
+	 */ 
     union
     {
-        char *C;
-        int *I;
-        long *L;
+        uint8_t *UI8;  // char
+        int8_t  *SI8;   
+
+        uint16_t *UI16; // unsigned short
+        int16_t *SI16;  
+
+        uint32_t *UI32;
+        int32_t *SI32;   // int
+
+        uint64_t *UI64;        
+        int64_t *SI64; // long
+
         float *F;
         double *D;
+        
         complex_float *CF;
         complex_double *CD;
-        unsigned short int *U;
+
+		EVENT_UI8_UI8_UI16_UI8 *event1121;
     } array;                 	/**< pointer to data array */
 
+
+    uint16_t sem; 				        /**< number of semaphores in use, specified at image creation      */
+    sem_t **semptr;	                    /**< array of pointers to semaphores   (each 8 bytes on 64-bit system) */
+
     IMAGE_KEYWORD *kw;
-
-    int sem; 					/**< number of semaphores in use     */
-    sem_t **semptr; 			/**< semaphore array */
-
-    sem_t *semlog; 				/**< semaphore for logging */
     
-    
-    char name[80]; 				/**< local name (can be different from name in shared memory) */
-
 } IMAGE;
 
 

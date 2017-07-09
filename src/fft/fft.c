@@ -1,3 +1,19 @@
+/**
+ * @file    fft.c
+ * @brief   Fourier Transform
+ * 
+ * Wrapper to fftw
+ *  
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
+
+
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
@@ -613,7 +629,7 @@ int permut(const char *ID_name)
 
     tmp=0;
 
-    if(atype==FLOAT)
+    if(atype==_DATATYPE_FLOAT)
     {
         if(naxis==1)
         {
@@ -656,7 +672,7 @@ int permut(const char *ID_name)
         }
     }
 
-    if(atype==DOUBLE)
+    if(atype==_DATATYPE_DOUBLE)
     {
         if(naxis==1)
         {
@@ -699,7 +715,7 @@ int permut(const char *ID_name)
         }
     }
 
-    if(atype==COMPLEX_FLOAT)
+    if(atype==_DATATYPE_COMPLEX_FLOAT)
     {
         if(naxis==1)
         {
@@ -745,7 +761,7 @@ int permut(const char *ID_name)
         }
     }
 
-   if(atype==COMPLEX_DOUBLE)
+   if(atype==_DATATYPE_COMPLEX_DOUBLE)
     {
         if(naxis==1)
         {
@@ -872,7 +888,7 @@ int array_index(long size)
 long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
 {
     int *naxes;
-    long *naxesl;
+    uint32_t *naxesl;
     long naxis;
     long IDin, IDout;
     long i;
@@ -887,10 +903,10 @@ long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
     IDin=image_ID(in_name);
     naxis=data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
-    naxesl = (long *) malloc(naxis*sizeof(long));
+    naxesl = (uint32_t *) malloc(naxis*sizeof(uint32_t));
     for (i=0; i<naxis; i++)
     {
-        naxesl[i]= (long) data.image[IDin].md[0].size[i];
+        naxesl[i]= data.image[IDin].md[0].size[i];
         naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
 	atype = data.image[IDin].md[0].atype;
@@ -901,7 +917,7 @@ long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
         if(array_index(naxes[0])!=100)
         {
             OK=1;
-            if(atype == COMPLEX_FLOAT)
+            if(atype == _DATATYPE_COMPLEX_FLOAT)
 				{
 					plan = fftwf_plan_dft_1d(naxes[0], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, dir, FFTWOPTMODE);
 					fftwf_execute(plan);
@@ -917,7 +933,7 @@ long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
         else
         {
             OK=1;
-            if(atype == COMPLEX_FLOAT)
+            if(atype == _DATATYPE_COMPLEX_FLOAT)
 				{
 					plan = fftwf_plan_dft_1d(naxes[0], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, dir, FFTWOPTMODE);
 					fftwf_execute(plan);
@@ -937,7 +953,7 @@ long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
         if((naxes[1]==1)&&(array_index(naxes[0])!=100))
         {
             OK=1;
-            if(atype == COMPLEX_FLOAT)
+            if(atype == _DATATYPE_COMPLEX_FLOAT)
             {
 				inptr = (fftwf_complex*) data.image[IDin].array.CF;
 				outptr = (fftwf_complex*) data.image[IDout].array.CF;
@@ -957,7 +973,7 @@ long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
         else
         {
             OK=1;
-            if(atype == COMPLEX_FLOAT)
+            if(atype == _DATATYPE_COMPLEX_FLOAT)
             {
 				inptr = (fftwf_complex*) malloc(sizeof(fftwf_complex)*naxes[0]);
 				outptr = (fftwf_complex*) malloc(sizeof(fftwf_complex)*naxes[0]);
@@ -1009,8 +1025,8 @@ long FFT_do1dfft(const char *in_name, const char *out_name, int dir)
 long do1drfft(const char *in_name, const char *out_name)
 {
     int *naxes;
-    long *naxesl;
-    long *naxesout;
+    uint32_t *naxesl;
+    uint32_t *naxesout;
     long naxis;
     long IDin, IDout, IDtmp;
     long i;
@@ -1030,14 +1046,14 @@ long do1drfft(const char *in_name, const char *out_name)
     IDin = image_ID(in_name);
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
-    naxesl = (long *) malloc(naxis*sizeof(long));
-    naxesout = (long *) malloc(naxis*sizeof(long));
+    naxesl = (uint32_t *) malloc(naxis*sizeof(uint32_t));
+    naxesout = (uint32_t *) malloc(naxis*sizeof(uint32_t));
 
 	atype = data.image[IDin].md[0].atype;
 
     for (i=0; i<naxis; i++)
     {
-        naxesl[i]= (long) data.image[IDin].md[0].size[i];
+        naxesl[i]= data.image[IDin].md[0].size[i];
         naxes[i]= (int) data.image[IDin].md[0].size[i];
         naxesout[i]=data.image[IDin].md[0].size[i];
         if(i==0)
@@ -1053,17 +1069,17 @@ long do1drfft(const char *in_name, const char *out_name)
    // IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, CDtype, data.SHARED_DFT, data.NBKEWORD_DFT);
 
 
-	if(atype == FLOAT)
-		IDout = create_image_ID(out_name, naxis, naxesout, COMPLEX_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
+	if(atype == _DATATYPE_FLOAT)
+		IDout = create_image_ID(out_name, naxis, naxesout, _DATATYPE_COMPLEX_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT);
 	else
-		IDout = create_image_ID(out_name, naxis, naxesout, COMPLEX_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
+		IDout = create_image_ID(out_name, naxis, naxesout, _DATATYPE_COMPLEX_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
 
     if(naxis==2)
     {
         if((naxes[1]==1)&&(array_index(naxes[0])!=100))
         {
             OK=1;
-            if(atype == FLOAT)
+            if(atype == _DATATYPE_FLOAT)
             {
 				plan = fftwf_plan_dft_r2c_1d(naxes[0], data.image[IDin].array.F, (fftwf_complex*) data.image[IDout].array.CF, FFTWOPTMODE);
 				fftwf_execute(plan);
@@ -1079,7 +1095,7 @@ long do1drfft(const char *in_name, const char *out_name)
         else
         {
             OK=1;
-            if(atype == FLOAT)
+            if(atype == _DATATYPE_FLOAT)
             {
 				inptr = (float*) malloc(sizeof(float)*naxes[0]);
 				outptr = (fftwf_complex*) malloc(sizeof(fftwf_complex)*naxes[0]);
@@ -1158,7 +1174,7 @@ long do1dffti(const char *in_name, const char *out_name)
 long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
 {
     int *naxes;
-    long *naxesl;
+    uint32_t *naxesl;
     long naxis;
     long IDin,IDout;
     long i;
@@ -1176,7 +1192,7 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
     IDin = image_ID(in_name);
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
-    naxesl = (long *) malloc(naxis*sizeof(long));
+    naxesl = (uint32_t *) malloc(naxis*sizeof(uint32_t));
 
     for (i=0; i<naxis; i++)
     {
@@ -1198,7 +1214,7 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
     {
         OK=1;
         
-        if(atype == COMPLEX_FLOAT)
+        if(atype == _DATATYPE_COMPLEX_FLOAT)
         {
 			plan = fftwf_plan_dft_2d(naxes[0],naxes[1], (fftwf_complex*) data.image[IDin].array.CF, (fftwf_complex*) data.image[IDout].array.CF, dir, FFTWOPTMODE);
 			if(plan==NULL)
@@ -1249,7 +1265,7 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
     if(naxis==3)
     {
         OK=1;
-		if(atype == COMPLEX_FLOAT)
+		if(atype == _DATATYPE_COMPLEX_FLOAT)
         {
 			plan = fftwf_plan_many_dft(2,naxes,naxes[2],(fftwf_complex*) data.image[IDin].array.CF,NULL, 1, naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL, 1 ,naxes[0]*naxes[1], dir, FFTWOPTMODE);
 			if(plan==NULL)
@@ -1422,9 +1438,9 @@ int pupfft(const char *ID_name_ampl, const char *ID_name_pha, const char *ID_nam
 // supports single and double precisions
 long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
 {
-    int *naxes;
-    long *naxesl;
-    long *naxestmp;
+    int *naxes;  // int format for fftw 
+    uint32_t *naxesl;
+    uint32_t *naxestmp;
 
     long naxis;
     long IDin,IDout,IDtmp;
@@ -1448,8 +1464,8 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
     atype = data.image[IDin].md[0].atype;
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
-    naxesl = (long *) malloc(naxis*sizeof(long));
-    naxestmp = (long *) malloc(naxis*sizeof(long));
+    naxesl = (uint32_t *) malloc(naxis*sizeof(uint32_t));
+    naxestmp = (uint32_t *) malloc(naxis*sizeof(uint32_t));
 
 
 
@@ -1457,7 +1473,7 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
     for (i=0; i<naxis; i++)
     {
         naxes[i] = (int) data.image[IDin].md[0].size[i];
-        naxesl[i] = (long) data.image[IDin].md[0].size[i];
+        naxesl[i] = (uint32_t) data.image[IDin].md[0].size[i];
         naxestmp[i] = data.image[IDin].md[0].size[i];
         if(i==0)
             naxestmp[i] = data.image[IDin].md[0].size[i]/2+1;
@@ -1467,10 +1483,10 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-	if(atype==FLOAT)
-		atypeout = COMPLEX_FLOAT;
+	if(atype==_DATATYPE_FLOAT)
+		atypeout = _DATATYPE_COMPLEX_FLOAT;
 	else
-		atypeout = COMPLEX_DOUBLE;
+		atypeout = _DATATYPE_COMPLEX_DOUBLE;
 
     IDtmp = create_image_ID(ffttmpname, naxis, naxestmp, atypeout, data.SHARED_DFT, data.NBKEWORD_DFT);
 
@@ -1479,9 +1495,9 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
     if(naxis==2)
     {
         OK=1;
-        if(atype==FLOAT)
+        if(atype==_DATATYPE_FLOAT)
         {
-            plan = fftwf_plan_dft_r2c_2d(naxes[1], naxes[0], data.image[IDin].array.F, (fftwf_complex*) data.image[IDtmp].array.CF, FFTWOPTMODE);
+            plan = fftwf_plan_dft_r2c_2d((int) naxes[1], (int) naxes[0], data.image[IDin].array.F, (fftwf_complex*) data.image[IDtmp].array.CF, FFTWOPTMODE);
             if(plan==NULL)
             {
                 // if ( Debug > 2)
@@ -1574,9 +1590,9 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
         naxes[0] = naxes[1];
         naxes[1] = tmp1;
 
-        if(atype==FLOAT)
+        if(atype==_DATATYPE_FLOAT)
         {
-            plan = fftwf_plan_many_dft_r2c(2,naxes,naxes[2],data.image[IDin].array.F,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],FFTWOPTMODE);
+            plan = fftwf_plan_many_dft_r2c(2, naxes, naxes[2], data.image[IDin].array.F, NULL, 1, naxes[0]*naxes[1], (fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],FFTWOPTMODE);
             if(plan==NULL)
             {
                 //	  if ( Debug > 2) fprintf(stdout,"New FFT size [do2drfft %d x %d x %d]: optimizing ...",naxes[1],naxes[0],naxes[2]);
@@ -1587,7 +1603,7 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
                     printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
                 copy_image_ID(in_name, ffttmpcpyname, 0);
 
-                plan = fftwf_plan_many_dft_r2c(2,naxes,naxes[2],data.image[IDin].array.F,NULL,1,naxes[0]*naxes[1],(fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],FFTWOPTMODE);
+                plan = fftwf_plan_many_dft_r2c(2, naxes, naxes[2], data.image[IDin].array.F, NULL, 1, naxes[0]*naxes[1], (fftwf_complex*) data.image[IDout].array.CF,NULL,1,naxes[0]*naxes[1],FFTWOPTMODE);
 
                 copy_image_ID(ffttmpcpyname, in_name, 0);
                 delete_image_ID(ffttmpcpyname);

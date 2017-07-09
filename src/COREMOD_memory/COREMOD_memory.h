@@ -10,7 +10,6 @@
  * 
  * @bug No known bugs.
  * 
- * @see https://github.com/oguyon/Cfits
  */
 
 
@@ -90,7 +89,7 @@ long create_variable_long_ID(const char *name, long value);
 
 long create_variable_string_ID(const char *name, const char *value);
 
-long create_image_ID(const char *name, long naxis, long *size, int atype, int shared, int nbkw);
+long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int nbkw);
 
 
  
@@ -107,22 +106,22 @@ long image_read_keyword_L(const char *IDname, const char *kname, long *val);
 long read_sharedmem_image_size(const char *name, const char *fname);
 long read_sharedmem_image(const char *name);
 
-long create_1Dimage_ID(const char *ID_name, long xsize);
+long create_1Dimage_ID(const char *ID_name, uint32_t xsize);
 
-long create_1DCimage_ID(const char *ID_name, long xsize);
+long create_1DCimage_ID(const char *ID_name, uint32_t xsize);
 
-long create_2Dimage_ID(const char *ID_name, long xsize, long ysize);
+long create_2Dimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize);
 
-long create_2Dimage_ID_double(const char *ID_name, long xsize, long ysize);
+long create_2Dimage_ID_double(const char *ID_name, uint32_t xsize, uint32_t ysize);
 
-long create_2DCimage_ID(const char *ID_name, long xsize, long ysize);
-long create_2DCimage_ID_double(const char *ID_name, long xsize, long ysize);
+long create_2DCimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize);
+long create_2DCimage_ID_double(const char *ID_name, uint32_t xsize, uint32_t ysize);
 
-long create_3Dimage_ID(const char *ID_name, long xsize, long ysize, long zsize);
+long create_3Dimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize, uint32_t zsize);
 
-long create_3Dimage_ID_double(const char *ID_name, long xsize, long ysize, long zsize);
+long create_3Dimage_ID_double(const char *ID_name, uint32_t xsize, uint32_t ysize, uint32_t zsize);
 
-long create_3DCimage_ID(const char *ID_name, long xsize, long ysize, long zsize);
+long create_3DCimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize, uint32_t zsize);
 
 long copy_image_ID(const char *name, const char *newname, int shared);
 
@@ -158,16 +157,16 @@ int_fast8_t mk_amph_from_reim(const char *re_name, const char *im_name, const ch
 
 int_fast8_t clearall();
 
-int_fast8_t check_2Dsize(const char *ID_name, long xsize, long ysize);
+int_fast8_t check_2Dsize(const char *ID_name, uint32_t xsize, uint32_t ysize);
 
-int_fast8_t check_3Dsize(const char *ID_name, long xsize, long ysize, long zsize);
+int_fast8_t check_3Dsize(const char *ID_name, uint32_t xsize, uint32_t ysize, uint32_t zsize);
 
 int_fast8_t rotate_cube(const char *ID_name, const char *ID_out_name, int orientation);
 
 long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname);
 
-long COREMOD_MEMORY_check_2Dsize(const char *IDname, long xsize, long ysize);
-long COREMOD_MEMORY_check_3Dsize(const char *IDname, long xsize, long ysize, long zsize);
+long COREMOD_MEMORY_check_2Dsize(const char *IDname, uint32_t xsize, uint32_t ysize);
+long COREMOD_MEMORY_check_3Dsize(const char *IDname, uint32_t xsize, uint32_t ysize, uint32_t zsize);
 
 
 long COREMOD_MEMORY_image_set_status(const char *IDname, int status);
@@ -234,7 +233,7 @@ long COREMOD_MEMORY_SaveAll_sequ(const char *dirname, const char *IDtrig_name, l
 long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr, int port, int mode, int RT_priority);
 long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority);
 
-long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, long xsizeim, long ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname);
+long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizeim, uint32_t ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname);
 
 
 /* ========================================================================================================================================= */
@@ -245,6 +244,6 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, long xsizeim, l
 int_fast8_t COREMOD_MEMORY_logshim_printstatus(const char *IDname);
 int_fast8_t COREMOD_MEMORY_logshim_set_on(const char *IDname, int setv);
 int_fast8_t COREMOD_MEMORY_logshim_set_logexit(const char *IDname, int setv);
-long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, const char *logdir, const char *IDlogdata_name);
+long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, uint32_t zsize, const char *logdir, const char *IDlogdata_name);
 
 #endif

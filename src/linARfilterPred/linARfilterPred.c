@@ -5,7 +5,7 @@
  * Implements Empirical Orthogonal Functions
  *  
  * @author  O. Guyon
- * @date    5 Jul 2017
+ * @date    7 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -511,7 +511,7 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
 	long naxis, axis;
 	long m;
 	long NBmodes1;
-	long *sizearray;
+	uint32_t *sizearray;
 	long xsize, ysize, zsize;
 	long cnt;
 	long ii, jj, kk;
@@ -542,19 +542,19 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
 	NBmodes1 = 0;
 	for(m=0;m<mmax;m++)
 		{
-			if(data.image[IDblknb].array.U[m] == blkNB)
+			if(data.image[IDblknb].array.UI16[m] == blkNB)
 				NBmodes1++;
 		}
 
 	
-	sizearray = (long*) malloc(sizeof(long)*naxis);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*naxis);
 	
 	for(axis=0;axis<naxis;axis++)
 		sizearray[axis] = data.image[IDin].md[0].size[axis];
 	sizearray[0] = NBmodes1;
 
 
-	IDout = create_image_ID(IDout_name, naxis, sizearray, FLOAT, 0, 0);
+	IDout = create_image_ID(IDout_name, naxis, sizearray, _DATATYPE_FLOAT, 0, 0);
 	
 	
 	xsize = data.image[IDin].md[0].size[0];
@@ -574,7 +574,7 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
 	for(jj=0;jj<ysize;jj++)
 		for(kk=0;kk<zsize;kk++)
 			for(ii=0;ii<mmax;ii++)
-				if(data.image[IDblknb].array.U[ii] == blkNB)
+				if(data.image[IDblknb].array.UI16[ii] == blkNB)
 						{
 							//printf("%ld / %ld   cnt = %8ld / %ld\n", ii, xsize, cnt, NBmodes1*ysize*zsize);
 							//fflush(stdout);
@@ -669,7 +669,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
     long NBiter, iter;
     long semtrig = 2;
-    long *imsizearray;
+    uint32_t *imsizearray;
     float gain;
 
     char fname[200];
@@ -965,19 +965,19 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         {
             if(iter==0) // create 2D and 3D filters as shared memory
             {
-                imsizearray = (long*) malloc(sizeof(long)*2);
+                imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
                 imsizearray[0] = NBpixin*PForder;
                 imsizearray[1] = NBpixout;
-                IDoutPF2D = create_image_ID(IDoutPF_name, 2, imsizearray, FLOAT, 1, 1);
+                IDoutPF2D = create_image_ID(IDoutPF_name, 2, imsizearray, _DATATYPE_FLOAT, 1, 1);
                 free(imsizearray);
                 COREMOD_MEMORY_image_set_semflush(IDoutPF_name, -1);
 
 
-                imsizearray = (long*) malloc(sizeof(long)*3);
+                imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
                 imsizearray[0] = xysize;
                 imsizearray[1] = xysize;
                 imsizearray[2] = PForder;
-                IDoutPF3D = create_image_ID(IDoutPF_name3D, 3, imsizearray, FLOAT, 1, 1);
+                IDoutPF3D = create_image_ID(IDoutPF_name3D, 3, imsizearray, _DATATYPE_FLOAT, 1, 1);
                 free(imsizearray);
                 COREMOD_MEMORY_image_set_semflush(IDoutPF_name3D, -1);
             }
@@ -1146,7 +1146,7 @@ long LINARFILTERPRED_Apply_LinPredictor_RT(const char *IDfilt_name, const char *
 	long PForder;
 	long NBpix_in;
 	long NBpix_out;
-	long *imsizearray;
+	uint32_t*imsizearray;
 	int semtrig = 7;
 	
 	float *inarray;
@@ -1175,10 +1175,10 @@ long LINARFILTERPRED_Apply_LinPredictor_RT(const char *IDfilt_name, const char *
 	
 	printf("Create prediction output %s\n", IDout_name);
 	fflush(stdout);
-	imsizearray = (long*) malloc(sizeof(long)*2);
+	imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	imsizearray[0] = NBpix_out;
 	imsizearray[1] = 1;
-	IDout = create_image_ID(IDout_name, 2, imsizearray, FLOAT, 1, 1);
+	IDout = create_image_ID(IDout_name, 2, imsizearray, _DATATYPE_FLOAT, 1, 1);
 	free(imsizearray);
 	COREMOD_MEMORY_image_set_semflush(IDout_name, -1);
 	printf("Done\n");
@@ -1347,7 +1347,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_
 	long inmode, NBmode, outmode, NBmode2;
 	long tstep, NBtstep;
 
-	long *sizearray;
+	uint32_t *sizearray;
 	long naxis;
 	
 	
@@ -1359,7 +1359,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_
 	assert( data.image[IDPF].md[0].size[0] == data.image[IDPF].md[0].size[1]);
 	NBtstep = data.image[IDPF].md[0].size[2];
 	
-	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sizearray[0] = NBmode*NBtstep;
 	sizearray[1] = NBmode;
 	naxis = 2;
@@ -1368,9 +1368,9 @@ long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_
 	
 	if(IDPFM==-1)
 		{
-			printf("Creating shared mem image %s  [ %ld  x  %ld ]\n", IDPFM_name, sizearray[0], sizearray[1]);
+			printf("Creating shared mem image %s  [ %ld  x  %ld ]\n", IDPFM_name, (long) sizearray[0], (long) sizearray[1]);
 			fflush(stdout);
-			IDPFM = create_image_ID(IDPFM_name, naxis, sizearray, FLOAT, 1, 0);
+			IDPFM = create_image_ID(IDPFM_name, naxis, sizearray, _DATATYPE_FLOAT, 1, 0);
 		}
 	free(sizearray);
 	
@@ -1415,7 +1415,7 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	
 	long IDINbuff;
 	long tstep;
-	long *sizearray;
+	uint32_t *sizearray;
 	long naxis;
 
 	long IDPFout;
@@ -1545,14 +1545,14 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	
 	IDINbuff = create_2Dimage_ID("INbuffer", NBmodeIN, NBPFstep);
 	
-	sizearray = (long*) malloc(sizeof(long)*2);
+	sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 	sizearray[0] = NBmodeOUT;
 	sizearray[1] = 1;
 	naxis = 2;
 	IDPFout = image_ID(IDPFout_name);
 
 	if(IDPFout==-1)
-		IDPFout = create_image_ID(IDPFout_name, naxis, sizearray, FLOAT, 1, 0);
+		IDPFout = create_image_ID(IDPFout_name, naxis, sizearray, _DATATYPE_FLOAT, 1, 0);
 	free(sizearray);
 	
 	

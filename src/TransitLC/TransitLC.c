@@ -129,7 +129,7 @@ long TransitLC_mkLC(const char *IDpl_name, const char *IDout_name)
 	
 	
 	IDpl = image_ID(IDpl_name);
-	printf("Creating planetary transits (%ld planets) ...", data.image[IDpl].md[0].size[1]);
+	printf("Creating planetary transits (%ld planets) ...", (long) data.image[IDpl].md[0].size[1]);
 	NBpl = data.image[IDpl].md[0].size[0];
 	for(pl=0;pl<NBpl;pl++)
 		{

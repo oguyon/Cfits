@@ -1,3 +1,19 @@
+/**
+ * @file    FPAOloopControl.c
+ * @brief   Focal Plane AO control 
+ * 
+ * Wavefront control for high contrast imaging
+ * Uses focal plane image(s) as wavefront sensor
+ * 
+ * @author  O. Guyon
+ * @date    7 Jul 2017
+ *
+ * @bug No known bugs. 
+ * 
+ */
+
+
+
 #define _GNU_SOURCE
 
 #include <stdint.h>
@@ -668,13 +684,13 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
     }
 
     switch (WFSatype) {
-    case FLOAT :
+    case _DATATYPE_FLOAT :
         ptrv = (char*) data.image[FPaoconfID_wfsim].array.F;
         ptrv += sizeof(float)*slice* FPAOconf[loop].sizeWFS;
         memcpy(arrayftmp, ptrv,  sizeof(float)*FPAOconf[loop].sizeWFS);
         break;
-    case USHORT :
-        ptrv = (char*) data.image[FPaoconfID_wfsim].array.U;
+    case _DATATYPE_UINT16 :
+        ptrv = (char*) data.image[FPaoconfID_wfsim].array.UI16;
         ptrv += sizeof(unsigned short)*slice* FPAOconf[loop].sizeWFS;
         memcpy (arrayutmp, ptrv, sizeof(unsigned short)*FPAOconf[loop].sizeWFS);
         break;
@@ -693,7 +709,7 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
 	nelem = FPAOconf[loop].sizeWFS;
 	
         switch ( WFSatype ) {
-        case USHORT :
+        case _DATATYPE_UINT16 :
 # ifdef _OPENMP
             #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
         {
@@ -708,7 +724,7 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
         }
 # endif
         break;
-        case FLOAT :
+        case _DATATYPE_FLOAT :
 # ifdef _OPENMP
             #pragma omp parallel num_threads(8) if (nelem>OMP_NELEMENT_LIMIT)
         {

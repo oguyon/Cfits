@@ -1,3 +1,17 @@
+/**
+ * @file    SCExAO_control.c
+ * @brief   misc SCExAO-specific control routines
+ * 
+ * Alignment, some processing etc...
+ *  
+ * @author  O. Guyon
+ * @date    8 Jul 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
 #include <stdint.h>
 #include <unistd.h>
 #include <malloc.h>
@@ -697,7 +711,7 @@ long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDn
 
 //    list_image_ID();
 
-	if(data.image[IDcam].md[0].atype == FLOAT)
+	if(data.image[IDcam].md[0].atype == _DATATYPE_FLOAT)
 		arraytmp = (float*) malloc(sizeof(float)*xysize);
 	else
 		arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
@@ -724,7 +738,7 @@ long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDn
          //   slice = data.image[IDcam].md[0].size[2]-1;
 
         
-		if(data.image[IDcam].md[0].atype == FLOAT)
+		if(data.image[IDcam].md[0].atype == _DATATYPE_FLOAT)
 			{
 				ptrv = (char*) data.image[IDcam].array.F;
 				memcpy (arraytmp, ptrv, sizeof(float)*xysize);
@@ -733,7 +747,7 @@ long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDn
 			}
         else
 			{
-				ptrv = (char*) data.image[IDcam].array.U;
+				ptrv = (char*) data.image[IDcam].array.UI16;
 				memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
 				for(ii=0; ii<xysize; ii++)
 					data.image[ID].array.F[ii] += (float) arrayutmp[ii];
@@ -757,7 +771,7 @@ long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDn
             data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
     }
 
-	if(data.image[IDcam].md[0].atype == FLOAT)
+	if(data.image[IDcam].md[0].atype == _DATATYPE_FLOAT)
 		free(arraytmp);
     else
 		free(arrayutmp);
@@ -946,7 +960,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
     char pausefilename[200];
     float v0;
     long IDshm;
-    long *sizearray;
+    uint32_t *sizearray;
 
     long NBframesAve;
     long NBframesAveMin = 500;
@@ -972,10 +986,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
     IDshm = image_ID("pyrTT");
     if(IDshm == -1)
     {
-        sizearray = (long*) malloc(sizeof(long)*2);
+        sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
         sizearray[0] = 2;
         sizearray[1] = 1;
-        IDshm = create_image_ID("pyrTT", 2, sizearray, FLOAT, 1, 0);
+        IDshm = create_image_ID("pyrTT", 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     }
 
 
@@ -1381,7 +1395,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     float centobs = 0.3;
     long ii, jj;
     float x, y, r;
-    long *sizearray;
+    uint32_t *sizearray;
     long ID;
     long size2;
     long cnt;
@@ -1404,7 +1418,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     size = data.image[IDwfs].md[0].size[0];
     size2 = size*size;
 
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = size;
     sizearray[1] = size;
 
@@ -1616,7 +1630,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
     usleep(delayus);
 
 
-    ID = create_image_ID("pcenter", 2, sizearray, FLOAT, 1, 0);
+    ID = create_image_ID("pcenter", 2, sizearray, _DATATYPE_FLOAT, 1, 0);
 
 
     IDmask = create_2Dimage_ID("pmask", size, size);
@@ -1679,7 +1693,7 @@ int SCExAOcontrol_PyramidWFS_Pcenter(const char *IDwfsname, float prad, float po
 
             data.image[ID].md[0].write = 1;
             for(ii=0; ii<size2; ii++)
-                data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.U[ii]*data.image[IDmask].array.F[ii];
+                data.image[ID].array.F[ii] = 1.0*data.image[IDwfs].array.UI16[ii]*data.image[IDmask].array.F[ii];
             data.image[ID].md[0].cnt0++;
             data.image[ID].md[0].write = 1;
         }
@@ -2144,7 +2158,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
     long IDout;
     long IDin;
     long xsize, ysize, zsize;
-    long *sizeoutarray;
+    uint32_t *sizeoutarray;
     long k;
     long ii, jj;
     float v0;
@@ -2175,17 +2189,17 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
     else
         k1start = 0;
 
-    sizeoutarray = (long*) malloc(sizeof(long)*3);
+    sizeoutarray = (uint32_t*) malloc(sizeof(uint32_t)*3);
     sizeoutarray[0] = xsize;
     sizeoutarray[1] = ysize;
     sizeoutarray[2] = zsize;
 
 
 
-    IDintmp = create_image_ID("intmp", 3, sizeoutarray, USHORT, 1, 0); // temporary buffer
-    IDsatmask = create_image_ID("satmask", 3, sizeoutarray, USHORT, 1, 0); // saturation mask
-    ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, FLOAT, 1, 0); // intermediate resutl
-    IDout = create_image_ID(IDoutname, 2, sizeoutarray, FLOAT, 1, 0);
+    IDintmp = create_image_ID("intmp", 3, sizeoutarray, _DATATYPE_UINT16, 1, 0); // temporary buffer
+    IDsatmask = create_image_ID("satmask", 3, sizeoutarray, _DATATYPE_UINT16, 1, 0); // saturation mask
+    ID2dtmp = create_image_ID("saphira2dtmp", 2, sizeoutarray, _DATATYPE_FLOAT, 1, 0); // intermediate resutl
+    IDout = create_image_ID(IDoutname, 2, sizeoutarray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDoutname, 4);
 
     if(data.image[IDin].sem == 0)
@@ -2214,7 +2228,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
 
         if(k == zsize-1)  // process cube
         {
-            memcpy(data.image[IDintmp].array.U, data.image[IDin].array.U, sizeof(short)*xysize*zsize);
+            memcpy(data.image[IDintmp].array.UI16, data.image[IDin].array.UI16, sizeof(short)*xysize*zsize);
             for(ii=0; ii<xysize; ii++)
             {
                 k1 = 0;
@@ -2225,18 +2239,18 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
                 vavevu = 0;
                 for(k1=k1start; k1<zsize; k1++)
                 {
-                    pvu = data.image[IDintmp].array.U[k1*xysize+ii];
+                    pvu = data.image[IDintmp].array.UI16[k1*xysize+ii];
                     //	printf("[%d %u] ", pvu, pvu);
                     if(pvu<SATURATION)
                     {
-                        data.image[IDsatmask].array.U[k1*xysize+ii] = 1;
+                        data.image[IDsatmask].array.UI16[k1*xysize+ii] = 1;
                         vavevu += pvu;
                         vaveku += k1;
                         vcnt++;
                     }
                     else
                     {
-                        data.image[IDsatmask].array.U[k1*xysize+ii] = 0;
+                        data.image[IDsatmask].array.UI16[k1*xysize+ii] = 0;
                     }
                 }
                 vavev = 1.0*vavevu/vcnt;
@@ -2244,8 +2258,8 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
 
                 for(k1=k1start; k1<zsize; k1++)
                 {
-                    pvu = data.image[IDintmp].array.U[k1*xysize+ii];
-                    if(data.image[IDsatmask].array.U[k1*xysize+ii] == 1)
+                    pvu = data.image[IDintmp].array.UI16[k1*xysize+ii];
+                    if(data.image[IDsatmask].array.UI16[k1*xysize+ii] == 1)
                     {
                         vk = 1.0*k1 - vavek;
                         vv = 1.0*pvu - vavev;
@@ -2281,7 +2295,7 @@ long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark
     long IDout;
     long IDin, IDdark;
     long semtrig = 3;
-    long *sizearray;
+    uint32_t *sizearray;
     long ii, jj, xsize, ysize, xysize;
     double val, vald, valx, valy, tot;
     int atype;
@@ -2299,10 +2313,10 @@ long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark
     xysize = xsize*ysize;
 
     // create output
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = 2;
     sizearray[1] = 1;
-    IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+    IDout = create_image_ID(IDout_name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
     free(sizearray);
 
@@ -2347,11 +2361,11 @@ long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark
         valy = 0.0;
 
         switch (atype) {
-        case USHORT :
+        case _DATATYPE_UINT16 :
             for(ii=iistart; ii<iiend; ii++)
                 for(jj=jjstart; jj<jjend; jj++)
                 {
-                    val = 1.0*data.image[IDin].array.U[jj*xsize+ii];
+                    val = 1.0*data.image[IDin].array.UI16[jj*xsize+ii];
 					vald = data.image[IDdark].array.F[jj*xsize+ii];
                     val -= vald;
                     valx += 1.0*ii*val;
@@ -2359,7 +2373,7 @@ long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark
                     tot += 1.0*val;
                 }
             break;
-        case FLOAT :
+        case _DATATYPE_FLOAT :
             for(ii=iistart; ii<iiend; ii++)
                 for(jj=jjstart; jj<jjend; jj++)
                 {
@@ -2443,7 +2457,7 @@ long SCExAOcontrol_vib_mergeData(const char *IDacc_name, const char *IDttpos_nam
 	FILE *fpout;
 	int WriteFile = 1;
 	
-	long *sizearray;
+	uint32_t *sizearray;
 	long iter = 0;	
 	
 	int initOK = 0;
@@ -2512,10 +2526,10 @@ long SCExAOcontrol_vib_mergeData(const char *IDacc_name, const char *IDttpos_nam
 
 
    // create output
-    sizearray = (long*) malloc(sizeof(long)*2);
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
     sizearray[0] = NBacc+2;
     sizearray[1] = 1;
-    IDout = create_image_ID(IDout_name, 2, sizearray, FLOAT, 1, 0);
+    IDout = create_image_ID(IDout_name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
     free(sizearray);
 
