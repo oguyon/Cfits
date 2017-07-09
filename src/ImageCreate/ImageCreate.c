@@ -36,6 +36,7 @@
 #include <netinet/tcp.h>
 #include <fcntl.h> // for open
 #include <unistd.h> // for close
+#include <errno.h>
 
 #include "ImageStruct.h"
 
@@ -76,6 +77,26 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 
+int ImageCreate_printERROR(const char *file, const char *func, int line, char *errmessage)
+{
+    char buff[256];
+
+    fprintf(stderr,"%c[%d;%dm ERROR [ FILE: %s   FUNCTION: %s   LINE: %d ]  %c[%d;m\n", (char) 27, 1, 31, file, func, line, (char) 27, 0);
+    if( errno != 0)
+    {
+        if( strerror_r( errno, buff, 256 ) == 0 ) {
+            fprintf(stderr,"C Error: %s\n", buff );
+        }
+        else
+            fprintf(stderr,"Unknown C Error\n");
+    }
+    else
+        fprintf(stderr,"No C error (errno = 0)\n");
+
+    fprintf(stderr,"%c[%d;%dm %s  %c[%d;m\n", (char) 27, 1, 31, errmessage, (char) 27, 0);
+
+    return(0);
+}
 
 
 
@@ -240,7 +261,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
         result = lseek(SM_fd, sharedsize-1, SEEK_SET);
         if (result == -1) {
             close(SM_fd);
-            printERROR(__FILE__,__func__,__LINE__,"Error calling lseek() to 'stretch' the file");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"Error calling lseek() to 'stretch' the file");
             exit(0);
         }
 
@@ -297,7 +318,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.UI8 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -328,7 +349,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI8 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -360,7 +381,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.UI16 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -390,7 +411,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI16 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -421,7 +442,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.UI32 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -453,7 +474,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI32 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -485,7 +506,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI64 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -515,7 +536,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI64 == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -545,7 +566,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.F == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -575,7 +596,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
   
         if(image->array.D == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -605,7 +626,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.CF == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -635,7 +656,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.CD == NULL)
         {
-            printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
