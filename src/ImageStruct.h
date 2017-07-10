@@ -57,14 +57,32 @@ typedef struct
 /** @brief Photon detection events
  * 
  * Log individual photon events on a 2D camera
- * Timing resolution = 1us
+ * Timing resolution = 1us \n 
  * 
- * Max detector size 256 x 256 pix
- * Max "exposure" time is 2^16 us = 65.535 ms (15.28 Hz)
- * Wavelength resolution set by keywords in frame:
- *   LAMBDA_MIN, LAMBDA_MAX
- * lambda = LAMBDA_MIN + (LAMBDA_MAX-LAMBDA_MIN)/256*lambda_index
- *   
+ * Max detector size 256 x 256 pix \n 
+ * Max "exposure" time is 2^16 us = 65.535 ms (15.28 Hz) \n 
+ * Wavelength resolution set by keywords in frame: \n 
+ *   LAMBDA_MIN, LAMBDA_MAX \n 
+ * lambda = LAMBDA_MIN + (LAMBDA_MAX-LAMBDA_MIN)/256*lambda_index \n
+ * 
+ * USAGE:
+ * An array of EVENT_UI8_UI8_UI16_UI8 is stored in the IMAGE structure \n 
+ * The array can be 1D (list of events), or 3D (N x 1 x M) for a circular buffer where the z-index (slice) is incremented between each "exposure" \n
+ * md[0].cnt2 contains the number of events in the last slice written \n
+ * Detection events do not have to be ordered \n
+ * 
+ * Write sequence in circular buffer :
+ * - [1] create IMAGE structure type EVENT_UI8_UI8_UI16_UI8. Size n x 1 x m, where n = max # of event per "exposure", m = number of slices in circular buffer. Note that md[0].size[0]=m, md[0].size[1]=1, md[0].size[2]=m
+ * - [2] set md[0].write=1 (start image write)
+ * - [3] set k=md[0].cnt1=0 (slice index)
+ * - [4] set md[0].cnt2=0 (# of events), ii=0 (event index in current slice) 
+ * - [5] store time in local variable (exposure start)
+ * - [6] Write each event in array.EVENT_UI8_UI8_UI16_UI8[k*md[0].size[0]+ii]. After each event, increment ii (event index)
+ * - [7] When "exposure" completed, set md[0].atime to exposure time start (see step [5]), md[0].cnt1=k (last slice written),  md[0].cnt2=ii (number of events), set md[0].write=0 (write completed), increment md[0].cnt0, and post all semaphores
+ * - [8] Increment k (if k=md[0].size[2], set k=0), return to step [4]
+ * 
+ * @warning Array size will define the maximum number of events packed in IMAGE. User is responsible for pushing out IMAGE and starting a new IMAGE or slice when max number of events is reached.
+ * 
  */
 typedef struct
 {
@@ -248,6 +266,7 @@ typedef struct
     uint8_t  status;              	/**< 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) */
     uint64_t cnt0;               	/**< counter (incremented if image is updated)                                    */
     uint64_t cnt1;               	/**< in 3D rolling buffer image, this is the last slice written                   */
+    uint64_t cnt2;                  /**< in event mode, this is the # of events                                       */
 
     uint16_t NBkw;                  /**< number of keywords (max: 65536)                                              */
     
