@@ -158,9 +158,22 @@ typedef struct
 } IMAGE_KEYWORD;
 
 
+/** @brief structure holding two 8-byte integers
+ * 
+ * Used in an union with struct timespec to ensure fixed 16 byte length
+ */
+typedef struct
+{
+	int64_t firstlong;
+	int64_t secondlong;
+} TIMESPECFIXED;
 
 
-
+/** @brief Image metadata
+ * 
+ * This structure has a fixed size regardless of implementation
+ * 
+ */ 
 typedef struct
 {
     /** @brief Image Name */
@@ -203,10 +216,32 @@ typedef struct
      */
     uint8_t atype;                 
 
-    double creation_time;           /**< creation time (since program start)                                          */
-    double last_access;             /**< last time the image was accessed  (since program start)                      */
-    struct timespec atime;          /**< Acquisition time (beginning of exposure                                      */
-
+    double creation_time;           /**< creation time (since process start)                                          */
+    double last_access;             /**< last time the image was accessed  (since process start)                      */
+    
+    /** @brief Acquisition time (beginning of exposure   
+     * 
+     * atime is defined as a union to ensure fixed 16-byte length regardless of struct timespec implementation
+     * 
+     * Data Type: struct timespec
+     * The struct timespec structure represents an elapsed time. It is declared in time.h and has the following members:
+     *    time_t tv_sec
+     * This represents the number of whole seconds of elapsed time.
+     *    long int tv_nsec
+     * This is the rest of the elapsed time (a fraction of a second), represented as the number of nanoseconds. It is always less than one billion.
+     * 
+     * On (most ?) 65-bit systems:
+     * sizeof(struct timespec) = 16 :  sizeof(long int) = 8;  sizeof(time_t) = 8
+     * 
+     * @warning sizeof(struct timespec) is implementation-specific, and could be smaller that 16 byte. Users may need to create and manage their own timespec implementation if data needs to be portable across machines.
+     */
+    union
+    {
+		struct timespec ts;
+		TIMESPECFIXED tsfixed;
+	} atime;
+    
+    
     uint8_t shared;                 /**< 1 if in shared memory                                                        */
 
     uint8_t  write;               	/**< 1 if image is being written                                                  */
@@ -247,14 +282,22 @@ typedef struct          		/**< structure used to store data arrays              
 	uint8_t logflag;                    /**< set to 1 to start logging         */
     sem_t *semlog; 				        /**< pointer to semaphore for logging  (8 bytes on 64-bit system) */
 
-
-
     IMAGE_METADATA *md;			
 
+
+	// Dynamic allocation starts here
+	// from this point, pointer offets are no longer fixed and are data-dependent
+	// user needs to perform pointer offsets to access fields after array
 
 	/** @brief data storage array
 	 * 
 	 * The array is declared as a union, so that multiple data types can be supported \n
+	 * 
+	 * For 2D image with pixel indices ii (x-axis) and jj (y-axis), the pixel values are stored as array.<TYPE>[ jj * md[0].size[0] + ii ] \n
+	 * image md[0].size[0] is x-axis size, md[0].size[1] is y-axis size
+	 * 
+	 * For 3D image with pixel indices ii (x-axis), jj (y-axis) and kk (z-axis), the pixel values are stored as array.<TYPE>[ kk * md[0].size[1] * md[0].size[0] + jj * md[0].size[0] + ii ] \n
+	 * image md[0].size[0] is x-axis size, md[0].size[1] is y-axis size, md[0].size[2] is z-axis size
 	 * 
 	 * @note Up to this point, all members of the structure have a fixed memory offset to the start point
 	 */ 
