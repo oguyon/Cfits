@@ -6,7 +6,7 @@
  * Supports shared memory, low latency IPC through semaphores
  * 
  * @author  O. Guyon
- * @date    7 Jul 2017
+ * @date    9 Jul 2017
  *
  * @bug No known bugs. 
  * 
