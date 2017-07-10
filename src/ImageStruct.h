@@ -230,7 +230,7 @@ typedef struct
      *    long int tv_nsec
      * This is the rest of the elapsed time (a fraction of a second), represented as the number of nanoseconds. It is always less than one billion.
      * 
-     * On (most ?) 65-bit systems:
+     * On (most ?) 64-bit systems:
      * sizeof(struct timespec) = 16 :  sizeof(long int) = 8;  sizeof(time_t) = 8
      * 
      * @warning sizeof(struct timespec) is implementation-specific, and could be smaller that 16 byte. Users may need to create and manage their own timespec implementation if data needs to be portable across machines.
