@@ -1189,6 +1189,8 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
     long nextID;
 	int atype;
 
+
+	
     IDin = image_ID(in_name);
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
@@ -1200,8 +1202,12 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
         naxes[i]= (int) data.image[IDin].md[0].size[i];
     }
 
+	
+
 	atype = data.image[IDin].md[0].atype;
     IDout = create_image_ID(out_name, naxis, naxesl, atype, data.SHARED_DFT, data.NBKEWORD_DFT);
+
+
 
     // need to swap first 2 axis for fftw
     if(naxis>1)
@@ -1210,6 +1216,9 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
         naxes[0] = naxes[1];
         naxes[1] = tmp1;
     }
+    
+    
+
     if(naxis==2)
     {
         OK=1;
@@ -1262,6 +1271,8 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
 		}
     }
 
+
+
     if(naxis==3)
     {
         OK=1;
@@ -1313,10 +1324,12 @@ long FFT_do2dfft(const char *in_name, const char *out_name, int dir)
 		}
     }
 
+
     if(OK==0)
         printf("Error : image dimension not appropriate for FFT\n");
 
     free(naxes);
+
 
     return(IDout);
 }
@@ -1877,6 +1890,9 @@ int autocorrelation(const char *ID_name, const char *ID_out)
     return(0);
 }
 
+
+
+
 int fftczoom(const char *ID_name, const char *ID_out, long factor)
 {
     long ID,ID1;
@@ -1928,6 +1944,7 @@ int fftczoom(const char *ID_name, const char *ID_out, long factor)
 
     return(0);
 }
+
 
 
 
@@ -1999,6 +2016,15 @@ int fftzoom(const char *ID_name, const char *ID_out, long factor)
     return(0);
 }
 
+
+
+
+
+
+/** @brief Test FFT speed (fftw)
+ * 
+ */ 
+
 int test_fftspeed(int nmax)
 {
     int n;
@@ -2046,12 +2072,12 @@ int test_fftspeed(int nmax)
             tS0.tv_nsec = tv.tv_usec*1000;
 #endif
 
-
+		
 
             //	  clock_gettime(CLOCK_REALTIME, &tS0);
             for(iter=0; iter<nbiter; iter++)
             {
-                create_2DCimage_ID("tmp",size,size);
+                create_2DCimage_ID("tmp", size, size);
                 do2dfft("tmp", "tmpf");
                 delete_image_ID("tmp");
                 delete_image_ID("tmpf");

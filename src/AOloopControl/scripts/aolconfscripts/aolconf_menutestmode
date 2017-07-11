@@ -35,6 +35,11 @@ rm runproc/MeasDMmodesRec.runproc
 
 
 
+
+#########################################################################################
+##          MEASURE LOOP RESPONSE  ON                                                  ##
+#########################################################################################
+
 function function_dmmtr_on {
 dmmtrONstat=" ON"
 tmuxname="aol${LOOPNUMBER}dmmtr"
@@ -46,6 +51,11 @@ tmux send-keys -t $tmuxname "./auxscripts/MeasLoopModeResp ${testModeNb} ${testM
 tmux send-keys -t $tmuxname "rm runproc/MeasLoopModeResp.runproc" C-m
 tmux send-keys -t $tmuxname "echo \"OFF\" > ./status/stat_dmmtrON.txt" C-m
 }
+
+
+#########################################################################################
+##          MEASURE LOOP RESPONSE OFF                                                  ##
+#########################################################################################
 	
 function function_dmmtr_off {
 dmmtrONstat="OFF"
@@ -54,6 +64,7 @@ echo "OFF" > ./status/stat_dmmtrON.txt
 tmux kill-session -t ${tmuxname}
 rm runproc/MeasLoopModeResp.runproc
 }
+
 
 
 

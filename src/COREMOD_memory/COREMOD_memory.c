@@ -950,7 +950,7 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"copy image");
     strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
     strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname, 0)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"cpsh");
@@ -959,7 +959,7 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
     strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
     strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname)");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname, 1)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"mv");
@@ -1514,7 +1514,6 @@ int_fast8_t delete_image_ID(const char* imname) /* deletes an ID */
             sem_close(data.image[ID].semptr[s]);
 
         data.image[ID].md[0].sem = 0;
-
         free(data.image[ID].semptr);
         data.image[ID].semptr = NULL;
 
@@ -1526,7 +1525,6 @@ int_fast8_t delete_image_ID(const char* imname) /* deletes an ID */
                 sem_close(data.image[ID].semlog);
                 data.image[ID].semlog = NULL;
             }
-
 
             if (munmap(data.image[ID].md, data.image[ID].memsize) == -1) {
                 printf("unmapping ID %ld : %p  %ld\n", ID, data.image[ID].md, data.image[ID].memsize);
@@ -1612,8 +1610,7 @@ int_fast8_t delete_image_ID(const char* imname) /* deletes an ID */
                 free(data.image[ID].array.CD);
                 data.image[ID].array.CD = NULL;
             }
-
-
+			
             if(data.image[ID].md == NULL)
             {
                 printERROR(__FILE__,__func__,__LINE__,"data array pointer is null\n");
@@ -2240,9 +2237,9 @@ long create_1Dimage_ID(const char *ID_name, uint32_t xsize)
     naxes[0]=xsize;
 
     if(data.precision == 0)
-        ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     if(data.precision == 1)
-        ID = create_image_ID(ID_name, naxis, naxes, 4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -2258,9 +2255,9 @@ long create_1DCimage_ID(const char *ID_name, uint32_t xsize)
     naxes[0]=xsize;
 
     if(data.precision == 0)
-        ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_COMPLEX_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     if(data.precision == 1)
-        ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_COMPLEX_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -2284,7 +2281,7 @@ long create_2Dimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize)
     else
     {
         printf("Default precision (%d) invalid value: assuming single precision\n", data.precision);
-        ID = create_image_ID(ID_name, naxis, naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     }
 
     //  printf("\n");
@@ -2304,7 +2301,7 @@ long create_2Dimage_ID_double(const char *ID_name, uint32_t xsize, uint32_t ysiz
     naxes[0] = xsize;
     naxes[1] = ysize;
 
-    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT);
+    ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT);
 
     return(ID);
 }
@@ -2321,9 +2318,9 @@ long create_2DCimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize)
     naxes[1] = ysize;
 
     if(data.precision == 0)
-        ID = create_image_ID(ID_name,naxis,naxes, 5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_COMPLEX_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     if(data.precision == 1)
-        ID = create_image_ID(ID_name,naxis,naxes, 6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+        ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_COMPLEX_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -2338,7 +2335,7 @@ long create_2DCimage_ID_double(const char *ID_name, uint32_t xsize, uint32_t ysi
     naxes[0] = xsize;
     naxes[1] = ysize;
 
-    ID = create_image_ID(ID_name,naxis,naxes, 6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_COMPLEX_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -2359,7 +2356,7 @@ long create_3Dimage_ID_float(const char *ID_name, uint32_t xsize, uint32_t ysize
     //  printf("CREATING 3D IMAGE: %s %ld %ld %ld\n", ID_name, xsize, ysize, zsize);
     //  fflush(stdout);
 
-    ID = create_image_ID(ID_name,naxis,naxes,3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+    ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
 
     //  printf("IMAGE CREATED WITH ID = %ld\n",ID);
     //  fflush(stdout);
@@ -2379,7 +2376,7 @@ long create_3Dimage_ID_double(const char *ID_name, uint32_t xsize, uint32_t ysiz
     naxes[1] = ysize;
     naxes[2] = zsize;
 
-    ID = create_image_ID(ID_name,naxis,naxes,4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+    ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -2398,9 +2395,9 @@ long create_3Dimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize, uint
     naxes[2] = zsize;
 
     if(data.precision == 0)
-        ID = create_image_ID(ID_name,naxis,naxes, 3, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     if(data.precision == 1)
-        ID = create_image_ID(ID_name,naxis,naxes, 4, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+        ID = create_image_ID(ID_name,naxis,naxes, _DATATYPE_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
@@ -2417,13 +2414,12 @@ long create_3DCimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize, uin
     naxes[2] = zsize;
 
     if(data.precision == 0)
-        ID = create_image_ID(ID_name,naxis,naxes,5, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_COMPLEX_FLOAT, data.SHARED_DFT, data.NBKEWORD_DFT); // single precision
     if(data.precision == 1)
-        ID = create_image_ID(ID_name,naxis,naxes,6, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
+        ID = create_image_ID(ID_name, naxis, naxes, _DATATYPE_COMPLEX_DOUBLE, data.SHARED_DFT, data.NBKEWORD_DFT); // double precision
 
     return(ID);
 }
-
 
 
 long copy_image_ID(const char *name, const char *newname, int shared)
@@ -2509,6 +2505,7 @@ long copy_image_ID(const char *name, const char *newname, int shared)
     }
     data.image[IDout].md[0].write = 1;
 
+
     if(atype == _DATATYPE_UINT8)
         memcpy (data.image[IDout].array.UI8, data.image[ID].array.UI8, SIZEOF_DATATYPE_UINT8*nelement);
 
@@ -2548,7 +2545,6 @@ long copy_image_ID(const char *name, const char *newname, int shared)
 
 
 
-    
     if(data.image[IDout].semlog!=NULL)
     {
         sem_getvalue(data.image[IDout].semlog, &semval);
@@ -2556,11 +2552,15 @@ long copy_image_ID(const char *name, const char *newname, int shared)
             sem_post(data.image[IDout].semlog);
     }
     
+    
+
+    
     COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
     data.image[IDout].md[0].write = 0;
     data.image[IDout].md[0].cnt0++;
 
     free(size);
+
 
     return(IDout);
 }

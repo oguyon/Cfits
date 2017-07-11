@@ -185,6 +185,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
     char kname[16];
     
 
+
     nelement = 1;
     for(i=0; i<naxis; i++)
         nelement*=size[i];
@@ -202,7 +203,6 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
             perror("semaphore creation / initilization");
         else
             sem_init(image->semlog, 1, 0);
-
 
 
         sharedsize = sizeof(IMAGE_METADATA);
@@ -254,7 +254,9 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
             exit(0);
         }
 
-        image->md[0].sem = 0;
+
+
+
         image->shmfd = SM_fd;
         image->memsize = sharedsize;
 
@@ -281,6 +283,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         image->md = (IMAGE_METADATA*) map;
         image->md[0].shared = 1;
+        image->md[0].sem = 0;
     }
     else
     {
@@ -291,6 +294,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
         else
             image->kw = NULL;
     }
+
 
     image->md[0].atype = atype;
     image->md[0].naxis = naxis;
@@ -672,6 +676,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
 
 
+
     clock_gettime(CLOCK_REALTIME, &timenow);
     image->md[0].last_access = 1.0*timenow.tv_sec + 0.000000001*timenow.tv_nsec;
     image->md[0].creation_time = image->md[0].last_access;
@@ -682,6 +687,9 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
     if(shared==1)
         ImageCreateSem(image, 10); // by default, create 10 semaphores
+    else
+		image->md[0].sem = 0; // no semaphores
+     
 
 
     // initialize keywords
