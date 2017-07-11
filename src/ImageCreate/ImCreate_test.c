@@ -67,6 +67,8 @@ int main()
 	
 	// allocate space for 10 keywords
 	NBkw = 10;
+
+
 	
 	// create an image in shared memory
 	ImageCreate(&imarray[0], "imtest00", naxis, imsize, atype, shared, NBkw);
