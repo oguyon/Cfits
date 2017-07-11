@@ -5,7 +5,7 @@
  * Alignment, some processing etc...
  *  
  * @author  O. Guyon
- * @date    8 Jul 2017
+ * @date    10 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -722,7 +722,7 @@ long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDn
         //printf("k = %ld\n", k);
         //fflush(stdout);
         
-        if(data.image[IDcam].sem<semindex)
+        if(data.image[IDcam].md[0].sem < semindex)
         {
             while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
                 usleep(10);
@@ -2202,7 +2202,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
     IDout = create_image_ID(IDoutname, 2, sizeoutarray, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(IDoutname, 4);
 
-    if(data.image[IDin].sem == 0)
+    if(data.image[IDin].md[0].sem == 0)
     {
         printf("Error: no semaphore detected\n");
         exit(0);
@@ -2275,7 +2275,7 @@ int SCExAOcontrol_SAPHIRA_cam_process(const char *IDinname, const char *IDoutnam
             printf("\n CUBE COMPLETED -> 2D image ready\n");
             data.image[IDout].md[0].write = 1;
             memcpy(data.image[IDout].array.F, data.image[ID2dtmp].array.F, sizeof(float)*xysize);
-            if(data.image[IDout].sem > 0)
+            if(data.image[IDout].md[0].sem > 0)
                 sem_post(data.image[IDout].semptr[0]);
             data.image[IDout].md[0].cnt0 ++;
             data.image[IDout].md[0].write = 0;

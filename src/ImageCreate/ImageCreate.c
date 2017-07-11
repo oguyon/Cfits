@@ -5,7 +5,7 @@
  * Creates images and streams (shared memory)
  *  
  * @author  O. Guyon
- * @date    9 Jul 2017
+ * @date    10 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -117,12 +117,12 @@ int ImageCreateSem(IMAGE *image, long NBsem)
 
 	
 	// Remove pre-existing semaphores if any
-    if(image->sem != NBsem)
+    if(image->md[0].sem != NBsem)
     {
         // Close existing semaphores ...
-        for(s=0; s < image->sem; s++)
+        for(s=0; s < image->md[0].sem; s++)
             sem_close(image->semptr[s]);
-        image->sem = 0;
+        image->md[0].sem = 0;
 
 		// ... and remove associated files
         for(s1=NBsem; s1<100; s1++)
@@ -135,14 +135,14 @@ int ImageCreateSem(IMAGE *image, long NBsem)
     }
 
    
-    if(image->sem == 0)
+    if(image->md[0].sem == 0)
     {
         if(image->semptr!=NULL)
             free(image->semptr);
 
-        image->sem = NBsem;
-        printf("malloc semptr %d entries\n", image->sem);
-        image->semptr = (sem_t**) malloc(sizeof(sem_t**)*image->sem);
+        image->md[0].sem = NBsem;
+        printf("malloc semptr %d entries\n", image->md[0].sem);
+        image->semptr = (sem_t**) malloc(sizeof(sem_t**)*image->md[0].sem);
 
 
         for(s=0; s<NBsem; s++)
@@ -254,7 +254,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
             exit(0);
         }
 
-        image->sem = 0;
+        image->md[0].sem = 0;
         image->shmfd = SM_fd;
         image->memsize = sharedsize;
 

@@ -1041,7 +1041,7 @@ long linopt_imtools_image_construct_stream(const char *IDmodes_name, const char 
 
     while(1==1)
     {
-        if((data.image[IDcoeff].sem==0)||(NOSEM==1))
+        if((data.image[IDcoeff].md[0].sem==0)||(NOSEM==1))
         {
             while(cnt==data.image[IDcoeff].md[0].cnt0) // test if new frame exists
                 usleep(5);

@@ -5,7 +5,7 @@
  * To be used for AOloopControl module
  *  
  * @author  O. Guyon
- * @date    7 Jul 2017
+ * @date    10 Jul 2017
  *
  *
  * 
@@ -1212,7 +1212,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     sprintf(name, "dm%02lddisp", DMindex);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
-    if(data.image[dmdispcombconf[DMindex].IDdisp].sem<2)
+    if(data.image[dmdispcombconf[DMindex].IDdisp].md[0].sem<2)
     {
         printf("ERROR: image %s semaphore %d missing\n", data.image[dmdispcombconf[DMindex].IDdisp].name, 1);
         exit(0);
@@ -1351,7 +1351,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].cnt0++;
             data.image[dmdispcombconf[DMindex].IDdisp].md[0].write = 0;            
  
-            for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].sem;semnb++)
+            for(semnb=0;semnb<data.image[dmdispcombconf[DMindex].IDdisp].md[0].sem;semnb++)
                {
                    sem_getvalue(data.image[dmdispcombconf[DMindex].IDdisp].semptr[semnb], &semval);
                    if(semval<SEMAPHORE_MAXVAL)

@@ -1510,10 +1510,10 @@ int_fast8_t delete_image_ID(const char* imname) /* deletes an ID */
     {
         data.image[ID].used = 0;
 
-        for(s=0; s<data.image[ID].sem; s++)
+        for(s=0; s<data.image[ID].md[0].sem; s++)
             sem_close(data.image[ID].semptr[s]);
 
-        data.image[ID].sem = 0;
+        data.image[ID].md[0].sem = 0;
 
         free(data.image[ID].semptr);
         data.image[ID].semptr = NULL;
@@ -2029,7 +2029,7 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         }
 
         image->memsize = file_stat.st_size;
-        image->sem = 0;
+        image->md[0].sem = 0;
         image->shmfd = SM_fd;
 
         image->md = map;
@@ -2184,8 +2184,8 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         }
         printf("%ld semaphores detected\n", snb);
 
-        image->sem = snb;
-        image->semptr = (sem_t**) malloc(sizeof(sem_t*) * image->sem);
+        image->md[0].sem = snb;
+        image->semptr = (sem_t**) malloc(sizeof(sem_t*) * image->md[0].sem);
         for(s=0; s<snb; s++)
         {
             sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
@@ -4175,7 +4175,7 @@ long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)
 
     if(index<0)
     {
-        for(s=0; s<data.image[ID].sem; s++)
+        for(s=0; s<data.image[ID].md[0].sem; s++)
         {
             sem_getvalue(data.image[ID].semptr[s], &semval);
             if(semval<SEMAPHORE_MAXVAL)
@@ -4184,7 +4184,7 @@ long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)
     }
     else
     {
-        if(index>data.image[ID].sem-1)
+        if(index>data.image[ID].md[0].sem-1)
             printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
         else
         {
@@ -4206,7 +4206,7 @@ long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 
     if(index<0)
     {
-        for(s=0; s<data.image[ID].sem; s++)
+        for(s=0; s<data.image[ID].md[0].sem; s++)
         {
             sem_getvalue(data.image[ID].semptr[s], &semval);
             if(semval<SEMAPHORE_MAXVAL)
@@ -4215,7 +4215,7 @@ long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
     }
     else
     {
-        if(index>data.image[ID].sem-1)
+        if(index>data.image[ID].md[0].sem-1)
             printf("ERROR: image ID %ld semaphore # %ld does no exist\n", ID, index);
         else
         {
@@ -4250,7 +4250,7 @@ long COREMOD_MEMORY_image_set_sempost_loop(const char *IDname, long index, long 
 	{
     if(index<0)
     {
-        for(s=0; s<data.image[ID].sem; s++)
+        for(s=0; s<data.image[ID].md[0].sem; s++)
         {
             sem_getvalue(data.image[ID].semptr[s], &semval);
             if(semval<SEMAPHORE_MAXVAL)
@@ -4259,7 +4259,7 @@ long COREMOD_MEMORY_image_set_sempost_loop(const char *IDname, long index, long 
     }
     else
     {
-        if(index>data.image[ID].sem-1)
+        if(index>data.image[ID].md[0].sem-1)
             printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
         else
         {
@@ -4285,7 +4285,7 @@ long COREMOD_MEMORY_image_set_semwait(const char *IDname, long index)
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
 
-    if(index>data.image[ID].sem-1)
+    if(index>data.image[ID].md[0].sem-1)
             printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
     else
             sem_wait(data.image[ID].semptr[index]);
@@ -4377,10 +4377,10 @@ long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID)
     list_image_ID();
     for(i=0; i<NB_ID; i++)
     {
-        for(s=0;s<data.image[IDarray[i]].sem;s++)
+        for(s=0;s<data.image[IDarray[i]].md[0].sem;s++)
         {
             sem_getvalue(data.image[IDarray[i]].semptr[s], &semval);
-           printf("sem %d/%d of %s [%ld] = %d\n", s, data.image[IDarray[i]].sem, data.image[IDarray[i]].name, IDarray[i], semval);
+           printf("sem %d/%d of %s [%ld] = %d\n", s, data.image[IDarray[i]].md[0].sem, data.image[IDarray[i]].name, IDarray[i], semval);
             fflush(stdout); 
             for(cnt=0; cnt<semval; cnt++)
                 sem_trywait(data.image[IDarray[i]].semptr[s]);
@@ -4407,7 +4407,7 @@ long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)
 
     if(index<0)
     {
-        for(s=0; s<data.image[ID].sem; s++)
+        for(s=0; s<data.image[ID].md[0].sem; s++)
         {
             sem_getvalue(data.image[ID].semptr[s], &semval);
             for(i=0; i<semval; i++)
@@ -4416,7 +4416,7 @@ long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)
     }
     else
     {
-        if(index>data.image[ID].sem-1)
+        if(index>data.image[ID].md[0].sem-1)
             printf("ERROR: image %s semaphore # %ld does not exist\n", IDname, index);
         else
         {
@@ -4497,7 +4497,7 @@ long COREMOD_MEMORY_streamDiff(const char *IDstream0_name, const char *IDstream1
 	while(1)
 	{
 		// has new frame arrived ?
-		if(data.image[ID0].sem==0)
+		if(data.image[ID0].md[0].sem==0)
         {
             while(cnt==data.image[ID0].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -4579,7 +4579,7 @@ long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDs
 	while(1)
 	{
 		// has new frame arrived ?
-		if(data.image[ID0].sem==0)
+		if(data.image[ID0].md[0].sem==0)
         {
             while(cnt==data.image[ID0].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -5541,12 +5541,12 @@ long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr
 
     oldslice = 0;
     sockOK = 1;
-    printf("sem = %d\n", data.image[ID].sem);
+    printf("sem = %d\n", data.image[ID].md[0].sem);
     fflush(stdout);
     
     while(sockOK==1)
     {
-        if((data.image[ID].sem==0)||(mode==1))
+        if((data.image[ID].md[0].sem==0)||(mode==1))
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);
@@ -5967,7 +5967,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
                 else
                      memcpy(ptr0, buff, framesize);
                 data.image[ID].md[0].cnt0++;
-                for(semnb=0;semnb<data.image[ID].sem ; semnb++)
+                for(semnb=0;semnb<data.image[ID].md[0].sem ; semnb++)
                 {
                     sem_getvalue(data.image[ID].semptr[semnb], &semval);
                     if(semval<SEMAPHORE_MAXVAL)
@@ -6123,7 +6123,7 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     loopOK = 1;
     while(loopOK == 1)
     {
-        if(data.image[IDin].sem==0)
+        if(data.image[IDin].md[0].sem==0)
         {
             while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);

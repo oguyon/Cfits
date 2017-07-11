@@ -5,7 +5,7 @@
  * Misc image analysis functions
  *  
  * @author  O. Guyon
- * @date    7 Jul 2017
+ * @date    10 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -494,7 +494,7 @@ long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, 
     {
         printf("Waiting for incoming image ... \n");
         fflush(stdout);
-        if(data.image[ID].sem>0)
+        if(data.image[ID].md[0].sem>0)
             sem_wait(data.image[ID].semptr[0]);
         else
         {
@@ -525,7 +525,7 @@ long IMG_REDUCE_cleanbadpix_fast(const char *IDname, const char *IDbadpix_name, 
           //  fflush(stdout);
         }
 
-        if(data.image[IDout].sem > 0)
+        if(data.image[IDout].md[0].sem > 0)
             sem_post(data.image[IDout].semptr[0]);
         data.image[IDout].md[0].write = 0;
         data.image[IDout].md[0].cnt0++;

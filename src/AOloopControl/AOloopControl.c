@@ -5,7 +5,7 @@
  * AO engine uses stream data structure
  *  
  * @author  O. Guyon
- * @date    17 Jun 2017
+ * @date    10 Jun 2017
  *
  * 
  * @bug No known bugs.
@@ -3076,7 +3076,7 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 
     while(1 == 1)
     {
-	 if(data.image[IDin].sem==0)
+	 if(data.image[IDin].md[0].sem==0)
         {
             while(cnt==data.image[IDin].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -3188,7 +3188,7 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 	
 	while(1 == 1)
     {
-		if(data.image[IDin].sem==0)
+		if(data.image[IDin].md[0].sem==0)
         {
             while(cnt==data.image[IDin].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -3749,7 +3749,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 	fflush(stdout);
 	#endif
 	
-	if(data.image[aoconfID_wfsim].sem==0)
+	if(data.image[aoconfID_wfsim].md[0].sem==0)
     {
         if(RM==0)
             while(AOconf[loop].WFScnt==data.image[aoconfID_wfsim].md[0].cnt0) // test if new frame exists
@@ -3876,7 +3876,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             break;
         }
 
-         for(s=0;s<data.image[aoconfID_imWFS0].sem; s++)
+         for(s=0;s<data.image[aoconfID_imWFS0].md[0].sem; s++)
             {
                 sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
@@ -3926,7 +3926,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
         }
     
-        for(s=0;s<data.image[aoconfID_imWFS0].sem; s++)
+        for(s=0;s<data.image[aoconfID_imWFS0].md[0].sem; s++)
             {
                 sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
@@ -10144,7 +10144,7 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
     
     IDzpdm = image_ID(IDzpdm_name);
     
-    if(data.image[IDzpdm].sem<2) // if semaphore #1 does not exist, create it
+    if(data.image[IDzpdm].md[0].sem<2) // if semaphore #1 does not exist, create it
         COREMOD_MEMORY_image_set_createsem(IDzpdm_name, 2);
     
     
@@ -10187,7 +10187,7 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
     
     zpcnt0 = 0;
     
-    if(data.image[IDzpdm].sem > 1) // drive semaphore #1 to zero
+    if(data.image[IDzpdm].md[0].sem > 1) // drive semaphore #1 to zero
         while(sem_trywait(data.image[IDzpdm].semptr[1])==0) {}
     else
         {
@@ -10295,7 +10295,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
     IDwfsref0 = image_ID(IDwfsref0_name);
    
-    if(data.image[IDwfsref].sem > 1) // drive semaphore #1 to zero
+    if(data.image[IDwfsref].md[0].sem > 1) // drive semaphore #1 to zero
         while(sem_trywait(data.image[IDwfsref].semptr[1])==0) {}
     else
         {
@@ -10641,7 +10641,7 @@ int_fast8_t AOloopControl_run()
 
 
 
-                        for(semnb=0; semnb<data.image[aoconfID_dmC].sem; semnb++)
+                        for(semnb=0; semnb<data.image[aoconfID_dmC].md[0].sem; semnb++)
                         {
                             sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
                             if(semval<SEMAPHORE_MAXVAL)
@@ -10651,7 +10651,7 @@ int_fast8_t AOloopControl_run()
                         data.image[aoconfID_dmC].md[0].write = 0;
                         // inform dmdisp that new command is ready in one of the channels
                         if(aoconfID_dmdisp!=-1)
-                            if(data.image[aoconfID_dmdisp].sem > 1)
+                            if(data.image[aoconfID_dmdisp].md[0].sem > 1)
                             {
                                 sem_getvalue(data.image[aoconfID_dmdisp].semptr[0], &semval);
                                 if(semval<SEMAPHORE_MAXVAL)
@@ -10744,7 +10744,7 @@ int_fast8_t set_DM_modes(long loop)
 
         data.image[aoconfID_dmC].md[0].write = 1;
         memcpy (data.image[aoconfID_dmC].array.F, arrayf, sizeof(float)*AOconf[loop].sizeDM);
-        if(data.image[aoconfID_dmC].sem > 0)
+        if(data.image[aoconfID_dmC].md[0].sem > 0)
         {
             sem_getvalue(data.image[aoconfID_dmC].semptr[0], &semval);
             if(semval<SEMAPHORE_MAXVAL)
@@ -10773,7 +10773,7 @@ int_fast8_t set_DM_modes(long loop)
     }
 
     if(aoconfID_dmdisp!=-1)
-        if(data.image[aoconfID_dmdisp].sem > 1)
+        if(data.image[aoconfID_dmdisp].md[0].sem > 1)
         {
             sem_getvalue(data.image[aoconfID_dmdisp].semptr[1], &semval);
             if(semval<SEMAPHORE_MAXVAL)
@@ -11220,7 +11220,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
             
-                for(semnb=0;semnb<data.image[aoconfID_meas_act].sem;semnb++)
+                for(semnb=0;semnb<data.image[aoconfID_meas_act].md[0].sem;semnb++)
                 {
                     sem_getvalue(data.image[aoconfID_meas_act].semptr[semnb], &semval);
                     if(semval<SEMAPHORE_MAXVAL)
@@ -11693,7 +11693,7 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 	printf("alpha = %f\n", alpha);
 	while(1)
 	{
-		if(data.image[IDimWFS0].sem==0)
+		if(data.image[IDimWFS0].md[0].sem==0)
         {
             while(cnt==data.image[IDimWFS0].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -12047,7 +12047,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	{		
 		// read WFS measured modes (residual)
 		
-		if(data.image[IDmodeval].sem==0)
+		if(data.image[IDmodeval].md[0].sem==0)
         {
             while(cnt==data.image[IDmodeval].md[0].cnt0) // test if new frame exists
                 usleep(5);
@@ -15298,7 +15298,7 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	cnt =  0;
 	while(1==1)
     {
-	  if(data.image[IDmodeval].sem==0)
+	  if(data.image[IDmodeval].md[0].sem==0)
         {
             while(cnt==data.image[IDmodeval].md[0].cnt0) // test if new frame exists
                 usleep(5);

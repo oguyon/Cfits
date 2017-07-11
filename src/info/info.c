@@ -346,8 +346,8 @@ int printstatus(long ID)
     printw("[cnt1 %8d] ", data.image[ID].md[0].cnt1);
    // printw("[logstatus %2d] ", data.image[ID].logstatus[0]);
  
-    printw("[%ld sems ", data.image[ID].sem);
-   for(s=0;s<data.image[ID].sem;s++)
+    printw("[%ld sems ", data.image[ID].md[0].sem);
+   for(s=0;s<data.image[ID].md[0].sem;s++)
     {
         sem_getvalue(data.image[ID].semptr[s], &semval);
         printw(" % 3d ", semval);
@@ -361,7 +361,7 @@ int printstatus(long ID)
             printw(" [semlog = %5d]", semval);
         }*/
     printw("\n");
-/*    if(data.image[ID].sem==1)
+/*    if(data.image[ID].md[0].sem==1)
     {
         sem_getvalue(data.image[ID].semptr1, &semval);
         printw("[Semaphore 1 %3d] ", semval);

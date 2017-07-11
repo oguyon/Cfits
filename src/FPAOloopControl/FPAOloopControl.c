@@ -6,7 +6,7 @@
  * Uses focal plane image(s) as wavefront sensor
  * 
  * @author  O. Guyon
- * @date    7 Jul 2017
+ * @date    10 Jul 2017
  *
  * @bug No known bugs. 
  * 
@@ -664,7 +664,7 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
     }
 
 
-    if(data.image[FPaoconfID_wfsim].sem==0)
+    if(data.image[FPaoconfID_wfsim].md[0].sem==0)
     {
         while(FPAOconf[loop].WFScnt==data.image[FPaoconfID_wfsim].md[0].cnt0) // test if new frame exists
                 usleep(5);

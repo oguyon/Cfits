@@ -5,7 +5,7 @@
  * Simple image routines
  *   
  * @author  O. Guyon
- * @date    7 Jul 2017
+ * @date    10 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -4002,7 +4002,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
 
 
-    if(data.image[ID].sem>0) // drive semaphore to zero
+    if(data.image[ID].md[0].sem>0) // drive semaphore to zero
         while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
 
     printf("\n\n");
@@ -4012,7 +4012,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     {
         printf("\r image number %8ld     ", k);
         fflush(stdout);
-        if(data.image[ID].sem==0)
+        if(data.image[ID].md[0].sem==0)
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
             {
@@ -4270,7 +4270,7 @@ long IMAGE_BASIC_streamfeed(const char *IDname, const char *streamname, float fr
     data.image[IDs].md[0].write = 1;
     for(ii=0;ii<xysize;ii++)
         data.image[IDs].array.F[ii] = 0.0;
-    if(data.image[IDs].sem > 0)
+    if(data.image[IDs].md[0].sem > 0)
         {
             sem_getvalue(data.image[IDs].semptr[0], &semval);
             if(semval<SEMAPHORE_MAXVAL)
