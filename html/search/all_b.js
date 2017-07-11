@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['l',['L',['../structIMAGE.html#af5ec4b345ce46b8802625a8428f159a1',1,'IMAGE::L()'],['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE::l()']]],
+  ['l',['l',['../structVARIABLE.html#ab47a102e3cd7c7085641ffc056c41878',1,'VARIABLE']]],
   ['lambda',['lambda',['../structOPTPIAACMCDESIGN.html#a64a6567f44c2102f913d378930c2c5f7',1,'OPTPIAACMCDESIGN']]],
   ['lambda0',['lambda0',['../structEXAOSIMCONF.html#abd69ae77c2826dccf9c85a599c07fe77',1,'EXAOSIMCONF']]],
+  ['lambda_5findex',['lambda_index',['../structEVENT__UI8__UI8__UI16__UI8.html#a769a2628f91e682052de03d1bd70dc3f',1,'EVENT_UI8_UI8_UI16_UI8']]],
   ['lambdaarray',['lambdaarray',['../structOPTSYST.html#affffe3221582de4166398a84debc5257',1,'OPTSYST::lambdaarray()'],['../structOPTPIAACMCDESIGN.html#ae7e05c68253c7a637f90597b0be9bec7',1,'OPTPIAACMCDESIGN::lambdaarray()']]],
   ['lambdab',['lambdaB',['../structOPTPIAACMCDESIGN.html#ac4a10cbfc3935db33fb2f3c5612fe0ef',1,'OPTPIAACMCDESIGN']]],
   ['lambdaend',['LAMBDAEND',['../PIAACMCsimul_8c.html#abe53f58d88702734246bbc1ebcd74236',1,'PIAACMCsimul.c']]],
@@ -103,6 +104,7 @@ var searchData=
   ['loadcreateshm_5flog',['loadcreateshm_log',['../AOloopControl_8c.html#aaf72f213eb3c9694c75a9ea54ddb4b4c',1,'AOloopControl.c']]],
   ['locoeff',['LOcoeff',['../structAOLOOPCONTROL__DMTURBCONF.html#add3ae0ba50727441f0a838d998297d5e',1,'AOLOOPCONTROL_DMTURBCONF::LOcoeff()'],['../structSCEXAO__DMTURBCONF.html#ac64131c487da4b74d132f83f37aa7f6a',1,'SCEXAO_DMTURBCONF::LOcoeff()']]],
   ['logexit',['logexit',['../structLOGSHIM__CONF.html#ade9849e9a2d4a6973b891d0ba46724ed',1,'LOGSHIM_CONF']]],
+  ['logflag',['logflag',['../structIMAGE.html#aef9755827cafe0f8b000ad928341d7f6',1,'IMAGE']]],
   ['logshim_5fconf',['LOGSHIM_CONF',['../structLOGSHIM__CONF.html',1,'']]],
   ['loopcnt',['loopcnt',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a2f048e0388e0d3e1b2f9ad7f3ad7e34f',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::loopcnt()'],['../structSCEXAO__DISPCOMB__CONF.html#a245e53d46cdd4f8172cc82008a5cc5af',1,'SCEXAO_DISPCOMB_CONF::loopcnt()'],['../coronagraphs_8c.html#adfef7b061132317e906e5dfd0fdd1038',1,'LOOPCNT():&#160;coronagraphs.c'],['../PIAACMCsimul_8c.html#adfef7b061132317e906e5dfd0fdd1038',1,'LOOPCNT():&#160;PIAACMCsimul.c']]],
   ['loopfrequ',['loopfrequ',['../structAOLOOPCONTROL__CONF.html#a506f80967bf851d09a3c7a3142666863',1,'AOLOOPCONTROL_CONF::loopfrequ()'],['../structFPAOLOOPCONTROL__CONF.html#a882a264056019581c3a5e557c21d1654',1,'FPAOLOOPCONTROL_CONF::loopfrequ()']]],

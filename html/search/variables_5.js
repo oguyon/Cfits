@@ -8,6 +8,7 @@ var searchData=
   ['fifoname',['fifoname',['../structDATA.html#ac3b98b39c316089481ab31820a1f4b21',1,'DATA']]],
   ['fifoon',['fifoON',['../structDATA.html#a37b44a7ef0d3d29f33bf3700ec28665e',1,'DATA']]],
   ['filecnt',['filecnt',['../structLOGSHIM__CONF.html#a540e125719be22adb4d4d1c1c87f575d',1,'LOGSHIM_CONF']]],
+  ['firstlong',['firstlong',['../structTIMESPECFIXED.html#ac5d8359c6f00ae3b50f59946055ac6c8',1,'TIMESPECFIXED']]],
   ['fitapo_5fa',['fitapo_a',['../coronagraphs_8c.html#a890da3b9806a68ae8110cd596a7fb5cc',1,'coronagraphs.c']]],
   ['fitapo_5fb',['fitapo_b',['../coronagraphs_8c.html#a2185667bf3272ded9cfec2f4a329bdda',1,'coronagraphs.c']]],
   ['fitapo_5fc',['fitapo_c',['../coronagraphs_8c.html#a428b05fe56bb8fb269a7be09c5334569',1,'coronagraphs.c']]],

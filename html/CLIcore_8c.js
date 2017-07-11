@@ -51,6 +51,6 @@ var CLIcore_8c =
     [ "rlquit", "CLIcore_8c.html#a4f8be0aef5b7a6c4f308f99f92370d74", null ],
     [ "SrcDir", "CLIcore_8c.html#aedb03ab482b6c7291fc929f4e7ff3f33", null ],
     [ "suid", "CLIcore_8c.html#a4013b1078f89c6a61f5572b3691ce817", null ],
-    [ "TYPESIZE", "CLIcore_8c.html#aadfaed58c87f621d2863f9f598db072e", null ],
+    [ "TYPESIZE", "CLIcore_8c.html#a3550f8e47f5206735dad064e5b00a0b8", null ],
     [ "Verbose", "CLIcore_8c.html#a95f627d7054b1abbffa2c6ea19bf05db", null ]
 ];

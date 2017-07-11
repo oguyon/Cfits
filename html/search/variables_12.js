@@ -30,6 +30,8 @@ var searchData=
   ['trigchan',['TrigChan',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a61b8cb3873bb8760a7e12051bf42a2d8',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['trigmode',['TrigMode',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#aae214325cb868e367cb9cbd83bc90c35',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['trigsem',['TrigSem',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a81fbd1321228bff0cf9c3116859fb9dd',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
+  ['ts',['ts',['../structIMAGE__METADATA.html#a63b6571e0098f7873d335e34abc7b36f',1,'IMAGE_METADATA']]],
+  ['tsfixed',['tsfixed',['../structIMAGE__METADATA.html#a74376b04d9551877d25bb5369b0ad21b',1,'IMAGE_METADATA']]],
   ['tstart',['tstart',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a3be151c816bca61cb3b71ca59a4eb637',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::tstart()'],['../structAOLOOPCONTROL__DMTURBCONF.html#aab4485b269aa4f1908abc5f563585eef',1,'AOLOOPCONTROL_DMTURBCONF::tstart()'],['../structSCEXAO__DISPCOMB__CONF.html#a2caaa62689a2795eacc0a25d777c61f4',1,'SCEXAO_DISPCOMB_CONF::tstart()'],['../structSCEXAO__DMTURBCONF.html#a56d25fd1fb67d71752743fd4cef0806d',1,'SCEXAO_DMTURBCONF::tstart()']]],
   ['twfs',['twfs',['../structEXAOSIMCONF.html#a4a6c6f36d6b693a3a60acbf71c833894',1,'EXAOSIMCONF']]],
   ['twfs_5fopt',['twfs_opt',['../structEXAOSIMCONF.html#a3ff9079e312b1f21948f78cffd63198a',1,'EXAOSIMCONF']]],
@@ -37,5 +39,5 @@ var searchData=
   ['twfssci',['twfssci',['../structEXAOSIMCONF.html#a036d88223438b4b217f8b5d1df5c9da1',1,'EXAOSIMCONF']]],
   ['twfssci_5fopt',['twfssci_opt',['../structEXAOSIMCONF.html#a7d27d7d1ef4148c714e16039525db09a',1,'EXAOSIMCONF']]],
   ['type',['type',['../structsymrec.html#a3ed0bae32ad0e16423a49153484094f8',1,'symrec::type()'],['../structCMDARGTOKEN.html#a268f75c3a394c9466df7aba70dc76c00',1,'CMDARGTOKEN::type()'],['../structVARIABLE.html#a84814331e54156c3ac9fbe6d2b851daf',1,'VARIABLE::type()'],['../structIMAGE__KEYWORD.html#a93acc5dd5d573d8e91129b27332e4ef4',1,'IMAGE_KEYWORD::type()']]],
-  ['typesize',['TYPESIZE',['../CLIcore_8c.html#aadfaed58c87f621d2863f9f598db072e',1,'TYPESIZE():&#160;CLIcore.c'],['../CLIcore_8h.html#aadfaed58c87f621d2863f9f598db072e',1,'TYPESIZE():&#160;CLIcore.c']]]
+  ['typesize',['TYPESIZE',['../CLIcore_8c.html#a3550f8e47f5206735dad064e5b00a0b8',1,'TYPESIZE():&#160;CLIcore.c'],['../CLIcore_8h.html#a3550f8e47f5206735dad064e5b00a0b8',1,'TYPESIZE():&#160;CLIcore.c']]]
 ];

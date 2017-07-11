@@ -268,7 +268,7 @@ var AOloopControl_8c =
     [ "tnow", "AOloopControl_8c.html#a59d2ab140fff2f63a38f4704a76fc2ec", null ],
     [ "wcol", "AOloopControl_8c.html#ae6916da9363f105e747ab3cb5af8a4e7", null ],
     [ "WFS_active_map", "AOloopControl_8c.html#abb7ca190f28831881358f1d0a7ee0529", null ],
-    [ "WFSatype", "AOloopControl_8c.html#a1b20bcdb35ebf0fcae912ddac30c1be5", null ],
+    [ "WFSatype", "AOloopControl_8c.html#ae7fa9238d412594f41ef9f6d5c4206c4", null ],
     [ "wfsrefcnt0", "AOloopControl_8c.html#a50daf580553415a9fa4fe7f3fcb85e28", null ],
     [ "wrow", "AOloopControl_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5", null ]
 ];

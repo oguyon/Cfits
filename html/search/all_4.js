@@ -99,6 +99,7 @@ var searchData=
   ['doublearray',['DOUBLEARRAY',['../structDATA.html#a15076d931e1bc151a4a9933e09f344b1',1,'DATA']]],
   ['doy',['doy',['../structnrlmsise__input.html#a81329554920ba6f7180d427ab7a3b907',1,'nrlmsise_input']]],
   ['dphadz_5farray',['dphadz_array',['../PIAACMCsimul_8c.html#ae2c9d516f5c47e45b510058bfba56c8a',1,'PIAACMCsimul.c']]],
+  ['dtus',['dtus',['../structEVENT__UI8__UI8__UI16__UI8.html#a04053acfb2e1ee96caa2e01ff5ebf848',1,'EVENT_UI8_UI8_UI16_UI8']]],
   ['dupstr',['dupstr',['../CLIcore_8c.html#aaa38e8336f9b0dabd89fba19867a6e88',1,'CLIcore.c']]],
   ['dx',['dX',['../structEXAOSIMCONF.html#a852809412654bdfb8fb928e3a7c76f2c',1,'EXAOSIMCONF']]],
   ['dy',['dY',['../structEXAOSIMCONF.html#a5abe88bccb732382fa7c290b1100d1a2',1,'EXAOSIMCONF']]]

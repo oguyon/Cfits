@@ -26,6 +26,7 @@ var searchData=
   ['timerid',['timerID',['../structGPUMATMULTCONF.html#afdf83a5e3c89f6626ab194378f2545db',1,'GPUMATMULTCONF']]],
   ['timespec_5fdiff',['timespec_diff',['../00CORE_8c.html#acd8c1457583903d309e19adde6805717',1,'timespec_diff(struct timespec start, struct timespec end):&#160;00CORE.c'],['../00CORE_8h.html#acd8c1457583903d309e19adde6805717',1,'timespec_diff(struct timespec start, struct timespec end):&#160;00CORE.c']]],
   ['timespec_5fdiff_5fdouble',['timespec_diff_double',['../00CORE_8c.html#aa333aaba4981442f52ab55df43d76ac5',1,'timespec_diff_double(struct timespec start, struct timespec end):&#160;00CORE.c'],['../00CORE_8h.html#aa333aaba4981442f52ab55df43d76ac5',1,'timespec_diff_double(struct timespec start, struct timespec end):&#160;00CORE.c']]],
+  ['timespecfixed',['TIMESPECFIXED',['../structTIMESPECFIXED.html',1,'']]],
   ['tint',['tint',['../structAOLOOPCONTROL__DMTURBCONF.html#a1d7cbe276afaf5c4de799e619abc3432',1,'AOLOOPCONTROL_DMTURBCONF::tint()'],['../structSCEXAO__DMTURBCONF.html#a400fd554d673f5693ce6d67cc9e4ecc9',1,'SCEXAO_DMTURBCONF::tint()']]],
   ['tkcommand',['TKCOMMAND',['../calc__bison_8c.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb',1,'TKCOMMAND():&#160;calc_bison.c'],['../calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb',1,'TKCOMMAND():&#160;calc_bison.h']]],
   ['tkfunc_5fd_5fd',['TKFUNC_d_d',['../calc__bison_8c.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a',1,'TKFUNC_d_d():&#160;calc_bison.c'],['../calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9aefad6a8e2d44518afd4d145bd5b4014a',1,'TKFUNC_d_d():&#160;calc_bison.h']]],
@@ -59,7 +60,9 @@ var searchData=
   ['trigchan',['TrigChan',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a61b8cb3873bb8760a7e12051bf42a2d8',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['trigmode',['TrigMode',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#aae214325cb868e367cb9cbd83bc90c35',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
   ['trigsem',['TrigSem',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a81fbd1321228bff0cf9c3116859fb9dd',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
+  ['ts',['ts',['../structIMAGE__METADATA.html#a63b6571e0098f7873d335e34abc7b36f',1,'IMAGE_METADATA']]],
   ['tselec',['tselec',['../AtmosphereModel_8c.html#a33a1cefdccd2b19639ffdf27c6a7abbd',1,'tselec(struct nrlmsise_flags *flags):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a33a1cefdccd2b19639ffdf27c6a7abbd',1,'tselec(struct nrlmsise_flags *flags):&#160;nrlmsise-00.c']]],
+  ['tsfixed',['tsfixed',['../structIMAGE__METADATA.html#a74376b04d9551877d25bb5369b0ad21b',1,'IMAGE_METADATA']]],
   ['tstart',['tstart',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a3be151c816bca61cb3b71ca59a4eb637',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::tstart()'],['../structAOLOOPCONTROL__DMTURBCONF.html#aab4485b269aa4f1908abc5f563585eef',1,'AOLOOPCONTROL_DMTURBCONF::tstart()'],['../structSCEXAO__DISPCOMB__CONF.html#a2caaa62689a2795eacc0a25d777c61f4',1,'SCEXAO_DISPCOMB_CONF::tstart()'],['../structSCEXAO__DMTURBCONF.html#a56d25fd1fb67d71752743fd4cef0806d',1,'SCEXAO_DMTURBCONF::tstart()']]],
   ['twfs',['twfs',['../structEXAOSIMCONF.html#a4a6c6f36d6b693a3a60acbf71c833894',1,'EXAOSIMCONF']]],
   ['twfs_5fopt',['twfs_opt',['../structEXAOSIMCONF.html#a3ff9079e312b1f21948f78cffd63198a',1,'EXAOSIMCONF']]],
@@ -67,5 +70,5 @@ var searchData=
   ['twfssci',['twfssci',['../structEXAOSIMCONF.html#a036d88223438b4b217f8b5d1df5c9da1',1,'EXAOSIMCONF']]],
   ['twfssci_5fopt',['twfssci_opt',['../structEXAOSIMCONF.html#a7d27d7d1ef4148c714e16039525db09a',1,'EXAOSIMCONF']]],
   ['type',['type',['../structsymrec.html#a3ed0bae32ad0e16423a49153484094f8',1,'symrec::type()'],['../structCMDARGTOKEN.html#a268f75c3a394c9466df7aba70dc76c00',1,'CMDARGTOKEN::type()'],['../structVARIABLE.html#a84814331e54156c3ac9fbe6d2b851daf',1,'VARIABLE::type()'],['../structIMAGE__KEYWORD.html#a93acc5dd5d573d8e91129b27332e4ef4',1,'IMAGE_KEYWORD::type()']]],
-  ['typesize',['TYPESIZE',['../CLIcore_8c.html#aadfaed58c87f621d2863f9f598db072e',1,'TYPESIZE():&#160;CLIcore.c'],['../CLIcore_8h.html#aadfaed58c87f621d2863f9f598db072e',1,'TYPESIZE():&#160;CLIcore.c']]]
+  ['typesize',['TYPESIZE',['../CLIcore_8c.html#a3550f8e47f5206735dad064e5b00a0b8',1,'TYPESIZE():&#160;CLIcore.c'],['../CLIcore_8h.html#a3550f8e47f5206735dad064e5b00a0b8',1,'TYPESIZE():&#160;CLIcore.c']]]
 ];

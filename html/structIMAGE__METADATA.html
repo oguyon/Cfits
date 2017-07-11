@@ -111,6 +111,9 @@ $(document).ready(function(){initNavTree('structIMAGE__METADATA.html','');});
 </div><!--header-->
 <div class="contents">
 
+<p>Image metadata.  
+ <a href="structIMAGE__METADATA.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="ImageStruct_8h_source.html">ImageStruct.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -121,9 +124,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a5585158d61a83d01513f928a497fb4f2"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a5585158d61a83d01513f928a497fb4f2">naxis</a></td></tr>
 <tr class="memdesc:a5585158d61a83d01513f928a497fb4f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of axis.  <a href="#a5585158d61a83d01513f928a497fb4f2">More...</a><br /></td></tr>
 <tr class="separator:a5585158d61a83d01513f928a497fb4f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3732fd3182f3b39463e4ee2f2138c20f"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a3732fd3182f3b39463e4ee2f2138c20f">size</a> [3]</td></tr>
-<tr class="memdesc:a3732fd3182f3b39463e4ee2f2138c20f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image size along each axis.  <a href="#a3732fd3182f3b39463e4ee2f2138c20f">More...</a><br /></td></tr>
-<tr class="separator:a3732fd3182f3b39463e4ee2f2138c20f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98fd73deef68cf99e4bd08f5deda9c02"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a98fd73deef68cf99e4bd08f5deda9c02">size</a> [3]</td></tr>
+<tr class="memdesc:a98fd73deef68cf99e4bd08f5deda9c02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image size along each axis.  <a href="#a98fd73deef68cf99e4bd08f5deda9c02">More...</a><br /></td></tr>
+<tr class="separator:a98fd73deef68cf99e4bd08f5deda9c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59e37101927d24d70d9e208de7a239ba"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a59e37101927d24d70d9e208de7a239ba">nelement</a></td></tr>
 <tr class="memdesc:a59e37101927d24d70d9e208de7a239ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements in image.  <a href="#a59e37101927d24d70d9e208de7a239ba">More...</a><br /></td></tr>
 <tr class="separator:a59e37101927d24d70d9e208de7a239ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,8 +137,14 @@ Data Fields</h2></td></tr>
 <tr class="separator:aa0cb87c78a4e3a5693f37f70fad185a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87830cf8b22ec5be4ab2a167ee9db9fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a87830cf8b22ec5be4ab2a167ee9db9fa">last_access</a></td></tr>
 <tr class="separator:a87830cf8b22ec5be4ab2a167ee9db9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a4dfe37e26ea28f88f85df4dde00600"><td class="memItemLeft" align="right" valign="top">struct timespec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a5a4dfe37e26ea28f88f85df4dde00600">wtime</a></td></tr>
-<tr class="separator:a5a4dfe37e26ea28f88f85df4dde00600"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1ae72eeda50a5b8f6995b575e4a5e7c"><td class="memItemLeft" >union {</td></tr>
+<tr class="memitem:a44ccbe60172a26375e36e6e95eaa5945"><td class="memItemLeft" >&#160;&#160;&#160;struct timespec&#160;&#160;&#160;<a class="el" href="structIMAGE__METADATA.html#a63b6571e0098f7873d335e34abc7b36f">ts</a></td></tr>
+<tr class="separator:a44ccbe60172a26375e36e6e95eaa5945"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99df77f100a5d0fd455bf9744201034f"><td class="memItemLeft" >&#160;&#160;&#160;<a class="el" href="structTIMESPECFIXED.html">TIMESPECFIXED</a>&#160;&#160;&#160;<a class="el" href="structIMAGE__METADATA.html#a74376b04d9551877d25bb5369b0ad21b">tsfixed</a></td></tr>
+<tr class="separator:a99df77f100a5d0fd455bf9744201034f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1ae72eeda50a5b8f6995b575e4a5e7c"><td class="memItemLeft" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#aa1ae72eeda50a5b8f6995b575e4a5e7c">atime</a></td></tr>
+<tr class="memdesc:aa1ae72eeda50a5b8f6995b575e4a5e7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acquisition time (beginning of exposure.  <a href="#aa1ae72eeda50a5b8f6995b575e4a5e7c">More...</a><br /></td></tr>
+<tr class="separator:aa1ae72eeda50a5b8f6995b575e4a5e7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca7ea6d913719f43915ecc2665475a70"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#aca7ea6d913719f43915ecc2665475a70">shared</a></td></tr>
 <tr class="separator:aca7ea6d913719f43915ecc2665475a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa6697c2d6277f5d0db1cf8306fd58a5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#aaa6697c2d6277f5d0db1cf8306fd58a5">write</a></td></tr>
@@ -146,10 +155,33 @@ Data Fields</h2></td></tr>
 <tr class="separator:a6e6ba72f5ba6958e664af526df06ce48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a53c89322cd71d9fa09a3f64222cdff"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a0a53c89322cd71d9fa09a3f64222cdff">cnt1</a></td></tr>
 <tr class="separator:a0a53c89322cd71d9fa09a3f64222cdff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58c063a71b37d3eea833f9c88be36b0c"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#a58c063a71b37d3eea833f9c88be36b0c">cnt2</a></td></tr>
+<tr class="separator:a58c063a71b37d3eea833f9c88be36b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af514179095cc9d164f72753c6b33fb3b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIMAGE__METADATA.html#af514179095cc9d164f72753c6b33fb3b">NBkw</a></td></tr>
 <tr class="separator:af514179095cc9d164f72753c6b33fb3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Field Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Image metadata. </p>
+<p>This structure has a fixed size regardless of implementation </p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="aa1ae72eeda50a5b8f6995b575e4a5e7c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">union { ... }   IMAGE_METADATA::atime</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acquisition time (beginning of exposure. </p>
+<p>atime is defined as a union to ensure fixed 16-byte length regardless of struct timespec implementation</p>
+<p>Data Type: struct timespec The struct timespec structure represents an elapsed time. It is declared in time.h and has the following members: time_t tv_sec This represents the number of whole seconds of elapsed time. long int tv_nsec This is the rest of the elapsed time (a fraction of a second), represented as the number of nanoseconds. It is always less than one billion.</p>
+<p>On (most ?) 64-bit systems: sizeof(struct timespec) = 16 : sizeof(long int) = 8; sizeof(time_t) = 8</p>
+<dl class="section warning"><dt>Warning</dt><dd>sizeof(struct timespec) is implementation-specific, and could be smaller that 16 byte. Users may need to create and manage their own timespec implementation if data needs to be portable across machines. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a05878f4f96b09402f031aeb6d0817416"></a>
 <div class="memitem">
 <div class="memproto">
@@ -206,6 +238,19 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a58c063a71b37d3eea833f9c88be36b0c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint64_t IMAGE_METADATA::cnt2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>in event mode, this is the # of events </p>
+
+</div>
+</div>
 <a class="anchor" id="aa0cb87c78a4e3a5693f37f70fad185a0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -215,7 +260,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>creation time (since program start) </p>
+<p>creation time (since process start) </p>
 
 </div>
 </div>
@@ -228,7 +273,7 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>last time the image was accessed (since program start) </p>
+<p>last time the image was accessed (since process start) </p>
 
 </div>
 </div>
@@ -302,12 +347,12 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3732fd3182f3b39463e4ee2f2138c20f"></a>
+<a class="anchor" id="a98fd73deef68cf99e4bd08f5deda9c02"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint64_t IMAGE_METADATA::size[3]</td>
+          <td class="memname">uint32_t IMAGE_METADATA::size[3]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -330,6 +375,30 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a63b6571e0098f7873d335e34abc7b36f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct timespec IMAGE_METADATA::ts</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a74376b04d9551877d25bb5369b0ad21b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structTIMESPECFIXED.html">TIMESPECFIXED</a> IMAGE_METADATA::tsfixed</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="aaa6697c2d6277f5d0db1cf8306fd58a5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -343,18 +412,6 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5a4dfe37e26ea28f88f85df4dde00600"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">struct timespec IMAGE_METADATA::wtime</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="ImageStruct_8h_source.html">ImageStruct.h</a></li>
 </ul>
@@ -364,7 +421,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structIMAGE__METADATA.html">IMAGE_METADATA</a></li>
-    <li class="footer">Generated on Thu Jul 6 2017 18:19:07 for cfitsTK by
+    <li class="footer">Generated on Mon Jul 10 2017 09:48:47 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

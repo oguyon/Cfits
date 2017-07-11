@@ -18,6 +18,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "image_filter", "dir_676befcc5933c2bdc27e94a2782f4631.html", "dir_676befcc5933c2bdc27e94a2782f4631" ],
     [ "image_format", "dir_0581ea1a1599a935566a2d800eb9900d.html", "dir_0581ea1a1599a935566a2d800eb9900d" ],
     [ "image_gen", "dir_3cb5195a138b2f433c7c5dd6e33a4f06.html", "dir_3cb5195a138b2f433c7c5dd6e33a4f06" ],
+    [ "ImageCreate", "dir_7d79a5ff17bfcd2e3d00fea5d66b2430.html", "dir_7d79a5ff17bfcd2e3d00fea5d66b2430" ],
     [ "img_reduce", "dir_2023aa0f1a7d7dd6bbe7e3d622e6aa1b.html", "dir_2023aa0f1a7d7dd6bbe7e3d622e6aa1b" ],
     [ "info", "dir_4b9d01165433dba703e06bc6af058de1.html", "dir_4b9d01165433dba703e06bc6af058de1" ],
     [ "kdtree", "dir_dc6f6ebb17638330358f8ce659751398.html", "dir_dc6f6ebb17638330358f8ce659751398" ],
@@ -42,7 +43,9 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "ImageStruct.h", "ImageStruct_8h.html", [
       [ "complex_float", "structcomplex__float.html", "structcomplex__float" ],
       [ "complex_double", "structcomplex__double.html", "structcomplex__double" ],
+      [ "EVENT_UI8_UI8_UI16_UI8", "structEVENT__UI8__UI8__UI16__UI8.html", "structEVENT__UI8__UI8__UI16__UI8" ],
       [ "IMAGE_KEYWORD", "structIMAGE__KEYWORD.html", "structIMAGE__KEYWORD" ],
+      [ "TIMESPECFIXED", "structTIMESPECFIXED.html", "structTIMESPECFIXED" ],
       [ "IMAGE_METADATA", "structIMAGE__METADATA.html", "structIMAGE__METADATA" ],
       [ "IMAGE", "structIMAGE.html", "structIMAGE" ]
     ] ],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['i',['I',['../structIMAGE.html#a979bae0476f8bc88caf3ffde2c140665',1,'IMAGE::I()'],['../calc__flex_8c.html#a139066bd9e344a8daae82c5ca919fffe',1,'i():&#160;calc_flex.c']]],
+  ['i',['i',['../calc__flex_8c.html#a139066bd9e344a8daae82c5ca919fffe',1,'calc_flex.c']]],
   ['id_5fcpafreq',['ID_CPAfreq',['../PIAACMCsimul_8c.html#a9e73e8445edf403b04c51e369d3438ca',1,'PIAACMCsimul.c']]],
   ['id_5fdm',['ID_DM',['../structOPTPIAACMCDESIGN.html#a01002138c2aeb8f60ce18ab70bac6a15',1,'OPTPIAACMCDESIGN']]],
   ['id_5fdm2dm_5fdmmodes',['ID_dm2dm_DMmodes',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a2bf434b16c3583f8c3dc176c7bd965c6',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['i',['I',['../structIMAGE.html#a979bae0476f8bc88caf3ffde2c140665',1,'IMAGE::I()'],['../calc__flex_8c.html#a139066bd9e344a8daae82c5ca919fffe',1,'i():&#160;calc_flex.c']]],
+  ['i',['i',['../calc__flex_8c.html#a139066bd9e344a8daae82c5ca919fffe',1,'calc_flex.c']]],
   ['id_5fcpafreq',['ID_CPAfreq',['../PIAACMCsimul_8c.html#a9e73e8445edf403b04c51e369d3438ca',1,'PIAACMCsimul.c']]],
   ['id_5fdm',['ID_DM',['../structOPTPIAACMCDESIGN.html#a01002138c2aeb8f60ce18ab70bac6a15',1,'OPTPIAACMCDESIGN']]],
   ['id_5fdm2dm_5fdmmodes',['ID_dm2dm_DMmodes',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a2bf434b16c3583f8c3dc176c7bd965c6',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF']]],
@@ -99,9 +99,15 @@ var searchData=
   ['image_5fwritebmp',['image_writeBMP',['../image__format_8c.html#a912bb7d8c2b78ee437aac7fc185d7610',1,'image_format.c']]],
   ['image_5fwritebmp_5fauto',['image_writeBMP_auto',['../image__format_8c.html#ade1e15f1769d76d503d11b3254f2d345',1,'image_writeBMP_auto(const char *IDnameR, const char *IDnameG, const char *IDnameB, const char *outname):&#160;image_format.c'],['../image__format_8h.html#ade1e15f1769d76d503d11b3254f2d345',1,'image_writeBMP_auto(const char *IDnameR, const char *IDnameG, const char *IDnameB, const char *outname):&#160;image_format.c']]],
   ['image_5fwritebmp_5fauto_5fcli',['image_writeBMP_auto_cli',['../image__format_8c.html#a2fe9c57f6eb47230fa7983bf01bd7c0d',1,'image_format.c']]],
+  ['imagecreate',['ImageCreate',['../ImageCreate_8c.html#a6be2b98425ee3eb486d1c4dd328d0e18',1,'ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw):&#160;ImageCreate.c'],['../ImageCreate_8h.html#a6be2b98425ee3eb486d1c4dd328d0e18',1,'ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw):&#160;ImageCreate.c']]],
+  ['imagecreate_2ec',['ImageCreate.c',['../ImageCreate_8c.html',1,'']]],
+  ['imagecreate_2eh',['ImageCreate.h',['../ImageCreate_8h.html',1,'']]],
+  ['imagecreate_5fprinterror',['ImageCreate_printERROR',['../ImageCreate_8c.html#a72aa688b4e281af7cf6c84915987f701',1,'ImageCreate.c']]],
+  ['imagecreatesem',['ImageCreateSem',['../ImageCreate_8c.html#a7d7b7d8b9314f94a107a54c50ba3731d',1,'ImageCreateSem(IMAGE *image, long NBsem):&#160;ImageCreate.c'],['../ImageCreate_8h.html#a7d7b7d8b9314f94a107a54c50ba3731d',1,'ImageCreateSem(IMAGE *image, long NBsem):&#160;ImageCreate.c']]],
   ['images_5fto_5fcube',['images_to_cube',['../COREMOD__iofits_8c.html#a725830b1309b84587375eda82b684689',1,'images_to_cube(const char *img_name, long nbframes, const char *cube_name):&#160;COREMOD_iofits.c'],['../COREMOD__iofits_8h.html#a725830b1309b84587375eda82b684689',1,'images_to_cube(const char *img_name, long nbframes, const char *cube_name):&#160;COREMOD_iofits.c']]],
   ['images_5fto_5fcube_5fcli',['images_to_cube_cli',['../COREMOD__iofits_8c.html#a408b58c604506761f53c7b405815c152',1,'COREMOD_iofits.c']]],
   ['imagestruct_2eh',['ImageStruct.h',['../ImageStruct_8h.html',1,'']]],
+  ['imcreate_5ftest_2ec',['ImCreate_test.c',['../ImCreate__test_8c.html',1,'']]],
   ['img_5fhistoc',['img_histoc',['../info_8h.html#aee841252488f94e44a90f2c82c8a1606',1,'info.h']]],
   ['img_5fhistoc_5fdouble',['img_histoc_double',['../info_8c.html#a3a01ab464bbae9daef1ee5dffd23bcc1',1,'info.c']]],
   ['img_5fhistoc_5ffloat',['img_histoc_float',['../info_8c.html#abad24e6ead17be3f4a4c82074a4ab3ea',1,'info.c']]],

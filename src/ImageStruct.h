@@ -53,7 +53,6 @@ typedef struct
 
 
 
-
 /** @brief Photon detection events
  * 
  * Log individual photon events on a 2D camera
@@ -98,7 +97,7 @@ typedef struct
 	
 	uint8_t lambda_index;  
 
-} EVENT_UI8_UI8_UI16_UI8;
+}  __attribute__ ((__packed__)) EVENT_UI8_UI8_UI16_UI8;
 
 
 
@@ -173,7 +172,8 @@ typedef struct
 
     char comment[80];
 
-} IMAGE_KEYWORD;
+} __attribute__ ((__packed__)) IMAGE_KEYWORD;
+
 
 
 /** @brief structure holding two 8-byte integers
@@ -187,33 +187,41 @@ typedef struct
 } TIMESPECFIXED;
 
 
+
+
 /** @brief Image metadata
  * 
  * This structure has a fixed size regardless of implementation
- * 
+ *
+ * @note size = 163 byte = 1304 bit
+ *  
  */ 
 typedef struct
 {
     /** @brief Image Name */
     char name[80];   
+    // offset 80 byte = 640 bit
 
 	/** @brief Number of axis
 	 * 
 	 * @warning 1, 2 or 3. Values above 3 not allowed.   
 	 */
     uint8_t naxis;                
+    // offset 81 byte = 648 bit
     
     /** @brief Image size along each axis 
      * 
      *  If naxis = 1 (1D image), size[1] and size[2] are irrelevant
      */
-    uint32_t size[3];               
+    uint32_t size[3];
+    // offset 93 byte = 744 bit
 
 	/** @brief Number of elements in image
 	 * 
 	 * This is computed upon image creation 
 	 */ 
     uint64_t nelement;             
+    // offset 101 byte = 808 bit
     
     /** @brief Data type
      * 
@@ -233,9 +241,12 @@ typedef struct
      * 
      */
     uint8_t atype;                 
+    // offset 102 byte = 816 bit
 
     double creation_time;           /**< creation time (since process start)                                          */
     double last_access;             /**< last time the image was accessed  (since process start)                      */
+    // offset 118 byte = 944 bit
+    
     
     /** @brief Acquisition time (beginning of exposure   
      * 
@@ -258,19 +269,30 @@ typedef struct
 		struct timespec ts;
 		TIMESPECFIXED tsfixed;
 	} atime;
-    
+    // offset 134 byte = 1072 bit
     
     uint8_t shared;                 /**< 1 if in shared memory                                                        */
+    uint8_t status;              	/**< 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) */
+    // offset 136 byte = 1088 bit
 
-    uint8_t  write;               	/**< 1 if image is being written                                                  */
-    uint8_t  status;              	/**< 1 to log image (default); 0 : do not log: 2 : stop log (then goes back to 2) */
+
+	uint64_t : 0; // align array to 8-byte boundary for speed 
+	// offset 136 byte = 1088 bit (was already aligned)
+    
     uint64_t cnt0;               	/**< counter (incremented if image is updated)                                    */
     uint64_t cnt1;               	/**< in 3D rolling buffer image, this is the last slice written                   */
     uint64_t cnt2;                  /**< in event mode, this is the # of events                                       */
+	// offset 160 byte = 1280 bit
+
+    uint8_t  write;               	/**< 1 if image is being written                                                  */
+	// offset 161 byte = 1288
 
     uint16_t NBkw;                  /**< number of keywords (max: 65536)                                              */
+    // offset 163 byte = 1304
     
-} IMAGE_METADATA;
+} __attribute__ ((__packed__)) IMAGE_METADATA;
+
+
 
 
 
@@ -280,10 +302,14 @@ typedef struct
  * The IMAGE structure includes :
  *   - an array of IMAGE_KEWORD structures
  *   - an array of IMAGE_METADATA structures (usually only 1 element)
+ * 
+ * @note size = 136 byte = 1088 bit
+ * 
  */
 typedef struct          		/**< structure used to store data arrays                      */
 {
     char name[80]; 				/**< local name (can be different from name in shared memory) */
+    // offset 80 byte = 640 bit
     
     /** @brief Image usage flag
      * 
@@ -294,20 +320,31 @@ typedef struct          		/**< structure used to store data arrays              
      * 
      */
     uint8_t used;              
+    // offset 81 byte = 648 bit
     
     int32_t shmfd;		     	        /**< if shared memory, file descriptor */
+	// offset 85 byte = 680 bit
+
     uint64_t memsize; 			        /**< total size in memory if shared    */
+	// offset 93 byte = 744 bit
 
 	uint8_t logflag;                    /**< set to 1 to start logging         */
+	// offset 94 byte = 752 bit
+
     sem_t *semlog; 				        /**< pointer to semaphore for logging  (8 bytes on 64-bit system) */
+	// offset 102 byte = 816 bit
 
     IMAGE_METADATA *md;			
-
+	// offset 110 byte = 880 bit
 
 	// Dynamic allocation starts here
 	// from this point, pointer offets are no longer fixed and are data-dependent
 	// user needs to perform pointer offsets to access fields after array
 
+	
+	
+	uint64_t : 0; // align array to 8-byte boundary for speed
+	
 	/** @brief data storage array
 	 * 
 	 * The array is declared as a union, so that multiple data types can be supported \n
@@ -342,14 +379,22 @@ typedef struct          		/**< structure used to store data arrays              
 
 		EVENT_UI8_UI8_UI16_UI8 *event1121;
     } array;                 	/**< pointer to data array */
-
+	
+	// offset 118 byte = 944 bit
 
     uint16_t sem; 				        /**< number of semaphores in use, specified at image creation      */
+
+	// offset 120 byte = 960 bit
+	
     sem_t **semptr;	                    /**< array of pointers to semaphores   (each 8 bytes on 64-bit system) */
+
+	// offset 128 byte = 1024 bit
 
     IMAGE_KEYWORD *kw;
     
-} IMAGE;
+    // offset 136 byte = 1088 bit
+    
+} __attribute__ ((__packed__)) IMAGE;
 
 
 
