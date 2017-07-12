@@ -198,8 +198,6 @@ static magma_int_t *magma_iwork;
 
 
 
-#ifdef HAVE_CUDA
-
 
 /* =============================================================================================== */
 /* =============================================================================================== */
@@ -212,13 +210,17 @@ static magma_int_t *magma_iwork;
 
 int_fast8_t CUDACOMP_test_cli()
 {
+	#ifdef HAVE_CUDA
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0)
         GPUcomp_test(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
     else
         return 1;
+    #else
+    printf("Error: function requires CUDA. Please install CUDA\n");
+    #endif
 }
 
-
+#ifdef HAVE_CUDA
 
 
 /* =============================================================================================== */
@@ -1563,7 +1565,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1;  // ->7
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1615,7 +1617,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1;  // -> 8
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1654,7 +1656,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1;  // -> 9
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -1675,7 +1677,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
 
 
-    /*  if(data.image[gpumatmultconf[index].IDout].sem > 0)
+    /*  if(data.image[gpumatmultconf[index].IDout].md[0].sem > 0)
        {
            sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[0], &semval);
            if(semval<SEMAPHORE_MAXVAL)
@@ -1683,7 +1685,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
        }
 
 
-       if(data.image[gpumatmultconf[index].IDout].sem > 1)
+       if(data.image[gpumatmultconf[index].IDout].md[0].sem > 1)
            {
                sem_getvalue(data.image[gpumatmultconf[index].IDout].semptr[1], &semval);
                if(semval<SEMAPHORE_MAXVAL)
@@ -1699,7 +1701,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
         *status = *status + 1; // -> 10
         clock_gettime(CLOCK_REALTIME, &tnow);
-        tdiff = info_time_diff(data.image[IDtiming].md[0].atime, tnow);
+        tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
@@ -3863,7 +3865,7 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
     while(loopOK == 1)
     {
 
-        if(data.image[IDcoeff].sem==0)
+        if(data.image[IDcoeff].md[0].sem==0)
         {
             while(data.image[IDcoeff].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);
@@ -4401,7 +4403,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
             if(initref==1)
             {
-                if(data.image[IDin].sem==0)
+                if(data.image[IDin].md[0].sem==0)
                 {
                     while(data.image[IDin].md[0].cnt0==cnt) // test if new frame exists
                         usleep(5);
@@ -4558,7 +4560,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
                     data.image[IDprocave].array.F[NBmodes*step+k] = (1.0-stepcoeff)*data.image[IDprocave].array.F[NBmodes*step+k] + stepcoeff*data.image[ID_modeval].array.F[k];
                 stepcoeff *= stepcoeff0;
             }
-            for(semnb=0; semnb<data.image[IDprocave].sem; semnb++)
+            for(semnb=0; semnb<data.image[IDprocave].md[0].sem; semnb++)
             {
                 sem_getvalue(data.image[IDprocave].semptr[semnb], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
@@ -4579,7 +4581,7 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
                 }
                 stepcoeff *= stepcoeff0;
             }
-            for(semnb=0; semnb<data.image[IDprocrms].sem; semnb++)
+            for(semnb=0; semnb<data.image[IDprocrms].md[0].sem; semnb++)
             {
                 sem_getvalue(data.image[IDprocrms].semptr[semnb], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
@@ -4826,7 +4828,7 @@ int CUDACOMP_createModesLoop(const char *DMmodeval_stream, const char *DMmodes, 
 
     while(loopOK == 1)
     {
-        if(data.image[ID_DMact].sem==0)
+        if(data.image[ID_DMact].md[0].sem==0)
         {
             while(data.image[ID_DMact].md[0].cnt0==cnt) // test if new frame exists
                 usleep(5);

@@ -1996,9 +1996,11 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
     long snb;
     long s;
  
-   
+   int rval = -1;
 
    // ID = next_avail_image_ID();
+
+
 
 
     sprintf(SM_fname, "%s/%s.im.shm", SHAREDMEMDIR, name);
@@ -2011,27 +2013,39 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         image->used = 0;
         return(-1);
         printf("Cannot import shared memory file %s \n", name);
+        rval = -1;
     }
     else
     {
+		rval = 0; // we assume by default success
+		
         fstat(SM_fd, &file_stat);
         printf("File %s size: %zd\n", SM_fname, file_stat.st_size);
+
+
 
 
         map = (IMAGE_METADATA*) mmap(0, file_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
         if (map == MAP_FAILED) {
             close(SM_fd);
             perror("Error mmapping the file");
+            rval = -1;
             exit(0);
         }
 
+
+
         image->memsize = file_stat.st_size;
-        image->md[0].sem = 0;
+
         image->shmfd = SM_fd;
 
+
+
         image->md = map;
+        image->md[0].sem = 0;
         atype = image->md[0].atype;
         image->md[0].shared = 1;
+
 
         printf("image size = %ld %ld\n", (long) image->md[0].size[0], (long) image->md[0].size[1]);
         fflush(stdout);
@@ -2039,21 +2053,27 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         if(image->md[0].size[0]*image->md[0].size[1]>10000000000)
         {
             printf("IMAGE \"%s\" SEEMS BIG... ABORTING\n", name);
+            rval = -1;
             exit(0);
         }
         if(image->md[0].size[0]<1)
         {
             printf("IMAGE \"%s\" AXIS SIZE < 1... ABORTING\n", name);
+            rval = -1;
             exit(0);
         }
         if(image->md[0].size[1]<1)
         {
             printf("IMAGE \"%s\" AXIS SIZE < 1... ABORTING\n", name);
+            rval = -1;
             exit(0);
         }
 
+
+
         mapv = (char*) map;
         mapv += sizeof(IMAGE_METADATA);
+
 
 
         printf("atype = %d\n", (int) atype);
@@ -2144,6 +2164,7 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         }
 
 
+
         printf("%ld keywords\n", (long) image->md[0].NBkw);
         fflush(stdout);
 
@@ -2163,6 +2184,8 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         mapv += sizeof(IMAGE_KEYWORD)*image->md[0].NBkw;
 
         strcpy(image->name, name);
+
+
 
  
         // looking for semaphores
@@ -2198,7 +2221,8 @@ long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
     }
 
-    return(0);
+
+    return(rval);
 }
 
 
