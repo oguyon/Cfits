@@ -83,6 +83,9 @@ int main()
 	float squarerad=20;
 	long dtus = 10000; // update every 10ms
 	float dangle = 0.02;
+	
+	int s;
+	int semval;
 
 	// writes a square in image
 	// square location rotates around center
@@ -109,6 +112,14 @@ int main()
 				else
 					imarray[0].array.F[jj*imarray[0].md[0].size[0]+ii] = 0.0;
 			}
+		
+		// POST ALL SEMAPHORES
+		for(s=0; s<imarray[0].md[0].sem; s++)
+        {
+            sem_getvalue(imarray[0].semptr[s], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(imarray[0].semptr[s]);
+        }
 		
 		imarray[0].md[0].write = 0; // Done writing data
 		imarray[0].md[0].cnt0++;
