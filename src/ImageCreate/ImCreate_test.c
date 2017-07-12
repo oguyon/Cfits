@@ -120,6 +120,10 @@ int main()
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(imarray[0].semptr[s]);
         }
+		sem_getvalue(imarray[0].semlog, &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(imarray[0].semlog);
+		
 		
 		imarray[0].md[0].write = 0; // Done writing data
 		imarray[0].md[0].cnt0++;

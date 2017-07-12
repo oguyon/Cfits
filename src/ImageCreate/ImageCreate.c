@@ -137,7 +137,7 @@ int ImageCreateSem(IMAGE *image, long NBsem)
    
     if(image->md[0].sem == 0)
     {
-        if(image->semptr!=NULL)
+        if(image->semptr != NULL)
             free(image->semptr);
 
         image->md[0].sem = NBsem;
@@ -157,6 +157,17 @@ int ImageCreateSem(IMAGE *image, long NBsem)
             }
         }
     }
+    
+    
+    // semlog
+    sem_close(image->semlog);
+    sprintf(fname, "/dev/shm/sem.%s_semlog", image->md[0].name);
+    remove(fname);
+     if ((image->semlog = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) 
+        perror("semaphore initilization");
+     else
+		sem_init(image->semlog, 1, 0);
+    
     
     return(0);
 }
