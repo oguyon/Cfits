@@ -1474,7 +1474,7 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
 
 
     IDin = image_ID(in_name);
-    printf("-------------------- %f  : IDin = %ld\n", __FUNCTION__, IDin);//TEST
+    printf("-------------------- %s  : IDin = %ld\n", __FUNCTION__, IDin);//TEST
     atype = data.image[IDin].md[0].atype;
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
