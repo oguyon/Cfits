@@ -11973,9 +11973,15 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	while(m<NBmodes)
 		{
 			sprintf(imname, "aol%ld_DMmodes%02ld", loop, blk);
+
+			printf("Loading %s  (%2ld/%2ld)\n", imname, m, NBmodes);
+			fflush(stdout);
+
 			ID = read_sharedmem_image(imname);		
 			n = data.image[ID].md[0].size[2];
+			printf(" -> found %2ld modes\n", n);
 			blockNBmodes[blk] = n;
+			
 			for(i=0;i<n;i++)
 				{
 					modeblock[m] = blk;
