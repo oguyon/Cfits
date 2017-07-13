@@ -1290,6 +1290,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
             /** compute offset */
             fft_correlation("imwfs", "imref", "outcorr");
             IDc = image_ID("outcorr");
+            
+            save_fits("imwfs", "!./tmp/imwfs0.fits");
+            save_fits("imref", "!./tmp/imref0.fits");
             save_fits("outcorr", "!./tmp/outcorr0.fits");
             list_image_ID();
             
