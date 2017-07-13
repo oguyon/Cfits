@@ -1756,12 +1756,12 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
     n = snprintf(ft1name,SBUFFERSIZE,"_ft1_%d",(int) getpid());
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-    do2drfft(ID_name1,ft1name);
+    do2drfft(ID_name1, ft1name);
 
     n = snprintf(ft2name,SBUFFERSIZE,"_ft2_%d",(int) getpid());
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
-    do2drfft(ID_name2,ft2name);
+    do2drfft(ID_name2, ft2name);
 
     n = snprintf(fta1name,SBUFFERSIZE,"_%s_a_%d",ft1name,(int) getpid());
     if(n >= SBUFFERSIZE)
@@ -1787,8 +1787,8 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_amph_from_complex(ft1name,fta1name,ftp1name, 0);
-    mk_amph_from_complex(ft2name,fta2name,ftp2name, 0);
+    mk_amph_from_complex(ft1name, fta1name, ftp1name, 0);
+    mk_amph_from_complex(ft2name, fta2name, ftp2name, 0);
     delete_image_ID(ft1name);
     delete_image_ID(ft2name);
 
@@ -1827,6 +1827,7 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
 
 
     IDout = image_ID(ID_nameout);
+	exit(0);
 
     return(IDout);
 }
