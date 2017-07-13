@@ -1733,7 +1733,7 @@ long do2drffti(const char *in_name, const char *out_name)
 
 long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_nameout)
 {
-    long ID1,ID2,IDout;
+    long ID1, ID2,IDout;
     long nelement;
 
     char ft1name[SBUFFERSIZE];
@@ -1752,6 +1752,9 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
     ID1 = image_ID(ID_name1);
     nelement = data.image[ID1].md[0].nelement;
 
+
+    save_fits(ID_name1, "!./tmp/fcorrel_ID_name1.fits");//TEST
+    save_fits(ID_name2, "!./tmp/fcorrel_ID_name2.fits");//TEST
 
     n = snprintf(ft1name,SBUFFERSIZE,"_ft1_%d",(int) getpid());
     if(n >= SBUFFERSIZE)
@@ -1789,6 +1792,12 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
 
     mk_amph_from_complex(ft1name, fta1name, ftp1name, 0);
     mk_amph_from_complex(ft2name, fta2name, ftp2name, 0);
+
+    save_fits(fta1name, "!./tmp/fcorrel_fta1name.fits");//TEST
+    save_fits(ftp1name, "!./tmp/fcorrel_ftp1name.fits");//TEST
+    save_fits(fta2name, "!./tmp/fcorrel_fta2name.fits");//TEST
+    save_fits(ftp2name, "!./tmp/fcorrel_ftp2name.fits");//TEST
+
     delete_image_ID(ft1name);
     delete_image_ID(ft2name);
 
