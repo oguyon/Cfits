@@ -11977,7 +11977,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			printf("Loading %s  (%2ld/%2ld)\n", imname, m, NBmodes);
 			fflush(stdout);
 
-			ID = read_sharedmem_image(imname);		
+			ID = read_sharedmem_image(imname);
+			if(ID==-1)
+			{
+				printf("ERROR: could not load %s from shared memory\n", imname);
+				exit(0);
+			}		
 			n = data.image[ID].md[0].size[2];
 			printf(" -> found %2ld modes\n", n);
 			blockNBmodes[blk] = n;
