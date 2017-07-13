@@ -1310,7 +1310,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
                     data.image[IDc].array.F[ii] = 0.0;
 
 			printf("---------- %ld %ld   %f %f ------------\n", (long) pXsize, (long) pYsize, peak, alpha);
-
+			exit(0);
+            
             totx = 0.0;
             toty = 0.0;
             tot = 0.0;

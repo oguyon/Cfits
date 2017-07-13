@@ -1820,14 +1820,14 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-    mk_amph_from_complex(fft1name,ID_nameout,fft1pname, 0);
+    mk_amph_from_complex(fft1name, ID_nameout, fft1pname, 0);
     permut(ID_nameout);
-    delete_image_ID(fft1name);
-    delete_image_ID(fft1pname);
+  //  delete_image_ID(fft1name);
+  //  delete_image_ID(fft1pname);
 
 
     IDout = image_ID(ID_nameout);
-	exit(0);
+
 
     return(IDout);
 }
