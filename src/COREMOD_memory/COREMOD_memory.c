@@ -31,6 +31,8 @@
 #include <signal.h> 
 #include <ncurses.h>
 
+#include <errno.h>
+
 #include <semaphore.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -5388,8 +5390,10 @@ long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr
 
             if ( rs != framesize1)
             {
+				perror("socket send error :");
                 printf("send() sent a different number of bytes (%d) than expected %ld  %ld  %ld\n", rs, (long) framesize, (long) framesize1, (long) sizeof(TCP_BUFFER_METADATA));
                 fflush(stdout);
+                
                 sockOK = 0;
             }
             oldslice = slice;
