@@ -889,6 +889,7 @@ fi
 
 	M)
 AOloadMem 1
+# AOloadMem is in ./aolconf
 ;;
 
 

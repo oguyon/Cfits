@@ -744,7 +744,7 @@ tmux send-keys -t $tmuxname "$execname" C-m
 tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT2" C-m
 tmux send-keys -t $tmuxname "loadfits \"wfturbC.fits\" wfc" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp10" C-m
-tmux send-keys -t $tmuxname "creaimstream wfc dm${DMindex}disp10 ${dmturbtint}" C-m
+tmux send-keys -t $tmuxname "creaimstream wfc dm${DMindex}disp10 ${dmturbtint} 1 0 0 null 0 0" C-m
 menutestmode_default="DMtf2sOFF"
 ;;
 
