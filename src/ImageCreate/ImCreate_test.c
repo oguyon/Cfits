@@ -134,8 +134,8 @@ int main()
 		angle += dangle;
 		if(angle > 2.0*M_PI)
 			angle -= 2.0*M_PI;
-		printf("Wrote square at position xc = %16f  yc = %16f\n", xc, yc);
-		fflush(stdout);
+		//printf("Wrote square at position xc = %16f  yc = %16f\n", xc, yc);
+		//fflush(stdout);
 	}
 	
 
