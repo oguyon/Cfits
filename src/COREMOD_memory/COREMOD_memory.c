@@ -5390,7 +5390,7 @@ long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr
 
             if ( rs != framesize1)
             {
-				perror("socket send error :");
+				perror("socket send error ");
                 printf("send() sent a different number of bytes (%d) than expected %ld  %ld  %ld\n", rs, (long) framesize, (long) framesize1, (long) sizeof(TCP_BUFFER_METADATA));
                 fflush(stdout);
                 
@@ -5773,6 +5773,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
 
     return(ID);
 }
+
+
+
 
 
 
