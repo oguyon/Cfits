@@ -1474,7 +1474,7 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
 
 
     IDin = image_ID(in_name);
-    printf("-------------------- %s  : IDin = %ld\n", __FUNCTION__, IDin);//TEST
+    
     atype = data.image[IDin].md[0].atype;
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
@@ -1754,9 +1754,6 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
     nelement = data.image[ID1].md[0].nelement;
 
 
-    save_fits(ID_name1, "!./tmp/fcorrel_ID_name1.fits");//TEST
-    save_fits(ID_name2, "!./tmp/fcorrel_ID_name2.fits");//TEST
-
     n = snprintf(ft1name,SBUFFERSIZE,"_ft1_%d",(int) getpid());
     if(n >= SBUFFERSIZE)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
@@ -1794,10 +1791,6 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
     mk_amph_from_complex(ft1name, fta1name, ftp1name, 0);
     mk_amph_from_complex(ft2name, fta2name, ftp2name, 0);
 
-    save_fits(fta1name, "!./tmp/fcorrel_fta1name.fits");//TEST
-    save_fits(ftp1name, "!./tmp/fcorrel_ftp1name.fits");//TEST
-    save_fits(fta2name, "!./tmp/fcorrel_fta2name.fits");//TEST
-    save_fits(ftp2name, "!./tmp/fcorrel_ftp2name.fits");//TEST
 
     delete_image_ID(ft1name);
     delete_image_ID(ft2name);
