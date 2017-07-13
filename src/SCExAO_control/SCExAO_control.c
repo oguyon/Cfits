@@ -1288,8 +1288,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
         if(ave > 10.0)
         {
             /** compute offset */
-//            fft_correlation("imwfs", "imref", "outcorr");
-            fft_correlation("imref", "imwfs", "outcorr");
+            fft_correlation("imwfs", "imref", "outcorr");
             IDc = image_ID("outcorr");
             
             save_fits("imwfs", "!./tmp/imwfs0.fits");
@@ -1310,8 +1309,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
                 else
                     data.image[IDc].array.F[ii] = 0.0;
 
-			printf("---------- %ld %ld   %f %f ------------\n", (long) pXsize, (long) pYsize, peak, alpha);
-			exit(0);
+			printf("---------- %ld %ld   %g %f ------------\n", (long) pXsize, (long) pYsize, peak, alpha);
+			exit(0);//TEST
             
             totx = 0.0;
             toty = 0.0;

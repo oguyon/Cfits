@@ -1474,6 +1474,7 @@ long FFT_do2drfft(const char *in_name, const char *out_name, int dir)
 
 
     IDin = image_ID(in_name);
+    printf("-------------------- %f  : IDin = %ld\n", __FUNCTION__, IDin);//TEST
     atype = data.image[IDin].md[0].atype;
     naxis = data.image[IDin].md[0].naxis;
     naxes = (int *) malloc(naxis*sizeof(int));
@@ -1831,9 +1832,9 @@ long fft_correlation(const char *ID_name1, const char *ID_name2, const char *ID_
 
     mk_amph_from_complex(fft1name, ID_nameout, fft1pname, 0);
     permut(ID_nameout);
-  //  delete_image_ID(fft1name);
-  //  delete_image_ID(fft1pname);
-
+    
+    delete_image_ID(fft1name); 
+    delete_image_ID(fft1pname);
 
     IDout = image_ID(ID_nameout);
 
