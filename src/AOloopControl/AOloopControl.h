@@ -376,6 +376,8 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
 
 long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem);
 
+/** @brief Re-arrange a 3D cube into an array of images into a single 2D frame
+ */
 long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem);
 ///@}
 

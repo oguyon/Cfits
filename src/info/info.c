@@ -260,6 +260,8 @@ int print_header(const char *str, char c)
 }
 
 
+
+
 int printstatus(long ID)
 {
     struct timespec tnow;
@@ -296,20 +298,38 @@ int printstatus(long ID)
     printw("%s  ", data.image[ID].name);
 
     atype = data.image[ID].md[0].atype;
+
     if(atype==_DATATYPE_UINT8)
-        printw("type:  CHAR               ");
+        printw("type:  UINT8             ");
+    if(atype==_DATATYPE_INT8)
+        printw("type:  INT8              ");
+
+    if(atype==_DATATYPE_UINT16)
+        printw("type:  UINT16            ");
+    if(atype==_DATATYPE_INT16)
+        printw("type:  INT16             ");
+
+    if(atype==_DATATYPE_UINT32)
+        printw("type:  UINT32            ");
     if(atype==_DATATYPE_INT32)
-        printw("type:  INT               ");
+        printw("type:  INT32             ");
+
+    if(atype==_DATATYPE_UINT64)
+        printw("type:  UINT64            ");
+    if(atype==_DATATYPE_INT64)
+        printw("type:  INT64             ");
+
     if(atype==_DATATYPE_FLOAT)
         printw("type:  FLOAT              ");
+
     if(atype==_DATATYPE_DOUBLE)
         printw("type:  DOUBLE             ");
+
     if(atype==_DATATYPE_COMPLEX_FLOAT)
         printw("type:  COMPLEX_FLOAT      ");
+
     if(atype==_DATATYPE_COMPLEX_DOUBLE)
         printw("type:  COMPLEX_DOUBLE     ");
-    if(atype==_DATATYPE_UINT16)
-        printw("type:  USHORT             ");
 
     sprintf(str, "[ %6ld", (long) data.image[ID].md[0].size[0]);
 
@@ -445,6 +465,9 @@ int printstatus(long ID)
 
 
     vcnt = (long*) malloc(sizeof(long)*NBhistopt);
+
+
+
 
     if(atype==_DATATYPE_FLOAT)
     {

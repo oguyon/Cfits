@@ -143,6 +143,103 @@ static long tret; // thread return value
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 1. MANAGE MEMORY AND IDENTIFIERS                                                                */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+int_fast8_t delete_image_ID_cli()
+{
+    long i = 1;
+    printf("%ld : %d\n", i, data.cmdargtoken[i].type);
+    while(data.cmdargtoken[i].type != 0)
+    {
+        if(data.cmdargtoken[i].type == 4)
+            delete_image_ID(data.cmdargtoken[i].val.string);
+        else
+            printf("Image %s does not exist\n", data.cmdargtoken[i].val.string);
+        i++;
+    }
+
+    return 0;
+}
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 2. KEYWORDS                                                                                     */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+int_fast8_t image_write_keyword_L_cli()
+{
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
+    image_write_keyword_L(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+  else
+    return 1;
+}
+
+
+
+int_fast8_t image_list_keywords_cli()
+{
+  if(CLI_checkarg(1,4)==0)
+    image_list_keywords(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 3. READ SHARED MEM IMAGE AND SIZE                                                               */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+int_fast8_t read_sharedmem_image_size_cli()
+{
+  if(CLI_checkarg(1,3)+CLI_checkarg(2,3)==0)
+    read_sharedmem_image_size(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+  else
+    return 1;
+}
+
+
+int_fast8_t read_sharedmem_image_cli()
+{
+  if(CLI_checkarg(1,3)==0)
+    read_sharedmem_image(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. CREATE IMAGE                                                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
 
 int_fast8_t create_image_cli()
 {
@@ -261,44 +358,6 @@ int_fast8_t create_image_cli()
 
 
 
-int_fast8_t image_write_keyword_L_cli()
-{
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,3)==0)
-    image_write_keyword_L(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
-  else
-    return 1;
-}
-
-
-
-int_fast8_t image_list_keywords_cli()
-{
-  if(CLI_checkarg(1,4)==0)
-    image_list_keywords(data.cmdargtoken[1].val.string);
-  else
-    return 1;
-}
-
-
-
-int_fast8_t read_sharedmem_image_size_cli()
-{
-  if(CLI_checkarg(1,3)+CLI_checkarg(2,3)==0)
-    read_sharedmem_image_size(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
-  else
-    return 1;
-}
-
-
-int_fast8_t read_sharedmem_image_cli()
-{
-  if(CLI_checkarg(1,3)==0)
-    read_sharedmem_image(data.cmdargtoken[1].val.string);
-  else
-    return 1;
-}
-
-
 int_fast8_t create_image_shared_cli() // default precision
 {
     uint32_t *imsize;
@@ -406,37 +465,33 @@ int_fast8_t create_3Dimage_float()
 
 
 
-int_fast8_t memory_monitor_cli()
-{
-  memory_monitor(data.cmdargtoken[1].val.string);
-  return 0;
-}
 
 
-int_fast8_t list_variable_ID_file_cli()
-{
- if(CLI_checkarg(1,3)==0)
-    list_variable_ID_file(data.cmdargtoken[1].val.string);
-  else
-    return 1;
-}
 
 
-int_fast8_t delete_image_ID_cli()
-{
-    long i = 1;
-    printf("%ld : %d\n", i, data.cmdargtoken[i].type);
-    while(data.cmdargtoken[i].type != 0)
-    {
-        if(data.cmdargtoken[i].type == 4)
-            delete_image_ID(data.cmdargtoken[i].val.string);
-        else
-            printf("Image %s does not exist\n", data.cmdargtoken[i].val.string);
-        i++;
-    }
 
-    return 0;
-}
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 5. CREATE VARIABLE                                                                              */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 6. COPY IMAGE                                                                                   */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 int_fast8_t copy_image_ID_cli()
@@ -451,6 +506,9 @@ int_fast8_t copy_image_ID_cli()
 
   return 0;
 }
+
+
+
 
 int_fast8_t copy_image_ID_sharedmem_cli()
 {
@@ -478,6 +536,58 @@ int_fast8_t chname_image_ID_cli()
 
   return 0;
 }
+
+
+
+int_fast8_t COREMOD_MEMORY_cp2shm_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
+    {
+        COREMOD_MEMORY_cp2shm(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 7. DISPLAY / LISTS                                                                              */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+int_fast8_t memory_monitor_cli()
+{
+  memory_monitor(data.cmdargtoken[1].val.string);
+  return 0;
+}
+
+
+int_fast8_t list_variable_ID_file_cli()
+{
+ if(CLI_checkarg(1,3)==0)
+    list_variable_ID_file(data.cmdargtoken[1].val.string);
+  else
+    return 1;
+}
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 8. TYPE CONVERSIONS TO AND FROM COMPLEX                                                         */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 int_fast8_t mk_complex_from_reim_cli()
@@ -547,6 +657,38 @@ int_fast8_t mk_amph_from_complex_cli()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 9. VERIFY SIZE                                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 10. COORDINATE CHANGE                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 11. SET IMAGE FLAGS / COUNTERS                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 int_fast8_t COREMOD_MEMORY_image_set_status_cli()
 {
@@ -572,6 +714,20 @@ int_fast8_t COREMOD_MEMORY_image_set_cnt1_cli()
     else
         return 1;
 }
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 12. MANAGE SEMAPHORES                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
 
 
 int_fast8_t COREMOD_MEMORY_image_set_createsem_cli()
@@ -619,16 +775,15 @@ int_fast8_t COREMOD_MEMORY_image_set_semflush_cli()
 
 
 
-int_fast8_t COREMOD_MEMORY_cp2shm_cli()
-{
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0)
-    {
-        COREMOD_MEMORY_cp2shm(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
-        return 0;
-    }
-    else
-        return 1;
-}
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 13. SIMPLE OPERATIONS ON STREAMS                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
 
 
 
@@ -649,6 +804,17 @@ int_fast8_t COREMOD_MEMORY_stream_halfimDiff_cli()
 	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
     {
         COREMOD_MEMORY_stream_halfimDiff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+int_fast8_t COREMODE_MEMORY_streamAve_cli()
+{
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
+    {
+        COREMODE_MEMORY_streamAve(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
         return 0;
     }
     else
@@ -694,6 +860,10 @@ int_fast8_t COREMOD_MEMORY_streamDelay_cli()
     else
         return 1;
 }
+
+
+
+
 
 
 int_fast8_t COREMOD_MEMORY_SaveAll_snapshot_cli()
@@ -762,6 +932,17 @@ int_fast8_t COREMOD_MEMORY_PixMapDecode_U_cli()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 14. DATA LOGGING                                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
 int_fast8_t COREMOD_MEMORY_logshim_printstatus_cli()
 {
     if(CLI_checkarg(1,3)==0)
@@ -811,6 +992,8 @@ int_fast8_t COREMOD_MEMORY_sharedMem_2Dim_log_cli()
     else
         return 1;
 }
+
+
 
 
 
@@ -1273,13 +1456,26 @@ int_fast8_t init_COREMOD_memory()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 1. MANAGE MEMORY AND IDENTIFIERS                                                                */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
+int_fast8_t memory_monitor(const char *termttyname)
+{
+    if(data.Debug>0)
+        printf("starting memory_monitor on \"%s\"\n", termttyname);
 
+    MEM_MONITOR = 1;
+    init_list_image_ID_ncurses(termttyname);
+    list_image_ID_ncurses();
+    atexit(close_list_image_ID_ncurses);
 
-
-
-
+}
 
 
 
@@ -1682,88 +1878,166 @@ int_fast8_t delete_variable_ID(const char* varname) /* deletes a variable ID */
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* creates an image ID */
-/* all images should be created by this function */
-long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw)
+int_fast8_t clearall()
 {
     long ID;
-    long i,ii;
-    time_t lt;
-    long nelement;
-    struct timespec timenow;
-    char sname[200];
 
-    size_t sharedsize = 0; // shared memory size in bytes
-    int SM_fd; // shared memory file descriptor
-    char SM_fname[200];
-    int result;
-    IMAGE_METADATA *map;
-    char *mapv; // pointed cast in bytes
-
-    int kw;
-    char comment[80];
-    char kname[16];
-
-
-
-    ID = -1;
-    if(image_ID(name) == -1)
+    for(ID=0; ID<data.NB_MAX_IMAGE; ID++)
     {
-        ID = next_avail_image_ID();
-        ImageCreate(&data.image[ID], name, naxis, size, atype, shared, NBkw);
+        if(data.image[ID].used==1)
+            delete_image_ID(data.image[ID].name);
     }
-    else
+    for(ID=0; ID<data.NB_MAX_VARIABLE; ID++)
     {
-        // Cannot create image : name already in use
-        ID = image_ID(name);
-
-        if(data.image[ID].md[0].atype != atype)
-        {
-            fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-            fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong type %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
-            exit(0);
-        }
-        if(data.image[ID].md[0].naxis != naxis)
-        {
-            fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-            fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong naxis %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
-            exit(0);
-        }
-
-        for(i=0; i<naxis; i++)
-            if(data.image[ID].md[0].size[i] != size[i])
-            {
-                fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
-                fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong size %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
-                fprintf(stderr,"Axis %ld :  %ld  %ld\n", i, (long) data.image[ID].md[0].size[i], (long) size[i]);
-                exit(0);
-            }
+        if(data.variable[ID].used==1)
+            delete_variable_ID(data.variable[ID].name);
     }
 
-    if(MEM_MONITOR == 1)
-        list_image_ID_ncurses();
-
-    return(ID);
+    return(0);
 }
 
 
+
+
+void *save_fits_function( void *ptr )
+{
+    long ID;
+    struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
+    uint32_t*imsizearray;
+    uint32_t xsize, ysize;
+    uint8_t atype;
+    long IDc;
+    long framesize; // in bytes
+    char *ptr0; // source
+    char *ptr1; // destination
+
+
+    imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
+
+    tmsg = (struct savethreadmsg*) ptr;
+    // printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
+    //fflush(stdout);
+    if(tmsg->partial==0) // full image
+        save_fits(tmsg->iname, tmsg->fname);
+    else
+    {
+        //      printf("Saving partial image (name = %s   zsize = %ld)\n", tmsg->iname, tmsg->cubesize);
+
+        //	list_image_ID();
+
+        ID = image_ID(tmsg->iname);
+        atype = data.image[ID].md[0].atype;
+        xsize = data.image[ID].md[0].size[0];
+        ysize = data.image[ID].md[0].size[1];
+
+        //printf("step00\n");
+        //fflush(stdout);
+
+        imsizearray[0] = xsize;
+        imsizearray[1] = ysize;
+        imsizearray[2] = tmsg->cubesize;
+
+
+
+        IDc = create_image_ID("tmpsavecube", 3, imsizearray, atype, 0, 1);
+
+        // list_image_ID();
+
+        switch ( atype ) {
+			
+        case _DATATYPE_UINT8:
+            framesize = SIZEOF_DATATYPE_UINT8*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.UI8;  // source
+			ptr1 = (char*) data.image[IDc].array.UI8; // destination
+            break;
+        case _DATATYPE_INT8:
+            framesize = SIZEOF_DATATYPE_INT8*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.SI8;  // source
+			ptr1 = (char*) data.image[IDc].array.SI8; // destination
+            break;       
+       
+         case _DATATYPE_UINT16:
+            framesize = SIZEOF_DATATYPE_UINT16*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.UI16;  // source
+			ptr1 = (char*) data.image[IDc].array.UI16; // destination
+            break;
+        case _DATATYPE_INT16:
+            framesize = SIZEOF_DATATYPE_INT16*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.SI16;  // source
+			ptr1 = (char*) data.image[IDc].array.SI16; // destination
+            break;       
+ 
+         case _DATATYPE_UINT32:
+            framesize = SIZEOF_DATATYPE_UINT32*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.UI32;  // source
+			ptr1 = (char*) data.image[IDc].array.UI32; // destination
+            break;
+        case _DATATYPE_INT32:
+            framesize = SIZEOF_DATATYPE_INT32*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.SI32;  // source
+			ptr1 = (char*) data.image[IDc].array.SI32; // destination
+            break;       
+ 
+        case _DATATYPE_UINT64:
+            framesize = SIZEOF_DATATYPE_UINT64*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.UI64;  // source
+			ptr1 = (char*) data.image[IDc].array.UI64; // destination
+            break;
+        case _DATATYPE_INT64:
+            framesize = SIZEOF_DATATYPE_INT64*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.SI64;  // source
+			ptr1 = (char*) data.image[IDc].array.SI64; // destination
+            break;       
+       
+        case _DATATYPE_FLOAT:
+            framesize = SIZEOF_DATATYPE_FLOAT*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.F;  // source
+			ptr1 = (char*) data.image[IDc].array.F; // destination
+            break;
+        case _DATATYPE_DOUBLE:
+            framesize = SIZEOF_DATATYPE_DOUBLE*xsize*ysize;
+			ptr0 = (char*) data.image[ID].array.D;  // source
+			ptr1 = (char*) data.image[IDc].array.D; // destination
+            break;
+
+        default:
+            printf("ERROR: WRONG DATA TYPE\n");
+            exit(0);
+            break;
+        }
+
+
+        memcpy((void *) ptr1, (void *) ptr0, framesize*tmsg->cubesize);
+        save_fits("tmpsavecube", tmsg->fname);
+        delete_image_ID("tmpsavecube");
+    }
+
+
+    //    printf(" DONE\n");
+    //fflush(stdout);
+
+    ID = image_ID(tmsg->iname);
+    tret = ID;
+    free(imsizearray);
+    pthread_exit(&tret);
+}
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 2. KEYWORDS                                                                                     */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
@@ -1924,6 +2198,16 @@ long image_read_keyword_L(const char *IDname, const char *kname, long *val)
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 3. READ SHARED MEM IMAGE AND SIZE                                                               */
+/*                                                                                                 */ 
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
 
 
 long read_sharedmem_image_size(const char *name, const char *fname)
@@ -1981,8 +2265,6 @@ long read_sharedmem_image_size(const char *name, const char *fname)
 
 
 
-
-
 long read_sharedmem_image(const char *name)
 {
 	long ID = -1;
@@ -1998,6 +2280,91 @@ long read_sharedmem_image(const char *name)
 		list_image_ID_ncurses();
 	
 	return(ID);
+}
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. CREATE IMAGE                                                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+
+/* creates an image ID */
+/* all images should be created by this function */
+long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw)
+{
+    long ID;
+    long i,ii;
+    time_t lt;
+    long nelement;
+    struct timespec timenow;
+    char sname[200];
+
+    size_t sharedsize = 0; // shared memory size in bytes
+    int SM_fd; // shared memory file descriptor
+    char SM_fname[200];
+    int result;
+    IMAGE_METADATA *map;
+    char *mapv; // pointed cast in bytes
+
+    int kw;
+    char comment[80];
+    char kname[16];
+
+
+
+    ID = -1;
+    if(image_ID(name) == -1)
+    {
+        ID = next_avail_image_ID();
+        ImageCreate(&data.image[ID], name, naxis, size, atype, shared, NBkw);
+    }
+    else
+    {
+        // Cannot create image : name already in use
+        ID = image_ID(name);
+
+        if(data.image[ID].md[0].atype != atype)
+        {
+            fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong type %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+            exit(0);
+        }
+        if(data.image[ID].md[0].naxis != naxis)
+        {
+            fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+            fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong naxis %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+            exit(0);
+        }
+
+        for(i=0; i<naxis; i++)
+            if(data.image[ID].md[0].size[i] != size[i])
+            {
+                fprintf(stderr,"%c[%d;%dm ERROR: [ %s %s %d ] %c[%d;m\n", (char) 27, 1, 31, __FILE__, __func__, __LINE__, (char) 27, 0);
+                fprintf(stderr,"%c[%d;%dm Pre-existing image \"%s\" has wrong size %c[%d;m\n", (char) 27, 1, 31,name, (char) 27, 0);
+                fprintf(stderr,"Axis %ld :  %ld  %ld\n", i, (long) data.image[ID].md[0].size[i], (long) size[i]);
+                exit(0);
+            }
+    }
+
+    if(MEM_MONITOR == 1)
+        list_image_ID_ncurses();
+
+    return(ID);
 }
 
 
@@ -2201,6 +2568,164 @@ long create_3DCimage_ID(const char *ID_name, uint32_t xsize, uint32_t ysize, uin
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 5. CREATE VARIABLE                                                                              */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+
+/* creates floating point variable */
+long create_variable_ID(const char *name, double value)
+{
+    long ID;
+    long i1,i2;
+
+    ID = -1;
+    i1 = image_ID(name);
+    i2 = variable_ID(name);
+
+    if(i1!=-1)
+    {
+        printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
+    }
+    else
+    {
+        if(i2!=-1)
+        {
+            //	  printf("Warning : variable name \"%s\" is already in use\n",name);
+            ID = i2;
+        }
+        else
+            ID = next_avail_variable_ID();
+
+        data.variable[ID].used = 1;
+        data.variable[ID].type = 0; /** floating point double */
+        strcpy(data.variable[ID].name,name);
+        data.variable[ID].value.f = value;
+
+    }
+
+    return(ID);
+}
+
+
+/* creates long variable */
+long create_variable_long_ID(const char *name, long value)
+{
+    long ID;
+    long i1,i2;
+
+    ID = -1;
+    i1 = image_ID(name);
+    i2 = variable_ID(name);
+
+    if(i1!=-1)
+    {
+        printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
+    }
+    else
+    {
+        if(i2!=-1)
+        {
+            //	  printf("Warning : variable name \"%s\" is already in use\n",name);
+            ID = i2;
+        }
+        else
+            ID = next_avail_variable_ID();
+
+        data.variable[ID].used = 1;
+        data.variable[ID].type = 1; /** long */
+        strcpy(data.variable[ID].name,name);
+        data.variable[ID].value.l = value;
+
+    }
+
+    return(ID);
+}
+
+
+
+/* creates long variable */
+long create_variable_string_ID(const char *name, const char *value)
+{
+    long ID;
+    long i1,i2;
+
+    ID = -1;
+    i1 = image_ID(name);
+    i2 = variable_ID(name);
+
+    if(i1!=-1)
+    {
+        printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
+    }
+    else
+    {
+        if(i2!=-1)
+        {
+            //	  printf("Warning : variable name \"%s\" is already in use\n",name);
+            ID = i2;
+        }
+        else
+            ID = next_avail_variable_ID();
+
+        data.variable[ID].used = 1;
+        data.variable[ID].type = 2; /** string */
+        strcpy(data.variable[ID].name,name);
+        strcpy(data.variable[ID].value.s, value);
+    }
+
+    return(ID);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */ 
+/* 6. COPY IMAGE                                                                                   */
+/*                                                                                                 */                                                                                        
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
 long copy_image_ID(const char *name, const char *newname, int shared)
 {
     long ID, IDout;
@@ -2347,106 +2872,22 @@ long copy_image_ID(const char *name, const char *newname, int shared)
 
 
 
-/* creates floating point variable */
-long create_variable_ID(const char *name, double value)
+long chname_image_ID(const char *ID_name, const char *new_name)
 {
     long ID;
-    long i1,i2;
 
-    ID = -1;
-    i1 = image_ID(name);
-    i2 = variable_ID(name);
-
-    if(i1!=-1)
+    ID=-1;
+    if((image_ID(new_name)==-1)&&(variable_ID(new_name)==-1))
     {
-        printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
+        ID = image_ID(ID_name);
+        strcpy(data.image[ID].name, new_name);
+        //      if ( Debug > 0 ) { printf("change image name %s -> %s\n",ID_name,new_name);}
     }
     else
-    {
-        if(i2!=-1)
-        {
-            //	  printf("Warning : variable name \"%s\" is already in use\n",name);
-            ID = i2;
-        }
-        else
-            ID = next_avail_variable_ID();
+        printf("Cannot change name %s -> %s : new name already in use\n", ID_name, new_name);
 
-        data.variable[ID].used = 1;
-        data.variable[ID].type = 0; /** floating point double */
-        strcpy(data.variable[ID].name,name);
-        data.variable[ID].value.f = value;
-
-    }
-
-    return(ID);
-}
-
-
-/* creates long variable */
-long create_variable_long_ID(const char *name, long value)
-{
-    long ID;
-    long i1,i2;
-
-    ID = -1;
-    i1 = image_ID(name);
-    i2 = variable_ID(name);
-
-    if(i1!=-1)
-    {
-        printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
-    }
-    else
-    {
-        if(i2!=-1)
-        {
-            //	  printf("Warning : variable name \"%s\" is already in use\n",name);
-            ID = i2;
-        }
-        else
-            ID = next_avail_variable_ID();
-
-        data.variable[ID].used = 1;
-        data.variable[ID].type = 1; /** long */
-        strcpy(data.variable[ID].name,name);
-        data.variable[ID].value.l = value;
-
-    }
-
-    return(ID);
-}
-
-
-
-/* creates long variable */
-long create_variable_string_ID(const char *name, const char *value)
-{
-    long ID;
-    long i1,i2;
-
-    ID = -1;
-    i1 = image_ID(name);
-    i2 = variable_ID(name);
-
-    if(i1!=-1)
-    {
-        printf("ERROR: cannot create variable \"%s\": name already used as an image\n",name);
-    }
-    else
-    {
-        if(i2!=-1)
-        {
-            //	  printf("Warning : variable name \"%s\" is already in use\n",name);
-            ID = i2;
-        }
-        else
-            ID = next_avail_variable_ID();
-
-        data.variable[ID].used = 1;
-        data.variable[ID].type = 2; /** string */
-        strcpy(data.variable[ID].name,name);
-        strcpy(data.variable[ID].value.s, value);
-    }
+    if(MEM_MONITOR==1)
+        list_image_ID_ncurses();
 
     return(ID);
 }
@@ -2454,6 +2895,158 @@ long create_variable_string_ID(const char *name, const char *value)
 
 
 
+
+
+/** copy an image to shared memory
+ *
+ *
+ */
+long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)
+{
+    long ID;
+    long IDshm;
+    uint8_t atype;
+    long naxis;
+    uint32_t *sizearray;
+    char *ptr1;
+    char *ptr2;
+    long k;
+	int axis;
+	int shmOK;
+	
+
+    ID = image_ID(IDname);
+    naxis = data.image[ID].md[0].naxis;
+
+
+    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*naxis);
+    atype = data.image[ID].md[0].atype;
+    for(k=0; k<naxis; k++)
+        sizearray[k] = data.image[ID].md[0].size[k];
+
+	shmOK = 1;
+	IDshm = read_sharedmem_image(IDshmname);
+	if(IDshm!=-1)
+	{
+		// verify type and size
+		if(data.image[ID].md[0].naxis!=data.image[IDshm].md[0].naxis)
+			shmOK = 0;
+		if(shmOK==1)
+			{
+				for(axis=0;axis<data.image[IDshm].md[0].naxis;axis++)
+					if(data.image[ID].md[0].size[axis]!=data.image[IDshm].md[0].size[axis])
+						shmOK = 0;
+			}
+		if(data.image[ID].md[0].atype!=data.image[IDshm].md[0].atype)
+			shmOK = 0;
+	
+		if(shmOK==0)
+			{
+				delete_image_ID(IDshmname);
+				IDshm = -1;
+			}
+	}
+	
+	if(IDshm==-1)
+		IDshm = create_image_ID(IDshmname, naxis, sizearray, atype, 1, 0);
+    free(sizearray);
+
+    //data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
+    //printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
+
+	data.image[IDshm].md[0].write = 1;
+
+    switch (atype) {
+		
+    case _DATATYPE_FLOAT :
+        ptr1 = (char*) data.image[ID].array.F;
+        ptr2 = (char*) data.image[IDshm].array.F;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_FLOAT*data.image[ID].md[0].nelement);
+        break;
+    
+    case _DATATYPE_DOUBLE :
+        ptr1 = (char*) data.image[ID].array.D;
+        ptr2 = (char*) data.image[IDshm].array.D;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_DOUBLE*data.image[ID].md[0].nelement);
+        break;
+
+
+    case _DATATYPE_INT8 :
+        ptr1 = (char*) data.image[ID].array.SI8;
+        ptr2 = (char*) data.image[IDshm].array.SI8;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT8*data.image[ID].md[0].nelement);
+        break;
+    
+    case _DATATYPE_UINT8 :
+        ptr1 = (char*) data.image[ID].array.UI8;
+        ptr2 = (char*) data.image[IDshm].array.UI8;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT8*data.image[ID].md[0].nelement);
+        break;
+
+    case _DATATYPE_INT16 :
+        ptr1 = (char*) data.image[ID].array.SI16;
+        ptr2 = (char*) data.image[IDshm].array.SI16;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT16*data.image[ID].md[0].nelement);
+        break;
+    
+    case _DATATYPE_UINT16 :
+        ptr1 = (char*) data.image[ID].array.UI16;
+        ptr2 = (char*) data.image[IDshm].array.UI16;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT16*data.image[ID].md[0].nelement);
+        break;
+    
+    case _DATATYPE_INT32 :
+        ptr1 = (char*) data.image[ID].array.SI32;
+        ptr2 = (char*) data.image[IDshm].array.SI32;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT32*data.image[ID].md[0].nelement);
+        break;
+
+    case _DATATYPE_UINT32 :
+        ptr1 = (char*) data.image[ID].array.UI32;
+        ptr2 = (char*) data.image[IDshm].array.UI32;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT32*data.image[ID].md[0].nelement);
+        break;
+
+    case _DATATYPE_INT64 :
+        ptr1 = (char*) data.image[ID].array.SI64;
+        ptr2 = (char*) data.image[IDshm].array.SI64;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT64*data.image[ID].md[0].nelement);
+        break;
+
+    case _DATATYPE_UINT64 :
+        ptr1 = (char*) data.image[ID].array.UI64;
+        ptr2 = (char*) data.image[IDshm].array.UI64;
+        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT64*data.image[ID].md[0].nelement);
+        break;
+
+
+    default :
+        printf("data type not supported\n");
+        break;
+    }
+    COREMOD_MEMORY_image_set_sempost_byID(IDshm, -1);
+	data.image[IDshm].md[0].cnt0++;
+	data.image[IDshm].md[0].write = 0;
+
+    return(0);
+}
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 7. DISPLAY / LISTS                                                                              */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
@@ -2644,6 +3237,8 @@ int_fast8_t list_image_ID_ncurses()
     return 0;
 }
 
+
+
 void close_list_image_ID_ncurses( void )
 {
     printf("Closing monitor cleanly\n");
@@ -2652,19 +3247,6 @@ void close_list_image_ID_ncurses( void )
     fclose(listim_scr_fpo);
     fclose(listim_scr_fpi);
     MEM_MONITOR = 0;
-}
-
-
-int_fast8_t memory_monitor(const char *termttyname)
-{
-    if(data.Debug>0)
-        printf("starting memory_monitor on \"%s\"\n", termttyname);
-
-    MEM_MONITOR = 1;
-    init_list_image_ID_ncurses(termttyname);
-    list_image_ID_ncurses();
-    atexit(close_list_image_ID_ncurses);
-
 }
 
 
@@ -2941,25 +3523,19 @@ int_fast8_t list_variable_ID_file(const char *fname)
 
 
 
-long chname_image_ID(const char *ID_name, const char *new_name)
-{
-    long ID;
 
-    ID=-1;
-    if((image_ID(new_name)==-1)&&(variable_ID(new_name)==-1))
-    {
-        ID = image_ID(ID_name);
-        strcpy(data.image[ID].name, new_name);
-        //      if ( Debug > 0 ) { printf("change image name %s -> %s\n",ID_name,new_name);}
-    }
-    else
-        printf("Cannot change name %s -> %s : new name already in use\n", ID_name, new_name);
 
-    if(MEM_MONITOR==1)
-        list_image_ID_ncurses();
 
-    return(ID);
-}
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 8. TYPE CONVERSIONS TO AND FROM COMPLEX                                                         */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 
@@ -3387,23 +3963,32 @@ int_fast8_t mk_amph_from_reim(const char *re_name, const char *im_name, const ch
     return(0);
 }
 
-int_fast8_t clearall()
-{
-    long ID;
 
-    for(ID=0; ID<data.NB_MAX_IMAGE; ID++)
-    {
-        if(data.image[ID].used==1)
-            delete_image_ID(data.image[ID].name);
-    }
-    for(ID=0; ID<data.NB_MAX_VARIABLE; ID++)
-    {
-        if(data.variable[ID].used==1)
-            delete_variable_ID(data.variable[ID].name);
-    }
 
-    return(0);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 9. VERIFY SIZE                                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
 
 
 //  check only is size > 0
@@ -3461,6 +4046,82 @@ int_fast8_t check_3Dsize(const char *ID_name, uint32_t xsize, uint32_t ysize, ui
 
     return(value);
 }
+
+
+
+
+
+
+
+long COREMOD_MEMORY_check_2Dsize(const char *IDname, uint32_t xsize, uint32_t ysize)
+{
+    int sizeOK = 1; // 1 if size matches
+    long ID;
+
+
+    ID = image_ID(IDname);
+    if(data.image[ID].md[0].naxis != 2)
+    {
+        printf("WARNING : image %s naxis = %d does not match expected value 2\n", IDname, (int) data.image[ID].md[0].naxis);
+        sizeOK = 0;
+    }
+    if((xsize>0)&&(data.image[ID].md[0].size[0] != xsize))
+    {
+        printf("WARNING : image %s xsize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[0], (int) xsize);
+        sizeOK = 0;
+    }
+    if((ysize>0)&&(data.image[ID].md[0].size[1] != ysize))
+    {
+        printf("WARNING : image %s ysize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[1], (int) ysize);
+        sizeOK = 0;
+    }
+
+    return sizeOK;
+}
+
+
+
+long COREMOD_MEMORY_check_3Dsize(const char *IDname, uint32_t xsize, uint32_t ysize, uint32_t zsize)
+{
+    int sizeOK = 1; // 1 if size matches
+    long ID;
+
+    ID = image_ID(IDname);
+    if(data.image[ID].md[0].naxis != 3)
+    {
+        printf("WARNING : image %s naxis = %d does not match expected value 3\n", IDname, (int) data.image[ID].md[0].naxis);
+        sizeOK = 0;
+    }
+    if((xsize>0)&&(data.image[ID].md[0].size[0] != xsize))
+    {
+        printf("WARNING : image %s xsize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[0], (int) xsize);
+        sizeOK = 0;
+    }
+    if((ysize>0)&&(data.image[ID].md[0].size[1] != ysize))
+    {
+        printf("WARNING : image %s ysize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[1], (int) ysize);
+        sizeOK = 0;
+    }
+    if((zsize>0)&&(data.image[ID].md[0].size[2] != zsize))
+    {
+        printf("WARNING : image %s zsize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[2], (int) zsize);
+        sizeOK = 0;
+    }
+
+    return sizeOK;
+}
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 10. COORDINATE CHANGE                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
@@ -3562,325 +4223,18 @@ int_fast8_t rotate_cube(const char *ID_name, const char *ID_out_name, int orient
 
 
 
-void *save_fits_function( void *ptr )
-{
-    long ID;
-    struct savethreadmsg *tmsg = malloc(sizeof(struct savethreadmsg));
-    uint32_t*imsizearray;
-    uint32_t xsize, ysize;
-    uint8_t atype;
-    long IDc;
-    long framesize; // in bytes
-    char *ptr0; // source
-    char *ptr1; // destination
 
 
-    imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
-
-    tmsg = (struct savethreadmsg*) ptr;
-    // printf("THREAD : SAVING  %s -> %s \n", tmsg->iname, tmsg->fname);
-    //fflush(stdout);
-    if(tmsg->partial==0) // full image
-        save_fits(tmsg->iname, tmsg->fname);
-    else
-    {
-        //      printf("Saving partial image (name = %s   zsize = %ld)\n", tmsg->iname, tmsg->cubesize);
-
-        //	list_image_ID();
-
-        ID = image_ID(tmsg->iname);
-        atype = data.image[ID].md[0].atype;
-        xsize = data.image[ID].md[0].size[0];
-        ysize = data.image[ID].md[0].size[1];
-
-        //printf("step00\n");
-        //fflush(stdout);
-
-        imsizearray[0] = xsize;
-        imsizearray[1] = ysize;
-        imsizearray[2] = tmsg->cubesize;
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 11. SET IMAGE FLAGS / COUNTERS                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
-        IDc = create_image_ID("tmpsavecube", 3, imsizearray, atype, 0, 1);
-
-        // list_image_ID();
-
-        switch ( atype ) {
-			
-        case _DATATYPE_UINT8:
-            framesize = SIZEOF_DATATYPE_UINT8*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.UI8;  // source
-			ptr1 = (char*) data.image[IDc].array.UI8; // destination
-            break;
-        case _DATATYPE_INT8:
-            framesize = SIZEOF_DATATYPE_INT8*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.SI8;  // source
-			ptr1 = (char*) data.image[IDc].array.SI8; // destination
-            break;       
-       
-         case _DATATYPE_UINT16:
-            framesize = SIZEOF_DATATYPE_UINT16*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.UI16;  // source
-			ptr1 = (char*) data.image[IDc].array.UI16; // destination
-            break;
-        case _DATATYPE_INT16:
-            framesize = SIZEOF_DATATYPE_INT16*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.SI16;  // source
-			ptr1 = (char*) data.image[IDc].array.SI16; // destination
-            break;       
- 
-         case _DATATYPE_UINT32:
-            framesize = SIZEOF_DATATYPE_UINT32*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.UI32;  // source
-			ptr1 = (char*) data.image[IDc].array.UI32; // destination
-            break;
-        case _DATATYPE_INT32:
-            framesize = SIZEOF_DATATYPE_INT32*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.SI32;  // source
-			ptr1 = (char*) data.image[IDc].array.SI32; // destination
-            break;       
- 
-        case _DATATYPE_UINT64:
-            framesize = SIZEOF_DATATYPE_UINT64*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.UI64;  // source
-			ptr1 = (char*) data.image[IDc].array.UI64; // destination
-            break;
-        case _DATATYPE_INT64:
-            framesize = SIZEOF_DATATYPE_INT64*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.SI64;  // source
-			ptr1 = (char*) data.image[IDc].array.SI64; // destination
-            break;       
-       
-        case _DATATYPE_FLOAT:
-            framesize = SIZEOF_DATATYPE_FLOAT*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.F;  // source
-			ptr1 = (char*) data.image[IDc].array.F; // destination
-            break;
-        case _DATATYPE_DOUBLE:
-            framesize = SIZEOF_DATATYPE_DOUBLE*xsize*ysize;
-			ptr0 = (char*) data.image[ID].array.D;  // source
-			ptr1 = (char*) data.image[IDc].array.D; // destination
-            break;
-
-        default:
-            printf("ERROR: WRONG DATA TYPE\n");
-            exit(0);
-            break;
-        }
-
-
-        memcpy((void *) ptr1, (void *) ptr0, framesize*tmsg->cubesize);
-        save_fits("tmpsavecube", tmsg->fname);
-        delete_image_ID("tmpsavecube");
-    }
-
-
-    //    printf(" DONE\n");
-    //fflush(stdout);
-
-    ID = image_ID(tmsg->iname);
-    tret = ID;
-    free(imsizearray);
-    pthread_exit(&tret);
-}
-
-
-
-
-/** copy an image to shared memory
- *
- *
- */
-long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)
-{
-    long ID;
-    long IDshm;
-    uint8_t atype;
-    long naxis;
-    uint32_t *sizearray;
-    char *ptr1;
-    char *ptr2;
-    long k;
-	int axis;
-	int shmOK;
-	
-
-    ID = image_ID(IDname);
-    naxis = data.image[ID].md[0].naxis;
-
-
-    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*naxis);
-    atype = data.image[ID].md[0].atype;
-    for(k=0; k<naxis; k++)
-        sizearray[k] = data.image[ID].md[0].size[k];
-
-	shmOK = 1;
-	IDshm = read_sharedmem_image(IDshmname);
-	if(IDshm!=-1)
-	{
-		// verify type and size
-		if(data.image[ID].md[0].naxis!=data.image[IDshm].md[0].naxis)
-			shmOK = 0;
-		if(shmOK==1)
-			{
-				for(axis=0;axis<data.image[IDshm].md[0].naxis;axis++)
-					if(data.image[ID].md[0].size[axis]!=data.image[IDshm].md[0].size[axis])
-						shmOK = 0;
-			}
-		if(data.image[ID].md[0].atype!=data.image[IDshm].md[0].atype)
-			shmOK = 0;
-	
-		if(shmOK==0)
-			{
-				delete_image_ID(IDshmname);
-				IDshm = -1;
-			}
-	}
-	
-	if(IDshm==-1)
-		IDshm = create_image_ID(IDshmname, naxis, sizearray, atype, 1, 0);
-    free(sizearray);
-
-    //data.image[IDshm].md[0].nelement = data.image[ID].md[0].nelement;
-    //printf("======= %ld %ld ============\n", data.image[ID].md[0].nelement, data.image[IDshm].md[0].nelement);
-
-	data.image[IDshm].md[0].write = 1;
-
-    switch (atype) {
-		
-    case _DATATYPE_FLOAT :
-        ptr1 = (char*) data.image[ID].array.F;
-        ptr2 = (char*) data.image[IDshm].array.F;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_FLOAT*data.image[ID].md[0].nelement);
-        break;
-    
-    case _DATATYPE_DOUBLE :
-        ptr1 = (char*) data.image[ID].array.D;
-        ptr2 = (char*) data.image[IDshm].array.D;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_DOUBLE*data.image[ID].md[0].nelement);
-        break;
-
-
-    case _DATATYPE_INT8 :
-        ptr1 = (char*) data.image[ID].array.SI8;
-        ptr2 = (char*) data.image[IDshm].array.SI8;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT8*data.image[ID].md[0].nelement);
-        break;
-    
-    case _DATATYPE_UINT8 :
-        ptr1 = (char*) data.image[ID].array.UI8;
-        ptr2 = (char*) data.image[IDshm].array.UI8;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT8*data.image[ID].md[0].nelement);
-        break;
-
-    case _DATATYPE_INT16 :
-        ptr1 = (char*) data.image[ID].array.SI16;
-        ptr2 = (char*) data.image[IDshm].array.SI16;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT16*data.image[ID].md[0].nelement);
-        break;
-    
-    case _DATATYPE_UINT16 :
-        ptr1 = (char*) data.image[ID].array.UI16;
-        ptr2 = (char*) data.image[IDshm].array.UI16;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT16*data.image[ID].md[0].nelement);
-        break;
-    
-    case _DATATYPE_INT32 :
-        ptr1 = (char*) data.image[ID].array.SI32;
-        ptr2 = (char*) data.image[IDshm].array.SI32;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT32*data.image[ID].md[0].nelement);
-        break;
-
-    case _DATATYPE_UINT32 :
-        ptr1 = (char*) data.image[ID].array.UI32;
-        ptr2 = (char*) data.image[IDshm].array.UI32;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT32*data.image[ID].md[0].nelement);
-        break;
-
-    case _DATATYPE_INT64 :
-        ptr1 = (char*) data.image[ID].array.SI64;
-        ptr2 = (char*) data.image[IDshm].array.SI64;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_INT64*data.image[ID].md[0].nelement);
-        break;
-
-    case _DATATYPE_UINT64 :
-        ptr1 = (char*) data.image[ID].array.UI64;
-        ptr2 = (char*) data.image[IDshm].array.UI64;
-        memcpy(ptr2, ptr1, SIZEOF_DATATYPE_UINT64*data.image[ID].md[0].nelement);
-        break;
-
-
-    default :
-        printf("data type not supported\n");
-        break;
-    }
-    COREMOD_MEMORY_image_set_sempost_byID(IDshm, -1);
-	data.image[IDshm].md[0].cnt0++;
-	data.image[IDshm].md[0].write = 0;
-
-    return(0);
-}
-
-
-
-long COREMOD_MEMORY_check_2Dsize(const char *IDname, uint32_t xsize, uint32_t ysize)
-{
-    int sizeOK = 1; // 1 if size matches
-    long ID;
-
-
-    ID = image_ID(IDname);
-    if(data.image[ID].md[0].naxis != 2)
-    {
-        printf("WARNING : image %s naxis = %d does not match expected value 2\n", IDname, (int) data.image[ID].md[0].naxis);
-        sizeOK = 0;
-    }
-    if((xsize>0)&&(data.image[ID].md[0].size[0] != xsize))
-    {
-        printf("WARNING : image %s xsize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[0], (int) xsize);
-        sizeOK = 0;
-    }
-    if((ysize>0)&&(data.image[ID].md[0].size[1] != ysize))
-    {
-        printf("WARNING : image %s ysize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[1], (int) ysize);
-        sizeOK = 0;
-    }
-
-    return sizeOK;
-}
-
-
-
-long COREMOD_MEMORY_check_3Dsize(const char *IDname, uint32_t xsize, uint32_t ysize, uint32_t zsize)
-{
-    int sizeOK = 1; // 1 if size matches
-    long ID;
-
-    ID = image_ID(IDname);
-    if(data.image[ID].md[0].naxis != 3)
-    {
-        printf("WARNING : image %s naxis = %d does not match expected value 3\n", IDname, (int) data.image[ID].md[0].naxis);
-        sizeOK = 0;
-    }
-    if((xsize>0)&&(data.image[ID].md[0].size[0] != xsize))
-    {
-        printf("WARNING : image %s xsize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[0], (int) xsize);
-        sizeOK = 0;
-    }
-    if((ysize>0)&&(data.image[ID].md[0].size[1] != ysize))
-    {
-        printf("WARNING : image %s ysize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[1], (int) ysize);
-        sizeOK = 0;
-    }
-    if((zsize>0)&&(data.image[ID].md[0].size[2] != zsize))
-    {
-        printf("WARNING : image %s zsize = %d does not match expected value %d\n", IDname, (int) data.image[ID].md[0].size[2], (int) zsize);
-        sizeOK = 0;
-    }
-
-    return sizeOK;
-}
 
 
 long COREMOD_MEMORY_image_set_status(const char *IDname, int status)
@@ -3913,6 +4267,19 @@ long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int cnt1)
     return(0);
 }
 
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 12. MANAGE SEMAPHORES                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
@@ -4226,15 +4593,14 @@ long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 13. SIMPLE OPERATIONS ON STREAMS                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
-
-
-
-/* ========================================================================================================================================= */
-
-/*                                                   SIMPLE OPERATIONS ON STREAMS                                                            */
-
-/* ========================================================================================================================================= */
 
 
 
@@ -4392,8 +4758,151 @@ long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDs
 
 
 
+long COREMODE_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name)
+{
+	long IDout, IDout0;
+	long IDin;
+	uint8_t atype;
+	uint32_t xsize, ysize, xysize;
+	uint32_t *imsize;
+	int_fast8_t OKloop;
+	int cntin = 0;
+	long dtus = 20;
+	long ii;
+	long cnt0, cnt0old;
+	
+	IDin = image_ID(IDstream_name);
+	atype = data.image[IDin].md[0].atype;
+	xsize = data.image[IDin].md[0].size[0];
+	ysize = data.image[IDin].md[0].size[1];
+	xysize = xsize*ysize;
+	
 
-// takes a 3Dimage(s) (circular buffer(s)) and writes slices to a 2D image with time interval specified in us
+	IDout0 = create_2Dimage_ID("_streamAve_tmp", xsize, ysize);
+
+	if(mode==1) // local image
+		IDout = create_2Dimage_ID(IDout_name, xsize, ysize);
+	else // shared memory
+	{
+		IDout = image_ID(IDout_name);
+		if(IDout==-1) // CREATE IT
+		{
+			imsize = (uint32_t*) malloc(sizeof(uint32_t)*2);
+			imsize[0] = xsize;
+			imsize[1] = ysize;
+			IDout = create_image_ID(IDout_name, 2, imsize, _DATATYPE_FLOAT, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(IDout_name, 10);
+			free(imsize);
+		}
+    }
+    
+        
+	cntin = 0;
+	cnt0old = data.image[IDin].md[0].cnt0;
+
+	for(ii=0;ii<xysize;ii++)
+		data.image[IDout].array.F[ii] = 0.0;
+
+	OKloop = 1;
+	while(OKloop == 1)
+	{
+		// has new frame arrived ?	
+		cnt0 = data.image[IDin].md[0].cnt0;
+		if(cnt0!=cnt0old)
+		{
+			switch ( atype )
+			{
+				case _DATATYPE_UINT8 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.UI8[ii];
+				break;
+				case _DATATYPE_INT8 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.SI8[ii];
+				break;
+				
+				case _DATATYPE_UINT16 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.UI16[ii];
+				break;
+				case _DATATYPE_INT16 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.SI16[ii];
+				break;
+
+				case _DATATYPE_UINT32 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.UI32[ii];
+				break;
+				case _DATATYPE_INT32 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.SI32[ii];
+				break;
+
+				case _DATATYPE_UINT64 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.UI64[ii];
+				break;
+				case _DATATYPE_INT64 :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.SI64[ii];
+				break;
+
+				
+				
+				case _DATATYPE_FLOAT :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.F[ii];
+				break;
+
+				case _DATATYPE_DOUBLE :
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout0].array.F[ii] += data.image[IDin].array.D[ii];
+				break;
+
+
+			}
+
+			cntin++;
+			if(cntin==NBave)
+			{
+				cntin = 0;
+				data.image[IDout].md[0].write = 1;
+				for(ii=0;ii<xysize;ii++)
+					data.image[IDout].array.F[ii] = data.image[IDout0].array.F[ii]/NBave;					
+				data.image[IDout].md[0].cnt0++;
+				data.image[IDout].md[0].write = 0;
+				COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+
+				if(mode != 1)
+				{
+					for(ii=0;ii<xysize;ii++)
+						data.image[IDout].array.F[ii] = 0.0;
+				}
+				else
+					OKloop = 0;
+			}
+			cnt0old = cnt0;		
+		}
+		usleep(dtus);		
+	}
+	
+	delete_image_ID("_tmpc");
+	
+
+	
+	
+	return(IDout);
+}
+
+
+
+
+/** @brief takes a 3Dimage(s) (circular buffer(s)) and writes slices to a 2D image with time interval specified in us
+ * 
+ * 
+ * 
+ */
 long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)
 {
     long *IDin;
@@ -6032,15 +6541,13 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
 
 
 
-
-
-/* ========================================================================================================================================= */
-
-/*                                                                DATA LOGGING                                                               */
-
-/* ========================================================================================================================================= */
-
-
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 14. DATA LOGGING                                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
