@@ -145,9 +145,9 @@ static long tret; // thread return value
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */ 
+/*                                                                                                 */
 /* 1. MANAGE MEMORY AND IDENTIFIERS                                                                */
-/*                                                                                                 */                                                                                        
+/*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -173,9 +173,9 @@ int_fast8_t delete_image_ID_cli()
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */ 
+/*                                                                                                 */
 /* 2. KEYWORDS                                                                                     */
-/*                                                                                                 */                                                                                        
+/*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -204,9 +204,9 @@ int_fast8_t image_list_keywords_cli()
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */ 
+/*                                                                                                 */
 /* 3. READ SHARED MEM IMAGE AND SIZE                                                               */
-/*                                                                                                 */                                                                                        
+/*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -476,9 +476,9 @@ int_fast8_t create_3Dimage_float()
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */ 
+/*                                                                                                 */
 /* 5. CREATE VARIABLE                                                                              */
-/*                                                                                                 */                                                                                        
+/*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -486,9 +486,9 @@ int_fast8_t create_3Dimage_float()
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */ 
+/*                                                                                                 */
 /* 6. COPY IMAGE                                                                                   */
-/*                                                                                                 */                                                                                        
+/*                                                                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -1010,425 +1010,235 @@ int_fast8_t init_COREMOD_memory()
     strcpy(data.module[data.NBmodule].info,"memory management for images and variables");
     data.NBmodule++;
 
-    strcpy(data.cmd[data.NBcmd].key,"listim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = list_image_ID;
-    strcpy(data.cmd[data.NBcmd].info,"list images in memory");
-    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-    strcpy(data.cmd[data.NBcmd].example,"listim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int_fast8_t list_image_ID()");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"mmon");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = memory_monitor_cli;
-    strcpy(data.cmd[data.NBcmd].info,"Monitor memory content");
-    strcpy(data.cmd[data.NBcmd].syntax,"terminal tty name");
-    strcpy(data.cmd[data.NBcmd].example,"mmon /dev/pts/4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int memory_monitor(const char *ttyname)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"listvar");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = list_variable_ID;
-    strcpy(data.cmd[data.NBcmd].info,"list variables in memory");
-    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-    strcpy(data.cmd[data.NBcmd].example,"listvar");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID()");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"listvarf");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = list_variable_ID_file_cli;
-    strcpy(data.cmd[data.NBcmd].info,"list variables in memory, write to file");
-    strcpy(data.cmd[data.NBcmd].syntax,"<file name>");
-    strcpy(data.cmd[data.NBcmd].example,"listvarf var.txt");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int list_variable_ID_file()");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"creaim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = create_image_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create image, default precision");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
-    strcpy(data.cmd[data.NBcmd].example,"creaim imname 512 512");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, 0, 10)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imwritekwL");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = image_write_keyword_L_cli;
-    strcpy(data.cmd[data.NBcmd].info,"write long type keyword");
-    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <kname> <value [long]> <comment>");
-    strcpy(data.cmd[data.NBcmd].example,"imwritekwL im1 kw2 34 my_keyword_comment");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long image_write_keyword_L(const char *IDname, const char *kname, long value, const char *comment)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imlistkw");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = image_list_keywords_cli;
-    strcpy(data.cmd[data.NBcmd].info,"list image keywords");
-    strcpy(data.cmd[data.NBcmd].syntax,"<imname>");
-    strcpy(data.cmd[data.NBcmd].example,"imlistkw im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long image_list_keywords(const char *IDname)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"readshmimsize");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = read_sharedmem_image_size_cli;
-    strcpy(data.cmd[data.NBcmd].info,"read shared memory image size");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name> <output file>");
-    strcpy(data.cmd[data.NBcmd].example,"readshmim im1 imsize.txt");
-    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image_size(const char *name, const char *fname)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"readshmim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = read_sharedmem_image_cli;
-    strcpy(data.cmd[data.NBcmd].info,"read shared memory image");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name>");
-    strcpy(data.cmd[data.NBcmd].example,"readshmim im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"read_sharedmem_image(const char *name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"creaimshm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = create_image_shared_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create image in shared mem, default precision");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
-    strcpy(data.cmd[data.NBcmd].example,"creaimshm imname 512 512");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, 0, 10)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"creaushortimshm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = create_ushort_image_shared_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create unsigned short image in shared mem");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <opt: zsize>");
-    strcpy(data.cmd[data.NBcmd].example,"creaushortimshm imname 512 512");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, long *size, _DATATYPE_UINT16, 0, 10)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"crea3dim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = create_3Dimage_float;
-    strcpy(data.cmd[data.NBcmd].info,"creates 3D image, single precision");
-    strcpy(data.cmd[data.NBcmd].syntax,"<name> <xsize> <ysize> <zsize>");
-    strcpy(data.cmd[data.NBcmd].example,"crea3dim imname 512 512 100");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long create_image_ID(const char *name, long naxis, long *size, _DATATYPE_FLOAT, 0, 10)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"rm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = delete_image_ID_cli;
-    strcpy(data.cmd[data.NBcmd].info,"remove image(s)");
-    strcpy(data.cmd[data.NBcmd].syntax,"list of images");
-    strcpy(data.cmd[data.NBcmd].example,"rm im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int delete_image_ID(char* imname)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"cp");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = copy_image_ID_cli;
-    strcpy(data.cmd[data.NBcmd].info,"copy image");
-    strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
-    strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname, 0)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"cpsh");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = copy_image_ID_sharedmem_cli;
-    strcpy(data.cmd[data.NBcmd].info,"copy image - create in shared mem if does not exist");
-    strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
-    strcpy(data.cmd[data.NBcmd].example,"cp im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long copy_image_ID(const char *name, const char *newname, 1)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"mv");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = chname_image_ID_cli;
-    strcpy(data.cmd[data.NBcmd].info,"change image name");
-    strcpy(data.cmd[data.NBcmd].syntax,"source, dest");
-    strcpy(data.cmd[data.NBcmd].example,"mv im1 im4");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long chname_image_ID(const char *name, const char *newname)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"ri2c");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = mk_complex_from_reim_cli;
-    strcpy(data.cmd[data.NBcmd].info,"real, imaginary -> complex");
-    strcpy(data.cmd[data.NBcmd].syntax,"real imaginary complex");
-    strcpy(data.cmd[data.NBcmd].example,"ri2c imr imi imc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_reim(const char *re_name, const char *im_name, const char *out_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"ap2c");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = mk_complex_from_amph_cli;
-    strcpy(data.cmd[data.NBcmd].info,"ampl, pha -> complex");
-    strcpy(data.cmd[data.NBcmd].syntax,"ampl pha complex");
-    strcpy(data.cmd[data.NBcmd].example,"ap2c ima imp imc");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_complex_from_amph(const char *re_name, const char *im_name, const char *out_name, int sharedmem)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"c2ri");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = mk_reim_from_complex_cli;
-    strcpy(data.cmd[data.NBcmd].info,"complex -> real, imaginary");
-    strcpy(data.cmd[data.NBcmd].syntax,"complex real imaginary");
-    strcpy(data.cmd[data.NBcmd].example,"c2ri imc imr imi");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_reim_from_complex(const char *re_name, const char *im_name, const char *out_name)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"c2ap");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = mk_amph_from_complex_cli;
-    strcpy(data.cmd[data.NBcmd].info,"complex -> ampl, pha");
-    strcpy(data.cmd[data.NBcmd].syntax,"complex ampl pha");
-    strcpy(data.cmd[data.NBcmd].example,"c2ap imc ima imp");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int mk_amph_from_complex(const char *re_name, const char *im_name, const char *out_name, int sharedmem)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"rmall");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = clearall;
-    strcpy(data.cmd[data.NBcmd].info,"remove all images");
-    strcpy(data.cmd[data.NBcmd].syntax,"no argument");
-    strcpy(data.cmd[data.NBcmd].example,"rmall");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int clearall()");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetstatus");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_status_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set image status variable");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetstatus im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_status(const char *IDname, int status)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetcnt0");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt0_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set image cnt0 variable");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetcnt0 im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt0(const char *IDname, int status)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetcnt1");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_cnt1_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set image cnt1 variable");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <value [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetcnt1 im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int status)");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetcreatesem");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_createsem_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create image semaphore");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <NBsem>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetcreatesem im1 5");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetsempost");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_cli;
-    strcpy(data.cmd[data.NBcmd].info,"post image semaphore. If sem index = -1, post all semaphores");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetsempostl");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_sempost_loop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"post image semaphore loop. If sem index = -1, post all semaphores");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index> <time interval [us]>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetsempost im1 2");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index, long dtus)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetsemwait");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_semwait_cli;
-    strcpy(data.cmd[data.NBcmd].info,"wait image semaphore");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetsemwait im1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semwait(const char *IDname)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsetsemflush");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_set_semflush_cli;
-    strcpy(data.cmd[data.NBcmd].info,"flush image semaphore");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <sem index>");
-    strcpy(data.cmd[data.NBcmd].example,"imsetsemflush im1 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"imcp2shm");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_cp2shm_cli;
-    strcpy(data.cmd[data.NBcmd].info,"copy image ot shared memory");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <shared mem image>");
-    strcpy(data.cmd[data.NBcmd].example,"imcp2shm im1 ims1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"creaimstream");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <interval [us]> <NBcubes> <period> <offsetus> <sync stream name> <semtrig> <timing mode>");
-    strcpy(data.cmd[data.NBcmd].example,"creaimstream imcube imstream 1000 3 3 154 ircam1 3 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"creaimstreamstrig");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_streamupdateloop_semtrig_cli;
-    strcpy(data.cmd[data.NBcmd].info,"create 2D image stream from 3D cube, use other stream to synchronize");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index> <timing mode>");
-    strcpy(data.cmd[data.NBcmd].example,"creaimstreamstrig imcube outstream 3 152 streamsync 3 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname, const char *IDoutname, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"streamdelay");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDelay_cli;
-    strcpy(data.cmd[data.NBcmd].info,"delay 2D image stream");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image2d in> <image2d out> <delay [us]> <resolution [us]>");
-    strcpy(data.cmd[data.NBcmd].example,"streamdelay instream outstream 1000 10");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, long delayus, long dtus)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"imsaveallsnap");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_SaveAll_snapshot_cli;
-    strcpy(data.cmd[data.NBcmd].info,"save all images in directory");
-    strcpy(data.cmd[data.NBcmd].syntax,"<directory>");
-    strcpy(data.cmd[data.NBcmd].example,"imsaveallsnap dir1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_snapshot(const char *dirname)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"imsaveallseq");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_SaveAll_sequ_cli;
-    strcpy(data.cmd[data.NBcmd].info,"save all images in directory - sequence");
-    strcpy(data.cmd[data.NBcmd].syntax,"<directory> <trigger image name> <trigger semaphore> <NB frames>");
-    strcpy(data.cmd[data.NBcmd].example,"imsaveallsequ dir1 im1 3 20");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_SaveAll_sequ(const char *dirname, const char *IDtrig_name, long semtrig, long NBframes)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"imnetwtransmit");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKtransmit_cli;
-    strcpy(data.cmd[data.NBcmd].info,"transmit image over network");
-    strcpy(data.cmd[data.NBcmd].syntax,"<image> <IP addr> <port [long]> <sync mode [int]>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwtransmit im1 127.0.0.1 0 8888 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr, int port, int mode)");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"imnetwreceive");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_image_NETWORKreceive_cli;
-    strcpy(data.cmd[data.NBcmd].info,"receive image(s) over network. mode=1 uses counter instead of semaphore");
-    strcpy(data.cmd[data.NBcmd].syntax,"<port [long]> <mode [int]> <RT priority>");
-    strcpy(data.cmd[data.NBcmd].example,"imnetwreceive 8887 0 80");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"impixdecodeU");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_PixMapDecode_U_cli;
-    strcpy(data.cmd[data.NBcmd].info,"decode image stream");
-    strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <xsize [long]> <ysize [long]> <nbpix per slice [ASCII file]> <decode map> <out stream> <out image slice index [FITS]>");
-    strcpy(data.cmd[data.NBcmd].example,"impixdecodeU streamin 120 120 pixsclienb.txt decmap outim outsliceindex.fits");
-    strcpy(data.cmd[data.NBcmd].Ccall,"COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizeim, uint32_t ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)");
-    data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"streamdiff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_streamDiff_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute difference between two image streams");
-    strcpy(data.cmd[data.NBcmd].syntax,"<in stream 0> <in stream 1> <out stream> <optional mask> <sem trigger index>");
-    strcpy(data.cmd[data.NBcmd].example,"streamdiff stream0 stream1 null outstream 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_streamDiff(const char *IDstream0_name, const char *IDstream1_name, const char *IDstreamout_name, long semtrig)");
-	data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"streamhalfdiff");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_stream_halfimDiff_cli;
-    strcpy(data.cmd[data.NBcmd].info,"compute difference between two halves of an image stream");
-    strcpy(data.cmd[data.NBcmd].syntax,"<in stream> <out stream> <sem trigger index>");
-    strcpy(data.cmd[data.NBcmd].example,"streamhalfdiff stream outstream 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDstreamout_name, long semtrig)");
-	data.NBcmd++;
-
-
-
-    strcpy(data.cmd[data.NBcmd].key,"shmimstreamlog");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_sharedMem_2Dim_log_cli;
-    strcpy(data.cmd[data.NBcmd].info,"logs shared memory stream (run in current directory)");
-    strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <cubesize [long]> <logdir>");
-    strcpy(data.cmd[data.NBcmd].example,"shmimstreamlog wfscamim 10000 /media/data");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, char *logdir)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"shmimslogstat");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_printstatus_cli;
-    strcpy(data.cmd[data.NBcmd].info,"print log shared memory stream status");
-    strcpy(data.cmd[data.NBcmd].syntax,"<shm image>");
-    strcpy(data.cmd[data.NBcmd].example,"shmimslogstat wfscamim");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_printstatus(const char *IDname)");
-    data.NBcmd++;
-
-
-    strcpy(data.cmd[data.NBcmd].key,"shmimslogonset");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_on_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set on variable in log shared memory stream");
-    strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"shmimslogonset imwfs 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_on(const char *IDname, int setv)");
-    data.NBcmd++;
-
-    strcpy(data.cmd[data.NBcmd].key,"shmimslogexitset");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = COREMOD_MEMORY_logshim_set_logexit_cli;
-    strcpy(data.cmd[data.NBcmd].info,"set exit variable in log shared memory stream");
-    strcpy(data.cmd[data.NBcmd].syntax,"<shm image> <setv [long]>");
-    strcpy(data.cmd[data.NBcmd].example,"shmimslogexitset imwfs 1");
-    strcpy(data.cmd[data.NBcmd].Ccall,"int COREMOD_MEMORY_logshim_set_logexit(const char *IDname, int setv)");
-    data.NBcmd++;
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 1. MANAGE MEMORY AND IDENTIFIERS                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("mmon", __FILE__, memory_monitor_cli, "Monitor memory content", "terminal tty name", "mmon /dev/pts/4", "int memory_monitor(const char *ttyname)");
+    
+    RegisterCLIcommand("rm", __FILE__, delete_image_ID_cli, "remove image(s)", "list of images", "rm im1 im4", "int delete_image_ID(char* imname)");
+     
+    RegisterCLIcommand("rmall", __FILE__, clearall, "remove all images", "no argument", "rmall", "int clearall()");
+    
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 2. KEYWORDS                                                                                     */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+   RegisterCLIcommand("imwritekwL", __FILE__, image_write_keyword_L_cli, "write long type keyword", "<imname> <kname> <value [long]> <comment>", "imwritekwL im1 kw2 34 my_keyword_comment", "long image_write_keyword_L(const char *IDname, const char *kname, long value, const char *comment)");
+    
+    RegisterCLIcommand("imlistkw", __FILE__, image_list_keywords_cli, "list image keywords", "<imname>", "imlistkw im1", "long image_list_keywords(const char *IDname)");
+  
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 3. READ SHARED MEM IMAGE AND SIZE                                                               */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("readshmimsize", __FILE__, read_sharedmem_image_size_cli, "read shared memory image size", "<name> <output file>", "readshmim im1 imsize.txt", "read_sharedmem_image_size(const char *name, const char *fname)");
+    
+    RegisterCLIcommand("readshmim", __FILE__, read_sharedmem_image_cli, "read shared memory image", "<name>", "readshmim im1", "read_sharedmem_image(const char *name)");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 4. CREATE IMAGE                                                                                 */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 5. CREATE VARIABLE                                                                              */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("creaim", __FILE__, create_image_cli, "create image, default precision", "<name> <xsize> <ysize> <opt: zsize>", "creaim imname 512 512", "long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, 0, 10)");
+   
+    RegisterCLIcommand("creaimshm", __FILE__, create_image_shared_cli, "create image in shared mem, default precision", "<name> <xsize> <ysize> <opt: zsize>", "creaimshm imname 512 512", "long create_image_ID(const char *name, long naxis, uint32_t *size, uint8_t atype, 0, 10)");
+    
+    RegisterCLIcommand("creaushortimshm", __FILE__, create_ushort_image_shared_cli, "create unsigned short image in shared mem", "<name> <xsize> <ysize> <opt: zsize>", "creaushortimshm imname 512 512", "long create_image_ID(const char *name, long naxis, long *size, _DATATYPE_UINT16, 0, 10)");
+    
+    RegisterCLIcommand("crea3dim", __FILE__, create_3Dimage_float, "creates 3D image, single precision", "<name> <xsize> <ysize> <zsize>", "crea3dim imname 512 512 100", "long create_image_ID(const char *name, long naxis, long *size, _DATATYPE_FLOAT, 0, 10)");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 6. COPY IMAGE                                                                                   */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("cp", __FILE__, copy_image_ID_cli, "copy image", "source, dest", "cp im1 im4", "long copy_image_ID(const char *name, const char *newname, 0)");
+    
+    RegisterCLIcommand("cpsh", __FILE__, copy_image_ID_sharedmem_cli, "copy image - create in shared mem if does not exist", "source, dest", "cp im1 im4", "long copy_image_ID(const char *name, const char *newname, 1)");
+    
+    RegisterCLIcommand("mv", __FILE__, chname_image_ID_cli, "change image name", "source, dest", "mv im1 im4", "long chname_image_ID(const char *name, const char *newname)");
+    
+     RegisterCLIcommand("imcp2shm", __FILE__, COREMOD_MEMORY_cp2shm_cli, "copy image ot shared memory", "<image> <shared mem image>", "imcp2shm im1 ims1", "long COREMOD_MEMORY_cp2shm(const char *IDname, const char *IDshmname)");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 7. DISPLAY / LISTS                                                                              */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+	RegisterCLIcommand("listim",__FILE__, list_image_ID, "list images in memory", "no argument", "listim", "int_fast8_t list_image_ID()");
+
+    RegisterCLIcommand("listvar", __FILE__, list_variable_ID, "list variables in memory", "no argument", "listvar", "int list_variable_ID()");
+    
+    RegisterCLIcommand("listvarf", __FILE__, list_variable_ID_file_cli, "list variables in memory, write to file", "<file name>", "listvarf var.txt", "int list_variable_ID_file()");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 8. TYPE CONVERSIONS TO AND FROM COMPLEX                                                         */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
+   RegisterCLIcommand("ri2c", __FILE__, mk_complex_from_reim_cli, "real, imaginary -> complex", "real imaginary complex", "ri2c imr imi imc", "int mk_complex_from_reim(const char *re_name, const char *im_name, const char *out_name)");
+
+    RegisterCLIcommand("ap2c", __FILE__, mk_complex_from_amph_cli, "ampl, pha -> complex", "ampl pha complex", "ap2c ima imp imc", "int mk_complex_from_amph(const char *re_name, const char *im_name, const char *out_name, int sharedmem)");
+    
+    RegisterCLIcommand("c2ri", __FILE__, mk_reim_from_complex_cli, "complex -> real, imaginary", "complex real imaginary", "c2ri imc imr imi", "int mk_reim_from_complex(const char *re_name, const char *im_name, const char *out_name)");
+    
+    RegisterCLIcommand("c2ap", __FILE__, mk_amph_from_complex_cli, "complex -> ampl, pha", "complex ampl pha", "c2ap imc ima imp", "int mk_amph_from_complex(const char *re_name, const char *im_name, const char *out_name, int sharedmem)");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 9. VERIFY SIZE                                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 10. COORDINATE CHANGE                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 11. SET IMAGE FLAGS / COUNTERS                                                                  */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("imsetstatus", __FILE__, COREMOD_MEMORY_image_set_status_cli, "set image status variable", "<image> <value [long]>", "imsetstatus im1 2", "long COREMOD_MEMORY_image_set_status(const char *IDname, int status)");  
+
+    RegisterCLIcommand("imsetcnt0", __FILE__, COREMOD_MEMORY_image_set_cnt0_cli, "set image cnt0 variable", "<image> <value [long]>", "imsetcnt0 im1 2", "long COREMOD_MEMORY_image_set_cnt0(const char *IDname, int status)");
+    
+    RegisterCLIcommand("imsetcnt1", __FILE__, COREMOD_MEMORY_image_set_cnt1_cli, "set image cnt1 variable", "<image> <value [long]>", "imsetcnt1 im1 2", "long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int status)");
+ 
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 12. MANAGE SEMAPHORES                                                                           */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("imsetcreatesem", __FILE__, COREMOD_MEMORY_image_set_createsem_cli, "create image semaphore", "<image> <NBsem>", "imsetcreatesem im1 5", "long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)");    
+
+    RegisterCLIcommand("imsetsempost", __FILE__, COREMOD_MEMORY_image_set_sempost_cli, "post image semaphore. If sem index = -1, post all semaphores", "<image> <sem index>", "imsetsempost im1 2", "long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)");  
+
+    RegisterCLIcommand("imsetsempostl", __FILE__, COREMOD_MEMORY_image_set_sempost_loop_cli, "post image semaphore loop. If sem index = -1, post all semaphores", "<image> <sem index> <time interval [us]>", "imsetsempost im1 2", "long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index, long dtus)");
+    
+    RegisterCLIcommand("imsetsemwait", __FILE__, COREMOD_MEMORY_image_set_semwait_cli, "wait image semaphore", "<image>", "imsetsemwait im1", "long COREMOD_MEMORY_image_set_semwait(const char *IDname)");   
+
+    RegisterCLIcommand("imsetsemflush", __FILE__, COREMOD_MEMORY_image_set_semflush_cli, "flush image semaphore", "<image> <sem index>", "imsetsemflush im1 0", "long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 13. SIMPLE OPERATIONS ON STREAMS                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+    RegisterCLIcommand("creaimstream", __FILE__ , COREMOD_MEMORY_image_streamupdateloop_cli, "create 2D image stream from 3D cube", "<image3d in> <image2d out> <interval [us]> <NBcubes> <period> <offsetus> <sync stream name> <semtrig> <timing mode>", "creaimstream imcube imstream 1000 3 3 154 ircam1 3 0", "long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)");
+    
+    RegisterCLIcommand("creaimstreamstrig", __FILE__, COREMOD_MEMORY_image_streamupdateloop_semtrig_cli, "create 2D image stream from 3D cube, use other stream to synchronize", "<image3d in> <image2d out> <period [int]> <delay [us]> <sync stream> <sync sem index> <timing mode>", "creaimstreamstrig imcube outstream 3 152 streamsync 3 0", "long COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname, const char *IDoutname, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)"); 
+
+    RegisterCLIcommand("streamdelay", __FILE__, COREMOD_MEMORY_streamDelay_cli, "delay 2D image stream", "<image2d in> <image2d out> <delay [us]> <resolution [us]>", "streamdelay instream outstream 1000 10", "long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, long delayus, long dtus)");
+
+    RegisterCLIcommand("imsaveallsnap", __FILE__, COREMOD_MEMORY_SaveAll_snapshot_cli, "save all images in directory", "<directory>", "imsaveallsnap dir1", "long COREMOD_MEMORY_SaveAll_snapshot(const char *dirname)");
+    
+    RegisterCLIcommand("imsaveallseq", __FILE__, COREMOD_MEMORY_SaveAll_sequ_cli, "save all images in directory - sequence", "<directory> <trigger image name> <trigger semaphore> <NB frames>", "imsaveallsequ dir1 im1 3 20", "long COREMOD_MEMORY_SaveAll_sequ(const char *dirname, const char *IDtrig_name, long semtrig, long NBframes)");
+    
+    RegisterCLIcommand("imnetwtransmit", __FILE__, COREMOD_MEMORY_image_NETWORKtransmit_cli, "transmit image over network", "<image> <IP addr> <port [long]> <sync mode [int]>", "imnetwtransmit im1 127.0.0.1 0 8888 0", "long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr, int port, int mode)");
+    
+    RegisterCLIcommand("imnetwreceive", __FILE__, COREMOD_MEMORY_image_NETWORKreceive_cli, "receive image(s) over network. mode=1 uses counter instead of semaphore", "<port [long]> <mode [int]> <RT priority>", "imnetwreceive 8887 0 80", "long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)");
+    
+    RegisterCLIcommand("impixdecodeU", __FILE__, COREMOD_MEMORY_PixMapDecode_U_cli, "decode image stream", "<in stream> <xsize [long]> <ysize [long]> <nbpix per slice [ASCII file]> <decode map> <out stream> <out image slice index [FITS]>", "impixdecodeU streamin 120 120 pixsclienb.txt decmap outim outsliceindex.fits", "COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizeim, uint32_t ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)");
+    
+    RegisterCLIcommand("streamdiff", __FILE__, COREMOD_MEMORY_streamDiff_cli, "compute difference between two image streams", "<in stream 0> <in stream 1> <out stream> <optional mask> <sem trigger index>", "streamdiff stream0 stream1 null outstream 3", "long COREMOD_MEMORY_streamDiff(const char *IDstream0_name, const char *IDstream1_name, const char *IDstreamout_name, long semtrig)");
+	
+    RegisterCLIcommand("streamhalfdiff", __FILE__, COREMOD_MEMORY_stream_halfimDiff_cli, "compute difference between two halves of an image stream", "<in stream> <out stream> <sem trigger index>", "streamhalfdiff stream outstream 3", "long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDstreamout_name, long semtrig)");
+
+	RegisterCLIcommand("streamave", __FILE__, COREMODE_MEMORY_streamAve_cli, "averages stream", "<instream> <NBave> <mode, 1 for single local instance, 0 for loop> <outstream>", "streamave instream 100 0 outstream", "long COREMODE_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name)");
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                                                                                 */
+/* 14. DATA LOGGING                                                                                */
+/*                                                                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+    RegisterCLIcommand("shmimstreamlog", __FILE__, COREMOD_MEMORY_sharedMem_2Dim_log_cli, "logs shared memory stream (run in current directory)", "<shm image> <cubesize [long]> <logdir>", "shmimstreamlog wfscamim 10000 /media/data", "long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, long zsize, char *logdir)");
+    
+    RegisterCLIcommand("shmimslogstat", __FILE__, COREMOD_MEMORY_logshim_printstatus_cli, "print log shared memory stream status", "<shm image>", "shmimslogstat wfscamim", "int COREMOD_MEMORY_logshim_printstatus(const char *IDname)");
+    
+    RegisterCLIcommand("shmimslogonset", __FILE__, COREMOD_MEMORY_logshim_set_on_cli, "set on variable in log shared memory stream", "<shm image> <setv [long]>", "shmimslogonset imwfs 1", "int COREMOD_MEMORY_logshim_set_on(const char *IDname, int setv)");
+    
+    RegisterCLIcommand("shmimslogexitset", __FILE__, COREMOD_MEMORY_logshim_set_logexit_cli, "set exit variable in log shared memory stream", "<shm image> <setv [long]>", "shmimslogexitset imwfs 1", "int COREMOD_MEMORY_logshim_set_logexit(const char *IDname, int setv)");
+   
+    
+
+	
+
+    
 
 
 
