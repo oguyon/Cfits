@@ -1227,7 +1227,7 @@ int_fast8_t init_COREMOD_memory()
 	
     RegisterCLIcommand("streamhalfdiff", __FILE__, COREMOD_MEMORY_stream_halfimDiff_cli, "compute difference between two halves of an image stream", "<in stream> <out stream> <sem trigger index>", "streamhalfdiff stream outstream 3", "long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDstreamout_name, long semtrig)");
 
-	RegisterCLIcommand("streamave", __FILE__, COREMODE_MEMORY_streamAve_cli, "averages stream", "<instream> <NBave> <mode, 1 for single local instance, 0 for loop> <outstream>", "streamave instream 100 0 outstream", "long COREMODE_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name)");
+	RegisterCLIcommand("streamave", __FILE__, COREMOD_MEMORY_streamAve_cli, "averages stream", "<instream> <NBave> <mode, 1 for single local instance, 0 for loop> <outstream>", "streamave instream 100 0 outstream", "long COREMODE_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name)");
 
 
 /* =============================================================================================== */
