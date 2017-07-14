@@ -3647,7 +3647,7 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
 							{
 								iiin = xstart + iiout;
 								jjin = ystart + jjout;
-								data.image[IDout].array.F[jjout*size_x+iiout] = 1.0*data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDin].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];
+								data.image[IDout].array.F[jjout*size_x+iiout] = 1.0*data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDdark].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];
 							}
 					}
 					                        
@@ -3685,7 +3685,7 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
 						{
 							iiin = xstart + iiout;
 							jjin = ystart + jjout;
-							data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDin].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];;
+							data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDdark].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];
 						}
 				}			
 
