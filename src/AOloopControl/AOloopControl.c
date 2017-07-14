@@ -3617,23 +3617,40 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
                 cnt0 = data.image[IDin].md[0].cnt0;
 				if(atypeout == _DATATYPE_UINT16)
 				{
-                for(iiout=0; iiout<size_x; iiout++)
-                    for(jjout=0; jjout<size_y; jjout++)
-                    {
-                        iiin = xstart + iiout;
-                        jjin = ystart + jjout;
-                        data.image[IDout].array.UI16[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
-                    }
-                    if(IDmask!=-1)
-                    for(ii=0; ii<sizeoutxy; ii++)
-                        data.image[IDout].array.UI16[ii] *= (int) data.image[IDmask].array.F[ii];
+					for(iiout=0; iiout<size_x; iiout++)
+						for(jjout=0; jjout<size_y; jjout++)
+						{
+							iiin = xstart + iiout;
+							jjin = ystart + jjout;
+							data.image[IDout].array.UI16[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
+						}
+						if(IDmask!=-1)
+						for(ii=0; ii<sizeoutxy; ii++)
+							data.image[IDout].array.UI16[ii] *= (int) data.image[IDmask].array.F[ii];
 				}
-				else
+				else // FLOAT
 				{
-                  if(IDdark!=-1)
-					for(ii=0; ii<sizeoutxy; ii++)
-                        data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
-                        
+					if(IDdark==-1)
+					{
+						for(iiout=0; iiout<size_x; iiout++)
+							for(jjout=0; jjout<size_y; jjout++)
+							{
+								iiin = xstart + iiout;
+								jjin = ystart + jjout;
+								data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
+							}
+					}
+					else
+					{
+						for(iiout=0; iiout<size_x; iiout++)
+							for(jjout=0; jjout<size_y; jjout++)
+							{
+								iiin = xstart + iiout;
+								jjin = ystart + jjout;
+								data.image[IDout].array.F[jjout*size_x+iiout] = 1.0*data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDin].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];
+							}
+					}
+					                        
 					if(IDmask!=-1)
 						for(ii=0; ii<sizeoutxy; ii++)
 							data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
@@ -3651,16 +3668,26 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
             {
                 data.image[IDout].md[0].write = 1;
                 cnt0 = data.image[IDin].md[0].cnt0;
-                for(iiout=0; iiout<size_x; iiout++)
-                    for(jjout=0; jjout<size_y; jjout++)
-                    {
-                        iiin = xstart + iiout;
-                        jjin = ystart + jjout;
-                        data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
-                    }
-				if(IDdark!=-1)
-                   for(ii=0; ii<sizeoutxy; ii++)
-                        data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];				
+                if(IDdark==-1)
+				{
+					for(iiout=0; iiout<size_x; iiout++)
+						for(jjout=0; jjout<size_y; jjout++)
+						{
+							iiin = xstart + iiout;
+							jjin = ystart + jjout;
+							data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
+						}
+				}
+				else
+				{
+					for(iiout=0; iiout<size_x; iiout++)
+						for(jjout=0; jjout<size_y; jjout++)
+						{
+							iiin = xstart + iiout;
+							jjin = ystart + jjout;
+							data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin] - data.image[IDin].array.F[jjin*data.image[IDdark].md[0].size[0]+iiin];;
+						}
+				}			
 
                 if(IDmask!=-1)
                     for(ii=0; ii<sizeoutxy; ii++)
