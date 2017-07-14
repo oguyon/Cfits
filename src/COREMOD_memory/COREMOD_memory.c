@@ -4710,7 +4710,7 @@ long COREMOD_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, co
 		usleep(dtus);		
 	}
 	
-	delete_image_ID("_tmpc");
+	delete_image_ID("_streamAve_tmp");
 	
 
 	
