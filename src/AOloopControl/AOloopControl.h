@@ -412,7 +412,7 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
 
 int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
 

@@ -534,8 +534,8 @@ int_fast8_t AOloopControl_dm2opdmaploop_cli()
 /* =============================================================================================== */
 
 int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
-  if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)==0) {
-      AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string , data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl);
+  if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0) {
+      AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string , data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
       return 0; } else return 1;}
 
 
@@ -1185,7 +1185,7 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
+    RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <optional dark> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin null imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, const char *dark_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
 
 
 
@@ -3543,11 +3543,12 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 //
 // every time im_name changes (counter increments), crop it to out_name in shared memory
 //
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)
 {
     long iiin,jjin, iiout, jjout;
-    long IDin, IDout;
+    long IDin, IDout, IDdark;
     uint8_t atype;
+    uint8_t atypeout;
     uint32_t *sizeout;
     long long cnt0;
     long IDmask;
@@ -3568,8 +3569,7 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
     IDin = image_ID(in_name);
     atype = data.image[IDin].md[0].atype;
 
-    // Create shared memory output image
-    IDout = create_image_ID(out_name, 2, sizeout, atype, 1, 0);
+
 
     // Check if there is a mask
     IDmask = image_ID("csmask");
@@ -3580,6 +3580,29 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
             exit(0);
         }
 
+	// Check dark
+	IDdark = image_ID(dark_name);
+	
+	if(IDdark!=-1)
+	{
+	    if((data.image[IDdark].md[0].size[0]!=size_x)||(data.image[IDdark].md[0].size[1]!=size_y))
+        {
+            printf("ERROR: csmask has wrong size\n");
+            exit(0);
+        }
+        if(data.image[IDdark].md[0].atype != _DATATYPE_FLOAT)
+        {
+            printf("ERROR: csmask has wrong type\n");
+            exit(0);
+        }
+		atypeout = _DATATYPE_FLOAT;
+	}
+	else
+		atypeout = atype;
+
+
+    // Create shared memory output image
+    IDout = create_image_ID(out_name, 2, sizeout, atypeout, 1, 0);
 
     cnt0 = -1;
 
@@ -3592,6 +3615,8 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
             {
                 data.image[IDout].md[0].write = 1;
                 cnt0 = data.image[IDin].md[0].cnt0;
+				if(atypeout == _DATATYPE_UINT16)
+				{
                 for(iiout=0; iiout<size_x; iiout++)
                     for(jjout=0; jjout<size_y; jjout++)
                     {
@@ -3599,10 +3624,20 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
                         jjin = ystart + jjout;
                         data.image[IDout].array.UI16[jjout*size_x+iiout] = data.image[IDin].array.UI16[jjin*data.image[IDin].md[0].size[0]+iiin];
                     }
-                if(IDmask!=-1)
+                    if(IDmask!=-1)
                     for(ii=0; ii<sizeoutxy; ii++)
                         data.image[IDout].array.UI16[ii] *= (int) data.image[IDmask].array.F[ii];
-
+				}
+				else
+				{
+                  if(IDdark!=-1)
+					for(ii=0; ii<sizeoutxy; ii++)
+                        data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];
+                        
+					if(IDmask!=-1)
+						for(ii=0; ii<sizeoutxy; ii++)
+							data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
+                }                
                 data.image[IDout].md[0].cnt0 = cnt0;
                 data.image[IDout].md[0].write = 0;
             }
@@ -3623,9 +3658,14 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
                         jjin = ystart + jjout;
                         data.image[IDout].array.F[jjout*size_x+iiout] = data.image[IDin].array.F[jjin*data.image[IDin].md[0].size[0]+iiin];
                     }
+				if(IDdark!=-1)
+                   for(ii=0; ii<sizeoutxy; ii++)
+                        data.image[IDout].array.F[ii] -= data.image[IDdark].array.F[ii];				
+
                 if(IDmask!=-1)
                     for(ii=0; ii<sizeoutxy; ii++)
                         data.image[IDout].array.F[ii] *= data.image[IDmask].array.F[ii];
+
                 data.image[IDout].md[0].cnt0 = cnt0;
                 data.image[IDout].md[0].write = 0;
             }
