@@ -526,11 +526,11 @@ fi
 #./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 #rm conf/aol${LOOPNUMBER}_$1.fits
 if [ -a "$PWD/${fname}" ]; then
-touch "case1_$1.txt"
+echo "$PWD/${fname}" > case1_$1.txt
 ./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
 else
-touch "case2_$1.txt"
+echo "$PWD/${fname}" > case2_$1.txt
 rm /tmp/aol${LOOPNUMBER}_$1.fits
 rm conf/aol${LOOPNUMBER}_$1.fits
 fi
