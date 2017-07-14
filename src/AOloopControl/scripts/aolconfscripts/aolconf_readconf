@@ -532,7 +532,8 @@ echo "$PWD/${fname}" > case1_$1.txt
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
 else
 echo "$PWD/${fname}" > case2_$1.txt
-rm /tmp/aol${LOOPNUMBER}_$1.fits
+rm /tmp/aol${LOOPNUMBER}_$1.im.shm
+rm /dev/shm/sem.$1.*
 rm conf/aol${LOOPNUMBER}_$1.fits
 fi
 }
