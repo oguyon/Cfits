@@ -395,7 +395,7 @@ long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDs
  * @param[out] IDout_name           output stream name
  * 
  */
-long COREMODE_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name);
+long COREMOD_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name);
 
 
 
