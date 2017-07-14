@@ -3585,7 +3585,7 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name,
 	
 	if(IDdark!=-1)
 	{
-	    if((data.image[IDdark].md[0].size[0]!=size_x)||(data.image[IDdark].md[0].size[1]!=size_y))
+	    if((data.image[IDdark].md[0].size[0]!=data.image[IDin].md[0].size[0])||(data.image[IDdark].md[0].size[1]!=data.image[IDin].md[0].size[1]))
         {
             printf("ERROR: csmask has wrong size\n");
             exit(0);
