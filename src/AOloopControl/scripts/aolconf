@@ -511,7 +511,7 @@ getshmimsize aol${LOOPNUMBER}_wfsim
 
 
 # SYSTEM CALIBRATION
-
+touch "here.txt"
 
 ReadConfFile "wfsdark"
 getshmimsize aol${LOOPNUMBER}_wfsdark
