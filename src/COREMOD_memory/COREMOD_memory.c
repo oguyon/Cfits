@@ -810,11 +810,24 @@ int_fast8_t COREMOD_MEMORY_stream_halfimDiff_cli()
         return 1;
 }
 
-int_fast8_t COREMODE_MEMORY_streamAve_cli()
+
+
+// CLI commands
+//
+// function CLI_checkarg used to check arguments
+// 1: float
+// 2: long
+// 3: string, not existing image
+// 4: existing image
+// 5: string
+
+
+
+int_fast8_t COREMOD_MEMORY_streamAve_cli()
 {
-	if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)
+	if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,5)==0)
     {
-        COREMODE_MEMORY_streamAve(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
+        COREMOD_MEMORY_streamAve(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string);
         return 0;
     }
     else
@@ -4568,7 +4581,7 @@ long COREMOD_MEMORY_stream_halfimDiff(const char *IDstream_name, const char *IDs
 
 
 
-long COREMODE_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name)
+long COREMOD_MEMORY_streamAve(const char *IDstream_name, int NBave, int mode, const char *IDout_name)
 {
 	long IDout, IDout0;
 	long IDin;
