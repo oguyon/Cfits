@@ -961,7 +961,7 @@ menucontrolloop_default="sACmrmN"
 
 nAUTOC)
 RMCalibReuseMasks=0
-function_nAUTOC
+function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
 
 

@@ -507,15 +507,14 @@ getshmimsize aol${LOOPNUMBER}_dmRM
 Readwfsimcamname
 getshmimsize aol${LOOPNUMBER}_wfsim
 
-ReadWFSdarkfname
-getshmimsize aol${LOOPNUMBER}_wfsdark
-
 
 
 
 # SYSTEM CALIBRATION
 
 
+ReadConfFile "wfsdark"
+getshmimsize aol${LOOPNUMBER}_wfsdark
 
 ReadConfFile "wfsmap"
 getshmimsize aol${LOOPNUMBER}_wfsmask

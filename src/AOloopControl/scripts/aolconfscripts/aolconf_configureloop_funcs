@@ -390,6 +390,7 @@ fi
 
 
 function function_acqWFSresp_LOmodes {
+tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
 
 # ACQUIRE LOW ORDER RESPONSE
 #
