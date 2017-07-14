@@ -594,7 +594,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 ./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
 mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
 echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/conf_contrM_name.txt
-ln -s $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
+cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
 #ReadConfFile "contrM"
 #getshmimsize aol${LOOPNUMBER}_contrM
