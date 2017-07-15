@@ -146,6 +146,7 @@ fi
 
 
 if [ ! -f "$1" ]; then
+touch ./loadedSM/$2.$1.mising
 LOADfile="0"
 fi
 
