@@ -92,6 +92,8 @@ fi
 
 mkdir -p loadedSM
 
+LOADfile="0"
+
 # has the file changed since last request ?
 
 cp ./loadedSM/$2.SMloaded ./loadedSM/$2.SMloaded.old
@@ -107,6 +109,7 @@ else
 rm ./loadedSM/$2.same
 touch ./loadedSM/$2.new
 NEW="1"
+LOADfile="1"
 fi
 rm ./loadedSM/$2.SMloaded.old
 
@@ -126,29 +129,16 @@ else
 rm ./loadedSM/$2.sm.same
 touch ./loadedSM/$2.sm.new
 NEW_SM="1"
+LOADfile="1"
 fi
 rm ./loadedSM/$2.SMcontent.old
 
 
-LOADfile="0"
-
-if [ "$NEW" = "1"]; then
-LOADfile="1"
-fi
-
-if [ "$NEW_SM" = "1" ]; then
-LOADfile="1"
-fi
 
 if [ ! -f "/tmp/$2.im.shm" ]; then
 LOADfile="1"
 fi
 
-
-if [ ! -f "$1" ]; then
-touch ./loadedSM/$2.$1.mising
-LOADfile="0"
-fi
 
 
 if [ "$LOADfile" = "1" ]; then
