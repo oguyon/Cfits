@@ -103,10 +103,10 @@ str1=$(cat ./loadedSM/$2.SMloaded.old)
 str2=$(cat ./loadedSM/$2.SMloaded)
 if [ "$str1" = "$str2" ]; then
 touch ./loadedSM/$2.same
-rm ./loadedSM/$2.new
+rm ./loadedSM/$2.new &> /dev/null
 NEW="0"
 else
-rm ./loadedSM/$2.same
+rm ./loadedSM/$2.same &> /dev/null
 touch ./loadedSM/$2.new
 NEW="1"
 LOADfile="1"
@@ -123,10 +123,10 @@ str2=$(cat ./loadedSM/$2.SMcontent)
 
 if [ "$str1" = "$str2" ]; then
 touch ./loadedSM/$2.sm.same
-rm ./loadedSM/$2.sm.new
+rm ./loadedSM/$2.sm.new &> /dev/null
 NEW_SM="0"
 else
-rm ./loadedSM/$2.sm.same
+rm ./loadedSM/$2.sm.same &> /dev/null
 touch ./loadedSM/$2.sm.new
 NEW_SM="1"
 LOADfile="1"
