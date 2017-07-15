@@ -2915,9 +2915,10 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
         }
         else
         {
-            printf("        AOloopControl_3Dloadcreate_shmim: ===== [2] memcpy  %ld %ld %ld\n", xsize, ysize, zsize);
+            printf("        AOloopControl_3Dloadcreate_shmim: ===== [2] memcpy %ld <- %ld     %ld %ld %ld\n", ID, ID1, xsize, ysize, zsize);
 			fflush(stdout);
-                			
+            list_image_ID();
+            	
             memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize*zsize);
             
                printf("        AOloopControl_3Dloadcreate_shmim: ===== [2] memcpy  DONE\n");
