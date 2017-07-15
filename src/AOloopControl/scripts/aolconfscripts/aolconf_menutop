@@ -732,7 +732,7 @@ menutop_default="stopRM"
 C01)
 # COMPUTE CM
 mkModesMODE=0; # full computation
-function_computeModesCM 
+function_computeModesCM # in aolconf_controlmatrix_funcs
 ;;
 
 
