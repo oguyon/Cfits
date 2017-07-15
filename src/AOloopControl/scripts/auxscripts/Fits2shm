@@ -52,7 +52,7 @@ singlelinehelp=1;
 done
 
 
-FORCE=0
+FORCE=1
 while getopts :hf FLAG; do
   case $FLAG in
     h)  #show help
