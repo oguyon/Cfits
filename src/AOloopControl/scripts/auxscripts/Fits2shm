@@ -121,7 +121,7 @@ rm ./loadedSM/$2.sm.same
 touch ./loadedSM/$2.sm.new
 NEW_SM="1"
 fi
-rm ./loadedSM/$2.DMcontent.old
+rm ./loadedSM/$2.SMcontent.old
 
 
 
