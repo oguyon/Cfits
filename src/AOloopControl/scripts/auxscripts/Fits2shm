@@ -102,7 +102,7 @@ rm ./loadedSM/$2.same
 touch ./loadedSM/$2.new
 NEW="1"
 fi
-#rm ./loadedSM/$2.SMloaded.old
+rm ./loadedSM/$2.SMloaded.old
 
 
 # has shared memory changed since last request ?
@@ -121,7 +121,7 @@ rm ./loadedSM/$2.sm.same
 touch ./loadedSM/$2.sm.new
 NEW_SM="1"
 fi
-#rm ./loadedSM/$2.SMcontent.old
+rm ./loadedSM/$2.SMcontent.old
 
 
 
@@ -132,5 +132,7 @@ cpsh im "$2"
 exitCLI
 EOF
 
+# write SM stat AFTER it has been updated
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
 
 
