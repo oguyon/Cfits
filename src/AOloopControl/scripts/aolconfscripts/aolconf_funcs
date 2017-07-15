@@ -83,7 +83,8 @@ line=$1
 
 
 function getshmimsize {
-if [ [ -f "./loadSM/$1.kept" ] && [ -f "./loadSM/$1.imsize" ] ]; then  # don't re-measure size if unchanged
+	
+if [ -f "./loadSM/$1.kept" ] && [ -f "./loadSM/$1.imsize" ]; then  # don't re-measure size if unchanged
 cp ./loadSM/$1.imsize conf/conf_imsize_$1.txt
 else
 echo "$execname" > execname.txt
