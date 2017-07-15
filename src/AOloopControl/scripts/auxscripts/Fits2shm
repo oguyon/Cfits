@@ -139,7 +139,7 @@ if [ ! -f "/tmp/$2.im.shm" ]; then
 touch ./loadedSM/$2.missing
 LOADfile="1"
 else
-rm ./loadedSM/$2.missing
+rm ./loadedSM/$2.missing  &> /dev/null
 fi
 
 
