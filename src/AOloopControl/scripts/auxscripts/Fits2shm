@@ -102,13 +102,13 @@ rm ./loadedSM/$2.same
 touch ./loadedSM/$2.new
 NEW="1"
 fi
-rm ./loadedSM/$2.SMloaded.old
+#rm ./loadedSM/$2.SMloaded.old
 
 
 # has shared memory changed since last request ?
 
 cp ./loadedSM/$2.SMcontent ./loadedSM/$2.SMcontent.old
-stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.sm.SMcontent
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
 
 str1=$(cat ./loadedSM/$2.SMcontent.old)
 str2=$(cat ./loadedSM/$2.SMcontent)
@@ -121,7 +121,7 @@ rm ./loadedSM/$2.sm.same
 touch ./loadedSM/$2.sm.new
 NEW_SM="1"
 fi
-rm ./loadedSM/$2.SMcontent.old
+#rm ./loadedSM/$2.SMcontent.old
 
 
 
