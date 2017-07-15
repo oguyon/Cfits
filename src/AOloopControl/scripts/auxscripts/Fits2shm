@@ -108,7 +108,6 @@ rm ./loadedSM/$2.SMloaded.old
 # has shared memory changed since last request ?
 
 cp ./loadedSM/$2.SMcontent ./loadedSM/$2.SMcontent.old
-stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
 
 str1=$(cat ./loadedSM/$2.SMcontent.old)
 str2=$(cat ./loadedSM/$2.SMcontent)
