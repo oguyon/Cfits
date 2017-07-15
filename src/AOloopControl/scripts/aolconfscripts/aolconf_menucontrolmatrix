@@ -513,7 +513,9 @@ aoconflogext "set SDVlimall ${SVDlimall}"
 
 RM2CMm)
 tmuxname="aol${LOOPNUMBER}mkmodesM"
+sleep 0.2
 tmux new-session -d -s $tmuxname
+sleep 0.2
 logRunningProcess "aolmkmodesM" "$tmuxname" "Compute control modes and control matrix (tmux session $tmuxname)"
 mkdir -p DMmodes
 mkdir -p respM

@@ -423,8 +423,9 @@ echo "csetpmove aol0RT" >> script_aol${LOOPNUMBER}test
 fi
 echo "AOsystsim ${AOsystsimsync} ${DMindex} ${AOsystsimWFSdelayus}" >> script_aol${LOOPNUMBER}test 
 chmod +x script_aol${LOOPNUMBER}test 
-
+sleep 0.2
 tmux new-session -d -s aol${LOOPNUMBER}test
+sleep 0.2
 echo " ON" > ./status/testloopstatus.txt
 tmux send-keys -t aol${LOOPNUMBER}test "./script_aol${LOOPNUMBER}test" C-m
 

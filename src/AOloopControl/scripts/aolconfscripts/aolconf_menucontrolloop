@@ -2522,6 +2522,7 @@ tmux kill-session -t $tmuxname
 
 tmuxname="aol${LOOPNUMBER}GPUzploop6z"
 tmux kill-session -t $tmuxname
+sleep 0.2
 tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n $tmuxname" C-m

@@ -528,7 +528,9 @@ fi
 
 #./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 rm conf/aol${LOOPNUMBER}_$1.fits
+
 rm /tmp/$1.im.shm
+rm /dev/shm/sem.$1.*
 
 if [ -f "$PWD/${fname}" ]
 then # SUCCESS
@@ -616,7 +618,9 @@ if [ -a $file ]
 	dmturbampl=0.1 #default
 fi
 aoconflog "dmturbampl = $dmturbampl"
+sleep 0.2
 tmux new-session -d -s DMturbamp
+sleep 0.2
 tmux send-keys -t DMturbamp "$execname " C-m
 if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t DMturbamp "csetpmove system" C-m
@@ -636,7 +640,9 @@ if [ -a $file ]
 	dmturbws=1.0 #default
 fi
 aoconflog "dmturbws = $dmturbws"
+sleep 0.2
 tmux new-session -d -s DMturbws
+sleep 0.2
 tmux send-keys -t DMturbws "$execname " C-m
 if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t DMturbws "csetpmove system" C-m
@@ -655,7 +661,9 @@ if [ -a $file ]
 	else
 	dmturblo=1.0 #default
 fi
+sleep 0.2
 tmux new-session -d -s DMturblo
+sleep 0.2
 tmux send-keys -t DMturblo "$execname " C-m
 if [ "$CPUconfRT" -eq "1" ]; then
 tmux send-keys -t DMturblo "csetpmove system" C-m
@@ -675,7 +683,9 @@ function ReadDMturbtint {
         dmturbtint=80 #default
     fi
     aoconflog "dmturbtint = ${dmturbtint}"
+    sleep 0.2
     tmux new-session -d -s DMturbtint
+    sleep 0.2
     tmux send-keys -t DMturbtint "$execname " C-m
     if [ "$CPUconfRT" -eq "1" ]; then
     tmux send-keys -t DMturbtint "csetpmove system" C-m
