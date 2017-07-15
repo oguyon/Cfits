@@ -2338,8 +2338,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         
             
                 sprintf(name, "aol%ld_contrMc%02ld", loop, kk);
-                sprintf(fname, "conf/%s.fits", name);
-           
+                sprintf(fname, "conf/%s.fits", name);      
                 ID = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
                 if(kk==0)
                     for(ii=0;ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM;ii++)
@@ -2353,7 +2352,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
              //   sprintf(fname, "conf/aol%ld_contrMcact%02ld_00", loop, kk);
                 printf("====== LOADING %s to %s  size %ld %ld\n", fname, name,  AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                 ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
-               if(kk==0)
+               
+				if(kk==0)
                     for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
                         data.image[aoconfID_contrMcact[0]].array.F[ii] = 0.0;
                     
@@ -2797,25 +2797,37 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
 	#endif
-
+	
+	
+	printf("-------- ENTERING AOloopControl_3Dloadcreate_shmim ----------\n");
+	fflush(stdout);
 
 
     ID = image_ID(name);
     sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
-	//printf("============== %ld  %ld  %ld ===== %ld ======\n", xsize, ysize, zsize, ID);
+	printf("        ENTERING AOloopControl_3Dloadcreate_shmim: ============== %ld  %ld  %ld ===== %ld ======\n", xsize, ysize, zsize, ID);
+	fflush(stdout);
 
     if(ID==-1)
     {
         CreateSMim = 0;
         ID = read_sharedmem_image(name);
+		
+			printf("        AOloopControl_3Dloadcreate_shmim: ============== %ld  ======\n", ID);
+			fflush(stdout);
+      
       
         if(ID!=-1) // stream exists
         {
+			
             sizeOK = COREMOD_MEMORY_check_3Dsize(name, xsize, ysize, zsize);
             if(sizeOK==0)
             {
                 //               printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
+       			printf("        AOloopControl_3Dloadcreate_shmim: ===== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s\n", name, name);
+				fflush(stdout);
+      
                 delete_image_ID(name);
                 sprintf(command, "rm /tmp/%s.im.shm", name);
                 r = system(command);
@@ -2824,6 +2836,8 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
             }
             else // SIZE OK
             {
+				printf("        AOloopControl_3Dloadcreate_shmim: ===== SIZE OK\n");
+				fflush(stdout);
                 CreateSMim = 0;
                 loadcreatestatus = 2;
             }
@@ -2841,6 +2855,8 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
             sizearray[2] = zsize;
             if(xsize*ysize*zsize>0)
             {
+				printf("        AOloopControl_3Dloadcreate_shmim: ===== create_image_ID\n");
+				fflush(stdout);
                 ID = create_image_ID(name, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
                 creashmimfromFITS = 0;
             }
@@ -2851,7 +2867,9 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
     free(sizearray);
 
 
-
+	printf("        AOloopControl_3Dloadcreate_shmim: ===== TEST pt\n");
+	fflush(stdout);
+				
     // here, ID is either loaded, or it should be created from FITS image
     if((ID==-1)&&(creashmimfromFITS==0))
     {
@@ -2926,6 +2944,9 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
         }
     }
     
+    
+    printf("-------- EXITING AOloopControl_3Dloadcreate_shmim ----------\n");
+	fflush(stdout);
     
     #ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
