@@ -2878,11 +2878,15 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
     }
 
     ID1 = load_fits(fname, "tmp3Dim", 1);
+	printf("        AOloopControl_3Dloadcreate_shmim: ===== ID1 = %ld\n", ID1);
+	fflush(stdout);
     if(ID1!=-1)
     {
         if(creashmimfromFITS == 1) // create shared mem from FITS
         {
             sizeOK = COREMOD_MEMORY_check_3Dsize("tmp3Dim", xsize, ysize, zsize);
+			printf("        AOloopControl_3Dloadcreate_shmim: ===== sizeOK = %d\n", (int) sizeOK);
+			fflush(stdout);
             if(sizeOK==1)
             {
                 xsize1 = data.image[ID1].md[0].size[0];
@@ -2892,7 +2896,15 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
                 sizearray[1] = ysize1;
                 sizearray[2] = zsize1;
                 ID = create_image_ID(name, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
+                
+                printf("        AOloopControl_3Dloadcreate_shmim: ===== [1] memcpy  %ld %ld %ld\n", xsize1, ysize1, zsize1);
+				fflush(stdout);
+                
                 memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize1*ysize1*zsize1);
+                
+                printf("        AOloopControl_3Dloadcreate_shmim: ===== [1] memcpy  DONE\n");
+				fflush(stdout);
+                
                 loadcreatestatus = 1;
             }
             else
@@ -2903,7 +2915,14 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
         }
         else
         {
+            printf("        AOloopControl_3Dloadcreate_shmim: ===== [2] memcpy  %ld %ld %ld\n", xsize, ysize, zsize);
+			fflush(stdout);
+                			
             memcpy(data.image[ID].array.F, data.image[ID1].array.F, sizeof(float)*xsize*ysize*zsize);
+            
+               printf("        AOloopControl_3Dloadcreate_shmim: ===== [2] memcpy  DONE\n");
+				fflush(stdout);            
+            
             loadcreatestatus = 2;
         }
         delete_image_ID("tmp3Dim");
