@@ -2305,6 +2305,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         fflush(stdout);
         #endif
     
+		
+    
         for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
             {          
 				#ifdef _PRINT_TEST 
@@ -2315,16 +2317,23 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 sprintf(name, "aol%ld_DMmodes%02ld", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
                 printf("FILE = %s\n", fname);
+                printf("====== LOADING %s to %s\n", fname, name);
+                fflush(stdout);
                 if((ID=AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, 0))!=-1)
                     AOconf[loop].NBmodes_block[kk] = data.image[ID].md[0].size[2];
                 
+                
                 sprintf(name, "aol%ld_respM%02ld", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
+                printf("====== LOADING %s to %s\n", fname, name);
+                fflush(stdout);
                 AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk]);
              
              
-                 sprintf(name, "aol%ld_contrM%02ld", loop, kk);
+                sprintf(name, "aol%ld_contrM%02ld", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
+                printf("====== LOADING %s to %s\n", fname, name);
+                fflush(stdout);
                 AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk]);
         
             
@@ -2342,7 +2351,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 sprintf(name, "aol%ld_contrMcact%02ld_00", loop, kk);
                 sprintf(fname, "conf/%s.fits", name);
              //   sprintf(fname, "conf/aol%ld_contrMcact%02ld_00", loop, kk);
-                printf("LOADING %s to %s  size %ld %ld\n", fname, name,  AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
+                printf("====== LOADING %s to %s  size %ld %ld\n", fname, name,  AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                 ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
                if(kk==0)
                     for(ii=0;ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt;ii++)
