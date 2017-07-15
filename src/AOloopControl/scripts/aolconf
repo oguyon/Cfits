@@ -466,7 +466,7 @@ function AOloadMem {
 # Custom hardware I/O functions [shared memory]
 
 ReaddmCname
-getshmimsize aol${LOOPNUMBER}_dmC
+getshmimsize aol${LOOPNUMBER}_dmC   # function in aolconf_funcs
 
 ReaddmOname
 getshmimsize aol${LOOPNUMBER}_dmO
@@ -509,6 +509,8 @@ getshmimsize aol${LOOPNUMBER}_wfsim
 
 
 # LOAD SYSTEM CALIBRATION (./conf/ -> shared mem)
+
+# ReadConfFile in aolconf_readconf
 
 
 ReadConfFile "wfsdark"
