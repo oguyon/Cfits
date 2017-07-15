@@ -711,7 +711,7 @@ RMCalibReuseMasks=1
 tmux new-session -d -s ${tmuxnameC00}
 tmux send-keys -t ${tmuxnameC00} " " C-c
 tmux send-keys -t ${tmuxnameC00} "" C-m
-#logRunningProcess "FUNCTION_C00" "$tmuxnameC00" "==== CALIBRATION ===="
+logRunningProcess "FUNCTION_C00" "$tmuxnameC00" "==== CALIBRATION ===="
 
 # START CALIBRATION: RM(s) ACQUISITION
 #function_configureloop_readparams
@@ -719,7 +719,7 @@ tmux send-keys -t ${tmuxnameC00} "" C-m
 #sleep 0.1
 #tmux send-keys -t ${tmuxnameC00} "./auxscripts/waitonfile runproc/FUNCTION_nAUTOC.runproc" C-m
 
-#tmux send-keys -t ${tmuxnameC00} "rm runproc/FUNCTION_C00.runproc" C-m
+tmux send-keys -t ${tmuxnameC00} "rm runproc/FUNCTION_C00.runproc" C-m
 menutop_default="stopRM"
 ;;
 
