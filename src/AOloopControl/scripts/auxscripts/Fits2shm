@@ -111,7 +111,7 @@ touch ./loadedSM/$2.new
 NEW="1"
 LOADfile="1"
 fi
-rm ./loadedSM/$2.SMloaded.old
+rm ./loadedSM/$2.SMloaded.old &> /dev/null
 
 
 # has shared memory changed since last request ?
@@ -131,7 +131,7 @@ touch ./loadedSM/$2.sm.new
 NEW_SM="1"
 LOADfile="1"
 fi
-rm ./loadedSM/$2.SMcontent.old
+rm ./loadedSM/$2.SMcontent.old &> /dev/null
 
 
 
@@ -139,7 +139,7 @@ if [ ! -f "/tmp/$2.im.shm" ]; then
 touch ./loadedSM/$2.missing
 LOADfile="1"
 else
-rm ./loadedSM/$2.missing  &> /dev/null
+rm ./loadedSM/$2.missing &> /dev/null
 fi
 
 
@@ -159,13 +159,13 @@ EOF
 
 # write SM stat AFTER it has been updated
 stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
-rm ./loadedSM/$2.kept
+rm ./loadedSM/$2.kept &> /dev/null
 touch ./loadedSM/$2.changed
 
 else
 
 touch ./loadedSM/$2.kept
-rm ./loadedSM/$2.changed
+rm ./loadedSM/$2.changed &> /dev/null
 
 fi
 
