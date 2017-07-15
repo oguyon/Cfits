@@ -12,6 +12,7 @@ echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Copy FITS files to shared memory $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "  Copy FITS file to shared memory"
+echo "  Writes into ./loadedSM/ what has been loaded"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h] <FITS file> <shared memory stream name>"
@@ -83,8 +84,8 @@ printHELP
 fi
 
 
-
-
+mkdir -p loadedSM
+stat -L --format "%n %s %y" $1 > ./loadedSM/$2.DMloaded
 
 ./AOloopControl -n pname << EOF
 loadfits "$1" im
@@ -92,5 +93,6 @@ readshmim "$2"
 cpsh im "$2"
 exitCLI
 EOF
+
 
 

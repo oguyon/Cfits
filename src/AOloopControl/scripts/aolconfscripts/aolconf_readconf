@@ -506,6 +506,8 @@ ln -s $PWD/${respMfname} conf/aol${LOOPNUMBER}_respM.fits
 # -> moves file to shared mem under aol#_XXX stream
 # -> makes sym link to conf/aol#_XXX.fits
 #
+# ./loadedSM/  keeps track of what has been loaded
+#
 function ReadConfFile {
 file="./conf/conf_$1_name.txt"
 fname="null"
@@ -526,11 +528,13 @@ fi
 
 #./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 #rm conf/aol${LOOPNUMBER}_$1.fits
-if [ -f "$PWD/${fname}" ]; then
+
+if [ -f "$PWD/${fname}" ]
+then # SUCCESS
 echo "$PWD/${fname}" > case1_$1.txt
 ./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
 ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
-else
+else # CAN'T LOAD
 echo "$PWD/${fname}" > case2_$1.txt
 rm /tmp/aol${LOOPNUMBER}_$1.im.shm
 rm /dev/shm/sem.$1.*

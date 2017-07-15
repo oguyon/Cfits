@@ -458,14 +458,13 @@ echo "OFF" > ./status/testloopstatus.txt
 
 
 
-
-# =================== READ CONFIGURATION====================================
-
 # =================== READ CONFIGURATION====================================
 
 
 function AOloadMem {
-# hardware I/O [shared memory]
+
+# Custom hardware I/O functions [shared memory]
+
 ReaddmCname
 getshmimsize aol${LOOPNUMBER}_dmC
 
@@ -497,7 +496,6 @@ ReaddmZP7name
 getshmimsize aol${LOOPNUMBER}_dmZP7
 
 
-
 Readdmdispname
 getshmimsize aol${LOOPNUMBER}_dmdisp
 
@@ -510,8 +508,8 @@ getshmimsize aol${LOOPNUMBER}_wfsim
 
 
 
-# SYSTEM CALIBRATION
-touch "here.txt"
+# LOAD SYSTEM CALIBRATION (./conf/ -> shared mem)
+
 
 ReadConfFile "wfsdark"
 getshmimsize aol${LOOPNUMBER}_wfsdark
