@@ -710,7 +710,9 @@ RMCalibReuseMasks=1
 
 echo "Start session ${tmuxnameC00}"
 echo " command: tmux new-session -d -s ${tmuxnameC00}"
+sleep 0.2
 tmux new-session -d -s ${tmuxnameC00}
+sleep 0.2
 echo " tmux ls | grep aol0cal"
 tmux send-keys -t ${tmuxnameC00} " " C-c
 tmux send-keys -t ${tmuxnameC00} "" C-m
