@@ -91,7 +91,7 @@ stat -L --format "%n %s %y" $1 > ./loadedSM/$2.DMloaded
 
 str1=$(cat ./loadedSM/$2.DMloaded.old)
 str2=$(cat ./loadedSM/$2.DMloaded)
-if [ "$str1" -eq "$str2" ]; then
+if [ "$str1" = "$str2" ]; then
 touch ./loadedSM/$2.same
 rm ./loadedSM/$2.new
 else
