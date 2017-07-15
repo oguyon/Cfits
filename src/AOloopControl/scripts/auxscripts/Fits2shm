@@ -98,7 +98,7 @@ cp ./loadedSM/$2.SMloaded ./loadedSM/$2.SMloaded.old
 stat -L --format "%n %s %y" $1 > ./loadedSM/$2.SMloaded
 
 str1=$(cat ./loadedSM/$2.SMloaded.old)
-str2=$(cat ./loadedSM/$2.SMloaded.new)
+str2=$(cat ./loadedSM/$2.SMloaded)
 if [ "$str1" = "$str2" ]; then
 touch ./loadedSM/$2.same
 rm ./loadedSM/$2.new
@@ -116,7 +116,7 @@ rm ./loadedSM/$2.SMloaded.old
 cp ./loadedSM/$2.SMcontent ./loadedSM/$2.SMcontent.old
 stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
 str1=$(cat ./loadedSM/$2.SMcontent.old)
-str2=$(cat ./loadedSM/$2.SMcontent.new)
+str2=$(cat ./loadedSM/$2.SMcontent)
 
 if [ "$str1" = "$str2" ]; then
 touch ./loadedSM/$2.sm.same
@@ -163,9 +163,12 @@ EOF
 stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.SMcontent
 rm ./loadedSM/$2.kept
 touch ./loadedSM/$2.changed
+
 else
+
 touch ./loadedSM/$2.kept
 rm ./loadedSM/$2.changed
+
 fi
 
 
