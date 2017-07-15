@@ -136,9 +136,16 @@ rm ./loadedSM/$2.SMcontent.old
 
 
 if [ ! -f "/tmp/$2.im.shm" ]; then
+touch ./loadedSM/$2.missing
 LOADfile="1"
+else
+rm ./loadedSM/$2.missing
 fi
 
+
+if [ "$FORCE" = "1" ]; then
+LOADfile="1"
+fi
 
 
 if [ "$LOADfile" = "1" ]; then
