@@ -86,18 +86,43 @@ fi
 
 mkdir -p loadedSM
 
-cp ./loadedSM/$2.DMloaded ./loadedSM/$2.DMloaded.old
-stat -L --format "%n %s %y" $1 > ./loadedSM/$2.DMloaded
+# has the file changed since last request ?
+
+cp ./loadedSM/$2.DMloaded ./loadedSM/$2.SMloaded.old
+stat -L --format "%n %s %y" $1 > ./loadedSM/$2.SMloaded
 
 str1=$(cat ./loadedSM/$2.DMloaded.old)
 str2=$(cat ./loadedSM/$2.DMloaded)
 if [ "$str1" = "$str2" ]; then
 touch ./loadedSM/$2.same
 rm ./loadedSM/$2.new
+NEW="0"
 else
 rm ./loadedSM/$2.same
 touch ./loadedSM/$2.new
+NEW="1"
 fi
+rm ./loadedSM/$2.DMloaded.old
+
+
+# has shared memory changed since last request ?
+
+cp ./loadedSM/$2.DMcontent ./loadedSM/$2.SMcontent.old
+stat -L --format "%n %s %y" /tmp/$2.im.shm > ./loadedSM/$2.sm.SMcontent
+
+str1=$(cat ./loadedSM/$2.DMcontent.old)
+str2=$(cat ./loadedSM/$2.DMcontent)
+if [ "$str1" = "$str2" ]; then
+touch ./loadedSM/$2.sm.same
+rm ./loadedSM/$2.sm.new
+NEW_SM="0"
+else
+rm ./loadedSM/$2.sm.same
+touch ./loadedSM/$2.sm.new
+NEW_SM="1"
+fi
+rm ./loadedSM/$2.DMcontent.old
+
 
 
 ./AOloopControl -n pname << EOF
