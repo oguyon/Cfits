@@ -3805,6 +3805,7 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
     
     printf("cudaMemcpy ID %ld  -> d_modes\n", IDmodes);
 	fflush(stdout);
+	list_image_ID();
     cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
