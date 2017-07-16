@@ -1,5 +1,6 @@
 var annotated =
 [
+    [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
     [ "AOLOOPCONTROL_CONF", "structAOLOOPCONTROL__CONF.html", "structAOLOOPCONTROL__CONF" ],
     [ "AOLOOPCONTROL_DM_DISPCOMB_CONF", "structAOLOOPCONTROL__DM__DISPCOMB__CONF.html", "structAOLOOPCONTROL__DM__DISPCOMB__CONF" ],
     [ "AOLOOPCONTROL_DMTURBCONF", "structAOLOOPCONTROL__DMTURBCONF.html", "structAOLOOPCONTROL__DMTURBCONF" ],
@@ -14,14 +15,10 @@ var annotated =
     [ "complex_float", "structcomplex__float.html", "structcomplex__float" ],
     [ "DATA", "structDATA.html", "structDATA" ],
     [ "DM_SIM", "structDM__SIM.html", "structDM__SIM" ],
-    [ "EVENT_UI8_UI8_UI16_UI8", "structEVENT__UI8__UI8__UI16__UI8.html", "structEVENT__UI8__UI8__UI16__UI8" ],
     [ "EXAOSIMCONF", "structEXAOSIMCONF.html", "structEXAOSIMCONF" ],
     [ "FOCMASK", "structFOCMASK.html", "structFOCMASK" ],
     [ "FPAOLOOPCONTROL_CONF", "structFPAOLOOPCONTROL__CONF.html", "structFPAOLOOPCONTROL__CONF" ],
     [ "GPUMATMULTCONF", "structGPUMATMULTCONF.html", "structGPUMATMULTCONF" ],
-    [ "IMAGE", "structIMAGE.html", "structIMAGE" ],
-    [ "IMAGE_KEYWORD", "structIMAGE__KEYWORD.html", "structIMAGE__KEYWORD" ],
-    [ "IMAGE_METADATA", "structIMAGE__METADATA.html", "structIMAGE__METADATA" ],
     [ "kdhyperrect", "structkdhyperrect.html", "structkdhyperrect" ],
     [ "kdnode", "structkdnode.html", "structkdnode" ],
     [ "kdres", "structkdres.html", "structkdres" ],

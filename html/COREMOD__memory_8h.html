@@ -127,6 +127,7 @@ Data Structures</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:aca8bfb0090f916df7c5966890ad83e55"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#aca8bfb0090f916df7c5966890ad83e55">init_COREMOD_memory</a> ()</td></tr>
 <tr class="separator:aca8bfb0090f916df7c5966890ad83e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">1. MANAGE MEMORY AND IDENTIFIERS</div></td></tr>
 <tr class="memitem:a8af523bbaa4182f659d2d195861293a7"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a8af523bbaa4182f659d2d195861293a7">memory_monitor</a> (const char *termttyname)</td></tr>
 <tr class="separator:a8af523bbaa4182f659d2d195861293a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4914da7cc39c9d6f3f449bba3a4e5b50"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a4914da7cc39c9d6f3f449bba3a4e5b50">compute_nb_image</a> ()</td></tr>
@@ -159,6 +160,11 @@ Functions</h2></td></tr>
 <tr class="separator:a489cd2e304ceb20504a2b676adb950d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a368f826f06263b07e76fd4cab19a0f47"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a368f826f06263b07e76fd4cab19a0f47">create_image_ID</a> (const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int nbkw)</td></tr>
 <tr class="separator:a368f826f06263b07e76fd4cab19a0f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfa9e91be46df5329679b8330b8db494"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#adfa9e91be46df5329679b8330b8db494">clearall</a> ()</td></tr>
+<tr class="separator:adfa9e91be46df5329679b8330b8db494"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1b0a2a5c4a3c31d996df61a2223d669"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ae1b0a2a5c4a3c31d996df61a2223d669">save_fits_function</a> (void *ptr)</td></tr>
+<tr class="separator:ae1b0a2a5c4a3c31d996df61a2223d669"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">2. KEYWORDS</div></td></tr>
 <tr class="memitem:a5fe7d496b8f5636b7e4e50a1635057b7"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a5fe7d496b8f5636b7e4e50a1635057b7">image_write_keyword_L</a> (const char *IDname, const char *kname, long value, const char *comment)</td></tr>
 <tr class="separator:a5fe7d496b8f5636b7e4e50a1635057b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c4f1c42015da7cecf5a45be0c1eec87"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a9c4f1c42015da7cecf5a45be0c1eec87">image_write_keyword_D</a> (const char *IDname, const char *kname, double value, const char *comment)</td></tr>
@@ -171,10 +177,12 @@ Functions</h2></td></tr>
 <tr class="separator:abe806dec4c8cf12328b0ccfaf23d5324"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad78c6b99d05de8f72ee91afcbd1e8b2"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#aad78c6b99d05de8f72ee91afcbd1e8b2">image_read_keyword_L</a> (const char *IDname, const char *kname, long *val)</td></tr>
 <tr class="separator:aad78c6b99d05de8f72ee91afcbd1e8b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">3. READ SHARED MEM IMAGE AND SIZE</div></td></tr>
 <tr class="memitem:a98cd70b4acfd1b31d2399985bb8e7a99"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a98cd70b4acfd1b31d2399985bb8e7a99">read_sharedmem_image_size</a> (const char *name, const char *fname)</td></tr>
 <tr class="separator:a98cd70b4acfd1b31d2399985bb8e7a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e0251e7339cbc50b6ed995e8609081c"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a7e0251e7339cbc50b6ed995e8609081c">read_sharedmem_image</a> (const char *name)</td></tr>
 <tr class="separator:a7e0251e7339cbc50b6ed995e8609081c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">4. CREATE IMAGE</div></td></tr>
 <tr class="memitem:af4310a93970c5e6f9ef77a4585b5cc25"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#af4310a93970c5e6f9ef77a4585b5cc25">create_1Dimage_ID</a> (const char *ID_name, uint32_t xsize)</td></tr>
 <tr class="separator:af4310a93970c5e6f9ef77a4585b5cc25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31e167d2d2fe4dea5c77e0ee3cd20d2b"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a31e167d2d2fe4dea5c77e0ee3cd20d2b">create_1DCimage_ID</a> (const char *ID_name, uint32_t xsize)</td></tr>
@@ -193,10 +201,21 @@ Functions</h2></td></tr>
 <tr class="separator:a55f4eceef762e9f116f2a730d808f4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a1982d50532e2f44856140fa331c0e6"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a0a1982d50532e2f44856140fa331c0e6">create_3DCimage_ID</a> (const char *ID_name, uint32_t xsize, uint32_t ysize, uint32_t zsize)</td></tr>
 <tr class="separator:a0a1982d50532e2f44856140fa331c0e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0862b4906b4c20e80cc171f3335449f5"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a0862b4906b4c20e80cc171f3335449f5">copy_image_ID</a> (const char *name, const char *newname, int shared)</td></tr>
-<tr class="separator:a0862b4906b4c20e80cc171f3335449f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">5. CREATE VARIABLE</div></td></tr>
 <tr class="memitem:a92bb4be8f7727c20b7dd450b04ec8529"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a92bb4be8f7727c20b7dd450b04ec8529">create_variable_ID</a> (const char *name, double value)</td></tr>
 <tr class="separator:a92bb4be8f7727c20b7dd450b04ec8529"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">6. COPY IMAGE</div></td></tr>
+<tr class="memitem:a0862b4906b4c20e80cc171f3335449f5"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a0862b4906b4c20e80cc171f3335449f5">copy_image_ID</a> (const char *name, const char *newname, int shared)</td></tr>
+<tr class="separator:a0862b4906b4c20e80cc171f3335449f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3101e27f0b2d7a3a38619969e00d7981"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a3101e27f0b2d7a3a38619969e00d7981">chname_image_ID</a> (const char *ID_name, const char *new_name)</td></tr>
+<tr class="separator:a3101e27f0b2d7a3a38619969e00d7981"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a028b3b657ad0b527202b90af286f68bc"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a028b3b657ad0b527202b90af286f68bc">COREMOD_MEMORY_cp2shm</a> (const char *IDname, const char *IDshmname)</td></tr>
+<tr class="separator:a028b3b657ad0b527202b90af286f68bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">7. DISPLAY / LISTS</div></td></tr>
+<tr class="memitem:a0c86cde245ec183fd25a3f6af916db4b"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a0c86cde245ec183fd25a3f6af916db4b">init_list_image_ID_ncurses</a> (const char *termttyname)</td></tr>
+<tr class="separator:a0c86cde245ec183fd25a3f6af916db4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5bd7036ad8ad25fa6ed8093a3ebe208"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#aa5bd7036ad8ad25fa6ed8093a3ebe208">close_list_image_ID_ncurses</a> (void)</td></tr>
+<tr class="separator:aa5bd7036ad8ad25fa6ed8093a3ebe208"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84739b6ed4d35037d1d0809467d60960"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a84739b6ed4d35037d1d0809467d60960">list_image_ID_ncurses</a> ()</td></tr>
 <tr class="separator:a84739b6ed4d35037d1d0809467d60960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90efa5a10c5baa2b8048922b3af4b3b8"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a90efa5a10c5baa2b8048922b3af4b3b8">list_image_ID_ofp</a> (FILE *fo)</td></tr>
@@ -211,8 +230,7 @@ Functions</h2></td></tr>
 <tr class="separator:aa23848676c77dba1619d790f5dd01fc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eeb0be5c86ce07cf87ea6b86624d106"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a6eeb0be5c86ce07cf87ea6b86624d106">list_variable_ID_file</a> (const char *fname)</td></tr>
 <tr class="separator:a6eeb0be5c86ce07cf87ea6b86624d106"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3101e27f0b2d7a3a38619969e00d7981"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a3101e27f0b2d7a3a38619969e00d7981">chname_image_ID</a> (const char *ID_name, const char *new_name)</td></tr>
-<tr class="separator:a3101e27f0b2d7a3a38619969e00d7981"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">8. TYPE CONVERSIONS TO AND FROM COMPLEX</div></td></tr>
 <tr class="memitem:ab6f969d35abddf8beb740473988ddf6d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ab6f969d35abddf8beb740473988ddf6d">mk_complex_from_reim</a> (const char *re_name, const char *im_name, const char *out_name, int sharedmem)</td></tr>
 <tr class="separator:ab6f969d35abddf8beb740473988ddf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77d968806ac968187091bd49cd6e7d7d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a77d968806ac968187091bd49cd6e7d7d">mk_complex_from_amph</a> (const char *am_name, const char *ph_name, const char *out_name, int sharedmem)</td></tr>
@@ -225,26 +243,26 @@ Functions</h2></td></tr>
 <tr class="separator:a60e48270286e4a238e08c94989eea330"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7fa3444b113a2f7b68a6386d3c9e792"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ab7fa3444b113a2f7b68a6386d3c9e792">mk_amph_from_reim</a> (const char *re_name, const char *im_name, const char *am_out_name, const char *ph_out_name, int sharedmem)</td></tr>
 <tr class="separator:ab7fa3444b113a2f7b68a6386d3c9e792"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfa9e91be46df5329679b8330b8db494"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#adfa9e91be46df5329679b8330b8db494">clearall</a> ()</td></tr>
-<tr class="separator:adfa9e91be46df5329679b8330b8db494"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">9. VERIFY SIZE</div></td></tr>
 <tr class="memitem:ae33095c38f0d8d55e3e98fc846f8d3c4"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ae33095c38f0d8d55e3e98fc846f8d3c4">check_2Dsize</a> (const char *ID_name, uint32_t xsize, uint32_t ysize)</td></tr>
 <tr class="separator:ae33095c38f0d8d55e3e98fc846f8d3c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a640a8dc956e10229ebbdbc6168bb95c8"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a640a8dc956e10229ebbdbc6168bb95c8">check_3Dsize</a> (const char *ID_name, uint32_t xsize, uint32_t ysize, uint32_t zsize)</td></tr>
 <tr class="separator:a640a8dc956e10229ebbdbc6168bb95c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ec74f3a91aa2fb625947bfecdda0419"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a6ec74f3a91aa2fb625947bfecdda0419">rotate_cube</a> (const char *ID_name, const char *ID_out_name, int orientation)</td></tr>
-<tr class="separator:a6ec74f3a91aa2fb625947bfecdda0419"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a028b3b657ad0b527202b90af286f68bc"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a028b3b657ad0b527202b90af286f68bc">COREMOD_MEMORY_cp2shm</a> (const char *IDname, const char *IDshmname)</td></tr>
-<tr class="separator:a028b3b657ad0b527202b90af286f68bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b1828af3e43b836f90a6cc57eb2926b"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a5b1828af3e43b836f90a6cc57eb2926b">COREMOD_MEMORY_check_2Dsize</a> (const char *IDname, uint32_t xsize, uint32_t ysize)</td></tr>
 <tr class="separator:a5b1828af3e43b836f90a6cc57eb2926b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a477e9b5abe68bf9cbdd73a2ba2f70b04"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a477e9b5abe68bf9cbdd73a2ba2f70b04">COREMOD_MEMORY_check_3Dsize</a> (const char *IDname, uint32_t xsize, uint32_t ysize, uint32_t zsize)</td></tr>
 <tr class="separator:a477e9b5abe68bf9cbdd73a2ba2f70b04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">10. COORDINATE CHANGE</div></td></tr>
+<tr class="memitem:a6ec74f3a91aa2fb625947bfecdda0419"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a6ec74f3a91aa2fb625947bfecdda0419">rotate_cube</a> (const char *ID_name, const char *ID_out_name, int orientation)</td></tr>
+<tr class="separator:a6ec74f3a91aa2fb625947bfecdda0419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">11. SET IMAGE FLAGS / COUNTERS</div></td></tr>
 <tr class="memitem:ab4f13d224122d1461f7cef6ce2a4533c"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ab4f13d224122d1461f7cef6ce2a4533c">COREMOD_MEMORY_image_set_status</a> (const char *IDname, int status)</td></tr>
 <tr class="separator:ab4f13d224122d1461f7cef6ce2a4533c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaeb18535b9e2c6003de95f46bc02d43e"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#aaeb18535b9e2c6003de95f46bc02d43e">COREMOD_MEMORY_image_set_cnt0</a> (const char *IDname, int cnt0)</td></tr>
 <tr class="separator:aaeb18535b9e2c6003de95f46bc02d43e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a055d59f38c8a8bcbad6a285fab3a9131"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a055d59f38c8a8bcbad6a285fab3a9131">COREMOD_MEMORY_image_set_cnt1</a> (const char *IDname, int cnt1)</td></tr>
 <tr class="separator:a055d59f38c8a8bcbad6a285fab3a9131"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">12. MANAGE SEMAPHORES</div></td></tr>
 <tr class="memitem:a37c8bc0f68d814f7220fc4f180862ec4"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a37c8bc0f68d814f7220fc4f180862ec4">COREMOD_MEMORY_image_set_createsem</a> (const char *IDname, long NBsem)</td></tr>
 <tr class="separator:a37c8bc0f68d814f7220fc4f180862ec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a0ff9c8d1f2360b6ac76ce4cd83e955"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a0a0ff9c8d1f2360b6ac76ce4cd83e955">COREMOD_MEMORY_image_set_sempost</a> (const char *IDname, long index)</td></tr>
@@ -266,10 +284,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a9666baf21aa5da7a4c3d21672d816b13"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a9666baf21aa5da7a4c3d21672d816b13">COREMOD_MEMORY_image_set_semflush</a> (const char *IDname, long index)</td></tr>
 <tr class="memdesc:a9666baf21aa5da7a4c3d21672d816b13"><td class="mdescLeft">&#160;</td><td class="mdescRight">set semaphore value to 0  <a href="#a9666baf21aa5da7a4c3d21672d816b13">More...</a><br /></td></tr>
 <tr class="separator:a9666baf21aa5da7a4c3d21672d816b13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">13. SIMPLE OPERATIONS ON STREAMS</div></td></tr>
 <tr class="memitem:ae11d3a0de47d45a60107c9e360eed117"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ae11d3a0de47d45a60107c9e360eed117">COREMOD_MEMORY_streamDiff</a> (const char *IDstream0_name, const char *IDstream1_name, const char *IDstreammask_name, const char *IDstreamout_name, long semtrig)</td></tr>
+<tr class="memdesc:ae11d3a0de47d45a60107c9e360eed117"><td class="mdescLeft">&#160;</td><td class="mdescRight">Difference between two streams.  <a href="#ae11d3a0de47d45a60107c9e360eed117">More...</a><br /></td></tr>
 <tr class="separator:ae11d3a0de47d45a60107c9e360eed117"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b1dad1809357fbe90d4e8c6a787ddd8"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a2b1dad1809357fbe90d4e8c6a787ddd8">COREMOD_MEMORY_stream_halfimDiff</a> (const char *IDstream_name, const char *IDstreamout_name, long semtrig)</td></tr>
 <tr class="separator:a2b1dad1809357fbe90d4e8c6a787ddd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad596a5fc09c31473e9e94a3fa821bc3a"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ad596a5fc09c31473e9e94a3fa821bc3a">COREMOD_MEMORY_streamAve</a> (const char *IDstream_name, int NBave, int mode, const char *IDout_name)</td></tr>
+<tr class="memdesc:ad596a5fc09c31473e9e94a3fa821bc3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Averages frames in stream.  <a href="#ad596a5fc09c31473e9e94a3fa821bc3a">More...</a><br /></td></tr>
+<tr class="separator:ad596a5fc09c31473e9e94a3fa821bc3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac17b73697ca497c275fd54238a76e1ef"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ac17b73697ca497c275fd54238a76e1ef">COREMOD_MEMORY_image_streamupdateloop</a> (const char *IDinname, const char *IDoutname, long usperiod, long NBcubes, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode)</td></tr>
 <tr class="memdesc:ac17b73697ca497c275fd54238a76e1ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us  <a href="#ac17b73697ca497c275fd54238a76e1ef">More...</a><br /></td></tr>
 <tr class="separator:ac17b73697ca497c275fd54238a76e1ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -288,6 +311,7 @@ Functions</h2></td></tr>
 <tr class="separator:ad6fac8d092c578c299f9717e474ae68c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac97ea4b7733bb3b1067849f1d9bf0a40"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#ac97ea4b7733bb3b1067849f1d9bf0a40">COREMOD_MEMORY_PixMapDecode_U</a> (const char *inputstream_name, uint32_t xsizeim, uint32_t ysizeim, const char *NBpix_fname, const char *IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)</td></tr>
 <tr class="separator:ac97ea4b7733bb3b1067849f1d9bf0a40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">14. DATA LOGGING</div></td></tr>
 <tr class="memitem:a0a48a63c3f53185b466c5e6bbd092bec"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a0a48a63c3f53185b466c5e6bbd092bec">COREMOD_MEMORY_logshim_printstatus</a> (const char *IDname)</td></tr>
 <tr class="separator:a0a48a63c3f53185b466c5e6bbd092bec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65fe6d4354c7306c72f5d45780e07b8d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a65fe6d4354c7306c72f5d45780e07b8d">COREMOD_MEMORY_logshim_set_on</a> (const char *IDname, int setv)</td></tr>
@@ -407,6 +431,22 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int_fast8_t clearall </td>
           <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aa5bd7036ad8ad25fa6ed8093a3ebe208"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void close_list_image_ID_ncurses </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -1057,10 +1097,11 @@ Functions</h2></td></tr>
     <tr><td class="paramname">offsetus</td><td>If NBcubes&gt;1: time offset [us] between input trigger and input buffer switch </td></tr>
     <tr><td class="paramname">IDsync_name</td><td>If NBcubes&gt;1: Stream used for synchronization </td></tr>
     <tr><td class="paramname">semtrig</td><td>If NBcubes&gt;1: semaphore used for synchronization </td></tr>
-    <tr><td class="paramname">timingmode</td><td>Not used </td></tr>
+    <tr><td class="paramname">timingmode</td><td>Not used</td></tr>
   </table>
   </dd>
 </dl>
+<p>takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us </p>
 
 </div>
 </div>
@@ -1374,6 +1415,56 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>difference between two halves of stream image </p>
+
+</div>
+</div>
+<a class="anchor" id="ad596a5fc09c31473e9e94a3fa821bc3a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long COREMOD_MEMORY_streamAve </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>IDstream_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>NBave</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>IDout_name</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Averages frames in stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">IDstream_name</td><td>Input stream </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NBave</td><td>Number of consecutive frames to be averaged together </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mode</td><td>1: Perform average once, exit when completed and write output to local image 2: Run forever, write output to shared mem stream </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">IDout_name</td><td>output stream name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1457,6 +1548,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Difference between two streams. </p>
 
 </div>
 </div>
@@ -2174,6 +2267,22 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a0c86cde245ec183fd25a3f6af916db4b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int_fast8_t init_list_image_ID_ncurses </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>termttyname</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a554f5c3a98709e626e7abc2b941ffe0b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2643,6 +2752,22 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ae1b0a2a5c4a3c31d996df61a2223d669"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* save_fits_function </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a6c8a58000943870cafcc9e4c9665bab5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2681,7 +2806,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3263a6acd0ffe1d4fb8f1f8557ae17b7.html">COREMOD_memory</a></li><li class="navelem"><a class="el" href="COREMOD__memory_8h.html">COREMOD_memory.h</a></li>
-    <li class="footer">Generated on Mon Jul 10 2017 09:48:47 for cfitsTK by
+    <li class="footer">Generated on Sat Jul 15 2017 01:53:01 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

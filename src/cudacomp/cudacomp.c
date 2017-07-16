@@ -3789,13 +3789,22 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
     fflush(stdout);
 
 
+
+
+
     // load modes to GPU
+    
+    printf("Allocating d_modes. Size = %ld x %ld, total = %ld\n", m, NBmodes, sizeof(float)*m*NBmodes);
+	fflush(stdout);
     cudaStat = cudaMalloc((void**)&d_modes, sizeof(float)*m*NBmodes);
     if (cudaStat != cudaSuccess)
     {
         printf("cudaMalloc d_DMmodes returned error code %d, line(%d)\n", cudaStat, __LINE__);
         exit(EXIT_FAILURE);
     }
+    
+    printf("cudaMemcpy ID %ld  -> d_modes\n", IDmodesm);
+	fflush(stdout);
     cudaStat = cudaMemcpy(d_modes, data.image[IDmodes].array.F, sizeof(float)*m*NBmodes, cudaMemcpyHostToDevice);
     if (cudaStat != cudaSuccess)
     {
@@ -3805,6 +3814,8 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
 
 
     // create d_outmap
+    printf("Allocating d_outmap. Size = %ld,  total = %ld\n", m, sizeof(float)*m);
+	fflush(stdout);   
     cudaStat = cudaMalloc((void**)&d_outmap, sizeof(float)*m);
     if (cudaStat != cudaSuccess)
     {
@@ -3814,6 +3825,8 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
 
 
     // create d_coeff
+	printf("Allocating d_coeff. Size = %ld,  total = %ld\n", NBmodes, sizeof(float)*NBmodes);
+	fflush(stdout);      
     cudaStat = cudaMalloc((void**)&d_coeff, sizeof(float)*NBmodes);
     if (cudaStat != cudaSuccess)
     {

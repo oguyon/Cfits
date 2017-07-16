@@ -43,11 +43,11 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "ImageStruct.h", "ImageStruct_8h.html", [
       [ "complex_float", "structcomplex__float.html", "structcomplex__float" ],
       [ "complex_double", "structcomplex__double.html", "structcomplex__double" ],
-      [ "EVENT_UI8_UI8_UI16_UI8", "structEVENT__UI8__UI8__UI16__UI8.html", "structEVENT__UI8__UI8__UI16__UI8" ],
-      [ "IMAGE_KEYWORD", "structIMAGE__KEYWORD.html", "structIMAGE__KEYWORD" ],
+      [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
+      [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
       [ "TIMESPECFIXED", "structTIMESPECFIXED.html", "structTIMESPECFIXED" ],
-      [ "IMAGE_METADATA", "structIMAGE__METADATA.html", "structIMAGE__METADATA" ],
-      [ "IMAGE", "structIMAGE.html", "structIMAGE" ]
+      [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ],
+      [ "__attribute__", "struct____attribute____.html", "struct____attribute____" ]
     ] ],
     [ "initmodules.c", "initmodules_8c.html", "initmodules_8c" ],
     [ "initmodules.h", "initmodules_8h.html", "initmodules_8h" ]

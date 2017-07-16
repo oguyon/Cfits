@@ -424,8 +424,19 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 /**
  * @brief takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore
  * 
+ * 
+ * @param[in]	IDinname  		3D circular buffer of frames to be written
+ * @param[out]	IDoutname 		2D output stream
+ * @param[in]	period	 		number of semaphore waits required to advance to next slice in the circular buffer 
+ * @param[in]	offsetus		fixed time offset between trigger stream and output write
+ * @param[in]	IDsync_name		trigger stream
+ * @param[in]	smmtrig			semaphore index for trigger
+ * @param[in]	timingmode		
  */ 
 long COREMOD_MEMORY_image_streamupdateloop_semtrig(const char *IDinname, const char *IDoutname, long period, long offsetus, const char *IDsync_name, int semtrig, int timingmode);
+
+
+
 
 long COREMOD_MEMORY_streamDelay(const char *IDin_name, const char *IDout_name, long delayus, long dtus);
 

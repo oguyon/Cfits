@@ -6,6 +6,7 @@ var COREMOD__memory_8h =
     [ "check_3Dsize", "COREMOD__memory_8h.html#a640a8dc956e10229ebbdbc6168bb95c8", null ],
     [ "chname_image_ID", "COREMOD__memory_8h.html#a3101e27f0b2d7a3a38619969e00d7981", null ],
     [ "clearall", "COREMOD__memory_8h.html#adfa9e91be46df5329679b8330b8db494", null ],
+    [ "close_list_image_ID_ncurses", "COREMOD__memory_8h.html#aa5bd7036ad8ad25fa6ed8093a3ebe208", null ],
     [ "compute_image_memory", "COREMOD__memory_8h.html#a5696509ead81f9b911ede55bd616b722", null ],
     [ "compute_nb_image", "COREMOD__memory_8h.html#a4914da7cc39c9d6f3f449bba3a4e5b50", null ],
     [ "compute_nb_variable", "COREMOD__memory_8h.html#aedba8b276660cb1b0b4a0aa6e8c93c99", null ],
@@ -37,6 +38,7 @@ var COREMOD__memory_8h =
     [ "COREMOD_MEMORY_SaveAll_snapshot", "COREMOD__memory_8h.html#ae6c3d5446663e40dec70a930d62dd323", null ],
     [ "COREMOD_MEMORY_sharedMem_2Dim_log", "COREMOD__memory_8h.html#a768294515f9e6eb06e441cc52a076619", null ],
     [ "COREMOD_MEMORY_stream_halfimDiff", "COREMOD__memory_8h.html#a2b1dad1809357fbe90d4e8c6a787ddd8", null ],
+    [ "COREMOD_MEMORY_streamAve", "COREMOD__memory_8h.html#ad596a5fc09c31473e9e94a3fa821bc3a", null ],
     [ "COREMOD_MEMORY_streamDelay", "COREMOD__memory_8h.html#a08bd70b13c19050ff683af640e72ffd3", null ],
     [ "COREMOD_MEMORY_streamDiff", "COREMOD__memory_8h.html#ae11d3a0de47d45a60107c9e360eed117", null ],
     [ "create_1DCimage_ID", "COREMOD__memory_8h.html#a31e167d2d2fe4dea5c77e0ee3cd20d2b", null ],
@@ -64,6 +66,7 @@ var COREMOD__memory_8h =
     [ "image_write_keyword_L", "COREMOD__memory_8h.html#a5fe7d496b8f5636b7e4e50a1635057b7", null ],
     [ "image_write_keyword_S", "COREMOD__memory_8h.html#aefab44344cd6c762ce475612f457b4d9", null ],
     [ "init_COREMOD_memory", "COREMOD__memory_8h.html#aca8bfb0090f916df7c5966890ad83e55", null ],
+    [ "init_list_image_ID_ncurses", "COREMOD__memory_8h.html#a0c86cde245ec183fd25a3f6af916db4b", null ],
     [ "list_image_ID", "COREMOD__memory_8h.html#a554f5c3a98709e626e7abc2b941ffe0b", null ],
     [ "list_image_ID_file", "COREMOD__memory_8h.html#a8a2b303e2c257033ceb37cae570f3d0b", null ],
     [ "list_image_ID_ncurses", "COREMOD__memory_8h.html#a84739b6ed4d35037d1d0809467d60960", null ],
@@ -83,6 +86,7 @@ var COREMOD__memory_8h =
     [ "read_sharedmem_image", "COREMOD__memory_8h.html#a7e0251e7339cbc50b6ed995e8609081c", null ],
     [ "read_sharedmem_image_size", "COREMOD__memory_8h.html#a98cd70b4acfd1b31d2399985bb8e7a99", null ],
     [ "rotate_cube", "COREMOD__memory_8h.html#a6ec74f3a91aa2fb625947bfecdda0419", null ],
+    [ "save_fits_function", "COREMOD__memory_8h.html#ae1b0a2a5c4a3c31d996df61a2223d669", null ],
     [ "variable_ID", "COREMOD__memory_8h.html#a6c8a58000943870cafcc9e4c9665bab5", null ],
     [ "waitforsemID", "COREMOD__memory_8h.html#a201263a8498c7557ab392a4cdcc13488", null ]
 ];
