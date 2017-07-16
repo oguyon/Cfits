@@ -2244,10 +2244,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop0" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP0" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo0" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
 menucontrolloop_default="GPUzploff0"
 ;;
 
@@ -2288,10 +2288,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop1" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP1" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo1" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP1 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP1 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo1 0 bogusname" C-m
 menucontrolloop_default="GPUzploff0"
 ;;
 
@@ -2331,10 +2331,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop2" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP2" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo2" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP2 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo2 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP2 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo2 0 bogusname" C-m
 menucontrolloop_default="GPUzploff2"
 ;;
 
@@ -2374,10 +2374,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop3" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP3" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo3" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP3 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP3 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo3 0 bogusname" C-m
 menucontrolloop_default="GPUzploff3"
 ;;
 
@@ -2417,10 +2417,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop4" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP4" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo4" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP0 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo0 0 bogusname" C-m
 menucontrolloop_default="GPUzploff0"
 ;;
 
@@ -2460,10 +2460,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop5" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP5" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo5" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP5 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo5 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP5 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo5 0 bogusname" C-m
 menucontrolloop_default="GPUzploff5"
 ;;
 
@@ -2503,10 +2503,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop6" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP6" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo6" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP6 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo6 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP6 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo6 0 bogusname" C-m
 menucontrolloop_default="GPUzploff6"
 ;;
 
@@ -2547,10 +2547,10 @@ tmux new-session -d -s $tmuxname
 sleep 0.2
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}GPUzploop7" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmZP7" C-m
-tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_respM" C-m
+tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_wfszpo7" C-m
 tmux send-keys -t $tmuxname "listim" C-m
-tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_respM aol${LOOPNUMBER}_dmZP7 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo7 0 bogusname" C-m
+tmux send-keys -t $tmuxname "cudacoeff2map aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_dmZP7 ${GPUzpoffsetZ} aol${LOOPNUMBER}_wfszpo7 0 bogusname" C-m
 menucontrolloop_default="GPUzploff7"
 ;;
 
