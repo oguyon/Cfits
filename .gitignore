@@ -21,7 +21,6 @@ autom4te.cache/*
 compile
 config.log
 config.status
-install-sh
 notes/
 src/cfits
 libtool
