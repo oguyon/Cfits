@@ -1506,6 +1506,18 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>takes a 3Dimage (circular buffer) and writes slices to a 2D image synchronized with an image semaphore </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">IDinname</td><td>3D circular buffer of frames to be written </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">IDoutname</td><td>2D output stream </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">period</td><td>number of semaphore waits required to advance to next slice in the circular buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">offsetus</td><td>fixed time offset between trigger stream and output write </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">IDsync_name</td><td>trigger stream </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">smmtrig</td><td>semaphore index for trigger </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">timingmode</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -3844,7 +3856,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3263a6acd0ffe1d4fb8f1f8557ae17b7.html">COREMOD_memory</a></li><li class="navelem"><a class="el" href="COREMOD__memory_8c.html">COREMOD_memory.c</a></li>
-    <li class="footer">Generated on Sat Jul 15 2017 01:53:01 for cfitsTK by
+    <li class="footer">Generated on Thu Jul 27 2017 18:11:32 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
