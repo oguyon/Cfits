@@ -1,11 +1,11 @@
 /**
- * @file    ImageCreate.c
- * @brief   Create image
+ * @file    ImageStreamIO.c
+ * @brief   Read and Create image
  * 
- * Creates images and streams (shared memory)
+ * Read and create images and streams (shared memory)
  *  
  * @author  O. Guyon
- * @date    10 Jul 2017
+ * @date    27 Jul 2017
  *
  * 
  * @bug No known bugs.
@@ -77,7 +77,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 
-int ImageCreate_printERROR(const char *file, const char *func, int line, char *errmessage)
+int ImageStreamIO_printERROR(const char *file, const char *func, int line, char *errmessage)
 {
     char buff[256];
 
@@ -106,7 +106,7 @@ int ImageCreate_printERROR(const char *file, const char *func, int line, char *e
 
 
 
-int ImageCreateSem(IMAGE *image, long NBsem)
+int ImageStreamIO_createSem(IMAGE *image, long NBsem)
 {
     char sname[200];
     long s, s1;
@@ -172,7 +172,7 @@ int ImageCreateSem(IMAGE *image, long NBsem)
 
 
 
-int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw)
+int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw)
 {
     long i,ii;
     time_t lt;
@@ -270,7 +270,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
         result = lseek(SM_fd, sharedsize-1, SEEK_SET);
         if (result == -1) {
             close(SM_fd);
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"Error calling lseek() to 'stretch' the file");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"Error calling lseek() to 'stretch' the file");
             exit(0);
         }
 
@@ -329,7 +329,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.UI8 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -360,7 +360,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI8 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -392,7 +392,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.UI16 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -422,7 +422,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI16 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -453,7 +453,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.UI32 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -485,7 +485,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI32 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -517,7 +517,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI64 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -547,7 +547,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.SI64 == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -577,7 +577,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.F == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -607,7 +607,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
   
         if(image->array.D == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -637,7 +637,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.CF == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -667,7 +667,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
         if(image->array.CD == NULL)
         {
-            ImageCreate_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
+            ImageStreamIO_printERROR(__FILE__,__func__,__LINE__,"memory allocation failed");
             fprintf(stderr,"%c[%d;%dm", (char) 27, 1, 31);
             fprintf(stderr,"Image name = %s\n",name);
             fprintf(stderr,"Image size = ");
@@ -693,7 +693,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
     image->md[0].nelement = nelement;
 
     if(shared==1)
-        ImageCreateSem(image, 10); // by default, create 10 semaphores
+        ImageStreamIO_createSem(image, 10); // by default, create 10 semaphores
     else
 		image->md[0].sem = 0; // no semaphores
      
@@ -716,7 +716,7 @@ int ImageCreate(IMAGE *image, const char *name, long naxis, uint32_t *size, uint
 
 
 
-long read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
+long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 {
     int SM_fd;
     struct stat file_stat;

@@ -86,11 +86,6 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 
-/**
- * @file PIAACMCsimul.c
- * @author Olivier Guyon
- */
-
 
 
 static int WRITE_OK = 1;

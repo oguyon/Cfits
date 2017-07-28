@@ -5,8 +5,14 @@
  * The IMAGE structure is defined here
  * Supports shared memory, low latency IPC through semaphores
  * 
+ * Dynamic allocation within IMAGE:
+ * IMAGE includes a pointer to an array of IMAGE_METADATA (usually only one element, >1 element for polymorphism)
+ * IMAGE includes a pointer to an array of KEYWORDS
+ * IMAGE includes a pointer to a data array
+ * 
+ * 
  * @author  O. Guyon
- * @date    9 Jul 2017
+ * @date    22 Jul 2017
  *
  * @bug No known bugs. 
  * 
@@ -25,79 +31,14 @@
 
 
 
-#define SHAREDMEMDIR "/tmp"        /**< location of file mapped semaphores */
+#define SHAREDMEMDIR        "/tmp"        /**< location of file mapped semaphores */
 
 
-//#define NB_SEMAPHORE_MAX    32     /**< maximum number of semaphores supported by IMAGE structure */
-
-#define SEMAPHORE_MAXVAL    10 	   /**< maximum value for each of the semaphore, mitigates warm-up time when processes catch up with data that has accumulated */
-
-
-
-
-typedef struct
-{
-    float re;
-    float im;
-} complex_float;
-
-
-typedef struct
-{
-    double re;
-    double im;
-} complex_double;
+#define SEMAPHORE_MAXVAL    10 	          /**< maximum value for each of the semaphore, mitigates warm-up time when processes catch up with data that has accumulated */
 
 
 
 
-
-
-/** @brief Photon detection events
- * 
- * Log individual photon events on a 2D camera
- * Timing resolution = 1us \n 
- * 
- * Max detector size 256 x 256 pix \n 
- * Max "exposure" time is 2^16 us = 65.535 ms (15.28 Hz) \n 
- * Wavelength resolution set by keywords in frame: \n 
- *   LAMBDA_MIN, LAMBDA_MAX \n 
- * lambda = LAMBDA_MIN + (LAMBDA_MAX-LAMBDA_MIN)/256*lambda_index \n
- * 
- * USAGE:
- * An array of EVENT_UI8_UI8_UI16_UI8 is stored in the IMAGE structure \n 
- * The array can be 1D (list of events), or 3D (N x 1 x M) for a circular buffer where the z-index (slice) is incremented between each "exposure" \n
- * md[0].cnt2 contains the number of events in the last slice written \n
- * Detection events do not have to be ordered \n
- * 
- * Write sequence in circular buffer :
- * - [1] create IMAGE structure type EVENT_UI8_UI8_UI16_UI8. Size n x 1 x m, where n = max # of event per "exposure", m = number of slices in circular buffer. Note that md[0].size[0]=m, md[0].size[1]=1, md[0].size[2]=m
- * - [2] set md[0].write=1 (start image write)
- * - [3] set k=md[0].cnt1=0 (slice index)
- * - [4] set md[0].cnt2=0 (# of events), ii=0 (event index in current slice) 
- * - [5] store time in local variable (exposure start)
- * - [6] Write each event in array.EVENT_UI8_UI8_UI16_UI8[k*md[0].size[0]+ii]. After each event, increment ii (event index)
- * - [7] When "exposure" completed, set md[0].atime to exposure time start (see step [5]), md[0].cnt1=k (last slice written),  md[0].cnt2=ii (number of events), set md[0].write=0 (write completed), increment md[0].cnt0, and post all semaphores
- * - [8] Increment k (if k=md[0].size[2], set k=0), return to step [4]
- * 
- * @warning Array size will define the maximum number of events packed in IMAGE. User is responsible for pushing out IMAGE and starting a new IMAGE or slice when max number of events is reached.
- * 
- */
-typedef struct
-{
-	uint8_t xpix;
-
-	uint8_t ypix;
-	
-	/** @brief Detection time since beginning of "exposure" [us] 
-	 *
-	 * Beginning of exposure is written to md[0].atime
-	 *  */
-	uint16_t dtus;               
-	
-	uint8_t lambda_index;  
-
-}  __attribute__ ((__packed__)) EVENT_UI8_UI8_UI16_UI8;
 
 
 
@@ -147,8 +88,8 @@ typedef struct
 
 
 
-#define Dtype                                 9   /**< default data type for floating point */
-#define CDtype                               11  /**< default data type for complex */
+#define Dtype                                          9   /**< default data type for floating point */
+#define CDtype                                        11   /**< default data type for complex */
 
 
 
@@ -176,6 +117,8 @@ typedef struct
 
 
 
+
+
 /** @brief structure holding two 8-byte integers
  * 
  * Used in an union with struct timespec to ensure fixed 16 byte length
@@ -189,11 +132,100 @@ typedef struct
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef struct
+{
+    float re;
+    float im;
+} complex_float;
+
+
+typedef struct
+{
+    double re;
+    double im;
+} complex_double;
+
+
+
+
+/** @brief Photon detection events
+ * 
+ * Log individual photon events on a 2D camera \n
+ * Timing resolution = 1 us \n 
+ * Optimized for small size \n
+ * 
+ * Max detector size 256 x 256 pix \n 
+ * Max "exposure" time is 2^16 us = 65.535 ms (15.28 Hz) \n 
+ * Wavelength resolution set by keywords in frame: \n 
+ *   LAMBDA_MIN, LAMBDA_MAX \n 
+ * lambda = LAMBDA_MIN + (LAMBDA_MAX-LAMBDA_MIN)/256*lambda_index \n
+ * 
+ * USAGE:
+ * An array of EVENT_UI8_UI8_UI16_UI8 is stored in the IMAGE structure \n 
+ * The array can be 1D (list of events), or 3D (N x 1 x M) for a circular buffer where the z-index (slice) is incremented between each "exposure" \n
+ * md[0].cnt2 contains the number of events in the last slice written \n
+ * Detection events do not have to be ordered \n
+ * 
+ * Write sequence in circular buffer :
+ * - [1] create IMAGE structure type EVENT_UI8_UI8_UI16_UI8. Size n x 1 x m, where n = max # of event per "exposure", m = number of slices in circular buffer. Note that md[0].size[0]=m, md[0].size[1]=1, md[0].size[2]=m
+ * - [2] set md[0].write=1 (start image write)
+ * - [3] set k=md[0].cnt1=0 (slice index)
+ * - [4] set md[0].cnt2=0 (# of events), ii=0 (event index in current slice) 
+ * - [5] store time in local variable (exposure start)
+ * - [6] Write each event in array.EVENT_UI8_UI8_UI16_UI8[k*md[0].size[0]+ii]. After each event, increment ii (event index)
+ * - [7] When "exposure" completed, set md[0].atime to exposure time start (see step [5]), md[0].cnt1=k (last slice written),  md[0].cnt2=ii (number of events), set md[0].write=0 (write completed), increment md[0].cnt0, and post all semaphores
+ * - [8] Increment k (if k=md[0].size[2], set k=0), return to step [4]
+ * 
+ * @warning Array size will define the maximum number of events packed in IMAGE. User is responsible for pushing out IMAGE and starting a new IMAGE or slice when max number of events is reached.
+ * 
+ */
+typedef struct
+{
+	uint8_t xpix;
+
+	uint8_t ypix;
+	
+	/** @brief Detection time since beginning of "exposure" [us] 
+	 *
+	 * Beginning of exposure is written to md[0].atime
+	 *  */
+	uint16_t dtus;               
+	
+	uint8_t lambda_index;  
+
+}  __attribute__ ((__packed__)) EVENT_UI8_UI8_UI16_UI8;
+
+
+
+
+
+
+
+
+
+
+
+
 /** @brief Image metadata
  * 
  * This structure has a fixed size regardless of implementation
  *
- * @note size = 163 byte = 1304 bit
+ * @note size = 171 byte = 1368 bit
  *  
  */ 
 typedef struct
@@ -226,15 +258,15 @@ typedef struct
     /** @brief Data type
      * 
      * Encoded according to data type defines.
-     *  - 1: uint8_t
-     * 	- 2: int8_t
-     * 	- 3: uint16_t
-     * 	- 4: int16_t
-     * 	- 5: uint32_t
-     * 	- 6: int32_t
-     * 	- 7: uint64_t
-     * 	- 8: int64_t
-     * 	- 9: IEEE 754 single-precision binary floating-point format: binary32
+     *  -  1: uint8_t
+     * 	-  2: int8_t
+     * 	-  3: uint16_t
+     * 	-  4: int16_t
+     * 	-  5: uint32_t
+     * 	-  6: int32_t
+     * 	-  7: uint64_t
+     * 	-  8: int64_t
+     * 	-  9: IEEE 754 single-precision binary floating-point format: binary32
      *  - 10: IEEE 754 double-precision binary floating-point format: binary64
      *  - 11: complex_float
      *  - 12: complex double
@@ -279,7 +311,7 @@ typedef struct
     uint16_t sem; 				        /**< number of semaphores in use, specified at image creation      */
 	// mem offset = 139
 
-	uint64_t : 0; // align array to 8-byte boundary for speed 
+	uint64_t : 0; // align array to 8-byte boundary for speed  -> pushed mem offset to 144
     
     uint64_t cnt0;               	/**< counter (incremented if image is updated)                                    */
     uint64_t cnt1;               	/**< in 3D rolling buffer image, this is the last slice written                   */
@@ -289,6 +321,8 @@ typedef struct
 
     uint16_t NBkw;                  /**< number of keywords (max: 65536)                                              */
     
+    // total size is 171 byte = 1368 bit
+    
 } __attribute__ ((__packed__)) IMAGE_METADATA;
 
 
@@ -296,8 +330,9 @@ typedef struct
 
 
  
+ 
 
-/** @brief  
+/** @brief IMAGE structure
  * The IMAGE structure includes :
  *   - an array of IMAGE_KEWORD structures
  *   - an array of IMAGE_METADATA structures (usually only 1 element)
@@ -308,7 +343,9 @@ typedef struct
 typedef struct          		/**< structure used to store data arrays                      */
 {
     char name[80]; 				/**< local name (can be different from name in shared memory) */
+    // mem offset = 80
     
+     
     /** @brief Image usage flag
      * 
      * 1 if image is used, 0 otherwise. \n
@@ -318,22 +355,23 @@ typedef struct          		/**< structure used to store data arrays              
      * 
      */
     uint8_t used;              
+    // mem offset = 81
     
     int32_t shmfd;		     	        /**< if shared memory, file descriptor */
+	// mem offset = 85
 
     uint64_t memsize; 			        /**< total size in memory if shared    */
+	// mem offset = 93
 
     sem_t *semlog; 				        /**< pointer to semaphore for logging  (8 bytes on 64-bit system) */
+	// mem offset = 101
 
     IMAGE_METADATA *md;			
+	// mem offset = 109
 
-	// Dynamic allocation starts here
-	// from this point, pointer offets are no longer fixed and are data-dependent
-	// user needs to perform pointer offsets to access fields after array
-
-	
 	
 	uint64_t : 0; // align array to 8-byte boundary for speed
+	// mem offset pushed to 112
 	
 	/** @brief data storage array
 	 * 
@@ -369,12 +407,16 @@ typedef struct          		/**< structure used to store data arrays              
 
 		EVENT_UI8_UI8_UI16_UI8 *event1121;
     } array;                 	/**< pointer to data array */
-	
+	// mem offset 120
 
     sem_t **semptr;	                    /**< array of pointers to semaphores   (each 8 bytes on 64-bit system) */
+	// mem offset 128
 
     IMAGE_KEYWORD *kw;
-        
+    // mem offset 136    
+    
+    // total size is 136 byte = 1088 bit
+    
 } __attribute__ ((__packed__)) IMAGE;
 
 
