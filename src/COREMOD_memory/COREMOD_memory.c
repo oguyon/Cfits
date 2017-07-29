@@ -2099,9 +2099,6 @@ long read_sharedmem_image(const char *name)
 	if(ImageStreamIO_read_sharedmem_image_toIMAGE(name, image)==-1)
 		ID = -1;
 
-	printf("IMAGE has been read\n");
-	fflush(stdout);
-
     if(MEM_MONITOR == 1)
 		list_image_ID_ncurses();
 	

@@ -941,7 +941,7 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
 //        image->md[0].sem = snb;
         image->semptr = (sem_t**) malloc(sizeof(sem_t*) * image->md[0].sem);
-        for(s=0; s<snb; s++)
+        for(s=0; s<image->md[0].sem; s++)
         {
             sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
             if ((image->semptr[s] = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
