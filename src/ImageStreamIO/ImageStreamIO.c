@@ -937,6 +937,8 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         printf("%ld semaphores detected  (image->md[0].sem = %d)\n", snb, (int) image->md[0].sem);
 
 
+		
+
 //        image->md[0].sem = snb;
         image->semptr = (sem_t**) malloc(sizeof(sem_t*) * image->md[0].sem);
         for(s=0; s<snb; s++)
@@ -951,6 +953,8 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         if ((image->semlog = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
                 printf("ERROR: could not open semaphore %s\n", sname);
             }
+
+		
 
     }
 
