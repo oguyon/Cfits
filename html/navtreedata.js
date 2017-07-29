@@ -1,9 +1,8 @@
 var NAVTREE =
 [
   [ "cfitsTK", "index.html", [
-    [ "README", "md_README.html", [
-      [ "Image analysis tools - full development package", "md_README.html#mainpage", null ]
-    ] ],
+    [ "Image analysis tools - full development package", "index.html#mainpage", null ],
+    [ "README", "md_README.html", null ],
     [ "AO loop control", "AOloopControl.html", null ],
     [ "Command Line Interface (CLI)", "md_src_CLIcore.html", null ],
     [ "Focal plane AO loop control", "md_src_FPAOloopControl_README.html", null ],
@@ -46,7 +45,7 @@ var NAVTREEINDEX =
 "coronagraphs_8c.html#af290b9b2cb41ccd98550e87794e7637c",
 "functions_vars.html",
 "image__filter_8c.html#a8932e1b8cb2de28c639605a36d68bc26",
-"initmodules_8c.html#a9842752e03b4de9b4593f1a3b34364ab",
+"initmodules_8c.html#a609836d60e996e4dc2af361344aae7c9",
 "nrlmsise-00__data_8c.html#ad4f203c6cf70efc738b56d4377ded829",
 "structBITMAPINFOHEADER.html#a9dddc8e5104f49e7feec78835bf7afbb",
 "structOPTPIAACMCDESIGN.html#a9b381fe9d31e74c5306577c8ca59116b"

@@ -6390,9 +6390,8 @@ LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(const char *logshimname)
     sprintf(SM_fname, "%s/%s.logshimconf.shm", SHAREDMEMDIR, logshimname);
     
     SM_fd = open(SM_fname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
-
     if (SM_fd == -1) {
-		printf("File \"%s\" : ", SM_fname);
+		printf("File \"%s\"\n", SM_fname);
 		fflush(stdout);
         perror("Error opening file for writing");
         exit(0);
