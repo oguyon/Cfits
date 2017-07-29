@@ -71,9 +71,11 @@ var searchData=
   ['aolcompute_5ftotal_5fasync_5fsem_5fname',['AOLCOMPUTE_TOTAL_ASYNC_sem_name',['../AOloopControl_8c.html#a8458f462ccc6c456caefc1b12d97a221',1,'AOloopControl.c']]],
   ['aolcompute_5ftotal_5fasync_5fthreadinit',['AOLCOMPUTE_TOTAL_ASYNC_THREADinit',['../AOloopControl_8c.html#a098842eda9bb99e89b988c597457047b',1,'AOloopControl.c']]],
   ['aolcompute_5ftotal_5finit',['AOLCOMPUTE_TOTAL_INIT',['../AOloopControl_8c.html#a96cee5d0f6b5e68e80b4191a60083dc5',1,'AOloopControl.c']]],
+  ['aolmkmodes_2emd',['aolmkmodes.md',['../aolmkmodes_8md.html',1,'']]],
   ['aoloop0_2econf',['AOloop0.conf',['../AOloop0_8conf.html',1,'']]],
   ['aoloopcontrol_2ec',['AOloopControl.c',['../AOloopControl_8c.html',1,'']]],
   ['aoloopcontrol_2eh',['AOloopControl.h',['../AOloopControl_8h.html',1,'']]],
+  ['aoloopcontrol_2emd',['AOloopControl.md',['../AOloopControl_8md.html',1,'']]],
   ['aoloopcontrol_5f2dloadcreate_5fshmim',['AOloopControl_2Dloadcreate_shmim',['../AOloopControl_8c.html#a119111bd69fc11e62f5911d6daf16427',1,'AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a119111bd69fc11e62f5911d6daf16427',1,'AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize):&#160;AOloopControl.c']]],
   ['aoloopcontrol_5f3dloadcreate_5fshmim',['AOloopControl_3Dloadcreate_shmim',['../AOloopControl_8c.html#a6b5771f15f14e76afc4b7899378a4a63',1,'AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a6b5771f15f14e76afc4b7899378a4a63',1,'AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize):&#160;AOloopControl.c']]],
   ['aoloopcontrol_5fanalyzerm_5fsensitivity',['AOloopControl_AnalyzeRM_sensitivity',['../AOloopControl_8c.html#a41cb4171b617b7de790b7d28c217d945',1,'AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a41cb4171b617b7de790b7d28c217d945',1,'AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname):&#160;AOloopControl.c']]],
@@ -234,6 +236,7 @@ var searchData=
   ['aoloopcontrol_5fprocess_5fzrespm_5fcli',['AOloopControl_Process_zrespM_cli',['../AOloopControl_8c.html#a2542329c8274137a8b11a3690d3cfbff',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fprocesszrespm_5fcli',['AOloopControl_ProcessZrespM_cli',['../AOloopControl_8c.html#af1886304dc0bf00f3d898ae718ede7c9',1,'AOloopControl.c']]],
   ['aoloopcontrol_5fprocesszrespm_5fmedianfilt',['AOloopControl_ProcessZrespM_medianfilt',['../AOloopControl_8c.html#a20fdd47b0b8c2cdc88e718d9b40f218d',1,'AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm_name, const char *WFSref0_name, const char *WFSmap_name, const char *DMmap_name, double rmampl, int normalize):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a20fdd47b0b8c2cdc88e718d9b40f218d',1,'AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm_name, const char *WFSref0_name, const char *WFSmap_name, const char *DMmap_name, double rmampl, int normalize):&#160;AOloopControl.c']]],
+  ['aoloopcontrol_5fprogguide_2emd',['AOloopControl_ProgGuide.md',['../AOloopControl__ProgGuide_8md.html',1,'']]],
   ['aoloopcontrol_5fresetrmsperf',['AOloopControl_resetRMSperf',['../AOloopControl_8c.html#a06e86fac0533d77ef55adb8ff2b35206',1,'AOloopControl_resetRMSperf():&#160;AOloopControl.c'],['../AOloopControl_8h.html#a06e86fac0533d77ef55adb8ff2b35206',1,'AOloopControl_resetRMSperf():&#160;AOloopControl.c']]],
   ['aoloopcontrol_5frespmatrix_5ffast',['AOloopControl_RespMatrix_Fast',['../AOloopControl_8c.html#a38df51aca049463698df9c0f4e6a3ae9',1,'AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_name, const char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, const char *outname):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a38df51aca049463698df9c0f4e6a3ae9',1,'AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_name, const char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, const char *outname):&#160;AOloopControl.c']]],
   ['aoloopcontrol_5frespmatrix_5ffast_5fcli',['AOloopControl_RespMatrix_Fast_cli',['../AOloopControl_8c.html#ad192890435f0126ce960ea89847e6fbc',1,'AOloopControl.c']]],
@@ -628,5 +631,8 @@ var searchData=
   ['average_5fcam_5fframes_5fiddark',['Average_cam_frames_IDdark',['../AOloopControl_8c.html#a282b71a3e6ef11808ffd8bc10c9faf12',1,'AOloopControl.c']]],
   ['average_5fcam_5fframes_5fnelem',['Average_cam_frames_nelem',['../AOloopControl_8c.html#a9b11e27293cb519d00bc33ee088bf9af',1,'AOloopControl.c']]],
   ['avestats_5fnbpt',['AveStats_NBpt',['../structAOLOOPCONTROL__CONF.html#ac51012bfb779f376a4e4476f5a1c76dd',1,'AOLOOPCONTROL_CONF']]],
+  ['aolmkmodes',['aolmkmodes',['../md_src_AOloopControl_doc_aolmkmodes.html',1,'']]],
+  ['aoloopcontrol',['AOloopControl',['../md_src_AOloopControl_doc_AOloopControl.html',1,'']]],
+  ['aoloopcontrol_5fprogguide',['AOloopControl_ProgGuide',['../md_src_AOloopControl_doc_AOloopControl_ProgGuide.html',1,'']]],
   ['ao_20loop_20control',['AO loop control',['../page_module_AOloopControl.html',1,'page_modules']]]
 ];

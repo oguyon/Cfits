@@ -109,6 +109,7 @@ var searchData=
   ['sg0',['sg0',['../AtmosphereModel_8c.html#a7f68e5f9adad978d8d875e5e927802e2',1,'sg0(double ex, double *p, double *ap):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a7f68e5f9adad978d8d875e5e927802e2',1,'sg0(double ex, double *p, double *ap):&#160;nrlmsise-00.c']]],
   ['shared',['shared',['../struct____attribute____.html#a406def6b37695e4203f7c929f97b68db',1,'__attribute__']]],
   ['shared_5fdft',['SHARED_DFT',['../structDATA.html#a64d5b0ed5d5cedf11ff69ebf8d30dc20',1,'DATA']]],
+  ['sharedmemstreams_2emd',['sharedmemstreams.md',['../sharedmemstreams_8md.html',1,'']]],
   ['shear4_5fshear',['SHEAR4_SHEAR',['../coronagraphs_8c.html#a4d008a7219a7d93d19381b9df8e43abd',1,'coronagraphs.c']]],
   ['shmfd',['shmfd',['../struct____attribute____.html#ac41b84d49d48656863d49edd5ce14410',1,'__attribute__']]],
   ['si16',['SI16',['../struct____attribute____.html#ac392e8b3dea36ebae8661aa89f99ae7b',1,'__attribute__']]],

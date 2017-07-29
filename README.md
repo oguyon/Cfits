@@ -24,6 +24,7 @@ On OS X you need to use gcc-mp-5 for opemMP:
     make install
 
 
+[online documentation]( http://oguyon.github.io/Cfits/ ) 
 
 
 ## Libraries
@@ -39,6 +40,7 @@ The following libraries are used:
 - fftw, for performing Fourier Transforms
 - gsl, for math functions and tools
 - fitsio, for reading and writing FITS image files
+- CUDA, CuBLAS, MAGMA for GPU acceleration (optional)
 
 If you use NVIDIA GPUs, install cuda and magma libraries, and add "--enable-cuda and --enable-magma" options to the configure command.
 

@@ -3,7 +3,15 @@ var NAVTREE =
   [ "cfitsTK", "index.html", [
     [ "User's Guide", "index.html", "index" ],
     [ "README", "md_README.html", null ],
+    [ "aolmkmodes", "md_src_AOloopControl_doc_aolmkmodes.html", null ],
+    [ "AOloopControl", "md_src_AOloopControl_doc_AOloopControl.html", "md_src_AOloopControl_doc_AOloopControl" ],
+    [ "AOloopControl_ProgGuide", "md_src_AOloopControl_doc_AOloopControl_ProgGuide.html", null ],
     [ "Focal plane AO loop control", "md_src_FPAOloopControl_README.html", null ],
+    [ "PIAACMCsimul", "md_src_PIAACMCsimul_doc_PIAACMCsimul.html", null ],
+    [ "PIAACMCsimul_script_run", "md_src_PIAACMCsimul_doc_PIAACMCsimul_script_run.html", null ],
+    [ "PIAACMCsimul_script_runopt", "md_src_PIAACMCsimul_doc_PIAACMCsimul_script_runopt.html", null ],
+    [ "PIAACMCsimul_script_runPIAACMC", "md_src_PIAACMCsimul_doc_PIAACMCsimul_script_runPIAACMC.html", null ],
+    [ "PIAACMCsimul_script_sim", "md_src_PIAACMCsimul_doc_PIAACMCsimul_script_sim.html", null ],
     [ "Bug List", "bug.html", null ],
     [ "Data Structures", null, [
       [ "Data Structures", "annotated.html", "annotated" ],
@@ -41,12 +49,12 @@ var NAVTREEINDEX =
 "calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9a16b47985a8dbf6c7c63df6cf22eb4feb",
 "coronagraphs_8c.html#af39ae729c13bfaa6936e2291bd6b4e20",
 "functions_vars.html",
-"image__filter_8c.html#a9842752e03b4de9b4593f1a3b34364ab",
-"initmodules_8c.html#a9842752e03b4de9b4593f1a3b34364ab",
-"nrlmsise-00__data_8c.html#ae391523526f8ec527742657b4f50db0e",
-"structBITMAPINFOHEADER.html#a5ef05c009e392db1cc9c3d41292928c8",
-"structOPTPIAACMCDESIGN.html#a8fbed9f02c0a17dcc2f233be4c4af697",
-"unionYYSTYPE.html#a81f209066080f5ffa329c1772b8b70c5"
+"image__filter_8c.html#a8932e1b8cb2de28c639605a36d68bc26",
+"initmodules_8c.html#a609836d60e996e4dc2af361344aae7c9",
+"nrlmsise-00__data_8c.html",
+"structASPHSURFR.html#a9c6a2f637f66b2911129ec69640f98d2",
+"structOPTPIAACMCDESIGN.html#a5fa43c209dc396f65f2d74d3bb275e75",
+"structyy__buffer__state.html#a9d60c60af6e1a6f69de16871fd64f85f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
