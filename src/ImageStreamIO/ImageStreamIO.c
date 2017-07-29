@@ -108,6 +108,10 @@ int ImageStreamIO_printERROR(const char *file, const char *func, int line, char 
 
 
 
+
+
+
+
 int ImageStreamIO_createSem(IMAGE *image, long NBsem)
 {
     char sname[200];
@@ -945,7 +949,14 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
         {
             sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
             if ((image->semptr[s] = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
-                printf("ERROR: could not open semaphore %s\n", sname);
+                printf("ERROR: could not open semaphore %s -> (re-)CREATING semaphore\n", sname);
+				
+				
+			if ((image->semptr[s] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
+				perror("semaphore initilization");
+            }
+            else
+               sem_init(image->semptr[s], 1, 0);		
             }
         }
         
