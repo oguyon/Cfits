@@ -6393,6 +6393,7 @@ LOGSHIM_CONF* COREMOD_MEMORY_logshim_create_SHMconf(const char *logshimname)
 
     if (SM_fd == -1) {
 		printf("File \"%s\" : ", SM_fname);
+		fflush(stdout);
         perror("Error opening file for writing");
         exit(0);
     }
