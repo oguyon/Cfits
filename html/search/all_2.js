@@ -72,7 +72,6 @@ var searchData=
   ['aolcompute_5ftotal_5fasync_5fthreadinit',['AOLCOMPUTE_TOTAL_ASYNC_THREADinit',['../AOloopControl_8c.html#a098842eda9bb99e89b988c597457047b',1,'AOloopControl.c']]],
   ['aolcompute_5ftotal_5finit',['AOLCOMPUTE_TOTAL_INIT',['../AOloopControl_8c.html#a96cee5d0f6b5e68e80b4191a60083dc5',1,'AOloopControl.c']]],
   ['aoloop0_2econf',['AOloop0.conf',['../AOloop0_8conf.html',1,'']]],
-  ['ao_20loop_20control',['AO loop control',['../AOloopControl.html',1,'']]],
   ['aoloopcontrol_2ec',['AOloopControl.c',['../AOloopControl_8c.html',1,'']]],
   ['aoloopcontrol_2eh',['AOloopControl.h',['../AOloopControl_8h.html',1,'']]],
   ['aoloopcontrol_5f2dloadcreate_5fshmim',['AOloopControl_2Dloadcreate_shmim',['../AOloopControl_8c.html#a119111bd69fc11e62f5911d6daf16427',1,'AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize):&#160;AOloopControl.c'],['../AOloopControl_8h.html#a119111bd69fc11e62f5911d6daf16427',1,'AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize):&#160;AOloopControl.c']]],
@@ -628,5 +627,6 @@ var searchData=
   ['average_5fcam_5fframes_5fdname',['Average_cam_frames_dname',['../AOloopControl_8c.html#a15bf87225e43ca5f1b9d05b1a14b06c0',1,'AOloopControl.c']]],
   ['average_5fcam_5fframes_5fiddark',['Average_cam_frames_IDdark',['../AOloopControl_8c.html#a282b71a3e6ef11808ffd8bc10c9faf12',1,'AOloopControl.c']]],
   ['average_5fcam_5fframes_5fnelem',['Average_cam_frames_nelem',['../AOloopControl_8c.html#a9b11e27293cb519d00bc33ee088bf9af',1,'AOloopControl.c']]],
-  ['avestats_5fnbpt',['AveStats_NBpt',['../structAOLOOPCONTROL__CONF.html#ac51012bfb779f376a4e4476f5a1c76dd',1,'AOLOOPCONTROL_CONF']]]
+  ['avestats_5fnbpt',['AveStats_NBpt',['../structAOLOOPCONTROL__CONF.html#ac51012bfb779f376a4e4476f5a1c76dd',1,'AOLOOPCONTROL_CONF']]],
+  ['ao_20loop_20control',['AO loop control',['../page_module_AOloopControl.html',1,'page_modules']]]
 ];

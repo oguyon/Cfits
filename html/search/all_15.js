@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['user_20input',['User input',['../page_userinput.html',1,'toppage']]],
+  ['user_27s_20guide',['User&apos;s Guide',['../toppage.html',1,'']]],
   ['ui16',['UI16',['../struct____attribute____.html#a1647f690190cc0dbbb107d196a09d107',1,'__attribute__']]],
   ['ui32',['UI32',['../struct____attribute____.html#a6a742278bb774326d8098eb2ba3ee9e1',1,'__attribute__']]],
   ['ui64',['UI64',['../struct____attribute____.html#a818f9dcec0b65b14ded26e6f02dd316c',1,'__attribute__']]],
@@ -7,5 +9,6 @@ var searchData=
   ['updatecnt',['updatecnt',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a0eb7c648b544dbe4e15f5932be0f5043',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::updatecnt()'],['../structSCEXAO__DISPCOMB__CONF.html#a626efd091c9d0b420a0acd7ea273fa66',1,'SCEXAO_DISPCOMB_CONF::updatecnt()']]],
   ['used',['used',['../structVARIABLE.html#a33fcb1d4034cdf238453dc4ac3f17290',1,'VARIABLE::used()'],['../struct____attribute____.html#ad55a17b62aa31a7bf048d44c91dcb255',1,'__attribute__::used()']]],
   ['usedft',['useDFT',['../coronagraphs_8c.html#ae72e98daac2fe7eb073889e402a42acd',1,'coronagraphs.c']]],
-  ['user_5ffunction',['user_function',['../CLIcore_8c.html#ac22472c4ee36d70ae07159f83fb690d3',1,'CLIcore.c']]]
+  ['user_5ffunction',['user_function',['../CLIcore_8c.html#ac22472c4ee36d70ae07159f83fb690d3',1,'CLIcore.c']]],
+  ['userinput_2emd',['UserInput.md',['../UserInput_8md.html',1,'']]]
 ];

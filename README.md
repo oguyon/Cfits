@@ -1,9 +1,7 @@
-@mainpage
-
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 
-# Image analysis tools - full development package  {#mainpage}
+# Image analysis tools - full development package 
 
 ## Downloading source code
 Latest distribution is on [github](https://github.com/oguyon/Cfits).

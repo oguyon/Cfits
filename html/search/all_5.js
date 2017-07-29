@@ -97,6 +97,7 @@ var searchData=
   ['do2drffti',['do2drffti',['../fft_8c.html#a9b9a510d962d02168c295430ed177c7f',1,'do2drffti(const char *in_name, const char *out_name):&#160;fft.c'],['../fft_8h.html#a9b9a510d962d02168c295430ed177c7f',1,'do2drffti(const char *in_name, const char *out_name):&#160;fft.c']]],
   ['docdir',['DocDir',['../CLIcore_8c.html#a1eb488f2804d57c2fe61590f6e9c77f7',1,'DocDir():&#160;CLIcore.c'],['../CLIcore_8h.html#a1eb488f2804d57c2fe61590f6e9c77f7',1,'DocDir():&#160;CLIcore.c']]],
   ['doublearray',['DOUBLEARRAY',['../structDATA.html#a15076d931e1bc151a4a9933e09f344b1',1,'DATA']]],
+  ['downloadcompile_2emd',['DownloadCompile.md',['../DownloadCompile_8md.html',1,'']]],
   ['doy',['doy',['../structnrlmsise__input.html#a81329554920ba6f7180d427ab7a3b907',1,'nrlmsise_input']]],
   ['dphadz_5farray',['dphadz_array',['../PIAACMCsimul_8c.html#ae2c9d516f5c47e45b510058bfba56c8a',1,'PIAACMCsimul.c']]],
   ['dtus',['dtus',['../struct____attribute____.html#adb6153e0035fad0c5f3de09b5fbb3e79',1,'__attribute__']]],

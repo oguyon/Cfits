@@ -1,9 +1,8 @@
-
-## Command Line Interface (CLI)   
+# Command Line Interface (CLI) {#page_command_line_interface}  
 
 Files CLIcore.c and CLIcore.h contain the source code for the command line interpreter (CLI)
 
-### COMMAND LINE OPTIONS
+## COMMAND LINE OPTIONS
 
 \verbatim
   -h, --help 
@@ -43,7 +42,7 @@ Files CLIcore.c and CLIcore.h contain the source code for the command line inter
         requires the -f option, as the script is loaded into fifo
 \endverbatim
 
-## SYNTAX RULES, PARSER
+# SYNTAX RULES, PARSER
 
 - Spaces are used to separate arguments. Number of spaces irrelevant.
 - Comments are written after the special character #
@@ -52,13 +51,13 @@ Files CLIcore.c and CLIcore.h contain the source code for the command line inter
 <command> <arg1> <arg2>   # comment
 
 
-## TAB COMPLETION
+# TAB COMPLETION
 
 Tab completion is provided and behaves as follows:
 - first argument:        try to match command, then image, then filename
 - additional arguments:  try to match image, then filename
 
-## INPUT
+# INPUT
 
 GNU readline used to read input. See GNU readline documentation on http://tiswww.case.edu/php/chet/readline/rltop.html. For a quick help on readline input, type:
 \verbatim
@@ -68,7 +67,7 @@ GNU readline used to read input. See GNU readline documentation on http://tiswww
 The command line interpreter (CLI) will take input from file cmdfile.txt if it exists. If file cmdfile.txt exists commands will be read one by one from top to bottom, and will be removed from the file as they are read, until the file is empty
 
 
-## HELP COMMANDS
+# HELP COMMANDS
 
 \verbatim
 > ?
@@ -91,7 +90,7 @@ The command line interpreter (CLI) will take input from file cmdfile.txt if it e
 \endverbatim
 
 
-## IMPORTANT COMMANDS
+# IMPORTANT COMMANDS
 
 \verbatim
 > ci
@@ -113,11 +112,11 @@ The command line interpreter (CLI) will take input from file cmdfile.txt if it e
 	# creates a 2D image named <im>, size = <xs> x <ys> pixels
 \endverbatim
 
-## FITS FILES I/O (see also modules COREMOD_memory and COREMOD_iofits
+# FITS FILES I/O (see also modules COREMOD_memory and COREMOD_iofits
 
 FITSIO is used for FITS files I/O, see FITSIO documentation for more detailed instructions\n
 
-### LOADING FILES
+## LOADING FILES
 
 \verbatim
 > loadfits <fname> <imname> 
@@ -130,7 +129,7 @@ FITSIO is used for FITS files I/O, see FITSIO documentation for more detailed in
 	# load compressed file
 \endverbatim
 
-### SAVING FILES
+## SAVING FILES
 
 \verbatim
 > save_fl  <imname> <fname> 
@@ -148,7 +147,7 @@ FITSIO is used for FITS files I/O, see FITSIO documentation for more detailed in
 \endverbatim
 
 
-## INTEGRATION WITH STANDARD LINUX TOOLS AND COMMANDS
+# INTEGRATION WITH STANDARD LINUX TOOLS AND COMMANDS
 
 
 USING "cmdfile.txt" TO DRIVE CFITS FROM UNIX PROMPT:
@@ -170,7 +169,7 @@ If you start Cfits with the "-l" option,  the file "imlist.txt" contains the lis
 > !awk '{if ($4>200) print $2}' imlist.txt| xargs -I {} echo save_fl {} {}_tmp.fits > cmdfile.txt
 
 
-## ARITHMETIC OPERATIONS
+# ARITHMETIC OPERATIONS
 
 \verbatim
 > im1=sqrt(im+2.0)          
