@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['user_20input',['User input',['../page_userinput.html',1,'toppage']]],
-  ['user_27s_20guide',['User&apos;s Guide',['../toppage.html',1,'']]]
+  ['readme',['README',['../md_README.html',1,'']]],
+  ['readline_20input_20keys',['Readline Input Keys',['../page_readlinekeys.html',1,'page_userinput']]]
 ];

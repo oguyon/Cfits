@@ -1,7 +1,9 @@
 var NAVTREE =
 [
   [ "cfitsTK", "index.html", [
-    [ "User's Guide", "toppage.html", "toppage" ],
+    [ "User's Guide", "index.html", "index" ],
+    [ "README", "md_README.html", null ],
+    [ "Focal plane AO loop control", "md_src_FPAOloopControl_README.html", null ],
     [ "Bug List", "bug.html", null ],
     [ "Data Structures", null, [
       [ "Data Structures", "annotated.html", "annotated" ],
@@ -40,11 +42,11 @@ var NAVTREEINDEX =
 "coronagraphs_8c.html#af39ae729c13bfaa6936e2291bd6b4e20",
 "functions_vars.html",
 "image__filter_8c.html#a9842752e03b4de9b4593f1a3b34364ab",
-"initmodules_8h.html",
-"nrlmsise-00__test_8c.html#a6ad72f893e0fbcdbbed7b85ca2d095d7",
-"structBITMAPINFOHEADER.html#a9538a3f40f9f57cd5b82b698e1855015",
-"structOPTPIAACMCDESIGN.html#a9a77cc42ff9de1dbd1d484e7020da6eb",
-"unionyyalloc.html#a4800e0520a89a4789afa7b5d82197e65"
+"initmodules_8c.html#a9842752e03b4de9b4593f1a3b34364ab",
+"nrlmsise-00__data_8c.html#ae391523526f8ec527742657b4f50db0e",
+"structBITMAPINFOHEADER.html#a5ef05c009e392db1cc9c3d41292928c8",
+"structOPTPIAACMCDESIGN.html#a8fbed9f02c0a17dcc2f233be4c4af697",
+"unionYYSTYPE.html#a81f209066080f5ffa329c1772b8b70c5"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

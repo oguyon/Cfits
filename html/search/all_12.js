@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['readme',['README',['../md_README.html',1,'']]],
   ['readline_20input_20keys',['Readline Input Keys',['../page_readlinekeys.html',1,'page_userinput']]],
   ['r0',['r0',['../structEXAOSIMCONF.html#a96bf4d887eae00160cbdf7b7d5be8533',1,'EXAOSIMCONF']]],
   ['r0lim',['r0lim',['../structOPTPIAACMCDESIGN.html#a0f039998bd513a4a91d5d144ba51001c',1,'OPTPIAACMCDESIGN']]],
