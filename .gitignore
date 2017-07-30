@@ -22,13 +22,9 @@ libtool
 *.save
 *#
 Makefile
-Makefile.in
 */Makefile
-*/Makefile.in
 */*/Makefile
-*/*/Makefile.in
 */*/*/Makefile
-*/*/*/Makefile.in
 src/fft/config/*
 src/*/data/*
 src/*/.libs/*
