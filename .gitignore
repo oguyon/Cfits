@@ -11,7 +11,6 @@ README.txt
 sync
 TBE
 latex/
-*.m4
 *.tex
 *.Plo
 bin/*
