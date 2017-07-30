@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['readme',['README',['../md_README.html',1,'']]],
   ['readline_20input_20keys',['Readline Input Keys',['../page_readlinekeys.html',1,'page_userinput']]],
   ['r0',['r0',['../structEXAOSIMCONF.html#a96bf4d887eae00160cbdf7b7d5be8533',1,'EXAOSIMCONF']]],
   ['r0lim',['r0lim',['../structOPTPIAACMCDESIGN.html#a0f039998bd513a4a91d5d144ba51001c',1,'OPTPIAACMCDESIGN']]],
@@ -28,7 +27,6 @@ var searchData=
   ['read_5fsharedmem_5fimage_5fsize',['read_sharedmem_image_size',['../COREMOD__memory_8c.html#a98cd70b4acfd1b31d2399985bb8e7a99',1,'read_sharedmem_image_size(const char *name, const char *fname):&#160;COREMOD_memory.c'],['../COREMOD__memory_8h.html#a98cd70b4acfd1b31d2399985bb8e7a99',1,'read_sharedmem_image_size(const char *name, const char *fname):&#160;COREMOD_memory.c']]],
   ['read_5fsharedmem_5fimage_5fsize_5fcli',['read_sharedmem_image_size_cli',['../COREMOD__memory_8c.html#a982579a26c8cc27d68b63d68c2c5e7a9',1,'COREMOD_memory.c']]],
   ['readme_2emd',['README.md',['../README_8md.html',1,'']]],
-  ['readme_2emd',['README.md',['../src_2FPAOloopControl_2README_8md.html',1,'']]],
   ['rect',['rect',['../structkdtree.html#aad2df600bbe8cf682fe61ac6847f5e18',1,'kdtree']]],
   ['refwfsinit',['refWFSinit',['../structGPUMATMULTCONF.html#a7b47c71769f2b07d492f7d4b13ce7c8b',1,'GPUMATMULTCONF']]],
   ['registerclicommand',['RegisterCLIcommand',['../CLIcore_8c.html#a097efcf1913161adeffaf98921d0f5a5',1,'RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t(*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall):&#160;CLIcore.c'],['../CLIcore_8h.html#a097efcf1913161adeffaf98921d0f5a5',1,'RegisterCLIcommand(char *CLIkey, char *CLImodule, int_fast8_t(*CLIfptr)(), char *CLIinfo, char *CLIsyntax, char *CLIexample, char *CLICcall):&#160;CLIcore.c']]],

@@ -112,6 +112,5 @@ var searchData=
   ['lst',['lst',['../structnrlmsise__input.html#ac41fa549d9cfb5f0f4b93c744d9225ce',1,'nrlmsise_input']]],
   ['lyotstop_5fzpos',['LyotStop_zpos',['../structOPTPIAACMCDESIGN.html#ac58466d4fb98041f6a1279ce0e1092b1',1,'OPTPIAACMCDESIGN']]],
   ['lyotzmax',['LyotZmax',['../structOPTPIAACMCDESIGN.html#a45bce5969d933b75f2002fc35d9366a8',1,'OPTPIAACMCDESIGN']]],
-  ['lyotzmin',['LyotZmin',['../structOPTPIAACMCDESIGN.html#aaf6a20a5f06d13546d4145fd878727bf',1,'OPTPIAACMCDESIGN']]],
-  ['list_20of_20shared_20memory_20streams_20and_20semaphores',['List of shared memory streams and semaphores',['../streams_semaphores.html',1,'md_src_AOloopControl_doc_AOloopControl']]]
+  ['lyotzmin',['LyotZmin',['../structOPTPIAACMCDESIGN.html#aaf6a20a5f06d13546d4145fd878727bf',1,'OPTPIAACMCDESIGN']]]
 ];

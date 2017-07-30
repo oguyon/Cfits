@@ -350,5 +350,6 @@ var searchData=
   ['cudacomp_5fmatmatmult_5ftestpseudoinverse_5fcli',['CUDACOMP_MatMatMult_testPseudoInverse_cli',['../cudacomp_8c.html#a452a6f095dd28bf63a83be60fdccda6a',1,'cudacomp.c']]],
   ['cudacomp_5ftest_5fcli',['CUDACOMP_test_cli',['../cudacomp_8c.html#ad81526b0b3c245b0f134a3bae42e0d24',1,'cudacomp.c']]],
   ['cval0',['cval0',['../PIAACMCsimul_8c.html#af135c3b49231877c60dca4688ef8ced1',1,'PIAACMCsimul.c']]],
+  ['cfitstk_20user_27s_20guide',['cfitsTK user&apos;s Guide',['../index.html',1,'']]],
   ['command_20line_20interface_20_28cli_29',['Command Line Interface (CLI)',['../page_command_line_interface.html',1,'page_userinput']]]
 ];

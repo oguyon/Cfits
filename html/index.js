@@ -1,6 +1,9 @@
 var index =
 [
     [ "Installation", "page_installation.html", null ],
+    [ "Overview", "page_overview.html", null ],
     [ "User input", "page_userinput.html", "page_userinput" ],
-    [ "Modules", "page_modules.html", "page_modules" ]
+    [ "Source code conventions", "page_sourcecode_conventions.html", null ],
+    [ "Modules", "page_modules.html", "page_modules" ],
+    [ "News", "page_news.html", null ]
 ];
