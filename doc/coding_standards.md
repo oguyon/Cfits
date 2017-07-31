@@ -1,4 +1,4 @@
-# Coding conventions {#page_coding_standards}
+# Coding Standards {#page_coding_standards}
 
 
 ## Compilation
