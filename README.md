@@ -11,10 +11,13 @@
 Set of image processing tools and functions accessible through a command line interface (CLI). Holds images in RAM, with image stream support (shared memory with low-latency IPC support).
 
 
+Written in C.
+The main is a command line interface (CLI). Source code is in CLIcore.c and CLIcore.h.
+Key data structures (such as the image data structure) are declared in CLIcore.h.
+
 
 ## Downloading and installing code
 
-Latest distribution is on [github](https://github.com/oguyon/Cfits).
 You can clone the repository, or download the latest .tar.gz distribution.
 
 
@@ -42,13 +45,16 @@ Report bugs and issues on [this page]( https://github.com/oguyon/Cfits/issues )
 
 ## Contributing to project
 
+
 See [coding standards]( http://oguyon.github.io/Cfits/html/page_coding_standards.html ) 
 
 
 
 
 
-[online documentation]( http://oguyon.github.io/Cfits/ ) 
+## Documentation
+
+[Full online documentation]( http://oguyon.github.io/Cfits/ ) 
 
 
 ## Libraries
@@ -69,23 +75,9 @@ The following libraries are used:
 If you use NVIDIA GPUs, install cuda and magma libraries, and add "--enable-cuda and --enable-magma" options to the configure command.
 
 
-## Source Code Architecture 
-
-Written in C.
-The main is a command line interface (CLI). Source code is in CLIcore.c and CLIcore.h.
-Key data structures (such as the image data structure) are declared in CLIcore.h.
+## LICENCE
 
 
+GNU General Public License v3.0
 
-## Programing guide
-
-### Adding modules
-
-- create module directory as ./src/modulename
-- required files: ./src/modulename/modulename.c ./src/modulename/modulename/h ./src/modulename/Makefile.am
-- add module in compile line of ./configure.ac file
-- add module in ./src/Makefile.am
-- add module in ./src/initmodules.c
-- (add module to git repository): git add ./src/modulename/modulename.c ./src/modulename/modulename.h ./src/modulename/Makefile.am
-- autoreconf
- 
+[LICENCE.txt]( https://github.com/oguyon/Cfits/blob/master/LICENCE.txt )
