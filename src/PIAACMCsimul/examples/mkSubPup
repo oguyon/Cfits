@@ -194,20 +194,41 @@ fi
 
 
 
-
+#
 # spider offset = 0.16135 x puprad 
+# spider centerline intersects x-axis at +spoffr (two right spiders) and -spoffr (two left spiders)
+# Note that setting this parameter to zero would have all spiders originate from center of pupil
+#
 spoffr=0.16135
 
+#
 # angle = 103.5 deg / 2 = 0.903208
+# This is the angle between x axis and spiders
+# spiders are not 90 deg apart. The opening angle between spiders on the right and left sides are 103.5
+# The opening angles at the top and bottom are 180-103.5 = 76.5 deg
+# 
 PA=0.903208
 
 
-
-
+#
 # pre-mask pupil, numbers relative to pupil radius
+#
+
+# magnification ratio. It is 1.0 for the native pupil, and is >1.0 when mask is applied
+# this magnification adjusts the pupil size back to the <pupradpix> entry when the mask is actually undersizing the pupil
+# it is unused (=1.0) unless a mask is applied
 mratio=1.0
+
+# central obstruction radius relative to pupil radius
 co=0.2883
+
+# spider thickness
 spthick=0.0566
+
+
+
+
+
 
 
 if [ "$COROMASK" = "1" ]; then
