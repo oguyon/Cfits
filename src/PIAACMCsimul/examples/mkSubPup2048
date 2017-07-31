@@ -38,6 +38,8 @@ echo "     pupSubaruM_<pixsize>.fits    output pupil after actuator masking + su
 echo ""
 echo " $(tput bold)NOTES:$(tput sgr0)"
 echo "    pupSubarum and pupSubaruM output pupil not relevant with -n option"
+echo "    The masked pupils are resized so that their outer radius matches parameter <radpix>"
+echo "       -> spiders and central obstruction will be slightly magnified !"
 echo "------------------------------------------------------------------------"
 }
 

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['source_20code_20conventions',['Source code conventions',['../page_sourcecode_conventions.html',1,'index']]],
   ['s',['s',['../structVARIABLE.html#a63e49f4cf699d62212a55d257d0d87f7',1,'VARIABLE']]],
   ['s2tloc',['s2tloc',['../AtmosphereModel_8c.html#a5b45e3666a7664914c9cdf3abb476960',1,'s2tloc():&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a5b45e3666a7664914c9cdf3abb476960',1,'s2tloc():&#160;nrlmsise-00.c']]],
   ['s3tloc',['s3tloc',['../AtmosphereModel_8c.html#a82a48eaf6f5edce5fa25a760e18a5c04',1,'s3tloc():&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a82a48eaf6f5edce5fa25a760e18a5c04',1,'s3tloc():&#160;nrlmsise-00.c']]],
@@ -150,7 +149,6 @@ var searchData=
   ['sizeywfs',['sizeyWFS',['../structAOLOOPCONTROL__CONF.html#aa74e23cd13599fa8f18a7c18f71bc2cd',1,'AOLOOPCONTROL_CONF::sizeyWFS()'],['../structFPAOLOOPCONTROL__CONF.html#a961e9082e9df118c60c294efd83564a7',1,'FPAOLOOPCONTROL_CONF::sizeyWFS()']]],
   ['smfd',['SMfd',['../AOloopControl__DM_8c.html#ad3fefa8c187fe37b7835f882acb21dda',1,'SMfd():&#160;AOloopControl_DM.c'],['../SCExAO__DM_8c.html#ad3fefa8c187fe37b7835f882acb21dda',1,'SMfd():&#160;SCExAO_DM.c']]],
   ['smturbfd',['SMturbfd',['../AOloopControl__DM_8c.html#aa733da67de0ae3ba855ec77c80a1c73c',1,'SMturbfd():&#160;AOloopControl_DM.c'],['../SCExAO__DM_8c.html#aa733da67de0ae3ba855ec77c80a1c73c',1,'SMturbfd():&#160;SCExAO_DM.c']]],
-  ['sourcecode_5fconventions_2emd',['sourcecode_conventions.md',['../sourcecode__conventions_8md.html',1,'']]],
   ['spline',['spline',['../AtmosphereModel_8c.html#ae2e73ba3832c389e53954019ceb47ded',1,'spline(double *x, double *y, int n, double yp1, double ypn, double *y2):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#ae2e73ba3832c389e53954019ceb47ded',1,'spline(double *x, double *y, int n, double yp1, double ypn, double *y2):&#160;nrlmsise-00.c']]],
   ['splini',['splini',['../AtmosphereModel_8c.html#ace413e8af59596333e916355b54a08c7',1,'splini(double *xa, double *ya, double *y2a, int n, double x, double *y):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#ace413e8af59596333e916355b54a08c7',1,'splini(double *xa, double *ya, double *y2a, int n, double x, double *y):&#160;nrlmsise-00.c']]],
   ['splint',['splint',['../AtmosphereModel_8c.html#a219484a4d3318d5361a52365d97cddc3',1,'splint(double *xa, double *ya, double *y2a, int n, double x, double *y):&#160;AtmosphereModel.c'],['../nrlmsise-00_8c.html#a219484a4d3318d5361a52365d97cddc3',1,'splint(double *xa, double *ya, double *y2a, int n, double x, double *y):&#160;nrlmsise-00.c']]],
