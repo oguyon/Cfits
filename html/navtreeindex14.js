@@ -5,7 +5,7 @@ var NAVTREEINDEX14 =
 "nrlmsise-00__test_8c.html":[4,0,0,5,0,3],
 "nrlmsise-00__test_8c.html#a6ad72f893e0fbcdbbed7b85ca2d095d7":[4,0,0,5,0,3,1],
 "nrlmsise-00__test_8c.html#a840291bc02cba5474a4cb46a9b9566fe":[4,0,0,5,0,3,0],
-"page_coding_conventions.html":[0,3],
+"page_coding_standards.html":[0,3],
 "page_command_line_interface.html":[0,2,1],
 "page_installation.html":[0,0],
 "page_module_AOloopControl.html":[0,4,0],

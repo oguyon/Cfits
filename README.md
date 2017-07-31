@@ -6,15 +6,22 @@
 
 # Image analysis tools - full development package 
 
-## Downloading source code
+## Overview
+
+Set of image processing tools and functions accessible through a command line interface (CLI). Holds images in RAM, with image stream support (shared memory with low-latency IPC support).
+
+
+
+## Downloading and installing code
+
 Latest distribution is on [github](https://github.com/oguyon/Cfits).
 You can clone the repository, or download the latest .tar.gz distribution.
 
 
-## Compilation
 
 The source code follows the standard GNU build process. On linux :
 
+	autoreconf -i
 	./configure
 	make
 	make install
@@ -25,6 +32,20 @@ On OS X you need to use gcc-mp-5 for opemMP:
 (Replace "/opt/local/" is the location of your installed libraries. )
     make
     make install
+
+
+
+## Reporting bugs, issues
+
+Report bugs and issues on [this page]( https://github.com/oguyon/Cfits/issues )
+
+
+## Contributing to project
+
+See [coding standards]( http://oguyon.github.io/Cfits/html/page_coding_standards.html ) 
+
+
+
 
 
 [online documentation]( http://oguyon.github.io/Cfits/ ) 

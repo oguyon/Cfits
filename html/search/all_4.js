@@ -92,7 +92,7 @@ var searchData=
   ['cntmax',['cntmax',['../structAOLOOPCONTROL__CONF.html#adda3452da7229a9a8232a76e49850b37',1,'AOLOOPCONTROL_CONF']]],
   ['co2_5fppm',['CO2_ppm',['../AtmosphereModel_8c.html#a78d44b4bb2e42dc83220d0d5f48d6265',1,'AtmosphereModel.c']]],
   ['code',['code',['../structMaterialIndex.html#a7b54b40a48c454c51cc0403b571dce15',1,'MaterialIndex']]],
-  ['coding_5fconventions_2emd',['coding_conventions.md',['../coding__conventions_8md.html',1,'']]],
+  ['coding_5fstandards_2emd',['coding_standards.md',['../coding__standards_8md.html',1,'']]],
   ['cols',['cols',['../structsImage.html#a8afe7b8cf4e980a69f07b4173d05a456',1,'sImage']]],
   ['combine_5f2psf',['combine_2psf',['../psf_8c.html#add41c81f007431113c86618e214b409d',1,'combine_2psf(const char *ID_name, const char *ID_name1, const char *ID_name2, float radius, float index):&#160;psf.c'],['../psf_8h.html#add41c81f007431113c86618e214b409d',1,'combine_2psf(const char *ID_name, const char *ID_name1, const char *ID_name2, float radius, float index):&#160;psf.c']]],
   ['command_5fline',['command_line',['../CLIcore_8c.html#a08a15eb6d82a4967d50502a18fe5f205',1,'CLIcore.c']]],
@@ -352,6 +352,6 @@ var searchData=
   ['cudacomp_5ftest_5fcli',['CUDACOMP_test_cli',['../cudacomp_8c.html#ad81526b0b3c245b0f134a3bae42e0d24',1,'cudacomp.c']]],
   ['cval0',['cval0',['../PIAACMCsimul_8c.html#af135c3b49231877c60dca4688ef8ced1',1,'PIAACMCsimul.c']]],
   ['cfitstk_20user_27s_20guide',['cfitsTK user&apos;s Guide',['../index.html',1,'']]],
-  ['coding_20conventions',['Coding conventions',['../page_coding_conventions.html',1,'index']]],
+  ['coding_20conventions',['Coding conventions',['../page_coding_standards.html',1,'index']]],
   ['command_20line_20interface_20_28cli_29',['Command Line Interface (CLI)',['../page_command_line_interface.html',1,'page_userinput']]]
 ];
