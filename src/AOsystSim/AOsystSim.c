@@ -2122,8 +2122,7 @@ int AOsystSim_mkWF(const char *CONF_FNAME)
                     jj1start0 = jj1;
             }
         }
-    ii1end ++;
-    jj1end ++;
+
 
 
 	

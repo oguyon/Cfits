@@ -5032,6 +5032,8 @@ int AtmosphericTurbulence_mkTestTTseq(double dt, long NBpts, long NBblocks, doub
 	free(xwaveform1);
 	free(ywaveform1);
 	
+	free(farray_PA);
+	
 	return(0);
 }
 
