@@ -10536,8 +10536,6 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
 {
     long ID = -1;
     char name[200];
-    long ID0;
-    long ii;
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10592,8 +10590,9 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
             ID = image_ID(name);
             if(ID==-1)
                 ID = read_sharedmem_image(name);
-            ID0 = image_ID("tmpcontrM");
+            long ID0 = image_ID("tmpcontrM");
             data.image[ID].md[0].write  = 1;
+            long ii;
             for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].NBDMmodes; ii++)
                 data.image[ID].array.F[ii] = data.image[ID0].array.F[ii];
             data.image[ID].md[0].write  = 0;
@@ -10832,7 +10831,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
 
     cntsumold = 0;
-    while(1 == 1)
+    for(;;)
     {
         if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
             perror("clock_gettime");
