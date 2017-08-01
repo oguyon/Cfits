@@ -279,7 +279,6 @@ int printstatus(long ID)
 
     int customcolor;
 
-
     float minPV = 60000;
     float maxPV = 0;
     double average;
@@ -295,6 +294,7 @@ int printstatus(long ID)
     long vcntmax;
     int semval;
     long s;
+
 
     printw("%s  ", data.image[ID].name);
 
@@ -339,7 +339,8 @@ int printstatus(long ID)
         sprintf(str1, "%s x %6ld", str, (long) data.image[ID].md[0].size[j]);
         strcpy(str, str1);
     }
-    sprintf(str, "%s]", str);
+    sprintf(str1, "%s]", str);
+    strcpy(str, str1);
 
     printw("%-28s\n", str);
 

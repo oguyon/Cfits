@@ -1827,6 +1827,8 @@ void *save_fits_function( void *ptr )
 
         default:
             printf("ERROR: WRONG DATA TYPE\n");
+			free(imsizearray);
+            free(tmsg);
             exit(0);
             break;
         }
@@ -3101,6 +3103,7 @@ int_fast8_t list_image_ID_ofp(FILE *fo)
     int n;
     unsigned long long sizeb, sizeKb, sizeMb, sizeGb;
     char str[500];
+    char str1[500];
     struct timespec timenow;
     double timediff;
 	struct mallinfo minfo;
@@ -3133,9 +3136,11 @@ int_fast8_t list_image_ID_ofp(FILE *fo)
 
             for(j=1; j<data.image[i].md[0].naxis; j++)
             {
-                sprintf(str, "%s x %6ld", str, (long) data.image[i].md[0].size[j]);
+                sprintf(str1, "%s x %6ld", str, (long) data.image[i].md[0].size[j]);
+				strcpy(str, str1);
             }
-            sprintf(str, "%s]", str);
+            sprintf(str1, "%s]", str);
+            strcpy(str, str1);
 
             fprintf(fo, "%-32s", str);
 
@@ -5758,9 +5763,12 @@ long COREMOD_MEMORY_image_NETWORKtransmit(const char *IDname, const char *IPaddr
     }
 
     free(buff);
+	
     close(fds_client);
     printf("port %d closed\n", port);
     fflush(stdout);
+    
+	free(frame_md);
 
     return(ID);
 }

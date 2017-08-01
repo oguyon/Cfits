@@ -364,6 +364,8 @@ int IMAGE_FORMAT_im_to_ASCII(const char *IDname, const char *foutname)
     }
     fclose(fpout);
 
+	free(coord);
+
     return 0;
 }
 

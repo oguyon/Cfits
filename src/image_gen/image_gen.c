@@ -1129,7 +1129,7 @@ long make_hexagon(const char *IDname, long l1, long l2, double x_center, double 
 
 long IMAGE_gen_segments2WFmodes(const char *prefix, long ndigit, const char *IDout_name)
 {
-	long IDout;
+	long IDout = -1;
 	long NBseg;
 	long seg;
 	int OK;

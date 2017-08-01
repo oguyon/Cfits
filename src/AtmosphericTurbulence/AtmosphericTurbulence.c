@@ -6644,7 +6644,7 @@ int measure_wavefront_series_expoframes(float etime, const char *outfile)
     long frame_number;
     double *xcenter;
     double *ycenter;
-    long amplitude_on;
+    long amplitude_on = 0;
 
     long zoomfactor = 2;
     long naxesout[2];

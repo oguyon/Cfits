@@ -2511,6 +2511,7 @@ long SCExAOcontrol_vib_mergeData(const char *IDacc_name, const char *IDttpos_nam
 	
 	printf("MODE = %d\n", mode);
 	
+	ID_TTact = -1;
 	if(mode>1)
 	{
 		// connect to actuators

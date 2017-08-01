@@ -3721,7 +3721,6 @@ int AOsystSim_DM(const char *CONF_FNAME)
     }
 
 
-    free(sizearray);
     free(dmifcarray_value);
     free(dmifcarray_act);
     free(dmifcarray_iijj);
