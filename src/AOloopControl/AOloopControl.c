@@ -6158,7 +6158,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     double coeff;
     long kelim = 20;
     long conviter;
- //   long NBconviter = 10;
+
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -7547,7 +7547,7 @@ long AOloopControl_DMslaveExt(const char *IDin_name, const char *IDmask_name, co
 long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode, int BlockNB, float SVDlim)
 {
     FILE *fp;
-    long ID=-1;
+    long ID = -1;
     long ii, jj;
 
     long IDmaskRM; // DM mask
@@ -7567,7 +7567,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     long mblock, m;
     long NBmblock;
-    float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+    
     long MBLOCK_NBmode[MAX_MBLOCK]; // number of blocks
     long MBLOCK_ID[MAX_MBLOCK];
     long MBLOCK_IDwfs[MAX_MBLOCK];
@@ -7638,7 +7638,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     long IDslaved, IDtmp, IDtmpg;
     long conviter;
-    long NBconviter = 10;
     float sigma;
 
     long act1, act2;
@@ -7814,6 +7813,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		long ID0 = -1;
 		long NBZ = 0;
 		long IDmfcpa;
+		float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+		
 		
         if(MODAL==0)
         {
