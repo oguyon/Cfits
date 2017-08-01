@@ -16,7 +16,7 @@ The main is a command line interface (CLI). Source code is in CLIcore.c and CLIc
 Key data structures (such as the image data structure) are declared in CLIcore.h.
 
 
-## Downloading and installing code
+## Downloading and installing 
 
 You can clone the repository, or download the latest .tar.gz distribution.
 
@@ -73,6 +73,14 @@ The following libraries are used:
 - CUDA, CuBLAS, MAGMA for GPU acceleration (optional)
 
 If you use NVIDIA GPUs, install cuda and magma libraries, and add "--enable-cuda and --enable-magma" options to the configure command.
+
+
+
+## Getting Started
+
+All functions are accessible from the command line interface (CLI). Enter the CLI and type "help" for instructions.
+
+		./bin/cfitsTK
 
 
 ## LICENCE

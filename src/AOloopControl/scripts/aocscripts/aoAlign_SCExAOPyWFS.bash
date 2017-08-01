@@ -189,8 +189,8 @@ Pcamloopgain=$(cat ./status/gain_PyAlignCam.txt)
 
 
 if [ -f ./status/pcampos.txt ]; then
-pywfsreimagexposref=$(cat ./status/pcampos.txt | awk '{print $1}')
-pywfsreimageyposref=$(cat ./status/pcampos.txt | awk '{print $2}')
+pywfsreimagexposref=$( awk '{print $1}' ./status/pcampos.txt )
+pywfsreimageyposref=$( awk '{print $2}' ./status/pcampos.txt )
 fi
 
 
