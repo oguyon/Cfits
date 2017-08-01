@@ -1330,7 +1330,7 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
     bitval = (int*) malloc(sizeof(int)*SEGcnt);
  
     fpmlevel = fopen("fpm_level.txt", "r");
-    if(fp!=NULL)
+    if(fpmlevel!=NULL)
         {
             for(i=0;i<SEGcnt;i++)
                 {

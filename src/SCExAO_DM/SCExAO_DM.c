@@ -811,6 +811,9 @@ int SCExAO_DM_dmturb_printstatus()
 } 
 
 
+
+
+
 int SCExAO_DM_turb()
 {
   long size_sx; // screen size
@@ -822,8 +825,8 @@ int SCExAO_DM_turb()
   struct timespec tdiff1;
   double tdiff1v;
 
-  float screen0_X;
-  float screen0_Y;
+  float screen0_X = 0.0;
+  float screen0_Y = 0.0;
   long ii, jj, ii1;
   float x, y;
   float xpix, ypix;

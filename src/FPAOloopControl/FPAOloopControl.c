@@ -342,7 +342,6 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
     char name1[200];
     char fname[200];
     long ID;
-    long *sizearray;
     int vOK;
     int kw;
     long k;
@@ -388,9 +387,6 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
     printf("FP loop WFS file name: %s\n", name);
     strcpy(FPAOconf[loop].WFSname, name);
 
-
-
-    sizearray = (long*) malloc(sizeof(long)*3);
 
 
     // READ LOOP NAME

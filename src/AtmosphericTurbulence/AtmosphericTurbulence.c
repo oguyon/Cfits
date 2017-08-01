@@ -1843,9 +1843,11 @@ int make_AtmosphericTurbulence_wavefront_series(float slambdaum, long WFprecisio
     fclose(fp);
 
 
-	if(compmode==0)
+	if(compmode==0){
+		free(naxes);
+		free(naxesout);
 		return 0;
-
+	}
 
     printf("CONF_ZANGLE = %f  alt = %f\n", CONF_ZANGLE, SiteAlt);
 
@@ -4640,8 +4642,8 @@ int measure_wavefront_series(float factor)
             printf("ERROR: pupil amplitude map not loaded");
             exit(0);
         }
-    naxes[0]=data.image[ID].md[0].size[0];
-    naxes[1]=data.image[ID].md[0].size[1];
+    naxes[0]=data.image[IDpupamp].md[0].size[0];
+    naxes[1]=data.image[IDpupamp].md[0].size[1];
 
 
 
@@ -5283,7 +5285,8 @@ int AtmosphericTurbulence_Build_LinPredictor_Full(const char *WFin_name, const c
 	free(valfarray);
 	free(pixarray_x);
 	free(pixarray_y);
-	
+
+		
 	return(0);
 }
 

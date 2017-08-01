@@ -3185,8 +3185,6 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     }
 
 
-    free(sizearray);
-
     return(0);
 }
 

@@ -166,7 +166,7 @@ long IMG_REDUCE_cubesimplestat(const char *IDin_name)
     long IDin;
     long xsize, ysize, zsize;
     long xysize;
-    long ii, jj, kk;
+    long ii, kk;
     long offset;
     double tmpf;
 
@@ -184,7 +184,7 @@ long IMG_REDUCE_cubesimplestat(const char *IDin_name)
     IDave = create_2Dimage_ID("c_ave", xsize, ysize);
     IDrms = create_2Dimage_ID("c_rms", xsize, ysize);
 
-    for(kk=jj; kk<zsize; kk++)
+    for(kk=0; kk<zsize; kk++)
     {
         offset = kk*xysize;
         for(ii=0; ii<xysize; ii++)

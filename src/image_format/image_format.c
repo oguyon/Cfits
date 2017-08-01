@@ -856,7 +856,6 @@ long loadCR2(const char *fnameCR2, const char *IDname)
   float iso;
   float shutter;
   float aperture;
-  long ID;
   long xsize,ysize;
   long ii;
   int r;
@@ -864,11 +863,12 @@ long loadCR2(const char *fnameCR2, const char *IDname)
   sprintf(command,"dcraw -t 0 -D -4 -c %s > _tmppgm.pgm",fnameCR2);
   r = system(command);
 
-  read_PGMimage("_tmppgm.pgm",IDname);
+  read_PGMimage("_tmppgm.pgm", IDname);
   r = system("rm _tmppgm.pgm");
 
-  return(ID);
+  return(0);
 }
+
 
 
 // load all images matching strfilter + .CR2
