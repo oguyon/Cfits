@@ -1276,8 +1276,8 @@ long make_hexsegpupil(const char *IDname, long size, double radius, double gap, 
 
     int WriteCIF = 0;
     FILE *fpmlevel;
-    FILE *fp;
-    FILE *fp1;
+    FILE *fp = NULL;
+    FILE *fp1 = NULL;
     double pixscale = 1.0;
     long vID;
     double x, y;
@@ -2480,7 +2480,8 @@ long image_gen_im2coord(const char *IDin_name, int axis, const char *IDout_name)
 {
 	long naxis;
 	int OK = 1;
-	long IDin, IDout;
+	long IDin;
+	long IDout = -1;
 	long xsize, ysize, zsize;
 	long ii, jj, kk;
 

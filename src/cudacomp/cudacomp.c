@@ -3521,6 +3521,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if((fp=fopen(fname, "w"))==NULL)
     {
         printf("ERROR: cannot create file \"%s\"\n", fname);
+        free(arraysizetmp);
         exit(0);
     }
     for(i=0; i<n; i++)
@@ -3666,6 +3667,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     free(rwork);
     free(h_A);
     free(h_M);
+    
     
     return(0);
 }

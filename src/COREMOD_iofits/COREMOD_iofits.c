@@ -1415,6 +1415,7 @@ int save_ush_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				free(array);
 				return(-1);
 				break;				
 			}            

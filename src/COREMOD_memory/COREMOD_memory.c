@@ -6141,7 +6141,7 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
 //
 long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizeim, uint32_t ysizeim, const char* NBpix_fname, const char* IDmap_name, const char *IDout_name, const char *IDout_pixslice_fname)
 {
-    long IDout;
+    long IDout = -1;
     long IDin;
     long IDmap;
     long slice, sliceii;
