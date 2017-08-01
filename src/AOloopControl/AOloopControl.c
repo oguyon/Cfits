@@ -383,12 +383,9 @@ NOTATIONS:
 
 static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *FunctionName, const long line, char *comments)
 {
-	FILE *fp;
 	time_t tnow;
-	struct tm *uttime;
 	struct timespec timenow;
 	pid_t tid;
-	char string[21];
 	char modechar;
 	
 	modechar = '?';
@@ -405,14 +402,16 @@ static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *Fun
 
 	if(AOLOOPCONTROL_logfunc_level < AOLOOPCONTROL_logfunc_level_max)
 	{
+		struct tm *uttime;
 		tnow = time(NULL);
 		uttime = gmtime(&tnow);
 		clock_gettime(CLOCK_REALTIME, &timenow);
 		tid = syscall(SYS_gettid);
 		
 	
-		// add custom parameter into string (optional) 
-
+		// add custom parameter into string (optional)
+		char string[21];
+		FILE *fp;
 		fp = fopen(AOLOOPCONTROL_logfunc_fname, "a");
 		fprintf(fp, "%02d:%02d:%02ld.%09ld  %10d  %10d  %3d  %c %40s %6ld   %20s %s\n", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec, getpid(), (int) tid, modechar, AOLOOPCONTROL_logfunc_level, FunctionName, line, string, comments);
 		fclose(fp);
@@ -1108,7 +1107,6 @@ int_fast8_t AOloopControl_setparam_cli()
 int_fast8_t init_AOloopControl()
 {
     FILE *fp;
-    int r;
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -1117,7 +1115,13 @@ int_fast8_t init_AOloopControl()
 
     if((fp=fopen("LOOPNUMBER","r"))!=NULL)
     {
+		int r;
         r = fscanf(fp,"%ld", &LOOPNUMBER);
+        if(r!=1)
+			{
+				printf("ERROR: cannot read LOOPNUMBER\n");
+				exit(0);
+			}
         printf("LOOP NUMBER = %ld\n", LOOPNUMBER);
         fclose(fp);
     }
@@ -1575,7 +1579,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     FILE *fp;
     char content[200];
     char name[200];
-    char name1[200];
     char fname[200];
     long ID;
     uint32_t *sizearray;
@@ -1956,6 +1959,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     if(initwfsref==0)
 		{
+			char name1[200];
 			sprintf(name1, "aol%ld_wfsref0", loop);
 			copy_image_ID(name1, name, 1);
 		}

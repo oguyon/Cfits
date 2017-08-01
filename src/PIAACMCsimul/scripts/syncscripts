@@ -19,7 +19,7 @@ echo "pname = $pname"
 
 
 
-filelist="runPIAACMCdesign run runclean runopt runPIAACMC sim waitforfile1"
+filelist="runPIAACMCdesign run runclean runopt runPIAACMC sim waitforfile1 setconf optloop"
 dirlist=""
 
 printHELP ()

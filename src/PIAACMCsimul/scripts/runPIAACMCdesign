@@ -223,6 +223,17 @@ set_pupil=1
 
 
 
+function loadPup_LUVOIR1024 {
+exampledir="$srcdir/PIAACMCsimul/local"
+cp $exampledir/pup_LUVOIR_1024.fits.gz pup_1024.fits.gz
+rm pup_1024.fits 2> /dev/null
+gunzip pup_1024.fits.gz
+coin="0.185"
+coout="0.16"
+pupoutmaskrad="0.98"
+set_pupil=1
+}
+
 
 
 
@@ -286,6 +297,7 @@ echo "     $(tput bold)-e$(tput sgr0) <index>      setup example #<index> (WILL 
 echo "                           0 : Subaru PIAACMC, H band, 2048 pix array"
 echo "                           1 : WFIST PIAACMC, visible (default), 1024 pix array"
 echo "                           2 : 3-rings segmented aperture, visible, 1024 pix array"
+echo "                           3 : LUVOIR visible, 1024 pix array"
 echo "     $(tput bold)-l$(tput sgr0)              List design parameters"
 echo "     $(tput bold)-m$(tput sgr0) <step>       Design PIAACMC step <step>"
 echo "                      1-18 : design monochromatic PIAACMC up to this step"
@@ -537,6 +549,14 @@ fi
 # Segmented aperture, 3 rings
 if [ "$DesignExampleIndex" -eq 2 ]; then
 loadPup_seg3rings1024
+SetConfig_PIAACMCvisMirrorGregorian1024
+SetOptParam
+fi
+
+
+# LUVOIR
+if [ "$DesignExampleIndex" -eq 3 ]; then
+loadPup_LUVOIR1024
 SetConfig_PIAACMCvisMirrorGregorian1024
 SetOptParam
 fi

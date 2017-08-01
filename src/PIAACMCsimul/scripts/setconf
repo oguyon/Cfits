@@ -3,9 +3,9 @@
 # example script to set coronagraph parameters
 
 
-ln -s /home/scexao/src/Cfits/bin/cfitsTK $PWD/PIAACMCdesign
+ln -s /home/olivier/src/Cfits/bin/cfitsTK $PWD/PIAACMCdesign
 
-./runPIAACMCdesign -e 2
+./runPIAACMCdesign -e 3
 ./runPIAACMCdesign -a
 echo "2" > conf/conf_extmode.txt
 echo "20" > conf/conf_ssize.txt
