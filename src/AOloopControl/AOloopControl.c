@@ -2679,7 +2679,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     int CreateSMim = 0;
     int sizeOK;
     uint32_t *sizearray;
-    long ID1;
+    
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -2746,6 +2746,8 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     }
     else
     {
+		long ID1;
+		
         ID1 = load_fits(fname, "tmp2Dim", 1);
         if(ID1!=-1)
         {
@@ -2811,17 +2813,17 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 }
 
 
+
+
+
 long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize)
 {
     long ID;
     int CreateSMim;
     int sizeOK;
     uint32_t *sizearray;
-    char command[500];
-    int r;
     long ID1;
     int creashmimfromFITS = 0;
-    long xsize1, ysize1, zsize1;
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -2864,13 +2866,18 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
             sizeOK = COREMOD_MEMORY_check_3Dsize(name, xsize, ysize, zsize);
             if(sizeOK==0)
             {
+				char command[500];
+				
                 //               printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
        			printf("        AOloopControl_3Dloadcreate_shmim: ===== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s\n", name, name);
 				fflush(stdout);
       
                 delete_image_ID(name);
                 sprintf(command, "rm /tmp/%s.im.shm", name);
-                r = system(command);
+                
+                if(system(command) != 0)
+					printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+                
                 CreateSMim = 1;
                 loadcreatestatus = 0;
             }
@@ -2924,6 +2931,8 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
     {
         if(creashmimfromFITS == 1) // create shared mem from FITS
         {
+			long xsize1, ysize1, zsize1;
+			
             sizeOK = COREMOD_MEMORY_check_3Dsize("tmp3Dim", xsize, ysize, zsize);
 			printf("        AOloopControl_3Dloadcreate_shmim: ===== sizeOK = %d\n", (int) sizeOK);
 			fflush(stdout);
@@ -4821,9 +4830,12 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
 //    save_fits("RMpokeCube", "!./conf/test1_RMpokeCube.fits");
 
     sprintf(command, "echo \"%ld\" > RM_NBpoke.txt\n", NBpoke);
-    ret = system(command);
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+		
     sprintf(command, "echo \"%ld\" > test_RM_NBpoke.txt\n", NBpoke);
-    ret = system(command);
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     //    sleep(10);
 
@@ -4864,11 +4876,16 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
     fflush(stdout);
     
     //    for(iter=0; iter<NBiter; iter++)
-    r = system("mkdir -p zresptmp");
-    r = system("rm ./zresptmp/LO*.fits");
+    if(system("mkdir -p zresptmp") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+    
+    if(system("rm ./zresptmp/LO*.fits") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
-    r = system(command);
+    
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
     printf("STARTING RM...\n");
@@ -5183,7 +5200,9 @@ long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long de
             }
             iter++;
             r = sprintf(command, "echo %ld > ./zresptmp/%s_nbiter.txt", iter, zrespm_name);
-            r = system(command);
+            
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
         }
     } // end of iteration loop 
 
@@ -9012,7 +9031,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         if(BlockNB<0)
         {
             sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock);
-            ret = system(command);
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
         }
         else
         {
@@ -9062,7 +9082,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
 
                 sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock);
-                ret = system(command);
+                if(system(command) != 0)
+					printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
                 //if(MBLOCK_NBmode[mblock]>-1)
@@ -9297,7 +9318,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
-            ret = system(command);
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
             sprintf(imname, "fmodesWFS_%02ld", mblock);
             IDmwfs = image_ID(imname);
@@ -9351,7 +9373,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		}
 
         sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt);
-        ret = system(command);
+        if(system(command) != 0)
+			printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     
     }
@@ -9479,7 +9502,8 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 				printf("Reconstructing block %ld\n", mblock);
 			
 				 sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock);
-                ret = system(command);
+                if(system(command) != 0)
+					printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 				
 				IDdmmask = create_2Dimage_ID("dmmask", NBmodes, 1);
@@ -9566,7 +9590,8 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
      for(mblock=0; mblock<NBmblock; mblock++)
         {
 			sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock);
-            ret = system(command);
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 			
             sprintf(imname, "fmodesWFS_%02ld", mblock);
             IDmwfs = image_ID(imname);
@@ -9915,9 +9940,14 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
         {
             save_fits(ID_Cmatrix_name, "!cmat.fits");
             sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES_RM.txt", NBMODES_REMOVED_EIGENVLIM);
-            ret = system(command);
+            
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+				
             sprintf(command, "echo \"%ld\" > ./cmat.NB_MODES.txt",  m);
-            ret = system(command);
+            
+            if(system(command) != 0)
+				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
        }
         else
         {
@@ -15384,16 +15414,22 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     printf("min / max over %ld measurements: %8.3f ms / %8.3f ms\n", NBiter, minlatency*1000.0, maxlatency*1000.0);
 
     ret = sprintf(command, "echo %8.6f > conf/conf_hardwlatency.txt", latencyarray[NBiter/2]);
-    ret = system(command);
+    
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     ret = sprintf(command, "echo %f %f %f %f %f > timinstats/hardwlatencyStats.txt", latencyarray[NBiter/2], latencyave, minlatency, maxlatency, latencystepave);
-    ret = system(command);
+
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
 	dt = tdouble_end - tdouble_start;
 	printf("FRAME RATE = %.3f Hz\n", 1.0*(wfscntend-wfscntstart)/dt);
 	ret = sprintf(command, "echo %.3f > conf/conf_loopfrequ.txt", 1.0*(wfscntend-wfscntstart)/dt );
-    ret = system(command);
+    
+    if(system(command) != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
     
     free(latencyarray);
     free(latencysteparray);
