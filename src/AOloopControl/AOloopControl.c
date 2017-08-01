@@ -1116,8 +1116,7 @@ int_fast8_t init_AOloopControl()
     if((fp=fopen("LOOPNUMBER","r"))!=NULL)
     {
 		int r;
-        r = fscanf(fp,"%ld", &LOOPNUMBER);
-		if(r!=1)
+        if(fscanf(fp,"%8ld", &LOOPNUMBER) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read LOOPNUMBER");
 
         printf("LOOP NUMBER = %ld\n", LOOPNUMBER);
@@ -1575,19 +1574,19 @@ int_fast8_t init_AOloopControl()
 static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 {
     FILE *fp;
-    char content[200];
-    char name[200];
-    char fname[200];
+    char content[201];
+    char name[201];
+    char fname[201];
     uint32_t *sizearray;
     int kw;
     long k;
     int r;
     int sizeOK;
-    char command[500];
+    char command[501];
     int CreateSMim;
     long ii;
     long tmpl;
-    char testdirname[200];
+    char testdirname[201];
     
     int initwfsref;
     
@@ -1663,8 +1662,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf("ERROR: file ./conf/conf_LOOPNAME.txt missing\n");
         exit(0);
     }
-    r = fscanf(fp, "%s", content);
-    if(r!=1)
+    if(fscanf(fp, "%200s", content) != 1)
 		printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
     
     
@@ -1684,8 +1682,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
 			
         printf("WFSnormalize : %d\n", atoi(content));
@@ -1704,8 +1701,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].loopfrequ);
-        if(r!=1)
+        if(fscanf(fp, "%50f", &AOconf[loop].loopfrequ) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
 			
         printf("loopfrequ : %f\n", AOconf[loop].loopfrequ);
@@ -1722,8 +1718,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].hardwlatency);
-        if(r!=1)
+        if(fscanf(fp, "%50f", &AOconf[loop].hardwlatency) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("hardwlatency : %f\n", AOconf[loop].hardwlatency);
@@ -1741,8 +1736,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].complatency);
-        if(r!=1)
+        if(fscanf(fp, "%50f", &AOconf[loop].complatency) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("complatency : %f\n", AOconf[loop].complatency);
@@ -1759,8 +1753,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &AOconf[loop].wfsmextrlatency);
-        if(r!=1)
+        if(fscanf(fp, "%50f", &AOconf[loop].wfsmextrlatency) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf(" : %f\n", AOconf[loop].wfsmextrlatency);
@@ -1784,8 +1777,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("GPU : %d\n", atoi(content));
@@ -1806,8 +1798,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("GPUall : %d\n", atoi(content));
@@ -1827,8 +1818,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("GPU : %d\n", atoi(content));
@@ -1850,8 +1840,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("AOLCOMPUTE_TOTAL_ASYNC : %d\n", atoi(content));
@@ -1875,8 +1864,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("Matrix mult mode : %d\n", atoi(content));
@@ -1897,8 +1885,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
-        if(r!=1)
+        if(fscanf(fp, "%200s", content) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
         
         printf("loopfrequ : %f\n", atof(content));
@@ -2305,8 +2292,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             }
         else
             {
-                r = fscanf(fp, "%ld", &tmpl);   
-                if(r==1)
+                if(fscanf(fp, "%50ld", &tmpl) == 1)
                     AOconf[loop].DMmodesNBblock = tmpl;
                 else
                 {
@@ -2622,7 +2608,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             fp = fopen(fname, "r");
             if(fp!=NULL)
             {				
-                if(fscanf(fp, "%d" , &tmpi) != 1)
+                if(fscanf(fp, "%50d" , &tmpi) != 1)
 					 printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
                 
                 fclose(fp);
@@ -2645,7 +2631,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             fp = fopen(fname, "r");
             if(fp!=NULL)
             {
-                if(fscanf(fp, "%d" , &tmpi) != 1)
+                if(fscanf(fp, "%50d" , &tmpi) != 1)
 					printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
 					
                 fclose(fp);
@@ -6744,7 +6730,7 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     }
     else
     {
-        if(fscanf(fp, "%ld", &NBmat) != 1)
+        if(fscanf(fp, "%50ld", &NBmat) != 1)
 			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
 		
         fclose(fp);
@@ -8235,7 +8221,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 				fp = fopen("./conf/conf_extrablockIndex.txt", "r");
 				if(fp != NULL)
 				{
-					ret = fscanf(fp, "%ld", &extrablockIndex);
+					if(fscanf(fp, "%50ld", &extrablockIndex) != 1)
+						printERROR(__FILE__, __func__, __LINE__, "cannot read parameter from file");
 					fclose(fp);
 				}
 			}
@@ -8584,7 +8571,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     else
     {
 		fp = fopen("./mkmodestmp/NBblocks.txt", "r");
-		ret = fscanf(fp, "%ld", &NBmblock);
+		if(fscanf(fp, "%50ld", &NBmblock) != 1)
+			printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+		
 		fclose(fp);
 		for(mblock=0; mblock<NBmblock; mblock++)
 			{
@@ -9032,7 +9021,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 printf("ERROR: cannot read file ./conf_staged/conf_NBmodeblocks.txt\n");
                 exit(0);
             }
-            ret = fscanf(fp, "%ld", &NBmblock);
+            if(fscanf(fp, "%50ld", &NBmblock) != 1)
+				printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
             fclose(fp);
         }
 
@@ -9452,7 +9442,8 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 					printf("ERROR: File \"%s\" not found\n", fname);
 					exit(0);
 				}
-			ret = fscanf(fp, "%ld", &MBLOCK_blockend[mblock]);
+			if(fscanf(fp, "%50ld", &MBLOCK_blockend[mblock]) != 1)
+				printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
 			fclose(fp);
 			
 			printf("Block end %ld = %ld\n", mblock, MBLOCK_blockend[mblock]);
@@ -13252,7 +13243,8 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 		}
 	else
 	{
-		ret = fscanf(fp, "%ld %ld %ld %f %f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag, &PFblockdgain);
+		if(fscanf(fp, "%50ld %50ld %50ld %50f %50f\n", &PFblockStart, &PFblockEnd, &PFblockOrder, &PFblockLag, &PFblockdgain) != 5)
+			printERROR(__FILE__, __func__, __LINE__, "Cannot read parameters from file");
 		fclose(fp);
 	}
 	PFblockSize = PFblockEnd - PFblockStart;
@@ -14836,7 +14828,9 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 		}
 	else
 		{
-			ret = fscanf(fp, "%f", &AOconf[LOOPNUMBER].hardwlatency);
+			if(fscanf(fp, "%50f", &AOconf[LOOPNUMBER].hardwlatency) != 1)
+				printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+				
 			printf("hardware latency = %f\n", AOconf[LOOPNUMBER].hardwlatency);
 			fclose(fp);
 			fflush(stdout);
