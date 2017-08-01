@@ -6145,9 +6145,9 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
 long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode)
 {
     long IDmask;
-    long ID, ID0, IDtm, IDem, IDtmp, IDtmpg, IDslaved;
+    long ID, ID0, IDtm, IDem, IDtmpg, IDslaved;
     long ii, jj;
-    double x, y, r, PA, xc1, yc1, totm, val0, offset, rms, sigma;
+    double x, y, r, PA, xc1, yc1, totm, offset, rms, sigma;
 
     long NBZ, m;
     long zindex[10];
@@ -6202,7 +6202,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     IDmask = image_ID("dmmask");
     if(IDmask==-1)
     {
-		double val1;
+		double val0, val1;
 		double a0=0.88;
 		double b0=40.0;
 		double a1=1.2;
@@ -6409,12 +6409,9 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     ID = image_ID(ID_name);
     if((IDslaved != -1)&&(IDmask!=-1))
     {
-		long IDtmp1, IDtmp2;
-		
-         IDtmp = create_2Dimage_ID("_tmpinterpol", msizex, msizey);
-         IDtmp1 = create_2Dimage_ID("_tmpcoeff1", msizex, msizey);
-                
-                IDtmp2 = create_2Dimage_ID("_tmpcoeff2", msizex, msizey);
+         long IDtmp = create_2Dimage_ID("_tmpinterpol", msizex, msizey);
+         long IDtmp1 = create_2Dimage_ID("_tmpcoeff1", msizex, msizey);                
+         long IDtmp2 = create_2Dimage_ID("_tmpcoeff2", msizex, msizey);
                 for(m=0; m<data.image[ID].md[0].size[2]; m++)
                 {
 					// write input DM mode
@@ -7572,30 +7569,24 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long MBLOCK_ID[MAX_MBLOCK];
     long MBLOCK_IDwfs[MAX_MBLOCK];
     float MBLOCK_CPA[MAX_MBLOCK];
-    float cpa;
+    
 
     char *ptr0;
     char *ptr1;
 
     char imname[200];
     char imname1[200];
-    char imnameDM[200];
-    char imnameDM1[200];
-    char imnameWFS1[200];
-    char imnameCM[200]; // modal control matrix
-    char imnameCMc[200]; // zonal ("combined") control matrix
-    char imnameCMcact[200]; // zonal control matrix masked
+    
+
     char fname[200];
     char fname1[200];
-    char fname2[200];
-    char command[1000];
+    
 
     float value, value0, value1, value1cnt, valuen;
     long msizexy;
     long m0, mblock0;
 
     long iter;
-    long kernsize;
 
     long IDzrespM;
     long IDwfsMresp;
@@ -7955,7 +7946,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             if(MaskMode==1)
             {
-                kernsize = 5;
+                long kernsize = 5;
                 if(2*kernsize>msizex)
                     kernsize = msizex/2;
 				long citer;
@@ -8319,7 +8310,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         NBmblock = 0;
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
-            cpa = data.image[IDmfcpa].array.F[m];
+            float cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
             {
@@ -8379,7 +8370,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
-            cpa = data.image[IDmfcpa].array.F[m];
+            float cpa = data.image[IDmfcpa].array.F[m];
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
                 mblock++;
@@ -8579,6 +8570,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
                 MBLOCK_ID[mblock] = IDm;
                 
+                char fname2[200];
                 if(sprintf(fname2, "!./mkmodestmp/fmodes2_%02ld.fits", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
@@ -8763,6 +8755,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         /// STEP 6: COMPUTE WFS RESPONSE TO MODES
         /// fmodes2ball -> fmodesWFS0all.fits
 
+		char imnameDM[200];
+		char imnameDM1[200];
+
         if(BlockNB<0)
         {   // check size
             if(data.image[IDzrespM].md[0].size[2]!=msizexy)
@@ -8796,7 +8791,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
                 printf("BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
                 fflush(stdout);
-                
+             
+				               
                 if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
@@ -8973,6 +8969,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             for(mblock=0; mblock<NBmblock; mblock++)
             {
+				
                 rmsarray = (float*) malloc(sizeof(float)*MBLOCK_NBmode[mblock]);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
@@ -8994,7 +8991,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 				// REMOVE WFS MODES FROM PREVIOUS BLOCKS
 
                 for(mblock0=0; mblock0<mblock; mblock0++)
-                {
+				{
+					
                     reuse = 0;
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
@@ -9211,6 +9209,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         if(BlockNB<0)
         {
+			char command[1000];
             if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 				
@@ -9271,7 +9270,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
-
+				char command[1000];
                 if(sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 					
@@ -9327,6 +9326,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                 IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
                 
+                char imnameWFS1[200];
                 if(sprintf(imnameWFS1, "fmodesWFS_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
@@ -9464,12 +9464,15 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
+			char imnameCM[200]; // modal control matrix
             if(sprintf(imnameCM, "cmat_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             
+            char imnameCMc[200]; // zonal ("combined") control matrix
             if(sprintf(imnameCMc, "cmatc_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             
+            char imnameCMcact[200]; // zonal control matrix masked
             if(sprintf(imnameCMcact, "cmatcact_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -9559,6 +9562,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
+			char command[1000];
             if(sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -9620,6 +9624,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 		}
 
+		char command[1000];
         if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
