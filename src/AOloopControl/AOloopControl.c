@@ -7589,7 +7589,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long iter;
 
     long IDzrespM;
-    long IDwfsMresp;
     long wfsxsize, wfsysize, wfssize;
     long wfselem, act;
 
@@ -7602,12 +7601,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     float SVDlim00;// DM filtering step 0
     float SVDlim01; // DM filtering step 1
-    float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
-    float rmslim0 = 0.01;
+    
+    
     float rmslim1 = 0.1;
-    float *rmsarray;
-    long IDm, IDSVDmodes;
-    float svdcoeff0;
+    long IDm;
+    
 
     int *mok;
     long NBmm = 2000; // max number of modes per block
@@ -7615,13 +7613,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
     int reuse;
-    long IDSVDmodein, IDSVDmode1, IDSVDcoeff, IDSVDmask, IDSVDmode1DM;
+    long IDSVDmodein, IDSVDmode1, IDSVDcoeff, IDSVDmask;
     long m1;
     long IDnewmodeC;
 
-    long IDmwfs, IDmwfs1;
-    long IDwfs;
-    long IDmdm, IDmdm1;
+    long IDmwfs1;
+    long IDmdm1;
 
     long kk, kk1;
     long ID_VTmatrix;
@@ -8434,7 +8431,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             fflush(stdout);
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
-            svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
+            float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
                 if(data.image[IDSVDcoeff].array.F[m]>SVDlim00*svdcoeff0)
                     cnt++;
@@ -8445,7 +8442,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
-            IDSVDmodes = image_ID("svdmodes");
+            long IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
@@ -8531,6 +8528,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     delete_image_ID("SVDmode1");
 
                     rms = sqrt(value1/totm);
+                    float rmslim0 = 0.01;
                     if(rms>rmslim0)
                     {
                         //       for(ii=0; ii<msizexy; ii++)
@@ -8626,7 +8624,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             fflush(stdout);
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
-            svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
+            float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             
             if(sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff01_%02ld.txt", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -8648,7 +8646,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
-            IDSVDmodes = image_ID("svdmodes");
+            long IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
                 data.image[IDm].array.F[ii] = data.image[IDSVDmodes].array.F[ii];
 
@@ -8798,7 +8796,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 
                 if(MBLOCK_NBmode[mblock]>0)
                 {
-                    IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
+                    long IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
 
 # ifdef _OPENMP
                     #pragma omp parallel for private(m,act,wfselem)
@@ -8935,7 +8933,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
-                IDmwfs = image_ID(imname);
+                long IDmwfs = image_ID(imname);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
                     for(ii=0; ii<wfssize; ii++)
@@ -8969,14 +8967,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             for(mblock=0; mblock<NBmblock; mblock++)
             {
-				
+				float *rmsarray;
                 rmsarray = (float*) malloc(sizeof(float)*MBLOCK_NBmode[mblock]);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
                     if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
 						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-                    IDmwfs = image_ID(imname);
+                    long IDmwfs = image_ID(imname);
                     value1 = 0.0;
                     for(ii=0; ii<wfssize; ii++)
                         value1 += data.image[IDmwfs].array.F[m*wfssize+ii]*data.image[IDmwfs].array.F[m*wfssize+ii];
@@ -8999,7 +8997,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
 							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                         
-                        IDmwfs = image_ID(imname);
+                        long IDmwfs = image_ID(imname);
                         
                         if(sprintf(imnameDM, "fmodes2b_%02ld", mblock) < 1)
 							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -9022,7 +9020,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                         linopt_imtools_image_construct(imnameDM, "modecoeff", "SVDmode1DM");
                         IDSVDmode1 = image_ID("SVDmode1");
-                        IDSVDmode1DM = image_ID("SVDmode1DM");
+                        
+                        long IDSVDmode1DM = image_ID("SVDmode1DM");
 
                         delete_image_ID("modecoeff");
 
@@ -9070,12 +9069,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
 						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                     
-                    IDmwfs = image_ID(imname);
+                    long IDmwfs = image_ID(imname);
                     
                     if(sprintf(imnameDM, "fmodes2b_%02ld", mblock) < 1)
 						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                     
-                    IDmdm = image_ID(imnameDM);
+                    long IDmdm = image_ID(imnameDM);
                     if(IDmdm==-1)
                     {
                         printf("ERROR: image %s does not exist\n", imnameDM);
@@ -9174,12 +9173,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
 						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 						
-                    IDmwfs = image_ID(imname);
+                    long IDmwfs = image_ID(imname);
                     
                     if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
 						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 						
-                    IDmdm = image_ID(imnameDM);
+                    long IDmdm = image_ID(imnameDM);
 
                     if(IDmwfs==-1)
                     {
@@ -9284,7 +9283,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 					
-                IDmwfs = image_ID(imname);
+                long IDmwfs = image_ID(imname);
                 if(IDmwfs==-1)
                 {
                     printf("ERROR: image %s does not exit\n", imname);
@@ -9294,7 +9293,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 					
-                IDmdm = image_ID(imnameDM);
+                long IDmdm = image_ID(imnameDM);
                 if(IDmdm==-1)
                 {
                     printf("ERROR: image %s does not exit\n", imnameDM);
@@ -9413,7 +9412,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
         IDm = create_3Dimage_ID("fmodesall", msizex, msizey, cnt);
-        IDwfs = create_3Dimage_ID("fmodesWFSall", wfsxsize, wfsysize, cnt);
+        long IDwfs = create_3Dimage_ID("fmodesWFSall", wfsxsize, wfsysize, cnt);
         cnt = 0;
         cnt1 = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
@@ -9488,6 +9487,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                     // COMPUTE MODAL CONTROL MATRICES
                     printf("COMPUTE CONTROL MATRIX\n");
+                    float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
                     #ifdef HAVE_MAGMA
                         CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat", 0);
                     #else
@@ -9572,7 +9572,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-            IDmwfs = image_ID(imname);
+            long IDmwfs = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9612,6 +9612,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     {
         // COMPUTE OVERALL CONTROL MATRIX
         printf("COMPUTE OVERALL CONTROL MATRIX\n");
+        float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
         #ifdef HAVE_MAGMA
             CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat", 0);
         #else
