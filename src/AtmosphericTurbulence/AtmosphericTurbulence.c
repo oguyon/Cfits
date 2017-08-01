@@ -4608,7 +4608,7 @@ int measure_wavefront_series(float factor)
     long frame;
     long NBFRAMES;
     long ii,jj;
-    int amplitude_on;
+    int amplitude_on = 0;
 
     double puprad = 0.035; // meter
     double pupradpix;
