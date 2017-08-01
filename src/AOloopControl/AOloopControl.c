@@ -1117,11 +1117,9 @@ int_fast8_t init_AOloopControl()
     {
 		int r;
         r = fscanf(fp,"%ld", &LOOPNUMBER);
-        if(r!=1)
-			{
-				printf("ERROR: cannot read LOOPNUMBER\n");
-				exit(0);
-			}
+		if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read LOOPNUMBER");
+
         printf("LOOP NUMBER = %ld\n", LOOPNUMBER);
         fclose(fp);
     }
@@ -1580,18 +1578,15 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     char content[200];
     char name[200];
     char fname[200];
-    long ID;
     uint32_t *sizearray;
-    int vOK;
     int kw;
     long k;
     int r;
     int sizeOK;
     char command[500];
     int CreateSMim;
-    long ID1tmp, ID2tmp;
     long ii;
-    long kk, tmpl;
+    long tmpl;
     char testdirname[200];
     
     int initwfsref;
@@ -1669,6 +1664,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         exit(0);
     }
     r = fscanf(fp, "%s", content);
+    if(r!=1)
+		printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+    
+    
     printf("loop name : %s\n", content);
     fprintf(fplog, "AOconf[%ld].name = %s\n", loop, AOconf[loop].name);
     fclose(fp);
@@ -1686,6 +1685,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			
         printf("WFSnormalize : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1703,6 +1705,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%f", &AOconf[loop].loopfrequ);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			
         printf("loopfrequ : %f\n", AOconf[loop].loopfrequ);
         fclose(fp);
         fflush(stdout);
@@ -1718,6 +1723,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%f", &AOconf[loop].hardwlatency);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("hardwlatency : %f\n", AOconf[loop].hardwlatency);
         fclose(fp);
         fflush(stdout);
@@ -1734,6 +1742,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%f", &AOconf[loop].complatency);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("complatency : %f\n", AOconf[loop].complatency);
         fclose(fp);
         fflush(stdout);
@@ -1749,6 +1760,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%f", &AOconf[loop].wfsmextrlatency);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf(" : %f\n", AOconf[loop].wfsmextrlatency);
         fclose(fp);
         fflush(stdout);
@@ -1771,6 +1785,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("GPU : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1790,6 +1807,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("GPUall : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1808,6 +1828,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("GPU : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1828,6 +1851,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("AOLCOMPUTE_TOTAL_ASYNC : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1850,6 +1876,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("Matrix mult mode : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
@@ -1869,6 +1898,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     else
     {
         r = fscanf(fp, "%s", content);
+        if(r!=1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+        
         printf("loopfrequ : %f\n", atof(content));
         fclose(fp);
         fflush(stdout);
@@ -2016,6 +2048,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
         if(aoconfID_DMmodes==-1) // If not, check file
         {
+			long ID1tmp, ID2tmp;
+			int vOK;
+			
            sprintf(fname, "./conf/aol%ld_DMmodes.fits", loop);
 
             printf("Checking file \"%s\"\n", fname);
@@ -2166,6 +2201,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     if(level>=10)
     {
+		long ID;
+		
         // Load/create modal command vector memory
         sprintf(name, "aol%ld_DMmode_cmd", loop);
         ID = image_ID(name);
@@ -2312,8 +2349,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     
 		
     
-        for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
-            {          
+        for(uint_fast16_t kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
+            {
+				long ID;
+				          
 				#ifdef _PRINT_TEST 
 				printf("TEST - BLOCK %3ld gain = %f\n", kk, data.image[aoconfID_gainb].array.F[kk]);
 				fflush(stdout);
@@ -2428,15 +2467,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
     int SM_fd;
     struct stat file_stat;
     int create = 0;
-    int result;
-    long loop;
-    char cntname[200];
-    int k;
-    FILE *fp;
-    // FILE *fp1; // testing
+    long loop;    
     int tmpi;
-    int ret;
-    char fname[200];
 
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -2467,6 +2499,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 
     if(create==1)
     {
+		int result;
+		
         SM_fd = open(AOconfname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
 
         if (SM_fd == -1) {
@@ -2504,6 +2538,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 	
     if((mode==0)||(create==1))
     {
+		char cntname[200];
+		
         AOconf[loop].on = 0;
         AOconf[loop].DMprimaryWrite_ON = 0;
 		AOconf[loop].AUTOTUNE_LIMITS_ON = 0;
@@ -2577,13 +2613,18 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         fflush(stdout);
 
         GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
-        for(k=0; k<GPUcntMax; k++)
+        for(uint_fast16_t k=0; k<GPUcntMax; k++)
         {
-            sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", k);
+			FILE *fp;
+			char fname[200];
+			
+            sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", (int) k);
             fp = fopen(fname, "r");
             if(fp!=NULL)
-            {
-                ret = fscanf(fp, "%d" , &tmpi);
+            {				
+                if(fscanf(fp, "%d" , &tmpi) != 1)
+					 printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+                
                 fclose(fp);
                 GPUset0[k] = tmpi;
             }
@@ -2595,13 +2636,18 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 
 
         GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
-        for(k=0; k<GPUcntMax; k++)
+        for(uint_fast16_t k=0; k<GPUcntMax; k++)
         {
-            sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", k);
+			FILE *fp;
+			char fname[200];
+			
+            sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", (int) k);
             fp = fopen(fname, "r");
             if(fp!=NULL)
             {
-                ret = fscanf(fp, "%d" , &tmpi);
+                if(fscanf(fp, "%d" , &tmpi) != 1)
+					printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+					
                 fclose(fp);
                 GPUset1[k] = tmpi;
             }
@@ -2647,8 +2693,6 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     int CreateSMim = 0;
     int sizeOK;
     uint32_t *sizearray;
-    char command[500];
-    int r;
     long ID1;
 
     int loadcreatestatus = -1;
@@ -2675,14 +2719,19 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
         CreateSMim = 0;
         ID = read_sharedmem_image(name);
         if(ID!=-1)  // ... and <name> does not exist as a memory stream
-        {
+        {			
             sizeOK = COREMOD_MEMORY_check_2Dsize(name, xsize, ysize);
             if(sizeOK==0)  // if size is different, delete stream -> create new one
             {
+				char command[500];
+				
                 printf("\n========== EXISTING %s HAS WRONG SIZE -> CREATING BLANK %s ===========\n\n", name, name);
                 delete_image_ID(name);
                 sprintf(command, "rm /tmp/%s.im.shm", name);
-                r = system(command);
+
+                if(system(command)!=0)
+					printERROR(__FILE__,__func__,__LINE__, "system() error");
+
                 CreateSMim = 1;
                 loadcreatestatus = 0;
             }
@@ -6009,10 +6058,9 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     double coeff;
     long kelim = 20;
     long kernsize, citer, conviter;
-   long NBciter = 200;
+	long NBciter = 200;
     long NBconviter = 10;
-
-	long IDtmp1, IDtmp2;
+    
 	long pixcnt;
 	float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym;
 	float ctot;
@@ -6256,6 +6304,8 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     ID = image_ID(ID_name);
     if((IDslaved != -1)&&(IDmask!=-1))
     {
+		long IDtmp1, IDtmp2;
+		
          IDtmp = create_2Dimage_ID("_tmpinterpol", msizex, msizey);
          IDtmp1 = create_2Dimage_ID("_tmpcoeff1", msizex, msizey);
                 
@@ -6694,7 +6744,9 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     }
     else
     {
-        r = fscanf(fp, "%ld", &NBmat);
+        if(fscanf(fp, "%ld", &NBmat) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+		
         fclose(fp);
     }
 
@@ -6719,9 +6771,13 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     // STEP 1: build individually cleaned RM
     for(kmat=0; kmat<NBmat; kmat++)
     {                    
-        r = sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat);
+        if(sprintf(fname, "./zresptmp/%s_pos_%03ld.fits", zrespm_name, kmat)<0)
+			printERROR(__FILE__,__func__,__LINE__, "sprintf error");
+        
         IDzrespfp = load_fits(fname, "zrespfp", 2);
-        r = sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat);
+        if(sprintf(fname, "./zresptmp/%s_neg_%03ld.fits", zrespm_name, kmat)<0)
+			printERROR(__FILE__,__func__,__LINE__, "sprintf error");
+
         IDzrespfm = load_fits(fname, "zrespfm", 2);
 
         sizexWFS = data.image[IDzrespfp].md[0].size[0];
@@ -6729,11 +6785,14 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
         NBpoke = data.image[IDzrespfp].md[0].size[2];
         sizeWFS = sizexWFS*sizeyWFS;
         
-        r = sprintf(name, "wfsrefc%03ld", kmat);
+        if(sprintf(name, "wfsrefc%03ld", kmat)<0)
+			printERROR(__FILE__,__func__,__LINE__, "sprintf error");
 
         IDWFSrefc_array[kmat] = create_3Dimage_ID(name, sizexWFS, sizeyWFS, NBpoke);
 
-        r = sprintf(zrname, "zrespm%03ld", kmat);
+        if(sprintf(zrname, "zrespm%03ld", kmat)<0)
+			printERROR(__FILE__,__func__,__LINE__, "sprintf error");
+        
         IDzresp_array[kmat] = create_3Dimage_ID(zrname, sizexWFS, sizeyWFS, NBpoke);
 
 
