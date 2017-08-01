@@ -6147,7 +6147,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     long IDmask;
     long ID, ID0, IDtm, IDem, IDtmp, IDtmpg, IDslaved;
     long ii, jj;
-    double x, y, r, PA, xc1, yc1, totm, totvm, val0, offset, rms, sigma;
+    double x, y, r, PA, xc1, yc1, totm, val0, offset, rms, sigma;
 
     long NBZ, m;
     long zindex[10];
@@ -6157,7 +6157,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
 
     double coeff;
     long kelim = 20;
-    long citer, conviter;
+    long conviter;
  //   long NBconviter = 10;
 
 
@@ -6331,7 +6331,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
         }
 
 
-        totvm = 0.0;
+        double totvm = 0.0;
         for(ii=0; ii<msizex*msizey; ii++)
         {
             //	  data.image[ID].array.F[k*msize*msize+ii] = data.image[ID0].array.F[(k+1)*msize*msize+ii];
@@ -6380,7 +6380,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     {
         long kernsize = 5;
 		long NBciter = 200;
-		
+		long citer;
 		
         if(2*kernsize>msizex)
             kernsize = msizex/2;
@@ -6834,7 +6834,6 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     long IDWFSmask, IDDMmask;
     float lim, rms;
     double tmpv;
-    long IDdm;
     long NBmatlim = 3;
     long ID1;
     long NBpoke, poke;
@@ -6874,7 +6873,6 @@ int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm
     if(sprintf(name, "aol%ld_dmC", loop) < 1)
 		printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     
-    IDdm = read_sharedmem_image(name);
 
     IDzresp_array = (long*) malloc(sizeof(long)*NBmat);
     IDWFSrefc_array = (long*) malloc(sizeof(long)*NBmat);
@@ -7557,33 +7555,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     double totm;
 
-    double a0=0.88;
-    double b0=40.0;
-
-    double a1=1.2;
-    double b1=12.0;
-
     double x, y, r, xc1, yc1;
-    double val1, rms;
+    double rms;
 
-    long IDem;
-    long IDeModes;
-
-    long kelim = 5;
-    double coeff;
-    long citer;
-    long NBciter = 200;
-    long IDg;
-
-
-    long NBZ;
     long IDz;
 
     long zindex[10];
     double zcpa[10];  /// CPA for each Zernike (somewhat arbitrary... used to sort modes in CPA)
-    long IDfreq;
 
-    long IDmfcpa; /// modesfreqcpa ID
     int ret;
 
     long mblock, m;
@@ -7772,7 +7751,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         IDmaskRM = image_ID("dmmaskRM");
         if(IDmaskRM==-1)
         {
-			double val0;
+			double val0, val1;
+			double a0=0.88;
+			double b0=40.0;
+			double a1=1.2;
+			double b1=12.0;
+
             IDmaskRM = create_2Dimage_ID("dmmaskRM", msizex, msizey);
             for(ii=0; ii<msizex; ii++)
                 for(jj=0; jj<msizey; jj++)
@@ -7828,11 +7812,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     if(COMPUTE_DM_MODES==1) // DM modes fmodes2b
     {
 		long ID0 = -1;
+		long NBZ = 0;
+		long IDmfcpa;
 		
         if(MODAL==0)
         {
             // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
-            NBZ = 5; /// 3: tip, tilt, focus
+            //NBZ = 5; /// 3: tip, tilt, focus
             NBZ = 0;
             for(m=0; m<10; m++)
             {
@@ -7845,7 +7831,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             linopt_imtools_makeCPAmodes("CPAmodes", msizex, CPAmax, deltaCPA, 0.5*msizex, 1.2, 0);
             ID0 = image_ID("CPAmodes");
 
-            IDfreq = image_ID("cpamodesfreq");
+            long IDfreq = image_ID("cpamodesfreq");
 
 
 
@@ -7971,11 +7957,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 kernsize = 5;
                 if(2*kernsize>msizex)
                     kernsize = msizex/2;
+				long citer;
+				long NBciter = 200;
                 for(citer=0; citer<NBciter; citer++)
                 {
                     printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
                     gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), kernsize);
-                    IDg = image_ID("modeg");
+                    long IDg = image_ID("modeg");
                     uint_fast32_t  k;
                     for(k=0; k<data.image[ID].md[0].size[2]; k++)
                     {
@@ -8071,12 +8059,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		double ave;
 		double totvm;
 		uint_fast32_t k;
-		for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
+		for(k=0; k<data.image[ID0].md[0].size[2]-1 + NBZ; k++)
 		{
 			  /// Remove excluded modes if they exist
-                IDeModes = image_ID("emodes");
+                long IDeModes = image_ID("emodes");
                 if(IDeModes!=-1)
                 {
+					long kelim = 5;
                     long IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
                     for(ii=0; ii<msizex*msizey; ii++)
@@ -8084,9 +8073,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-3, "lcoeff", 0);
                     linopt_imtools_image_construct("emodes", "lcoeff", "em00");
                     delete_image_ID("lcoeff");
-                    IDem = image_ID("em00");
+                    long IDem = image_ID("em00");
 
-					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+					double coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
 
 					if(k>kelim)
 						coeff = 1.0;
