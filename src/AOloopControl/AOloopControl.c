@@ -7560,8 +7560,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long zindex[10];
     double zcpa[10];  /// CPA for each Zernike (somewhat arbitrary... used to sort modes in CPA)
 
-    int ret;
-
     long mblock, m;
     long NBmblock;
     
@@ -7617,18 +7615,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long m1;
     long IDnewmodeC;
 
-    long IDmwfs1;
-    long IDmdm1;
+    long kk1;
 
-    long kk, kk1;
-    long ID_VTmatrix;
-    long cnt1;
-
-    long IDslaved, IDtmp, IDtmpg;
+    long IDtmp, IDtmpg;
     long conviter;
     float sigma;
 
-    long act1, act2;
+    long act2;
 
     int MODAL; // 1 if "pixels" of DM are already modes
 
@@ -7637,7 +7630,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long ID_imfit = -1;
     long IDRMM_coeff = -1;
     long IDcoeffmat = -1;
-    long IDmodes0all = -1;
+    
     long linfitsize;
     int linfitreuse;
     double res, res1, v0;
@@ -7647,7 +7640,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     double LOcoeff;
     FILE *fpLOcoeff;
     long IDwfstmp;
-    char fnameLOcoeff[200];
 
 	long pixcnt;
 	float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym, ctot;
@@ -7655,16 +7647,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 	int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
-	int COMPUTE_FULL_CMAT = 0;
-
-	long IDcmat, IDcmatall;
+	
+	long IDcmatall;
 
 	long ii1, jj1;
 	float dx, dy, dist, dist0, val1cnt;
 	long IDprox, IDprox1;
 
-
-	long IDmaskRMedge, IDmaskRMin;
+	long IDmaskRMin;
 	float gain;
 	
 	FILE *fpcoeff;
@@ -7672,10 +7662,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 	// extra block
-	long IDextrablock;
 	long extrablockIndex;
-	long mblock1;
-
+	
+	
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
 	#endif
@@ -7726,7 +7715,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-    ret = system("mkdir -p mkmodestmp");
+    if(system("mkdir -p mkmodestmp") < 1)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     msizexy = msizex*msizey;
 
@@ -7973,7 +7963,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		// MAKE MASKS FOR EDGE EXTRAPOLATION
 		
 		          
-		IDslaved = image_ID("dmslaved");
+		long IDslaved = image_ID("dmslaved");
 		// load or create DM mask : union of dmslaved and dmmaskRM
 		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
 		printf("Create DM mask\n");
@@ -7992,7 +7982,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		}
 
 		// EDGE PIXELS IN IDmaskRM
-		IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
+		long IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
 		save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
 		
 		// IDmaskRM pixels excluding edge
@@ -8122,7 +8112,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-        IDmodes0all = image_ID(ID_name);
+        long IDmodes0all = image_ID(ID_name);
         printf("DONE SAVING\n");
 
         // time : 0:04
@@ -8149,7 +8139,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         printf("size: %ld %ld %ld\n", (long) data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
 
-
+		long act1;
 # ifdef _OPENMP
         #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
 # endif
@@ -8326,7 +8316,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         NBmblock++;
 
 		
-		IDextrablock = image_ID("extrablockM");
+		long IDextrablock = image_ID("extrablockM");
 		if(IDextrablock != -1)
 			{				
 				extrablockIndex = 4;
@@ -8344,6 +8334,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
+			long mblock1;
+
 			if(IDextrablock != -1)
 			{
 				mblock1 = mblock;
@@ -8367,7 +8359,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
+			long mblock1;
+
             float cpa = data.image[IDmfcpa].array.F[m];
+
             mblock = 0;
             while (cpa > CPAblocklim[mblock])
                 mblock++;
@@ -8814,6 +8809,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                     if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
                     {
+						char fnameLOcoeff[200];
                         if(sprintf(fnameLOcoeff, "./mkmodestmp/LOcoeff_%02ld.txt", mblock) < 1)
 							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -9062,8 +9058,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                     
                                         
-					IDmwfs1 = create_3Dimage_ID(imname, wfsxsize, wfsysize, cnt);
-                    IDmdm1 = create_3Dimage_ID(imnameDM, msizex, msizey, cnt);
+					long IDmwfs1 = create_3Dimage_ID(imname, wfsxsize, wfsysize, cnt);
+                    long IDmdm1 = create_3Dimage_ID(imnameDM, msizex, msizey, cnt);
                     m1 = 0;
                     
                     if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
@@ -9163,7 +9159,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             for(mblock=0; mblock<NBmblock; mblock++)
                 cnt += MBLOCK_NBmode[mblock];
             IDm = create_3Dimage_ID("fmodesWFS1all", wfsxsize, wfsysize, cnt);
-            IDmdm1 = create_3Dimage_ID("fmodes3all", msizex, msizey, cnt);
+            long IDmdm1 = create_3Dimage_ID("fmodes3all", msizex, msizey, cnt);
 
             cnt = 0;
             for(mblock=0; mblock<NBmblock; mblock++)
@@ -9313,6 +9309,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
                 fpcoeff = fopen(fnameSVDcoeff, "w");
+                uint_fast16_t kk;
                 for(kk=0; kk<data.image[IDSVDcoeff].md[0].size[0]; kk++)
                 {
 					fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0], SVDlim);
@@ -9323,14 +9320,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 fclose(fpcoeff);
 
 
-                IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
+                long IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
                 
                 char imnameWFS1[200];
                 if(sprintf(imnameWFS1, "fmodesWFS_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
-                IDmwfs1 = create_3Dimage_ID(imnameWFS1, wfsxsize, wfsysize, cnt);
-                ID_VTmatrix = image_ID("SVD_VTm");
+                long IDmwfs1 = create_3Dimage_ID(imnameWFS1, wfsxsize, wfsysize, cnt);
+                long ID_VTmatrix = image_ID("SVD_VTm");
 
 
                 for(kk=0; kk<cnt; kk++) /// eigen mode index
@@ -9401,7 +9398,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(sprintf(imnameDM1, "fmodes_%02ld", mblock) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
                 
-                IDmdm1 = load_fits(fname, imnameDM1, 1);
+                long IDmdm1 = load_fits(fname, imnameDM1, 1);
                 MBLOCK_ID[mblock] = IDmdm1;
                 //MBLOCK_IDwfs[mblock] = IDmwfs1;
                 MBLOCK_NBmode[mblock] = data.image[IDmdm1].md[0].size[2];
@@ -9414,7 +9411,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         IDm = create_3Dimage_ID("fmodesall", msizex, msizey, cnt);
         long IDwfs = create_3Dimage_ID("fmodesWFSall", wfsxsize, wfsysize, cnt);
         cnt = 0;
-        cnt1 = 0;
+        long cnt1 = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             if(MBLOCK_NBmode[mblock]>0)
@@ -9593,7 +9590,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(sprintf(imname, "cmat_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 				
-            IDcmat = image_ID(imname);
+            long IDcmat = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9607,7 +9604,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     
     
     
-    
+    int COMPUTE_FULL_CMAT = 0;
     if(COMPUTE_FULL_CMAT == 1)
     {
         // COMPUTE OVERALL CONTROL MATRIX
@@ -9673,9 +9670,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	long NBmodes;
 	long cnt;
 	long IDm;
-	long IDmwfs;
 	long m;
-	long IDcmat;
 	long IDcmatall;
 	char command[500];
 
@@ -9896,7 +9891,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
             if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 				
-            IDmwfs = image_ID(imname);
+            long IDmwfs = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9917,7 +9912,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
             if(sprintf(imname, "cmat_%02ld", mblock) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 				
-            IDcmat = image_ID(imname);
+            long IDcmat = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<wfssize; ii++)
@@ -9978,8 +9973,8 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     long ID_Rmatrix, ID_Cmatrix, ID_VTmatrix;
     uint32_t *arraysizetmp;
 
-    long IDmodes, IDeigenmodes;
-    uint32_t xsize_modes, ysize_modes, zsize_modes;
+    long IDmodes;
+
     long IDeigenmodesResp;
     long kk, kk1;
     long ID_RMmask;
@@ -10156,6 +10151,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
     IDmodes = image_ID("modesM");
     if(IDmodes!=-1)
     {
+		uint32_t xsize_modes, ysize_modes, zsize_modes;
         xsize_modes = data.image[IDmodes].md[0].size[0];
         ysize_modes = data.image[IDmodes].md[0].size[1];
         zsize_modes = data.image[IDmodes].md[0].size[2];
@@ -10163,7 +10159,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
             printf("ERROR: zsize (%ld) of modesM does not match expected size (%ld)\n", (long) zsize_modes, (long) m);
         else
         {
-            IDeigenmodes = create_3Dimage_ID("eigenmodesM", xsize_modes, ysize_modes, m);
+            long IDeigenmodes = create_3Dimage_ID("eigenmodesM", xsize_modes, ysize_modes, m);
             printf("Computing eigenmodes .... \n");
             for(kk=0; kk<m; kk++) /// eigen mode index
             {
@@ -10307,7 +10303,7 @@ int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *I
 
 long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_name, const char* IDwfsmask_name, const char *IDdmmask_name, const char *IDcmatc_name, const char *IDcmatc_active_name)
 {
-    long ID;
+   // long ID;
     struct timespec t1;
     struct timespec t2;
     struct timespec tdiff;
@@ -10318,7 +10314,6 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
     //    long n_sizeDM, n_NBDMmodes, n_sizeWFS;
     float *matrix_Mc, *matrix_DMmodes;
     long act_active, wfselem_active;
-    int chunk = 10;
 
     long IDwfsmask, IDdmmask;
     long sizexWFS, sizeyWFS, sizeWFS, sizeWFS_active[100];
@@ -10426,7 +10421,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
     //    }
     //# endif
     memcpy(data.image[IDcmatc].array.F, matrix_Mc, sizeof(float)*sizeWFS*sizeDM);
-
+	free(matrix_cmp);
 
     printf("REDUCE MATRIX SIZE\n");
     fflush(stdout);
@@ -10530,7 +10525,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
 	#endif
 
-    return(ID);
+    return(0);
 }
 
 
@@ -10541,7 +10536,7 @@ long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_
 long AOloopControl_loadCM(long loop, const char *CMfname)
 {
     long ID = -1;
-    char name[200];
+    
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10553,9 +10548,11 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
 
     if( (ID = load_fits(CMfname, "tmpcontrM", 1)) != -1 )
     {
-
+		
         // check size is OK
         int vOK = 1;
+    
+    
         if(data.image[ID].md[0].naxis!=3)
         {
             printf("Control matrix has wrong dimension\n");
@@ -10589,7 +10586,7 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
         if(vOK==1)
         {
             AOconf[loop].init_CM = 1;
-            
+            char name[200];
             if(sprintf(name, "ContrM_%ld", loop) < 1)
 				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             
@@ -10784,17 +10781,17 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     long wfsxsize, wfsysize, wfsxysize;
     long IDwfsref, IDwfsref0;
     long *IDwfszparray;
-    long cntsum, cntsumold;
+    long cntsumold;
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
     long nsecwait = 10000; // 10 us
-    int r;
     struct timespec semwaitts;
     long ch;
     long IDtmp;
     long ii;
     char name[200];
     int semval;
+    
     
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10803,9 +10800,13 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     
     schedpar.sched_priority = RT_priority;
     #ifndef __MACH__
-    r = seteuid(euid_called); //This goes up to maximum privileges
-    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    r = seteuid(euid_real);//Go back to normal privileges
+    if(seteuid(euid_called) != 0) //This goes up to maximum privileges
+		printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");
+		
+    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster    
+
+    if(seteuid(euid_real) != 0) //Go back to normal privileges
+		printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");
 	#endif
 
     IDwfsref = image_ID(IDwfsref_name);
@@ -10849,7 +10850,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
         sem_timedwait(data.image[IDwfsref].semptr[1], &semwaitts);
 
-        cntsum = 0;
+        long cntsum = 0;
         for(ch=0; ch<NBzp; ch++)
             cntsum += data.image[IDwfszparray[ch]].md[0].cnt0;
         
@@ -10910,15 +10911,13 @@ int_fast8_t AOloopControl_run()
     double a;
     long cnttest;
     float tmpf1;
-    long xsize, ysize;
+    
 
     struct timespec t1;
     struct timespec t2;
     struct timespec tdiff;
-    double tdiffv;
-    int timerinit;
     int semval;
-    int semnb;
+   
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -10981,8 +10980,8 @@ int_fast8_t AOloopControl_run()
 
     if(COMPUTE_PIXELSTREAMING == 1)
     {
-        xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
-        ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
+        long xsize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[0];
+        long ysize = data.image[aoconfID_pixstream_wfspixindex].md[0].size[1];
         PIXSTREAM_NBSLICES = 0;
         for(ii=0; ii<xsize*ysize; ii++)
             if(data.image[aoconfID_pixstream_wfspixindex].array.UI16[ii] > PIXSTREAM_NBSLICES)
@@ -11026,6 +11025,7 @@ int_fast8_t AOloopControl_run()
     AOconf[loop].init_CMc = 0;
     clock_gettime(CLOCK_REALTIME, &t1);
 
+
     if(vOK==1)
     {
         AOconf[loop].kill = 0;
@@ -11034,7 +11034,9 @@ int_fast8_t AOloopControl_run()
         AOconf[loop].ARPFon = 0;
         printf("entering loop ...\n");
         fflush(stdout);
-        
+
+		int timerinit = 0;
+		
         while( AOconf[loop].kill == 0)
         {
             if(timerinit==1)
@@ -11045,7 +11047,7 @@ int_fast8_t AOloopControl_run()
             clock_gettime(CLOCK_REALTIME, &t2);
 
             tdiff = info_time_diff(t1, t2);
-            tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+            double tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 			
             printf(" WAITING     %20.3lf sec         \r", tdiffv);
             fflush(stdout);
@@ -11162,7 +11164,7 @@ int_fast8_t AOloopControl_run()
 
 
 
-
+						int semnb;
                         for(semnb=0; semnb<data.image[aoconfID_dmC].md[0].sem; semnb++)
                         {
                             sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
@@ -11375,7 +11377,6 @@ int_fast8_t AOcompute(long loop, int normalize)
     struct timespec t1;
     struct timespec t2;
 
-    int chunk = 10;
     float *matrix_Mc, *matrix_DMmodes;
     long n_sizeDM, n_NBDMmodes, n_sizeWFS;
 
