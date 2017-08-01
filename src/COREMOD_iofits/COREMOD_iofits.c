@@ -830,7 +830,7 @@ int save_db_fits(const char *ID_name, const char *file_name)
             nelements *= naxes[i];
 
 
-        if (atype != _DATATYPE_FLOAT) // data conversion required
+        if (atype != _DATATYPE_DOUBLE) // data conversion required
 		{
 			array = (double*) malloc(SIZEOF_DATATYPE_DOUBLE*nelements);
 			if(array==NULL)
@@ -885,10 +885,11 @@ int save_db_fits(const char *ID_name, const char *file_name)
 				for (ii = 0; ii < nelements; ii++)
 					array[ii] = (double) data.image[ID].array.F[ii];
 				break;
-        			
+        		        		        			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
-				printf("atype = %d\n", atype);
+				printf("ID %ld  atype = %d\n", ID, atype);
 				free(array);
 				exit(0);
 				break;				
@@ -1062,8 +1063,9 @@ int save_fl_fits(const char *ID_name, const char *file_name)
 				break;
         			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
-				printf("atype = %d\n", atype);
+				printf("ID %ld  atype = %d\n", ID, atype);
 				free(array);
 				exit(0);
 				break;				
@@ -1241,9 +1243,10 @@ int save_sh_fits(const char *ID_name, const char *file_name)
 				break;
         			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 				free(array);
-				printf("atype = %d\n", atype);
+				printf("ID %ld  atype = %d\n", ID, atype);
 				exit(0);
 				break;				
 			}            
@@ -1417,9 +1420,10 @@ int save_ush_fits(const char *ID_name, const char *file_name)
 				break;
         			
 				default :
+				list_image_ID();
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 				free(array);
-				printf("atype = %d\n", atype);
+				printf("ID %ld  atype = %d\n", ID, atype);
 				exit(0);
 				break;				
 			}            

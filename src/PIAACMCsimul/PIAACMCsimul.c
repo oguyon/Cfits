@@ -4971,7 +4971,7 @@ long PIAACMC_FPM_process(const char *FPMsag_name, const char *zonescoord_name, l
 	
 	for(zone=0; zone<NBzones; zone++)
 		{
-			if(atype==_DATATYPE_FLOAT)
+			if(atype == _DATATYPE_FLOAT)
 				sagarray_in[zone] = (double) data.image[IDin].array.F[zone];
 			else
 				sagarray_in[zone] = data.image[IDin].array.D[zone];
