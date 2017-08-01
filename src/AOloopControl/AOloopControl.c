@@ -2392,8 +2392,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         #endif
     
 		
-    
-        for(uint_fast16_t kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
+		uint_fast16_t kk;
+        for(kk=0;kk<AOconf[loop].DMmodesNBblock;kk++)
             {
 				long ID;
 				          
@@ -2671,7 +2671,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         fflush(stdout);
 
         GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
-        for(uint_fast16_t k=0; k<GPUcntMax; k++)
+        uint_fast16_t k;
+        for(k=0; k<GPUcntMax; k++)
         {
 			FILE *fp;
 			char fname[200];
@@ -2695,7 +2696,8 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 
 
         GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
-        for(uint_fast16_t k=0; k<GPUcntMax; k++)
+        uint_fast16_t k;
+        for(k=0; k<GPUcntMax; k++)
         {
 			FILE *fp;
 			char fname[200];
@@ -3161,7 +3163,8 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
                 data.image[IDout_ave].md[0].write = 1;
                 data.image[IDout_AC].md[0].write = 1;
                 data.image[IDout_RMS].md[0].write = 1;
-                for(uint_fast64_t ii=0;ii<xsize*ysize;ii++)
+                uint_fast64_t ii;
+                for(ii=0;ii<xsize*ysize;ii++)
                     {
                         data.image[IDout_ave].array.F[ii] = (1.0-alpha)*data.image[IDout_ave].array.F[ii] + alpha * data.image[IDin].array.F[ii];
                         data.image[IDout_RMS].array.F[ii] = (1.0-alpha)*data.image[IDout_RMS].array.F[ii] + alpha * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]) * (data.image[IDin].array.F[ii] - data.image[IDout_ave].array.F[ii]);
@@ -4442,8 +4445,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
 
 
 
-
-	for(uint_fast16_t PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
+	uint_fast16_t PokeIndex;
+	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] = 0.0;
 
@@ -4626,8 +4629,8 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     free(sizearray);
 
 
-    
-	for(uint_fast16_t PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
+    uint_fast16_t PokeIndex;
+	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
 
@@ -7858,7 +7861,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             zernike_init();
             
             double PA;
-            for(uint_fast32_t k=0; k<NBZ; k++)
+            uint_fast32_t k;
+            for(k=0; k<NBZ; k++)
             {
                 data.image[IDmfcpa].array.F[k] = zcpa[k];
                 for(ii=0; ii<msizex; ii++)
@@ -7871,7 +7875,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         data.image[ID].array.F[k*msizex*msizey+jj*msizex+ii] = Zernike_value(zindex[k], r, PA);
                     }
             }
-            for(uint_fast32_t k=0; k<data.image[ID0].md[0].size[2]-1; k++)
+            uint_fast32_t k;
+            for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
             {
                 data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
                 for(ii=0; ii<msizex*msizey; ii++)
@@ -7885,7 +7890,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 			double ave;
 			double offset;
 			double totvm;
-            for(uint_fast32_t k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
+			uint_fast32_t k;
+            for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
                // set RMS = 1 over mask
                 rms = 0.0;
@@ -7973,7 +7979,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
                     gauss_filter(ID_name, "modeg", 4.0*pow(1.0*(NBciter-citer)/NBciter,0.5), kernsize);
                     IDg = image_ID("modeg");
-                    for(uint_fast32_t  k=0; k<data.image[ID].md[0].size[2]; k++)
+                    uint_fast32_t  k;
+                    for(k=0; k<data.image[ID].md[0].size[2]; k++)
                     {
                         for(ii=0; ii<msizex*msizey; ii++)
                             if(data.image[IDmaskRM].array.F[ii]<0.98)
@@ -8066,7 +8073,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		double offset;
 		double ave;
 		double totvm;
-		for(uint_fast32_t k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
+		uint_fast32_t k;
+		for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
 		{
 			  /// Remove excluded modes if they exist
                 IDeModes = image_ID("emodes");
@@ -11001,7 +11009,8 @@ int_fast8_t AOloopControl_run()
     printf("GPU = %d\n", AOconf[loop].GPU);
     if(AOconf[loop].GPU>1)
     {
-        for(uint8_t k=0; k<AOconf[loop].GPU; k++)
+		uint8_t k;
+        for(k=0; k<AOconf[loop].GPU; k++)
             printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", (int) k, GPUset0[k], GPUset1[k]);
     }
 
