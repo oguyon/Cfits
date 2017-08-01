@@ -1611,7 +1611,7 @@ int break_cube(const char *ID_name)
     {
         n = snprintf(framename,SBUFFERSIZE,"%s_%5ld",ID_name,kk);
         if(n >= SBUFFERSIZE)
-            printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
+            printERROR(__FILE__, __func__, __LINE__, "Attempted to write string buffer with too many characters");
         for(i=0; i<(long) strlen(framename); i++)
         {
             if(framename[i] == ' ')

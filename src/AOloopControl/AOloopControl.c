@@ -5342,8 +5342,6 @@ int_fast8_t Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, l
 
     long IDeigenmodes;
 
-    long frameDelay = 0;
-    long frameDelayMax = 50;
     long double RMsig;
     long double RMsigold;
     long kc0;
