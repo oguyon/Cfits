@@ -2671,7 +2671,9 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         fflush(stdout);
 
         GPUset0 = (int*) malloc(sizeof(int)*GPUcntMax);
+
         uint_fast16_t k;
+
         for(k=0; k<GPUcntMax; k++)
         {
 			FILE *fp;
@@ -2693,10 +2695,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         }
 
 
-
-
         GPUset1 = (int*) malloc(sizeof(int)*GPUcntMax);
-        uint_fast16_t k;
         for(k=0; k<GPUcntMax; k++)
         {
 			FILE *fp;
@@ -4628,8 +4627,6 @@ long AOloopControl_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, lo
     
     free(sizearray);
 
-
-    uint_fast16_t PokeIndex;
 	for(PokeIndex = 0; PokeIndex < NBpoke; PokeIndex++)
 		for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
 			data.image[IDoutC].array.F[PokeIndex*AOconf[loop].sizeWFS+ii] /= NBave*iter;
@@ -6148,7 +6145,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
 long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode)
 {
     long IDmask;
-    long ID, ID0, IDtm, IDeModes, IDem, IDtmp, IDtmpg, IDslaved;
+    long ID, ID0, IDtm, IDem, IDtmp, IDtmpg, IDslaved;
     long ii, jj;
     double x, y, r, PA, xc1, yc1, totm, totvm, val0, offset, rms, sigma;
 
@@ -6311,7 +6308,7 @@ long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, fl
     for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
     {
         /// Remove excluded modes
-        IDeModes = image_ID("emodes");
+        long IDeModes = image_ID("emodes");
         if(IDeModes!=-1)
         {
             IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
@@ -7875,7 +7872,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         data.image[ID].array.F[k*msizex*msizey+jj*msizex+ii] = Zernike_value(zindex[k], r, PA);
                     }
             }
-            uint_fast32_t k;
+            
             for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
             {
                 data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
@@ -7890,7 +7887,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 			double ave;
 			double offset;
 			double totvm;
-			uint_fast32_t k;
+			
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
                // set RMS = 1 over mask
