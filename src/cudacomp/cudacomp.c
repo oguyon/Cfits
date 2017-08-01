@@ -220,6 +220,10 @@ int_fast8_t CUDACOMP_test_cli()
     #endif
 }
 
+
+
+
+
 #ifdef HAVE_CUDA
 
 
@@ -519,7 +523,7 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     double SVDeps = 0.1;
 
     long n, m;
-    uint32_t *arraysizetmp;
+//    uint32_t *arraysizetmp;
     long ID, ID_R, ID_C;
     long ii, jj;
     float val;
@@ -572,6 +576,8 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
                     data.image[ID].array.F[jj*n+ii] = val;
                 }
         save_fits("SVDcheck", "!SVDcheck.fits");
+
+		free(arraysizetmp);
         printf("DONE\n");
         fflush(stdout);*/
     }
@@ -3374,6 +3380,7 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
     if(atype!=_DATATYPE_FLOAT)
     {
         printf("wrong type\n");
+        free(arraysizetmp);
         exit(0);
     }
 

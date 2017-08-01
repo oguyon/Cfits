@@ -6155,7 +6155,7 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     int loopOK;
     long ii;
     long cnt = 0;
-    int RT_priority = 80; //any number from 0-99
+//    int RT_priority = 80; //any number from 0-99
 
     struct sched_param schedpar;
     struct timespec ts;
@@ -6169,6 +6169,9 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     double *dtarray;
     struct timespec *tarray;
     long slice1;
+
+
+
 
     sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
@@ -6369,7 +6372,8 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
     free(nbpixslice);
     free(sizearray);
     free(dtarray);
-
+    free(tarray);
+    
     return(IDout);
 }
 

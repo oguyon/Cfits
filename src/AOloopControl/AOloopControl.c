@@ -2426,7 +2426,6 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
     int create = 0;
     int result;
     long loop;
-    uint32_t *sizearray;
     char cntname[200];
     int k;
     FILE *fp;
@@ -2513,6 +2512,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
         sprintf(cntname, "aol%ld_logdata", loop); // contains loop count (cnt0) and loop gain
         if((aoconfIDlogdata = image_ID(cntname))==-1)
         {
+			uint32_t *sizearray;
             sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearray[0] = 1;
             sizearray[1] = 1;

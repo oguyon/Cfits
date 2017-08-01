@@ -2694,7 +2694,6 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
     uint_fast16_t nblambda;
     uint_fast32_t k;
     uint_fast32_t ii, jj;
-    double x, y, r; // in meter
 
     int_fast32_t ii1, jj1;
     uint_fast32_t iii, jjj;
@@ -2809,6 +2808,12 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
 	printf("Entering parallel loop\n");
 	fflush(stdout);
 	
+	
+	double x, y, r; // in meter
+	x = 0.0;
+	y = 0.0;
+	r = 0.0;
+	
 # ifdef HAVE_LIBGOMP
     #pragma omp parallel default(shared) private(ii, jj, x, y, r, retmp, imtmp, iii, jjj, ii1, jj1, zi, t, a, fpscale, amp, pha, cospha, sinpha, ttmp, zonetmp)
     {
@@ -2825,9 +2830,7 @@ long PIAACMCsimul_mkFocalPlaneMask(const char *IDzonemap_name, const char *ID_na
             printf("piaacmc[0].fpmCentConeRad = %g m\n", piaacmc[0].fpmCentConeRad);
             printf("piaacmc[0].fpmOuterConeRad [%d] = %g m\n",  OuterCone, piaacmc[0].fpmOuterConeRad);
 
-		
-
-
+	
 
             for(ii=0; ii<size; ii++)
                 for(jj=0; jj<size; jj++)
