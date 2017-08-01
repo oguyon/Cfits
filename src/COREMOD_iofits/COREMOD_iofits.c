@@ -888,8 +888,9 @@ int save_db_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				printf("atype = %d\n", atype);
 				free(array);
-				return(-1);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1062,8 +1063,9 @@ int save_fl_fits(const char *ID_name, const char *file_name)
         			
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
+				printf("atype = %d\n", atype);
 				free(array);
-				return(-1);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1241,7 +1243,8 @@ int save_sh_fits(const char *ID_name, const char *file_name)
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 				free(array);
-				return(-1);
+				printf("atype = %d\n", atype);
+				exit(0);
 				break;				
 			}            
 		}    
@@ -1416,7 +1419,8 @@ int save_ush_fits(const char *ID_name, const char *file_name)
 				default :
 				printERROR(__FILE__,__func__,__LINE__,"atype value not recognised");
 				free(array);
-				return(-1);
+				printf("atype = %d\n", atype);
+				exit(0);
 				break;				
 			}            
 		}    
