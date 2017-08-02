@@ -7621,8 +7621,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long conviter;
     float sigma;
 
-    long act2;
-
     int MODAL; // 1 if "pixels" of DM are already modes
 
     long IDRMMmodes = -1;
@@ -7648,13 +7646,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 	int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
 	
-	long IDcmatall;
 
 	long ii1, jj1;
 	float dx, dy, dist, dist0, val1cnt;
 	long IDprox, IDprox1;
-
-	long IDmaskRMin;
 	float gain;
 	
 	FILE *fpcoeff;
@@ -7849,9 +7844,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 			fp = fopen("rmscomp.dat", "w");
 			
 			
-			double ave;
-			double offset;
-			double totvm;
+		//	double ave;
+		//	double offset;
+			//double totvm;
 			
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
@@ -7897,13 +7892,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 				// Compute total of image over mask -> totvm
-                ave = 0.0;
-                totvm = 0.0;
+                double ave = 0.0;
+                double totvm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                     totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
                 // compute DC offset in mode
-                offset = totvm/totm;
+                double offset = totvm/totm;
 
 				// remove DM offset
                 for(ii=0; ii<msizex*msizey; ii++)
@@ -7986,7 +7981,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
 		
 		// IDmaskRM pixels excluding edge
-		IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
+		long IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
 		for(ii=0; ii<msizex*msizey; ii++)
 			data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
 		save_fits("dmmaskRMin", "!dmmaskRMin.fits");
@@ -8139,7 +8134,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         printf("size: %ld %ld %ld\n", (long) data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
 
-		long act1;
+		long act1, act2;
 # ifdef _OPENMP
         #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
 # endif
@@ -9583,7 +9578,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
-        IDcmatall = create_3Dimage_ID("cmatall", wfsxsize, wfsysize, cnt);
+        long IDcmatall = create_3Dimage_ID("cmatall", wfsxsize, wfsysize, cnt);
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
