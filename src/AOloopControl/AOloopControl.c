@@ -7844,9 +7844,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 			fp = fopen("rmscomp.dat", "w");
 			
 			
-		//	double ave;
-		//	double offset;
-			//double totvm;
 			
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
