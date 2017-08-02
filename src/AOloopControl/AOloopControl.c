@@ -7615,8 +7615,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long m1;
     long IDnewmodeC;
 
-    long kk1;
-
     long IDtmp, IDtmpg;
     long conviter;
     float sigma;
@@ -7889,7 +7887,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 				// Compute total of image over mask -> totvm
-                double ave = 0.0;
                 double totvm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                     totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
@@ -7960,18 +7957,22 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
 		printf("Create DM mask\n");
 		fflush(stdout);
-		IDmask = -1;
-		if(IDmask == -1)
-		{
-			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
+		
+		
+		//IDmask = -1;
+		//if(IDmask == -1)
+		//{
+			long IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
 			for(ii=0; ii<msizex*msizey; ii++)
 				{
-					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+// TO BE DONE: explore use of IDmaskRM 
+//					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
 					if(data.image[IDmask].array.F[ii]>1.0)
 						data.image[IDmask].array.F[ii] = 1.0;
 				}
 			save_fits("dmmask", "!dmmask.fits");
-		}
+		//}
 
 		// EDGE PIXELS IN IDmaskRM
 		long IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
@@ -8026,9 +8027,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 		// remove modes
-		double offset;
-		double ave;
-		double totvm;
 		uint_fast32_t k;
 		for(k=0; k<data.image[ID0].md[0].size[2]-1 + NBZ; k++)
 		{
@@ -8062,8 +8060,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
 			
 			// Compute total of image over mask -> totvm
-                ave = 0.0;
-                totvm = 0.0;
+                double ave = 0.0;
+                double totvm = 0.0;
                 totm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                     {
@@ -8072,7 +8070,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 					}
 					
                 // compute DC offset in mode
-                offset = totvm/totm;
+                double offset = totvm/totm;
 
 				// remove DM offset
                 for(ii=0; ii<msizex*msizey; ii++)
@@ -8214,8 +8212,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                 delete_image_ID("testrc");
 
-
-                LOcoeff = 1.0;
 
                 LOcoeff = 1.0/(1.0+pow(10.0*res, 4.0));
 
@@ -9324,6 +9320,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                 for(kk=0; kk<cnt; kk++) /// eigen mode index
                 {
+					long kk1;
                     for(kk1=0; kk1<data.image[IDSVDcoeff].md[0].size[0]; kk1++)
                     {
                         for(ii=0; ii<msizexy; ii++)
@@ -9595,11 +9592,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     
     
     
-    
-    int COMPUTE_FULL_CMAT = 0;
+ // COMPUTE OVERALL CONTROL MATRIX
+/*    int COMPUTE_FULL_CMAT = 0;
     if(COMPUTE_FULL_CMAT == 1)
     {
-        // COMPUTE OVERALL CONTROL MATRIX
         printf("COMPUTE OVERALL CONTROL MATRIX\n");
         float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
         #ifdef HAVE_MAGMA
@@ -9608,11 +9604,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
 		#endif
 		
-        //save_fits("VTmat", "!./mkmodestmp/VTmat.fits");
         delete_image_ID("VTmat");
         save_fits("cmat", "!./mkmodestmp/cmat.fits");
 
-		}
+	}
 
 		char command[1000];
         if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
@@ -9621,7 +9616,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         if(system(command) != 0)
 			printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
-    
+    */
     }
     // time : 07:43
 
@@ -9646,7 +9641,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	long *MBLOCK_blockstart;
 	long *MBLOCK_blockend;
 	char fname[500];
-	int ret;
+
 	char imname[500];
 	char imname1[500];
 	long ID;
@@ -9673,7 +9668,9 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
 	
 	printf("Function AOloopControl_mkModes_Simple - Cmblock = %ld / %ld\n", Cmblock, NBmblock);
 	fflush(stdout);
-	ret = system("mkdir -p mkmodestmp");
+	
+	if(system("mkdir -p mkmodestmp") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 	
 	
 	
@@ -11234,15 +11231,10 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
 
 int_fast8_t set_DM_modes(long loop)
 {
-    long k;
-    long i, j;
-    float *arrayf;
     double a;
     long cnttest;
     int semval;
     
-//    printf("======= set DM modes\n");
-//   fflush(stdout);
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
@@ -11250,7 +11242,11 @@ int_fast8_t set_DM_modes(long loop)
     
     if(AOconf[loop].GPU == 0)
     {
+		float *arrayf;
+        long i, j, k;
+        
         arrayf = (float*) malloc(sizeof(float)*AOconf[loop].sizeDM);
+		
         for(j=0; j<AOconf[loop].sizeDM; j++)
             arrayf[j] = 0.0;
 
@@ -11274,8 +11270,7 @@ int_fast8_t set_DM_modes(long loop)
     else
     {
 #ifdef HAVE_CUDA
-     //   printf("GPU setup\n");
-     //   fflush(stdout);
+
 		
         GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);        
         AOconf[loop].status = 12; 
@@ -11352,15 +11347,13 @@ int_fast8_t set_DM_modesRM(long loop)
 
 int_fast8_t AOcompute(long loop, int normalize)
 {
-    float total = 0.0;
-    long k, k1, k2;
+    long k1, k2;
     long ii;
     long i;
     long m, n;
     long index;
     //  long long wcnt;
     // long long wcntmax;
-    long cnttest;
     double a;
 
     float *matrix_cmp;
@@ -11372,12 +11365,10 @@ int_fast8_t AOcompute(long loop, int normalize)
     float *matrix_Mc, *matrix_DMmodes;
     long n_sizeDM, n_NBDMmodes, n_sizeWFS;
 
-    long ii1;
     long IDmask;
     long act_active, wfselem_active;
     float *matrix_Mc_active;
     long IDcmatca_shm;
-    char imname[200];
     int r;
     float imtot;
 
@@ -11432,7 +11423,6 @@ int_fast8_t AOcompute(long loop, int normalize)
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
             data.image[aoconfID_imWFS2].array.F[ii] = data.image[aoconfID_imWFS1].array.F[ii] - normfloorcoeff*data.image[aoconfID_wfsref].array.F[ii];
 		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS2, -1);
-        cnttest = data.image[aoconfID_meas_modes].md[0].cnt0;
         data.image[aoconfID_imWFS2].md[0].cnt0 ++;
         data.image[aoconfID_imWFS2].md[0].write = 0;
     }
@@ -11461,7 +11451,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         {
             for(slice=0; slice<PIXSTREAM_NBSLICES; slice++)
             {
-                ii1 = 0;
+                long ii1 = 0;
                 for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
                     if(data.image[aoconfID_wfsmask].array.F[ii]>0.1)
                     {
@@ -11478,6 +11468,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                     }
                 AOconf[loop].sizeWFS_active[slice] = ii1;
                 
+                char imname[200];
                 if(sprintf(imname, "aol%ld_imWFS2active_%02d", LOOPNUMBER, slice) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -11503,7 +11494,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         DM_active_map = (int*) malloc(sizeof(int)*AOconf[loop].sizeDM);
         if(aoconfID_dmmask != -1)
         {
-            ii1 = 0;
+            long ii1 = 0;
             for(ii=0; ii<AOconf[loop].sizeDM; ii++)
                 if(data.image[aoconfID_dmmask].array.F[ii]>0.5)
                 {
@@ -11520,6 +11511,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         sizearray[0] = AOconf[loop].sizeDM_active;
         sizearray[1] = 1;
         
+        char imname[200];
         if(sprintf(imname, "aol%ld_meas_act_active", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -11766,6 +11758,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     if(MATRIX_COMPUTATION_MODE==0)
     {
         AOconf[loop].RMSmodes = 0;
+        long k;
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
 
@@ -11807,20 +11800,18 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_WFSref_name, const char *ID_WFSim_name, const char *ID_WFSimtot_name, const char *ID_coeff_name)
 {
+	#ifdef HAVE_CUDA
+	
     int *GPUsetM;
-    int GPUcntMax = 1;
     long ID_CM;
     long ID_WFSref;
     long ID_coeff;
-    long GPUcnt=1;
+    long GPUcnt;
     int k;
     int_fast8_t GPUstatus[100];
     int_fast8_t status;
-    long iter;
-    long NBiter=100;
     long NBmodes;
     uint32_t *sizearray;
-    long initWFSref = 0;
     
     long ID_WFSim;
     long ID_WFSim_n;
@@ -11830,13 +11821,9 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     
     long ID_WFSimtot;
     double totfluxave;
-    double alpha = 0.1;
     long ID_coefft;
     
-    
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
-	#endif
+	double alpha = 0.1;
 
     
     GPUcnt = 2;
@@ -11871,15 +11858,16 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     COREMOD_MEMORY_image_set_createsem("wfsim_n", 10);
     
     
+    
+    
     ID_WFSim = image_ID(ID_WFSim_name);
     ID_WFSimtot = image_ID(ID_WFSimtot_name);
     
-//    for(iter=0; iter<NBiter; iter++)
-    #ifdef HAVE_CUDA
+    
     GPU_loop_MultMat_setup(2, ID_CM_name, "wfsim_n", "coefftmp", GPUcnt, GPUsetM, 0, 1, 1, 0);
 
     totfluxave = 1.0;
-    
+    int initWFSref;
     while(1==1)
         {
             if(initWFSref==0)
@@ -11909,10 +11897,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
               data.image[ID_coeff].array.F[m] = data.image[ID_coefft].array.F[m]/totfluxave - data.image[IDcoeff0].array.F[m];
             data.image[ID_coeff].md[0].cnt0 ++;
             data.image[ID_coeff].md[0].write = 0;
-            
-            iter++;
         }
-    #endif
         
     
     delete_image_ID("coeff0");
@@ -11920,9 +11905,9 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
         
     free(GPUsetM);
     
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
-	#endif
+
+    
+    #endif
     
     return(0);
 }
@@ -11936,6 +11921,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
 //
 int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name, const char *DMmodes_name, int semTrigg, const char *out_name, int GPUindex, long loop, int offloadMode)
 {
+#ifdef HAVE_CUDA
 	long IDmodecoeffs;
 	int GPUcnt, k;
 	int *GPUsetM;
@@ -11972,9 +11958,9 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 
     schedpar.sched_priority = RT_priority;
-#ifndef __MACH__
+	#ifndef __MACH__
     sched_setscheduler(0, SCHED_FIFO, &schedpar); 
-#endif
+	#endif
 
 
 	// read AO loop gain, mult
@@ -12006,7 +11992,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 
 
-	#ifdef HAVE_CUDA
+	
     GPU_loop_MultMat_setup(0, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);        
 
 
@@ -12022,11 +12008,11 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 		IDc = image_ID(imnamedmC);
 		dmxsize = data.image[IDc].md[0].size[0];
 		dmysize = data.image[IDc].md[0].size[1];
-	} 
 	
-	printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
-	fflush(stdout);
-
+	
+		printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
+		fflush(stdout);
+	}
 
 	while(1==1)
         {	
@@ -12051,7 +12037,6 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 				}		
 			AOconf[loop].statusM = 20;	
 		}
-	#endif
 
 
 	
@@ -12061,8 +12046,13 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
 	#endif
 
+	#endif
+
 	return(0);
 }
+
+
+
 
 
 //
@@ -12306,6 +12296,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 }
 
 
+
+
 // includes mode filtering (limits, multf)
 long AOloopControl_ComputeOpenLoopModes(long loop)
 {
@@ -12338,7 +12330,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	long framelatency0, framelatency1;
 	long IDgainb;
 	long cnt;
-	long ii;
 	
 	
 	// FILTERING
@@ -12480,6 +12471,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	IDmodevalPF = read_sharedmem_image(imname);
 	if(IDmodevalPF != -1)
 		{
+			long ii;
 			for(ii=0;ii<data.image[IDmodevalPF].md[0].size[0]*data.image[IDmodevalPF].md[0].size[1];ii++)
 				data.image[IDmodevalPF].array.F[ii] = 0.0;
 		}
@@ -13971,7 +13963,6 @@ int_fast8_t AOloopControl_loopstep(long loop, long NBstep)
 
 int_fast8_t AOloopControl_loopreset()
 {
-    char name[200];
     long k;
     long mb;
 
@@ -13984,6 +13975,7 @@ int_fast8_t AOloopControl_loopreset()
 
     if(aoconfID_cmd_modes==-1)
     {
+		char name[200];
         if(sprintf(name, "DMmode_cmd_%ld", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -15992,7 +15984,7 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 	
 	
 	cnt =  0;
-	while(1==1)
+	for(;;)
     {
 	  if(data.image[IDmodeval].md[0].sem==0)
         {
