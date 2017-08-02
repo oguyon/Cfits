@@ -13330,6 +13330,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	free(modemult);
 	free(NOISEfactor);
 
+	free(stdev);
+
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
 	#endif
@@ -13436,7 +13438,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long
     
     for(ii=0;ii<NBsamples;ii++)
         for(m=0;m<modesize;m++)
-            data.image[IDtrace].array.F[jj*NBsamples+ii] = data.image[IDmodecoeff].array.F[ii*NBmodes+jj];
+            data.image[IDtrace].array.F[m*NBsamples+ii] = data.image[IDmodecoeff].array.F[ii*NBmodes+m];
 
     
     val = AOloopControl_testPredictiveFilter("trace", modeouto, delayfr, filtsize, "filt", SVDeps);
@@ -15573,12 +15575,11 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     long wfsframeoffset = 10;
 
     long IDwfsref;
-    unsigned int dmstate;
+    
     unsigned long wfscnt0;
     char *ptr;
     long kk, kkmax;
     double *valarray;
-    double valmax, valmaxdt;
     double tmp;
     double dtoffset;
     long kkoffset;
@@ -15594,8 +15595,6 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     double latency;
-    float latencystep;
-    int ret;
     float minlatency, maxlatency;
 	double wfsdt;
 	
@@ -15672,7 +15671,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     tarray = (struct timespec *) malloc(sizeof(struct timespec)*wfs_NBframesmax);
     dtarray = (double*) malloc(sizeof(double)*wfs_NBframesmax);
 
-    ret = system("mkdir -p timingstats");
+	if(system("mkdir -p timingstats") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     if ((fp=fopen("timingstats/hardwlatency.txt", "w"))==NULL)
     {
@@ -15696,7 +15696,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 		printf("write to %s\n", dmname);
 		fflush(stdout);
         copy_image_ID("_testdm0", dmname, 1);
-        dmstate = 0;
+        
+        unsigned int dmstate = 0;
 
         // waiting time
         usleep(twaitus);  	
@@ -15754,7 +15755,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 
             tdouble = 1.0*tarray[wfsframe].tv_sec + 1.0e-9*tarray[wfsframe].tv_nsec;
             dt = tdouble - tstartdouble;
-            dt1 = tdouble - tlastdouble;
+          //  dt1 = tdouble - tlastdouble;
             dtarray[wfsframe] = dt;
             tlastdouble = tdouble;
 
@@ -15783,8 +15784,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         // Computing difference between consecutive images
         NBwfsframe = wfsframe;
         valarray = (double*) malloc(sizeof(double)*NBwfsframe);
-        valmax = 0.0;
-        valmaxdt = 0.0;
+        double valmax = 0.0;
+        double valmaxdt = 0.0;
         for(kk=1; kk<NBwfsframe; kk++)
         {
             valarray[kk] = 0.0;
@@ -15821,7 +15822,8 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         free(valarray);
 
         latency = valmaxdt-dtoffset;
-        latencystep = kkmax;
+       // latencystep = kkmax;
+        
         printf("Hardware latency = %f ms  = %ld frames\n", 1000.0*latency, kkmax);
         if(latency > latencymax)
         {
@@ -16032,7 +16034,6 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 int_fast8_t AOloopControl_InjectMode( long index, float ampl )
 {
     long i;
-    float *arrayf;
     char name[200];
 
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -16061,6 +16062,8 @@ int_fast8_t AOloopControl_InjectMode( long index, float ampl )
     }
     else
     {
+		float *arrayf;
+		
         arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
 
         for(i=0; i<AOconf[LOOPNUMBER].sizeDM; i++)
@@ -17583,13 +17586,12 @@ int_fast8_t AOloopControl_setmultfrange(long m0, long m1, float multfval)
 
 int_fast8_t AOloopControl_setgainblock(long mb, float gainval)
 {
-    char imname[200];
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
 	if(aoconfID_gainb == -1)
 	{
+		char imname[200];
 		if(sprintf(imname, "aol%ld_gainb", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
