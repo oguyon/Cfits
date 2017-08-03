@@ -274,18 +274,18 @@ int CLIWritePid()
     int pid;
     char command[200];
     int n;
-    int r;
 
     pid = getpid();
-    n = snprintf(command,200,"touch CLI_%d",pid);
+    n = snprintf(command, 200, "touch CLI_%d", pid);
     if(n >= 200)
         printERROR(__FILE__,__func__,__LINE__,"Attempted to write string buffer with too many characters");
 
-
-    r = system(command);
+    if(system(command) != 0)
+        printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
 
     return(0);
 }
+
 
 
 
