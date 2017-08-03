@@ -5,6 +5,7 @@ var CLIcore_8h =
     [ "CMDARGTOKEN", "structCMDARGTOKEN.html", "structCMDARGTOKEN" ],
     [ "VARIABLE", "structVARIABLE.html", "structVARIABLE" ],
     [ "DATA", "structDATA.html", "structDATA" ],
+    [ "BOOL", "CLIcore_8h.html#a8dfff6fca82af0a0432e777a61607d87", null ],
     [ "CLI_checkarg", "CLIcore_8h.html#acfa3a12412c06fe66437c5f77f066fa0", null ],
     [ "CLI_checkarg_noerrmsg", "CLIcore_8h.html#a8b68e72c423d42662e9c37f450ced2df", null ],
     [ "RegisterCLIcommand", "CLIcore_8h.html#a097efcf1913161adeffaf98921d0f5a5", null ],

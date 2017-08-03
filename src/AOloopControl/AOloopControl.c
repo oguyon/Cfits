@@ -1404,7 +1404,6 @@ int_fast8_t init_AOloopControl()
 
 
 
-
     
 
     
@@ -1415,7 +1414,15 @@ int_fast8_t init_AOloopControl()
 
 
 
-    RegisterCLIcommand("aolsetloopfrequ",__FILE__, AOloopControl_set_loopfrequ_cli, "set loop frequency", "<loop frequ [Hz]>", "aolsetloopfrequ 2000", "int AOloopControl_set_loopfrequ(float loopfrequ)");
+RegisterCLIcommand("aolsetloopfrequ",
+                   __FILE__,
+                   AOloopControl_set_loopfrequ_cli,
+                   "set loop frequency",
+                   "<loop frequ [Hz]>",
+                   "aolsetloopfrequ 2000",
+                   "int AOloopControl_set_loopfrequ(float loopfrequ)");
+
+
 
     RegisterCLIcommand("aolsethlat", __FILE__, AOloopControl_set_hardwlatency_frame_cli, "set hardware latency", "<hardware latency [frame]>", "aolsethlat 2.7", "int AOloopControl_set_hardwlatency_frame(float hardwlatency_frame)");
 
@@ -17060,9 +17067,8 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 	
 	long IDout_ave;
 	long IDout_rms;
-	double ave, rms, tmpv;
 	
-	long kk, m;
+	long m;
 	long ID1dtmp;
 	FILE *fp;
 	
@@ -17070,8 +17076,8 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 	FILE *fpPSD;
 	long IDft;
 	char fname[200];
-	int ret;
 
+	
 	#ifdef AOLOOPCONTROL_LOGFUNC
 	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
 	#endif	
@@ -17087,11 +17093,17 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
 	ID1dtmp = create_2Dimage_ID("modeval1d", data.image[ID].md[0].size[2], 1);
 	ID1dPSD = create_2Dimage_ID("modevalPSD", data.image[ID].md[0].size[2]/2, 1);
 	
-	ret = system("mkdir -p modePSD");
+	if(system("mkdir -p modePSD") != 0)
+		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+	
 	fp = fopen("moveval_stats.dat", "w");
 	for(m=0;m<NBmodes;m++)
 		{
-			ave = 0.0;
+			double ave = 0.0;
+			double rms;
+			long kk;
+			double tmpv;
+			
 			for(kk=0;kk<NBframes;kk++)
 				ave += data.image[ID].array.F[kk*NBmodes+m];
 			ave /= NBframes;
@@ -17500,13 +17512,13 @@ int_fast8_t AOloopControl_setgainrange(long m0, long m1, float gainval)
 {
     long k;
     long kmax;
-    char name[200];
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_GAIN_modes==-1)
     {
+		char name[200];
         if(sprintf(name, "aol%ld_DMmode_GAIN", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -17530,13 +17542,13 @@ int_fast8_t AOloopControl_setlimitrange(long m0, long m1, float limval)
 {
     long k;
     long kmax;
-    char name[200];
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_LIMIT_modes==-1)
     {
+		char name[200];
         if(sprintf(name, "aol%ld_DMmode_LIMIT", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -17555,17 +17567,18 @@ int_fast8_t AOloopControl_setlimitrange(long m0, long m1, float limval)
 
 
 
+
 int_fast8_t AOloopControl_setmultfrange(long m0, long m1, float multfval)
 {
     long k;
     long kmax;
-    char name[200];
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_MULTF_modes==-1)
     {
+		char name[200];
         if(sprintf(name, "aol%ld_DMmode_MULTF", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -17581,6 +17594,7 @@ int_fast8_t AOloopControl_setmultfrange(long m0, long m1, float multfval)
 
     return 0;
 }
+
 
 
 
@@ -17607,15 +17621,15 @@ int_fast8_t AOloopControl_setgainblock(long mb, float gainval)
 
 
 
+
 int_fast8_t AOloopControl_setlimitblock(long mb, float limitval)
 {
-    char imname[200];
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
 	if(aoconfID_limitb == -1)
 	{
+		char imname[200];
 		if(sprintf(imname, "aol%ld_limitb", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -17630,15 +17644,15 @@ int_fast8_t AOloopControl_setlimitblock(long mb, float limitval)
 
 
 
+
 int_fast8_t AOloopControl_setmultfblock(long mb, float multfval)
 {
-    char imname[200];
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
 	if(aoconfID_multfb == -1)
 	{
+		char imname[200];
 		if(sprintf(imname, "aol%ld_multfb", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 			
@@ -17731,9 +17745,6 @@ long AOloopControl_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long 
 int_fast8_t AOloopControl_AutoTune()
 {
     long block;
-    float gainStart = 0.0;
-    float gainEnd = 1.0;
-
     long NBgain = 10;
     long NBstep = 10000;
     float gain;
@@ -17742,10 +17753,6 @@ int_fast8_t AOloopControl_AutoTune()
     float bestgain= 0.0;
     float bestval = 10000000.0;
     float val;
-
-    int gOK;
-
-
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
@@ -17769,8 +17776,12 @@ int_fast8_t AOloopControl_AutoTune()
 
     for(block=0; block<AOconf[LOOPNUMBER].DMmodesNBblock; block++)
     {
+		float gainStart = 0.0;
+		float gainEnd = 1.0;
+		int gOK = 1;
+
+
         // tune block gain
-        gOK = 1;
         gain = gainStart;
         bestval = 100000000.0;
         while((gOK==1)&&(gain<gainEnd))

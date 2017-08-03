@@ -12,3 +12,6 @@ echo "20" > conf/conf_ssize.txt
 
 echo "1.30" > conf/conf_fpmradld.txt
 echo "2.00" > conf/conf_maskradld.txt
+
+echo "0" > searchtime.txt
+

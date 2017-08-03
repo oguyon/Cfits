@@ -88,6 +88,7 @@ var searchData=
   ['blockave_5flimfrac',['blockave_limFrac',['../structAOLOOPCONTROL__CONF.html#a57d81c3036634564f449eb154b196f2c',1,'AOLOOPCONTROL_CONF']]],
   ['blockave_5folrms',['blockave_OLrms',['../structAOLOOPCONTROL__CONF.html#a3abf091b21f9d919d6e8a7f6c474ed66',1,'AOLOOPCONTROL_CONF']]],
   ['blockave_5fwfsrms',['blockave_WFSrms',['../structAOLOOPCONTROL__CONF.html#a8559879588d5cb0baf2b918391f439c2',1,'AOLOOPCONTROL_CONF']]],
+  ['bool',['BOOL',['../CLIcore_8h.html#a8dfff6fca82af0a0432e777a61607d87',1,'CLIcore.h']]],
   ['break_5fcube',['break_cube',['../COREMOD__iofits_8c.html#ae0d7354c8cd7a60606f816ec85800e5a',1,'break_cube(const char *ID_name):&#160;COREMOD_iofits.c'],['../COREMOD__iofits_8h.html#ae0d7354c8cd7a60606f816ec85800e5a',1,'break_cube(const char *ID_name):&#160;COREMOD_iofits.c']]],
   ['break_5fcube_5fcli',['break_cube_cli',['../COREMOD__iofits_8c.html#a2a03a65f69660604a8c1eee6a7814410',1,'COREMOD_iofits.c']]],
   ['brighter',['brighter',['../info_8c.html#af1ad3fd57f62decf7ee1952a35e70bea',1,'brighter(const char *ID_name, double value):&#160;info.c'],['../info_8h.html#af1ad3fd57f62decf7ee1952a35e70bea',1,'brighter(const char *ID_name, double value):&#160;info.c']]],
