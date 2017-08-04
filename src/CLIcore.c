@@ -363,7 +363,7 @@ static int_fast8_t help()
   char command[200];
 
   sprintf(command, "more %s/doc/help.txt", ABSSRCTOPDIR);
-  if(system(command)==-1)
+  if(system(command) != 0)
     {
       printERROR(__FILE__,__func__,__LINE__,"system call error");
       exit(1);
@@ -379,7 +379,7 @@ static int_fast8_t helpreadline()
   int r;
 
   sprintf(command, "more %s/doc/helpreadline.txt", ABSSRCTOPDIR);
-  if(system(command)==-1)
+  if(system(command) != 0)
     {
       printERROR(__FILE__,__func__,__LINE__,"system call error");
       exit(1);
@@ -464,12 +464,12 @@ static int_fast8_t CLI_execute_line()
     struct tm *uttime;
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
     char command[200];
-    int r;
+    
 
     if (line[0]=='!')
     {
         line[0] = ' ';
-        if(system(line)==-1)
+        if(system(line) != 0)
         {
             printERROR(__FILE__,__func__,__LINE__,"system call error");
             exit(1);
@@ -502,7 +502,9 @@ static int_fast8_t CLI_execute_line()
             {
                 printf("ERROR: cannot log into file %s\n", data.CLIlogname);
                 sprintf(command, "mkdir -p %s/logdir/%04d%02d%02d\n", getenv("HOME"), 1900+uttime->tm_year, 1+uttime->tm_mon, uttime->tm_mday);
-                r = system(command);
+                
+                if( system(command) != 0)
+					printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
             }
             else
             {
@@ -903,7 +905,8 @@ int_fast8_t main(int argc, char *argv[])
             {
                 printf("IMPORTING FILE %s\n", CLIstartupfilename);
                 sprintf(command, "cat %s > %s 2> /dev/null", CLIstartupfilename, data.fifoname);
-                r = system(command);
+                if( system(command) != 0)
+					printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
             }
         initstartup = 1;
 
@@ -1600,7 +1603,8 @@ int command_line( int argc, char **argv)
         case 'e':
             printf("Idle mode: only runs process when X is idle (pid %ld)\n", (long) getpid());
             sprintf(command, "runidle %ld > /dev/null &\n", (long) getpid());
-            r = system(command);
+            if( system(command) != 0)
+				printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
             break;
             
         case 'm':
