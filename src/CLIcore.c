@@ -1526,7 +1526,6 @@ int command_line( int argc, char **argv)
     time_t tm;
     int option_index = 0;
     struct sched_param schedpar;
-    int r;
     char command[200];
 
 
@@ -1561,7 +1560,7 @@ int command_line( int argc, char **argv)
     {
 		int c;
 		
-        c = getopt_long (argc, argv, "hioed:m:n:f:s:",
+        c = getopt_long (argc, argv, "hidoe:m:n:p:f:s:",
                          long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -1626,10 +1625,15 @@ int command_line( int argc, char **argv)
 
         case 'p':
             schedpar.sched_priority = atoi(optarg);
+            printf("RUNNING WITH RT PRIORITY = %d\n", schedpar.sched_priority);
             #ifndef __MACH__
-            r = seteuid(euid_called); //This goes up to maximum privileges
+            //r = seteuid(euid_called); //This goes up to maximum privileges
+            if(seteuid(euid_called) != 0) //This goes up to maximum privileges
+				printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");            
             sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-            r = seteuid(euid_real);//Go back to normal privileges
+//            r = seteuid(euid_real);//Go back to normal privileges
+			if(seteuid(euid_real) != 0) //Go back to normal privileges
+				printERROR(__FILE__, __func__, __LINE__, "seteuid() returns non-zero value");
             #endif
             break;
 
