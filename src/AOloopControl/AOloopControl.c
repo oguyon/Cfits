@@ -7569,23 +7569,23 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     long mblock, m;
     long NBmblock;
-    
+
     long MBLOCK_NBmode[MAX_MBLOCK]; // number of blocks
     long MBLOCK_ID[MAX_MBLOCK];
     long MBLOCK_IDwfs[MAX_MBLOCK];
     float MBLOCK_CPA[MAX_MBLOCK];
-    
+
 
     char *ptr0;
     char *ptr1;
 
     char imname[200];
     char imname1[200];
-    
+
 
     char fname[200];
     char fname1[200];
-    
+
 
     float value, value0, value1, value1cnt, valuen;
     long msizexy;
@@ -7606,11 +7606,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
     float SVDlim00;// DM filtering step 0
     float SVDlim01; // DM filtering step 1
-    
-    
+
+
     float rmslim1 = 0.1;
     long IDm;
-    
+
 
     int *mok;
     long NBmm = 2000; // max number of modes per block
@@ -7633,7 +7633,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     long ID_imfit = -1;
     long IDRMM_coeff = -1;
     long IDcoeffmat = -1;
-    
+
     long linfitsize;
     int linfitreuse;
     double res, res1, v0;
@@ -7644,36 +7644,36 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     FILE *fpLOcoeff;
     long IDwfstmp;
 
-	long pixcnt;
-	float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym, ctot;
-	long IDtmp1, IDtmp2;
+    long pixcnt;
+    float vxp, vxm, vyp, vym, cxp, cxm, cyp, cym, ctot;
+    long IDtmp1, IDtmp2;
 
 
-	int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
-	
-
-	long ii1, jj1;
-	float dx, dy, dist, dist0, val1cnt;
-	long IDprox, IDprox1;
-	float gain;
-	
-	FILE *fpcoeff;
-	char fnameSVDcoeff[400];
+    int COMPUTE_DM_MODES = 1; // compute DM modes (initial step) fmode2b_xxx and fmodes2ball
 
 
-	// extra block
-	long extrablockIndex;
-	
-	
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
-	#endif
+    long ii1, jj1;
+    float dx, dy, dist, dist0, val1cnt;
+    long IDprox, IDprox1;
+    float gain;
+
+    FILE *fpcoeff;
+    char fnameSVDcoeff[400];
+
+
+    // extra block
+    long extrablockIndex;
+
+
+#ifdef AOLOOPCONTROL_LOGFUNC
+    AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
+#endif
 
 
 
-	// SET LIMITS
-	SVDlim00 = SVDlim; // DM filtering step 0
-	SVDlim01 = SVDlim; // DM filtering step 1
+    // SET LIMITS
+    SVDlim00 = SVDlim; // DM filtering step 0
+    SVDlim01 = SVDlim; // DM filtering step 1
 
 
 
@@ -7716,7 +7716,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
     if(system("mkdir -p mkmodestmp") < 1)
-		printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+        printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
     msizexy = msizex*msizey;
 
@@ -7728,11 +7728,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         IDmaskRM = image_ID("dmmaskRM");
         if(IDmaskRM==-1)
         {
-			double val0, val1;
-			double a0=0.88;
-			double b0=40.0;
-			double a1=1.2;
-			double b1=12.0;
+            double val0, val1;
+            double a0=0.88;
+            double b0=40.0;
+            double a1=1.2;
+            double b1=12.0;
 
             IDmaskRM = create_2Dimage_ID("dmmaskRM", msizex, msizey);
             for(ii=0; ii<msizex; ii++)
@@ -7778,34 +7778,32 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-	
-	COMPUTE_DM_MODES = 0;
-	ID2b = image_ID("fmodes2ball");
-	
-	if(ID2b == -1)
-		COMPUTE_DM_MODES = 1;
-	else
-	{
-		
-	}
+
+    COMPUTE_DM_MODES = 0;
+    ID2b = image_ID("fmodes2ball");
+
+    if(ID2b == -1)
+        COMPUTE_DM_MODES = 1;
 
 
 
     if(COMPUTE_DM_MODES==1) // DM modes fmodes2b
     {
-		long ID0 = -1;
-		long NBZ = 0;
-		long IDmfcpa;
-		float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
-		
-		long IDmask;
-		long IDslaved;
-		long IDmaskRMedge;
-		long IDmaskRMin;
-		
-		
+        long ID0 = -1;
+        long NBZ = 0;
+        long IDmfcpa;
+        float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+
+        long IDmask;
+        long IDslaved;
+        long IDmaskRMedge;
+
+
+
         if(MODAL==0)
         {
+	        long IDmaskRMin;
+			
             // AOloopControl_mkloDMmodes(ID_name, msizex, msizey, CPAmax, deltaCPA, xc, yc, r0, r1, MaskMode);
             //NBZ = 5; /// 3: tip, tilt, focus
             NBZ = 0;
@@ -7816,7 +7814,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             }
 
 
-			// here we create simple Fourier modes
+            // here we create simple Fourier modes
             linopt_imtools_makeCPAmodes("CPAmodes", msizex, CPAmax, deltaCPA, 0.5*msizex, 1.2, 0);
             ID0 = image_ID("CPAmodes");
 
@@ -7831,7 +7829,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
             zernike_init();
-            
+
             double PA;
             uint_fast32_t k;
             for(k=0; k<NBZ; k++)
@@ -7847,7 +7845,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         data.image[ID].array.F[k*msizex*msizey+jj*msizex+ii] = Zernike_value(zindex[k], r, PA);
                     }
             }
-            
+
             for(k=0; k<data.image[ID0].md[0].size[2]-1; k++)
             {
                 data.image[IDmfcpa].array.F[k+NBZ] = data.image[IDfreq].array.F[k+1];
@@ -7856,13 +7854,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             }
 
 
-			fp = fopen("rmscomp.dat", "w");
-			
-			
-			
+            fp = fopen("rmscomp.dat", "w");
+
+
+
             for(k=0; k<data.image[ID0].md[0].size[2]-1+NBZ; k++)
             {
-               // set RMS = 1 over mask
+                // set RMS = 1 over mask
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
@@ -7871,39 +7869,39 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
-				
-				fprintf(fp, "%5ld  %g ", k, rms);
-                
-                 /// Remove excluded modes if they exist
-      /*          IDeModes = image_ID("emodes");
-                if(IDeModes!=-1)
-                {
-                    IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmaskRM", 1.0e-3, "lcoeff", 0);
-                    linopt_imtools_image_construct("emodes", "lcoeff", "em00");
-                    delete_image_ID("lcoeff");
-                    IDem = image_ID("em00");
+                fprintf(fp, "%5ld  %g ", k, rms);
 
-//					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
+                /// Remove excluded modes if they exist
+                /*          IDeModes = image_ID("emodes");
+                          if(IDeModes!=-1)
+                          {
+                              IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
-					if(k>kelim)
-						coeff = 1.0;
-					else
-						coeff = 0.0;
+                              for(ii=0; ii<msizex*msizey; ii++)
+                                  data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
+                              linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmaskRM", 1.0e-3, "lcoeff", 0);
+                              linopt_imtools_image_construct("emodes", "lcoeff", "em00");
+                              delete_image_ID("lcoeff");
+                              IDem = image_ID("em00");
 
+                //					coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
 
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
-
-                    delete_image_ID("em00");
-                    delete_image_ID("tmpmode");
-                }*/
+                			if(k>kelim)
+                				coeff = 1.0;
+                			else
+                				coeff = 0.0;
 
 
-				// Compute total of image over mask -> totvm
+                              for(ii=0; ii<msizex*msizey; ii++)
+                                  data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
+
+                              delete_image_ID("em00");
+                              delete_image_ID("tmpmode");
+                          }*/
+
+
+                // Compute total of image over mask -> totvm
                 double totvm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                     totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
@@ -7911,7 +7909,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 // compute DC offset in mode
                 double offset = totvm/totm;
 
-				// remove DM offset
+                // remove DM offset
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
 
@@ -7919,7 +7917,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 for(ii=0; ii<msizex*msizey; ii++)
                     offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
-				// set RMS = 1 over mask
+                // set RMS = 1 over mask
                 rms = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
@@ -7929,21 +7927,21 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
                 fprintf(fp, " %g\n", rms);
-                
+
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
             }
-			fclose(fp);
+            fclose(fp);
 
-       
+
 
             if(MaskMode==1)
             {
                 long kernsize = 5;
                 if(2*kernsize>msizex)
                     kernsize = msizex/2;
-				long citer;
-				long NBciter = 200;
+                long citer;
+                long NBciter = 200;
                 for(citer=0; citer<NBciter; citer++)
                 {
                     printf("Convolution [%3ld/%3ld]\n", citer, NBciter);
@@ -7962,60 +7960,57 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-	
-		
-		
-		
-		// MAKE MASKS FOR EDGE EXTRAPOLATION
-		
-		          
-		IDslaved = image_ID("dmslaved");
-		// load or create DM mask : union of dmslaved and dmmaskRM
-		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
-		printf("Create DM mask\n");
-		fflush(stdout);
-		
-		
-		//IDmask = -1;
-		//if(IDmask == -1)
-		//{
-			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
-			for(ii=0; ii<msizex*msizey; ii++)
-				{
-					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
-					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
-					if(data.image[IDmask].array.F[ii]>1.0)
-						data.image[IDmask].array.F[ii] = 1.0;
-				}
-			save_fits("dmmask", "!dmmask.fits");
-		//}
-
-		// EDGE PIXELS IN IDmaskRM
-		IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
-		save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
-		
-		// IDmaskRM pixels excluding edge
-		IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
-		for(ii=0; ii<msizex*msizey; ii++)
-			data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
-		save_fits("dmmaskRMin", "!dmmaskRMin.fits");
-		
-		
-		save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all00.fits");
-		
-		
-		IDtmp = AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
-		save_fits("fmodes0test", "!fmodes0test.fits");
-		
-		
-		for(m=0; m<data.image[ID].md[0].size[2]; m++)
-		{
-			for(ii=0; ii<msizex*msizey; ii++)
-				data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii] * data.image[IDmask].array.F[ii];		
-		}
 
 
 
+
+            // MAKE MASKS FOR EDGE EXTRAPOLATION
+
+
+            IDslaved = image_ID("dmslaved");
+            // load or create DM mask : union of dmslaved and dmmaskRM
+            //IDmask = load_fits("dmmask.fits", "dmmask", 1);
+            printf("Create DM mask\n");
+            fflush(stdout);
+
+
+            //IDmask = -1;
+            //if(IDmask == -1)
+            //{
+            IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
+            for(ii=0; ii<msizex*msizey; ii++)
+            {
+                data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+                data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
+                if(data.image[IDmask].array.F[ii]>1.0)
+                    data.image[IDmask].array.F[ii] = 1.0;
+            }
+            save_fits("dmmask", "!dmmask.fits");
+            //}
+
+            // EDGE PIXELS IN IDmaskRM
+            IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
+            save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
+
+            // IDmaskRM pixels excluding edge
+            IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
+            save_fits("dmmaskRMin", "!dmmaskRMin.fits");
+
+
+            save_fits(ID_name, "!./mkmodestmp/_test_fmodes0all00.fits");
+
+
+            IDtmp = AOloopControl_DMextrapolateModes(ID_name, "dmmaskRMin", "modesfreqcpa", "fmodes0test");
+            save_fits("fmodes0test", "!fmodes0test.fits");
+
+
+            for(m=0; m<data.image[ID].md[0].size[2]; m++)
+            {
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[ID].array.F[m*msizex*msizey+ii] = data.image[IDtmp].array.F[m*msizex*msizey+ii] * data.image[IDmask].array.F[ii];
+            }
         }
         else
         {
@@ -8034,83 +8029,83 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 data.image[ID].array.F[m*msizex*msizey+m] = 1.0;
             }
         }
-        
-    
-       
+
+
+
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all_00.fits");
 
 
 
-		// remove modes
-		uint_fast32_t k;
-		for(k=0; k<data.image[ID0].md[0].size[2]-1 + NBZ; k++)
-		{
-			  /// Remove excluded modes if they exist
-                long IDeModes = image_ID("emodes");
-                if(IDeModes!=-1)
-                {
-					long kelim = 5;
-                    long IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
+        // remove modes
+        uint_fast32_t k;
+        for(k=0; k<data.image[ID0].md[0].size[2]-1 + NBZ; k++)
+        {
+            /// Remove excluded modes if they exist
+            long IDeModes = image_ID("emodes");
+            if(IDeModes!=-1)
+            {
+                long kelim = 5;
+                long IDtm = create_2Dimage_ID("tmpmode", msizex, msizey);
 
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
-                    linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-3, "lcoeff", 0);
-                    linopt_imtools_image_construct("emodes", "lcoeff", "em00");
-                    delete_image_ID("lcoeff");
-                    long IDem = image_ID("em00");
-
-					double coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
-
-					if(k>kelim)
-						coeff = 1.0;
-					else
-						coeff = 0.0;
-
-
-                    for(ii=0; ii<msizex*msizey; ii++)
-                        data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
-
-                    delete_image_ID("em00");
-                    delete_image_ID("tmpmode");
-                }
-			
-			// Compute total of image over mask -> totvm
-                double ave = 0.0;
-                double totvm = 0.0;
-                totm = 0.0;
                 for(ii=0; ii<msizex*msizey; ii++)
-                    {
-						totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
-						totm += data.image[IDmask].array.F[ii];
-					}
-					
-                // compute DC offset in mode
-                double offset = totvm/totm;
+                    data.image[IDtm].array.F[ii] = data.image[ID].array.F[k*msizex*msizey+ii];
+                linopt_imtools_image_fitModes("tmpmode", "emodes", "dmmask", 1.0e-3, "lcoeff", 0);
+                linopt_imtools_image_construct("emodes", "lcoeff", "em00");
+                delete_image_ID("lcoeff");
+                long IDem = image_ID("em00");
 
-				// remove DM offset
-                for(ii=0; ii<msizex*msizey; ii++)
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
+                double coeff = 1.0-exp(-pow(1.0*k/kelim,6.0));
 
-                offset = 0.0;
-                for(ii=0; ii<msizex*msizey; ii++)
-                    offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+                if(k>kelim)
+                    coeff = 1.0;
+                else
+                    coeff = 0.0;
 
-				// set RMS = 1 over mask
-                rms = 0.0;
-                for(ii=0; ii<msizex*msizey; ii++)
-                {
-                    data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
-                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
-                }
-                rms = sqrt(rms/totm);
-                printf("Mode %ld   RMS = %lf\n", k, rms);
-                
-                for(ii=0; ii<msizex*msizey; ii++)
-                    data.image[ID].array.F[k*msizex*msizey+ii] /= rms;		
-		}
 
-       save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[ID].array.F[k*msizex*msizey+ii] = data.image[IDtm].array.F[ii] - coeff*data.image[IDem].array.F[ii];
+
+                delete_image_ID("em00");
+                delete_image_ID("tmpmode");
+            }
+
+            // Compute total of image over mask -> totvm
+            double ave = 0.0;
+            double totvm = 0.0;
+            totm = 0.0;
+            for(ii=0; ii<msizex*msizey; ii++)
+            {
+                totvm += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+                totm += data.image[IDmask].array.F[ii];
+            }
+
+            // compute DC offset in mode
+            double offset = totvm/totm;
+
+            // remove DM offset
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[ID].array.F[k*msizex*msizey+ii] -= offset;
+
+            offset = 0.0;
+            for(ii=0; ii<msizex*msizey; ii++)
+                offset += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+
+            // set RMS = 1 over mask
+            rms = 0.0;
+            for(ii=0; ii<msizex*msizey; ii++)
+            {
+                data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
+                rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+            }
+            rms = sqrt(rms/totm);
+            printf("Mode %ld   RMS = %lf\n", k, rms);
+
+            for(ii=0; ii<msizex*msizey; ii++)
+                data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
+        }
+
+        save_fits(ID_name, "!./mkmodestmp/fmodes0all.fits");
 
 
 
@@ -8145,7 +8140,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         printf("size: %ld %ld %ld\n", (long) data.image[ID].md[0].size[2], msizexy, wfssize);
         printf("\n");
 
-		long act1, act2;
+        long act1, act2;
 # ifdef _OPENMP
         #pragma omp parallel for private(m,m1,act,act1,act2,wfselem)
 # endif
@@ -8319,51 +8314,51 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         NBmblock++;
 
-		
-		long IDextrablock = image_ID("extrablockM");
-		if(IDextrablock != -1)
-			{				
-				extrablockIndex = 4;
-				
-				fp = fopen("./conf/conf_extrablockIndex.txt", "r");
-				if(fp != NULL)
-				{
-					if(fscanf(fp, "%50ld", &extrablockIndex) != 1)
-						printERROR(__FILE__, __func__, __LINE__, "cannot read parameter from file");
-					fclose(fp);
-				}
-			}
-			
-			
+
+        long IDextrablock = image_ID("extrablockM");
+        if(IDextrablock != -1)
+        {
+            extrablockIndex = 4;
+
+            fp = fopen("./conf/conf_extrablockIndex.txt", "r");
+            if(fp != NULL)
+            {
+                if(fscanf(fp, "%50ld", &extrablockIndex) != 1)
+                    printERROR(__FILE__, __func__, __LINE__, "cannot read parameter from file");
+                fclose(fp);
+            }
+        }
+
+
 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-			long mblock1;
+            long mblock1;
 
-			if(IDextrablock != -1)
-			{
-				mblock1 = mblock;
-				if(mblock>extrablockIndex-1)
-					mblock1 = mblock+1;
-			}
-			else
-				mblock1 = mblock;
-				
+            if(IDextrablock != -1)
+            {
+                mblock1 = mblock;
+                if(mblock>extrablockIndex-1)
+                    mblock1 = mblock+1;
+            }
+            else
+                mblock1 = mblock;
+
             if(sprintf(imname, "fmodes0_%02ld", mblock1) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             MBLOCK_ID[mblock1] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
             MBLOCK_ID[mblock1] = image_ID(imname);
         }
 
-			
+
 
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
             MBLOCK_NBmode[mblock] = 0;
 
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
-			long mblock1;
+            long mblock1;
 
             float cpa = data.image[IDmfcpa].array.F[m];
 
@@ -8371,14 +8366,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             while (cpa > CPAblocklim[mblock])
                 mblock++;
 
-			if(IDextrablock!= -1)
-			{
-				mblock1 = mblock;
-				if(mblock>extrablockIndex-1)
-					mblock1 = mblock+1;
-			}
-			else
-				mblock1 = mblock;
+            if(IDextrablock!= -1)
+            {
+                mblock1 = mblock;
+                if(mblock>extrablockIndex-1)
+                    mblock1 = mblock+1;
+            }
+            else
+                mblock1 = mblock;
 
 
             for(ii=0; ii<msizex*msizey; ii++)
@@ -8388,22 +8383,22 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
 
-		if(IDextrablock != -1)
-			{
-				mblock = extrablockIndex;
-				
-				if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");				
-				
-				MBLOCK_NBmode[mblock] = data.image[IDextrablock].md[0].size[2];
-				MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
+        if(IDextrablock != -1)
+        {
+            mblock = extrablockIndex;
 
-				for(m=0;m<MBLOCK_NBmode[mblock];m++)
-					for(ii=0; ii<msizex*msizey; ii++)
-						data.image[MBLOCK_ID[mblock]].array.F[m*msizex*msizey+ii] = data.image[IDextrablock].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
-				
-				NBmblock++;
-			}
+            if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            MBLOCK_NBmode[mblock] = data.image[IDextrablock].md[0].size[2];
+            MBLOCK_ID[mblock] = create_3Dimage_ID(imname, msizex, msizey, MBLOCK_NBmode[mblock]);
+
+            for(m=0; m<MBLOCK_NBmode[mblock]; m++)
+                for(ii=0; ii<msizex*msizey; ii++)
+                    data.image[MBLOCK_ID[mblock]].array.F[m*msizex*msizey+ii] = data.image[IDextrablock].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+
+            NBmblock++;
+        }
 
 
 
@@ -8412,17 +8407,17 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         // time : 00:42
 
         /// STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)
-		printf("STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)\n");
-		fflush(stdout);
-		
+        printf("STEP 3: REMOVE NULL SPACE WITHIN EACH BLOCK - USE SVDlim00 FOR CUTOFF -> fmodes1all.fits  (DM space)\n");
+        fflush(stdout);
+
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             printf("\nMODE BLOCK %ld\n", mblock);
             fflush(stdout);
 
             if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             printf("SVD decomp ... (%ld) .... ", (long) data.image[image_ID(imname)].md[0].size[2]);
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
@@ -8436,10 +8431,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     cnt++;
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             fflush(stdout);
-            
+
             if(sprintf(imname1, "fmodes1_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
             long IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
@@ -8447,10 +8442,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
-            
+
             if(sprintf(fname1, "!./mkmodestmp/fmodes1_%02ld.fits", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             save_fits(imname1, fname1);
 
             delete_image_ID("svdmodes");
@@ -8476,13 +8471,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-	
+
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
         /// fmodes1all -> fmodes2all
-		printf("STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)\n");
-		fflush(stdout);
+        printf("STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)\n");
+        fflush(stdout);
 
         IDSVDmask = create_2Dimage_ID("SVDmask", msizex, msizey);
         for(ii=0; ii<msizexy; ii++)
@@ -8502,18 +8497,18 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 reuse = 0;
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
-                  //  printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
-                  //  fflush(stdout);
-                    
+                    //  printf("STEP 4: REMOVING BLOCK %ld from   block %ld mode %ld/%ld      ", mblock0, mblock, m, MBLOCK_NBmode[mblock]);
+                    //  fflush(stdout);
+
                     for(ii=0; ii<msizexy; ii++)
                         data.image[IDSVDmodein].array.F[ii] = data.image[MBLOCK_ID[mblock]].array.F[m*msizexy+ii];
-                    
+
                     if(sprintf(imname, "fmodes1_%02ld", mblock0) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-					
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
 
-                  
+
                     reuse = 1;
                     linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                     IDSVDmode1 = image_ID("SVDmode1");
@@ -8536,8 +8531,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     else
                         mok[m] = 0;
 
-//                    printf("->  %12g (%g %g)\n", rms, value1, totm);
-//					fflush(stdout);
+                    //                    printf("->  %12g (%g %g)\n", rms, value1, totm);
+                    //					fflush(stdout);
                 }
             }
             cnt = 0;
@@ -8548,8 +8543,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(cnt>0)
             {
                 if(sprintf(imname, "fmodes2_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 printf("saving result %s \n", imname);
                 fflush(stdout);
                 IDm = create_3Dimage_ID(imname, msizex, msizey, cnt);
@@ -8566,11 +8561,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     }
                 }
                 MBLOCK_ID[mblock] = IDm;
-                
+
                 char fname2[200];
                 if(sprintf(fname2, "!./mkmodestmp/fmodes2_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imname, fname2);
             }
             MBLOCK_NBmode[mblock] = cnt;
@@ -8591,7 +8586,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-			
+
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
                 for(ii=0; ii<msizexy; ii++)
@@ -8614,8 +8609,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             fflush(stdout);
 
             if(sprintf(imname, "fmodes2_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-				
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             printf("SVD decomp ...");
             fflush(stdout);
             linopt_compute_SVDdecomp(imname, "svdmodes", "svdcoeff");
@@ -8624,26 +8619,26 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             cnt = 0;
             IDSVDcoeff = image_ID("svdcoeff");
             float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
-            
+
             if(sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff01_%02ld.txt", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
-            fpcoeff = fopen(fnameSVDcoeff, "w");            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            fpcoeff = fopen(fnameSVDcoeff, "w");
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
             {
-				fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", m, data.image[IDSVDcoeff].array.F[m], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[m]/data.image[IDSVDcoeff].array.F[0], SVDlim01);
+                fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", m, data.image[IDSVDcoeff].array.F[m], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[m]/data.image[IDSVDcoeff].array.F[0], SVDlim01);
 
-				if(data.image[IDSVDcoeff].array.F[m]>SVDlim01*svdcoeff0)
-					cnt++;
-			}
+                if(data.image[IDSVDcoeff].array.F[m]>SVDlim01*svdcoeff0)
+                    cnt++;
+            }
             fclose(fpcoeff);
-            
+
             printf("BLOCK %ld/%ld: keeping %ld / %ld modes\n", mblock, NBmblock, cnt, m);
             fflush(stdout);
-            
+
             if(sprintf(imname1, "fmodes2b_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             IDm = create_3Dimage_ID(imname1, msizex, msizey, cnt);
             long IDSVDmodes = image_ID("svdmodes");
             for(ii=0; ii<cnt*msizex*msizey; ii++)
@@ -8651,16 +8646,16 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             for(m=0; m<cnt; m++)
             {
-				value1 = 0.0;
-				value1cnt = 0.0;
-				for(ii=0; ii<msizexy; ii++)
-					{
-						value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
-						value1cnt += data.image[IDmaskRM].array.F[ii];
-					}
-				for(ii=0; ii<msizexy; ii++)
-					data.image[IDm].array.F[m*msizexy+ii] -= value1/value1cnt;
-				
+                value1 = 0.0;
+                value1cnt = 0.0;
+                for(ii=0; ii<msizexy; ii++)
+                {
+                    value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                    value1cnt += data.image[IDmaskRM].array.F[ii];
+                }
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[IDm].array.F[m*msizexy+ii] -= value1/value1cnt;
+
                 value1 = 0.0;
                 for(ii=0; ii<msizexy; ii++)
                     value1 += data.image[IDm].array.F[m*msizexy+ii]*data.image[IDm].array.F[m*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
@@ -8669,20 +8664,20 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     data.image[IDm].array.F[m*msizexy+ii] /= rms;
             }
 
-			// Extrapolate outside maskRM
-			IDtmp = AOloopControl_DMslaveExt(data.image[IDm].md[0].name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodesext", 100.0);
-			for(m=0; m<cnt; m++)
-				for(ii=0; ii<msizexy; ii++)
-					data.image[IDm].array.F[m*msizexy+ii] = data.image[IDtmp].array.F[m*msizexy+ii];
-			delete_image_ID("fmodesext");
+            // Extrapolate outside maskRM
+            IDtmp = AOloopControl_DMslaveExt(data.image[IDm].md[0].name, data.image[IDmaskRM].md[0].name, "dmslaved", "fmodesext", 100.0);
+            for(m=0; m<cnt; m++)
+                for(ii=0; ii<msizexy; ii++)
+                    data.image[IDm].array.F[m*msizexy+ii] = data.image[IDtmp].array.F[m*msizexy+ii];
+            delete_image_ID("fmodesext");
 
 
             MBLOCK_NBmode[mblock] = cnt;
             MBLOCK_ID[mblock] = IDm;
-            
+
             if(sprintf(fname1, "!./mkmodestmp/fmodes2b_%02ld.fits", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             save_fits(imname1, fname1);
 
             delete_image_ID("svdmodes");
@@ -8690,9 +8685,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
 
-		fp = fopen("./mkmodestmp/NBblocks.txt", "w");
-		fprintf(fp, "%ld\n", NBmblock);
-		fclose(fp);
+        fp = fopen("./mkmodestmp/NBblocks.txt", "w");
+        fprintf(fp, "%ld\n", NBmblock);
+        fclose(fp);
 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
@@ -8713,24 +8708,24 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     }
     else
     {
-		fp = fopen("./mkmodestmp/NBblocks.txt", "r");
-		if(fscanf(fp, "%50ld", &NBmblock) != 1)
-			printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
-		
-		fclose(fp);
-		for(mblock=0; mblock<NBmblock; mblock++)
-			{
-				if(sprintf(fname, "./mkmodestmp/fmodes2b_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        fp = fopen("./mkmodestmp/NBblocks.txt", "r");
+        if(fscanf(fp, "%50ld", &NBmblock) != 1)
+            printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
 
-				if(sprintf(imname, "fmodes2b_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        fclose(fp);
+        for(mblock=0; mblock<NBmblock; mblock++)
+        {
+            if(sprintf(fname, "./mkmodestmp/fmodes2b_%02ld.fits", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-				ID = load_fits(fname, imname, 1);
-				MBLOCK_NBmode[mblock] = data.image[ID].md[0].size[2];
-				MBLOCK_ID[mblock] = ID;
-			}
-	}
+            if(sprintf(imname, "fmodes2b_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            ID = load_fits(fname, imname, 1);
+            MBLOCK_NBmode[mblock] = data.image[ID].md[0].size[2];
+            MBLOCK_ID[mblock] = ID;
+        }
+    }
 
 
 
@@ -8741,7 +8736,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
     // 1:25
 
 
-	// ==================================================
+    // ==================================================
 
 
 
@@ -8752,8 +8747,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         /// STEP 6: COMPUTE WFS RESPONSE TO MODES
         /// fmodes2ball -> fmodesWFS0all.fits
 
-		char imnameDM[200];
-		char imnameDM1[200];
+        char imnameDM[200];
+        char imnameDM1[200];
 
         if(BlockNB<0)
         {   // check size
@@ -8788,11 +8783,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
                 printf("BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
                 fflush(stdout);
-             
-				               
+
+
                 if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 if(MBLOCK_NBmode[mblock]>0)
                 {
                     long IDwfsMresp = create_3Dimage_ID(imname, wfsxsize, wfsysize, MBLOCK_NBmode[mblock]);
@@ -8813,9 +8808,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                     if((IDRMMmodes!=-1)&&(IDRMMresp!=-1))
                     {
-						char fnameLOcoeff[200];
+                        char fnameLOcoeff[200];
                         if(sprintf(fnameLOcoeff, "./mkmodestmp/LOcoeff_%02ld.txt", mblock) < 1)
-							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                         fpLOcoeff = fopen(fnameLOcoeff, "w");
                         if(fpLOcoeff == NULL)
@@ -8915,7 +8910,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
                     if(sprintf(fname, "!./mkmodestmp/fmodesWFS0_%02ld.fits", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                     save_fits(imname, fname);
                 }
@@ -8931,8 +8926,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             for(mblock=0; mblock<NBmblock; mblock++)
             {
                 if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 long IDmwfs = image_ID(imname);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
@@ -8967,12 +8962,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             for(mblock=0; mblock<NBmblock; mblock++)
             {
-				float *rmsarray;
+                float *rmsarray;
                 rmsarray = (float*) malloc(sizeof(float)*MBLOCK_NBmode[mblock]);
                 for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                 {
                     if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                     long IDmwfs = image_ID(imname);
                     value1 = 0.0;
@@ -8985,23 +8980,23 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     mok[m] = 1;
 
 
- 
-				// REMOVE WFS MODES FROM PREVIOUS BLOCKS
+
+                // REMOVE WFS MODES FROM PREVIOUS BLOCKS
 
                 for(mblock0=0; mblock0<mblock; mblock0++)
-				{
-					
+                {
+
                     reuse = 0;
                     for(m=0; m<MBLOCK_NBmode[mblock]; m++)
                     {
                         if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
-							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                        
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                         long IDmwfs = image_ID(imname);
-                        
+
                         if(sprintf(imnameDM, "fmodes2b_%02ld", mblock) < 1)
-							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-							
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                         IDm = image_ID(imnameDM);
 
 
@@ -9009,18 +9004,18 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                             data.image[IDSVDmodein].array.F[ii] = data.image[IDmwfs].array.F[m*wfssize+ii];
 
                         if(sprintf(imname, "fmodesWFS0_%02ld", mblock0) < 1)
-							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-							
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                         if(sprintf(imnameDM, "fmodes2b_%02ld", mblock0) < 1)
-							printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-							
+                            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                         linopt_imtools_image_fitModes("SVDmodein", imname, "SVDmask", 1.0e-2, "modecoeff", reuse);
                         IDSVDcoeff = image_ID("modecoeff");
                         reuse = 1;
                         linopt_imtools_image_construct(imname, "modecoeff", "SVDmode1");
                         linopt_imtools_image_construct(imnameDM, "modecoeff", "SVDmode1DM");
                         IDSVDmode1 = image_ID("SVDmode1");
-                        
+
                         long IDSVDmode1DM = image_ID("SVDmode1DM");
 
                         delete_image_ID("modecoeff");
@@ -9039,7 +9034,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                         delete_image_ID("SVDmode1DM");
 
                         rms = sqrt(value1/wfssize);
-                        
+
                         if(rms<rmsarray[m]*rmslim1)
                         {
                             mok[m] = 0;
@@ -9056,24 +9051,24 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(cnt>0)
                 {
                     if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                    
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                    
-                                        
-					long IDmwfs1 = create_3Dimage_ID(imname, wfsxsize, wfsysize, cnt);
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+
+                    long IDmwfs1 = create_3Dimage_ID(imname, wfsxsize, wfsysize, cnt);
                     long IDmdm1 = create_3Dimage_ID(imnameDM, msizex, msizey, cnt);
                     m1 = 0;
-                    
+
                     if(sprintf(imname, "fmodesWFS0_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                    
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     long IDmwfs = image_ID(imname);
-                    
+
                     if(sprintf(imnameDM, "fmodes2b_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                    
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     long IDmdm = image_ID(imnameDM);
                     if(IDmdm==-1)
                     {
@@ -9111,10 +9106,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     fflush(stdout);//TEST
 
                     if(sprintf(imname1, "fmodesWFS1_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                                        
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     if(sprintf(fname1, "!./mkmodestmp/fmodesWFS1_%02ld.fits", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                     printf("   saving   %s -> %s\n", imname1, fname1);
                     fflush(stdout);//TEST
@@ -9125,11 +9120,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     fflush(stdout);//TEST
 
                     if(sprintf(imname1, "fmodes3_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     if(sprintf(fname1, "!./mkmodestmp/fmodes3_%02ld.fits", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imname1, fname1);
                     MBLOCK_ID[mblock] = IDmdm1;
                     printf("STEP 0002\n");
@@ -9137,9 +9132,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
                 else
                 {
-					printf("ERROR: keeping no mode in block !!!\n");
-					exit(0);
-				}
+                    printf("ERROR: keeping no mode in block !!!\n");
+                    exit(0);
+                }
                 printf("STEP 0010\n");
                 fflush(stdout);//TEST
 
@@ -9158,7 +9153,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             // time : 04:34
 
 
-	list_image_ID();
+            list_image_ID();
             cnt = 0;
             for(mblock=0; mblock<NBmblock; mblock++)
                 cnt += MBLOCK_NBmode[mblock];
@@ -9171,13 +9166,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(MBLOCK_NBmode[mblock]>0)
                 {
                     if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     long IDmwfs = image_ID(imname);
-                    
+
                     if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     long IDmdm = image_ID(imnameDM);
 
                     if(IDmwfs==-1)
@@ -9208,12 +9203,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         if(BlockNB<0)
         {
-			char command[1000];
+            char command[1000];
             if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-				
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             if(system(command) != 0)
-				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+                printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
         }
         else
         {
@@ -9223,7 +9218,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 exit(0);
             }
             if(fscanf(fp, "%50ld", &NBmblock) != 1)
-				printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
+                printERROR(__FILE__, __func__, __LINE__, "Cannot read parameter from file");
             fclose(fp);
         }
 
@@ -9241,22 +9236,22 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(BlockNB>-1) // LOAD & VERIFY SIZE
             {
                 if(sprintf(imname1, "fmodesWFS1_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 if(sprintf(fname1, "./mkmodestmp/fmodesWFS1_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 ID = load_fits(fname1, imname1, 1);
                 wfsxsize = data.image[ID].md[0].size[0];
                 wfsysize = data.image[ID].md[0].size[1];
                 wfssize = wfsxsize*wfsysize;
 
                 if(sprintf(imname1, "fmodes3_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-					
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 if(sprintf(fname1, "./mkmodestmp/fmodes3_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-					
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 ID = load_fits(fname1, imname1, 1);
                 if((data.image[ID].md[0].size[0] != msizex) && (msizey != data.image[ID].md[0].size[0]))
                 {
@@ -9269,20 +9264,20 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
-				char command[1000];
+                char command[1000];
                 if(sprintf(command, "echo \"%f\" > ./conf_staged/block%02ld_SVDlim.txt", SVDlim, mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-					
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 if(system(command) != 0)
-					printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+                    printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
 
                 //if(MBLOCK_NBmode[mblock]>-1)
                 //{
 
                 if(sprintf(imname, "fmodesWFS1_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-					
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 long IDmwfs = image_ID(imname);
                 if(IDmwfs==-1)
                 {
@@ -9291,8 +9286,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
 
                 if(sprintf(imnameDM, "fmodes3_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-					
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 long IDmdm = image_ID(imnameDM);
                 if(IDmdm==-1)
                 {
@@ -9301,22 +9296,22 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 }
 
                 if(sprintf(imnameDM1, "fmodes_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
 
                 linopt_compute_SVDdecomp(imname, "SVDout", "modecoeff"); // SVD
                 IDSVDcoeff = image_ID("modecoeff");
 
                 cnt = 0;
-				
-				if(sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+
+                if(sprintf(fnameSVDcoeff, "./mkmodestmp/SVDcoeff_%02ld.txt", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 fpcoeff = fopen(fnameSVDcoeff, "w");
                 uint_fast16_t kk;
                 for(kk=0; kk<data.image[IDSVDcoeff].md[0].size[0]; kk++)
                 {
-					fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0], SVDlim);
+                    fprintf(fpcoeff, "%5ld   %12g   %12g  %5ld     %10.8f  %10.8f\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt, data.image[IDSVDcoeff].array.F[kk]/data.image[IDSVDcoeff].array.F[0], SVDlim);
                     printf("==== %ld %12g %12g  %3ld\n", kk, data.image[IDSVDcoeff].array.F[kk], data.image[IDSVDcoeff].array.F[0], cnt);
                     if(data.image[IDSVDcoeff].array.F[kk]>SVDlim*data.image[IDSVDcoeff].array.F[0])
                         cnt++;
@@ -9325,18 +9320,18 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
                 long IDmdm1 = create_3Dimage_ID(imnameDM1, msizex, msizey, cnt);
-                
+
                 char imnameWFS1[200];
                 if(sprintf(imnameWFS1, "fmodesWFS_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 long IDmwfs1 = create_3Dimage_ID(imnameWFS1, wfsxsize, wfsysize, cnt);
                 long ID_VTmatrix = image_ID("SVD_VTm");
 
 
                 for(kk=0; kk<cnt; kk++) /// eigen mode index
                 {
-					long kk1;
+                    long kk1;
                     for(kk1=0; kk1<data.image[IDSVDcoeff].md[0].size[0]; kk1++)
                     {
                         for(ii=0; ii<msizexy; ii++)
@@ -9346,49 +9341,49 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                             data.image[IDmwfs1].array.F[kk*wfssize + ii] += data.image[ID_VTmatrix].array.F[kk1*data.image[IDSVDcoeff].md[0].size[0]+kk]*data.image[IDmwfs].array.F[kk1*wfssize + ii];
                     }
 
-					value1 = 0.0;
-					value1cnt = 0.0;
-					for(ii=0; ii<msizexy; ii++)
-						{
-						value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
-						value1cnt += data.image[IDmaskRM].array.F[ii];
-						}
-					for(ii=0; ii<msizexy; ii++)
-						data.image[IDmdm1].array.F[kk*msizexy+ii] -= value1/value1cnt;
-				
-					value1 = 0.0;
-					for(ii=0; ii<msizexy; ii++)
-						value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
-					rms = sqrt(value1/value1cnt);
-					
-					for(ii=0; ii<msizexy; ii++)
-						data.image[IDmdm1].array.F[kk*msizexy+ii] /= rms;
-
-					for(ii=0; ii<wfssize; ii++)
-						data.image[IDmwfs1].array.F[kk*wfssize+ii] /= rms;
-
-
-               /*     value1 = 0.0;
+                    value1 = 0.0;
+                    value1cnt = 0.0;
                     for(ii=0; ii<msizexy; ii++)
-                        value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
-                    rms = sqrt(value1/totm);
-                    */
-                    
-                    
+                    {
+                        value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                        value1cnt += data.image[IDmaskRM].array.F[ii];
+                    }
+                    for(ii=0; ii<msizexy; ii++)
+                        data.image[IDmdm1].array.F[kk*msizexy+ii] -= value1/value1cnt;
+
+                    value1 = 0.0;
+                    for(ii=0; ii<msizexy; ii++)
+                        value1 += data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmdm1].array.F[kk*msizexy+ii]*data.image[IDmaskRM].array.F[ii];
+                    rms = sqrt(value1/value1cnt);
+
+                    for(ii=0; ii<msizexy; ii++)
+                        data.image[IDmdm1].array.F[kk*msizexy+ii] /= rms;
+
+                    for(ii=0; ii<wfssize; ii++)
+                        data.image[IDmwfs1].array.F[kk*wfssize+ii] /= rms;
+
+
+                    /*     value1 = 0.0;
+                         for(ii=0; ii<msizexy; ii++)
+                             value1 += data.image[IDmdm1].array.F[kk*msizexy + ii]*data.image[IDmdm1].array.F[kk*msizexy + ii];
+                         rms = sqrt(value1/totm);
+                         */
+
+
                     // for(ii=0; ii<msizexy; ii++)
                     //     data.image[IDmdm1].array.F[kk*msizexy + ii] /= rms;
                 }
                 delete_image_ID("SVDout");
                 delete_image_ID("modecoeff");
-                
+
                 if(sprintf(fname, "!./mkmodestmp/fmodes_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imnameDM1, fname);
-				
-				if(sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+
+                if(sprintf(fname, "!./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 save_fits(imnameWFS1, fname);
                 MBLOCK_ID[mblock] = IDmdm1;
                 MBLOCK_IDwfs[mblock] = IDmwfs1;
@@ -9398,11 +9393,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             else
             {
                 if(sprintf(fname, "./mkmodestmp/fmodes_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 if(sprintf(imnameDM1, "fmodes_%02ld", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 long IDmdm1 = load_fits(fname, imnameDM1, 1);
                 MBLOCK_ID[mblock] = IDmdm1;
                 //MBLOCK_IDwfs[mblock] = IDmwfs1;
@@ -9432,8 +9427,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
                 cnt++;
             }
-        }                       
-        
+        }
+
         save_fits("fmodesall", "!./mkmodestmp/fmodesall.fits");
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
@@ -9445,7 +9440,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-//exit(0);//TEST
+        //exit(0);//TEST
 
 
 
@@ -9461,21 +9456,21 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {
             printf(".... BLOCK %ld has %ld modes\n", mblock, MBLOCK_NBmode[mblock]);
             fflush(stdout);
-            
-            if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-			char imnameCM[200]; // modal control matrix
+            if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+            char imnameCM[200]; // modal control matrix
             if(sprintf(imnameCM, "cmat_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             char imnameCMc[200]; // zonal ("combined") control matrix
             if(sprintf(imnameCMc, "cmatc_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             char imnameCMcact[200]; // zonal control matrix masked
             if(sprintf(imnameCMcact, "cmatcact_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             if((BlockNB<0)||(BlockNB==mblock))
             {
@@ -9490,17 +9485,17 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     // COMPUTE MODAL CONTROL MATRICES
                     printf("COMPUTE CONTROL MATRIX\n");
                     float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
-                    #ifdef HAVE_MAGMA
-                        CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat", 0);
-                    #else
-                        linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
-					#endif
+#ifdef HAVE_MAGMA
+                    CUDACOMP_magma_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat", 0);
+#else
+                    linopt_compute_SVDpseudoInverse(imname, imnameCM, SVDlim1, 10000, "VTmat");
+#endif
 
                     delete_image_ID("VTmat");
-                    
+
                     if(sprintf(fname, "!./mkmodestmp/cmat_%02ld.fits", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imnameCM, fname);
 
                     printf("-- COMPUTE ZONAL CONTROL MATRIX FROM MODAL CONTROL MATRIX\n");
@@ -9512,16 +9507,16 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
                     if(sprintf(fname, "!./mkmodestmp/cmatc_%02ld.fits", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imnameCMc, fname);
-                    
+
                     if(sprintf(fname, "!./mkmodestmp/cmatcact_%02ld.fits", mblock) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     if(sprintf(imname1, "%s_00", imnameCMcact) < 1)
-						printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-						
+                        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                     save_fits(imname1, fname);
 
                     list_image_ID();
@@ -9532,27 +9527,27 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             {
                 printf("LOADING WFS MODES, MODAL CONTROL MATRICES: block %ld\n", mblock);
                 fflush(stdout);
-                
-			//	list_image_ID();
-				
+
+                //	list_image_ID();
+
                 if(sprintf(fname, "./mkmodestmp/fmodesWFS_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imname, 1);
-                
-                if(sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock) < 1) 
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+
+                if(sprintf(fname, "./mkmodestmp/cmat_%02ld.fits", mblock) < 1)
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imnameCM, 1);
-                
+
                 if(sprintf(fname, "./mkmodestmp/cmatc_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imnameCMc, 1);
-                
+
                 if(sprintf(fname, "./mkmodestmp/cmatcact_%02ld.fits", mblock) < 1)
-					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-                
+                    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
                 load_fits(fname, imnameCMcact, 1);
             }
         }
@@ -9564,15 +9559,15 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-			char command[1000];
+            char command[1000];
             if(sprintf(command, "echo \"%ld\" > ./conf_staged/block%02ld_NBmodes.txt", MBLOCK_NBmode[mblock], mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             if(system(command) != 0)
-				printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+                printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
             if(sprintf(imname, "fmodesWFS_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             long IDmwfs = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
@@ -9593,8 +9588,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         for(mblock=0; mblock<NBmblock; mblock++)
         {
             if(sprintf(imname, "cmat_%02ld", mblock) < 1)
-				printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-				
+                printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
             long IDcmat = image_ID(imname);
             for(m=0; m<MBLOCK_NBmode[mblock]; m++)
             {
@@ -9605,44 +9600,45 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
         save_fits("cmatall", "!./mkmodestmp/cmatall.fits");
 
-    
-    
-    
- // COMPUTE OVERALL CONTROL MATRIX
-/*    int COMPUTE_FULL_CMAT = 0;
-    if(COMPUTE_FULL_CMAT == 1)
-    {
-        printf("COMPUTE OVERALL CONTROL MATRIX\n");
-        float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
-        #ifdef HAVE_MAGMA
-            CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat", 0);
-        #else
-            linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
-		#endif
-		
-        delete_image_ID("VTmat");
-        save_fits("cmat", "!./mkmodestmp/cmat.fits");
 
-	}
 
-		char command[1000];
-        if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
-			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-			
-        if(system(command) != 0)
-			printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
 
-    */
+        // COMPUTE OVERALL CONTROL MATRIX
+        /*    int COMPUTE_FULL_CMAT = 0;
+            if(COMPUTE_FULL_CMAT == 1)
+            {
+                printf("COMPUTE OVERALL CONTROL MATRIX\n");
+                float SVDlim1 = 0.01; // WFS filtering (ONLY USED FOR FULL SINGLE STEP INVERSION)
+                #ifdef HAVE_MAGMA
+                    CUDACOMP_magma_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 100000, "VTmat", 0);
+                #else
+                    linopt_compute_SVDpseudoInverse("fmodesWFSall", "cmat", SVDlim1, 10000, "VTmat");
+        		#endif
+
+                delete_image_ID("VTmat");
+                save_fits("cmat", "!./mkmodestmp/cmat.fits");
+
+        	}
+
+        		char command[1000];
+                if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
+        			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+                if(system(command) != 0)
+        			printERROR(__FILE__, __func__, __LINE__, "system() returns non-zero value");
+
+            */
     }
     // time : 07:43
 
-	#ifdef AOLOOPCONTROL_LOGFUNC
-	AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
-	#endif
+#ifdef AOLOOPCONTROL_LOGFUNC
+    AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
+#endif
 
 
     return(ID);
 }
+
 
 
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-execname="Cfits"
+#execname="Cfits"
 
 
 tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
@@ -18,7 +18,7 @@ echo "$COLUMNS -> $nbwcols"
 
 
 LOOPNUMBER_file="LOOPNUMBER"
-confnbfile="./conf/conf_CONFNUMBER.txt"
+
 
 
 mkdir -p conf
@@ -96,7 +96,6 @@ Pcamloopstat="OFF"
 fi
 
 
-PyrFilter=$(cat ./status/status_fw.txt)
 
 
 if [ $state = "menualign" ]; then
