@@ -7781,8 +7781,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 	
 	COMPUTE_DM_MODES = 0;
 	ID2b = image_ID("fmodes2ball");
+	
 	if(ID2b == -1)
 		COMPUTE_DM_MODES = 1;
+	else
+	{
+		
+	}
 
 
 
@@ -7792,6 +7797,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		long NBZ = 0;
 		long IDmfcpa;
 		float CPAblocklim[MAX_MBLOCK]; // defines CPA limits for blocks
+		
+		long IDmask;
+		long IDslaved;
+		long IDmaskRMedge;
+		long IDmaskRMin;
 		
 		
         if(MODAL==0)
@@ -7959,7 +7969,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		// MAKE MASKS FOR EDGE EXTRAPOLATION
 		
 		          
-		long IDslaved = image_ID("dmslaved");
+		IDslaved = image_ID("dmslaved");
 		// load or create DM mask : union of dmslaved and dmmaskRM
 		//IDmask = load_fits("dmmask.fits", "dmmask", 1);
 		printf("Create DM mask\n");
@@ -7969,11 +7979,10 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		//IDmask = -1;
 		//if(IDmask == -1)
 		//{
-			long IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
+			IDmask = create_2Dimage_ID("dmmask", msizex, msizey);
 			for(ii=0; ii<msizex*msizey; ii++)
 				{
-// TO BE DONE: explore use of IDmaskRM 
-//					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
+					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
 					data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
 					if(data.image[IDmask].array.F[ii]>1.0)
 						data.image[IDmask].array.F[ii] = 1.0;
@@ -7982,11 +7991,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 		//}
 
 		// EDGE PIXELS IN IDmaskRM
-		long IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
+		IDmaskRMedge = AOloopControl_DMedgeDetect(data.image[IDmaskRM].md[0].name, "dmmaskRMedge");
 		save_fits("dmmaskRMedge", "!dmmaskRMedge.fits");
 		
 		// IDmaskRM pixels excluding edge
-		long IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
+		IDmaskRMin = create_2Dimage_ID("dmmaskRMin", msizex, msizey);
 		for(ii=0; ii<msizex*msizey; ii++)
 			data.image[IDmaskRMin].array.F[ii] = data.image[IDmaskRM].array.F[ii] * (1.0 - data.image[IDmaskRMedge].array.F[ii]);
 		save_fits("dmmaskRMin", "!dmmaskRMin.fits");
@@ -8092,7 +8101,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
                     data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
-                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]; //*data.image[IDmask].array.F[ii];
+                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
