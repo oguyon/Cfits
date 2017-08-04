@@ -725,12 +725,7 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
 long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 {
     int SM_fd;
-    struct stat file_stat;
-    char SM_fname[200];
-    IMAGE_METADATA *map;    
-    char sname[200];
-    long s;
- 
+    char SM_fname[200];    
 	int rval = -1;
 
 
@@ -741,12 +736,20 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
     if(SM_fd==-1)
     {
         image->used = 0;
-        return(-1);
         printf("Cannot import shared memory file %s \n", name);
         rval = -1;
     }
     else
     {
+		char sname[200];
+		IMAGE_METADATA *map;
+		long s;
+		struct stat file_stat;
+		
+		long snb = 0;
+        int sOK = 1;
+		
+		
 		rval = 0; // we assume by default success
 		
         fstat(SM_fd, &file_stat);
@@ -920,10 +923,8 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
 
  
-        // looking for semaphores
-        long snb = 0;
-        int sOK = 1;
-       while(sOK==1)
+        // looking for semaphores       
+		while(sOK==1)
         {
             sprintf(sname, "%s_sem%02ld", image->md[0].name, snb);
             sem_t *stest;
@@ -942,7 +943,6 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
 //        image->md[0].sem = snb;
         image->semptr = (sem_t**) malloc(sizeof(sem_t*) * image->md[0].sem);
-        long s;
         for(s=0; s<image->md[0].sem; s++)
         {
             sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
