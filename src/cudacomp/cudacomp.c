@@ -13,6 +13,12 @@
  */
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                        HEADER FILES                                             */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 #include <stdint.h>
 #include <stdio.h>
@@ -90,6 +96,13 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #include "linopt_imtools/linopt_imtools.h" // for testing
 
 
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                      DEFINES, MACROS                                            */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 #define min(a,b) (((a)<(b))?(a):(b))
 
 
@@ -98,9 +111,17 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #define OMP_NELEMENT_LIMIT 1000000
 # endif
 
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                  GLOBAL DATA DECLARATION                                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
 int FORCESEMINIT = 1;
-
-
 
 
 extern DATA data;
@@ -185,6 +206,16 @@ static magma_int_t *magma_iwork;
 
 
 
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                           FUNCTIONS TIED TO COMMAND LINE INTERFACE (CLI)                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name CLI bindings */
 
 // CLI commands
 //
@@ -324,7 +355,12 @@ int_fast8_t CUDACOMP_extractModesLoop_cli()
 
 
 
-
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                    MODULE INITIALIZATION                                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name Module initialization */
 
 
 
@@ -523,121 +559,120 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     double SVDeps = 0.1;
 
     long n, m;
-//    uint32_t *arraysizetmp;
+    //    uint32_t *arraysizetmp;
     long ID, ID_R, ID_C;
     long ii, jj;
     float val;
 
-    if(1==1)
-    {
+
+
+
     //printf("Testing SVD on CPU\n");
-      // linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
-    
-        create_2Dimage_ID("Rmat", WFSsize, WFSsize);
-    
-       printf("Testing SVD on GPU\n");
-       GPU_SVD_computeControlMatrix(0, "Rmat", "Cmat", SVDeps, "VTmat");
-        list_image_ID();
-        printf("DONE ... ");
-        fflush(stdout);
-        
-        
-       // CHECK RESULT
-     /*   arraysizetmp = (long*) malloc(sizeof(long)*3);
-        ID_R = image_ID("Rmat");
-        ID_C = image_ID("Cmat");
+    // linopt_compute_reconstructionMatrix("Rmat", "Cmat", SVDeps, "VTmat");
 
-        if(data.image[ID_R].md[0].naxis==3)
-        {
-            m = data.image[ID_R].md[0].size[0]*data.image[ID_R].md[0].size[1];
-            n = data.image[ID_R].md[0].size[2];
-            printf("3D image -> %ld %ld\n", m, n);
-            fflush(stdout);
-        }
-        else
-        {
-            m = data.image[ID_R].md[0].size[0];
-            n = data.image[ID_R].md[0].size[1];
-            printf("2D image -> %ld %ld\n", m, n);
-            fflush(stdout);
-        }
-        
-     
-        printf("CHECKING RESULT ... ");
-        fflush(stdout);
-        
-        ID = create_2Dimage_ID("SVDcheck", n, n);
-        for(ii=0;ii<n;ii++)
-            for(jj=0;jj<n;jj++)
-                {
-                    val = 0.0;
-                    for(k=0;k<m;k++)
-                        val += data.image[ID_C].array.F[ii*m+k] * data.image[ID_R].array.F[jj*m+k];
-                    data.image[ID].array.F[jj*n+ii] = val;
-                }
-        save_fits("SVDcheck", "!SVDcheck.fits");
+    create_2Dimage_ID("Rmat", WFSsize, WFSsize);
 
-		free(arraysizetmp);
-        printf("DONE\n");
-        fflush(stdout);*/
-    }
-    else
+    printf("Testing SVD on GPU\n");
+    GPU_SVD_computeControlMatrix(0, "Rmat", "Cmat", SVDeps, "VTmat");
+    list_image_ID();
+    printf("DONE ... ");
+    fflush(stdout);
+
+
+    // CHECK RESULT
+    /*   arraysizetmp = (long*) malloc(sizeof(long)*3);
+       ID_R = image_ID("Rmat");
+       ID_C = image_ID("Cmat");
+
+       if(data.image[ID_R].md[0].naxis==3)
+       {
+           m = data.image[ID_R].md[0].size[0]*data.image[ID_R].md[0].size[1];
+           n = data.image[ID_R].md[0].size[2];
+           printf("3D image -> %ld %ld\n", m, n);
+           fflush(stdout);
+       }
+       else
+       {
+           m = data.image[ID_R].md[0].size[0];
+           n = data.image[ID_R].md[0].size[1];
+           printf("2D image -> %ld %ld\n", m, n);
+           fflush(stdout);
+       }
+
+
+       printf("CHECKING RESULT ... ");
+       fflush(stdout);
+
+       ID = create_2Dimage_ID("SVDcheck", n, n);
+       for(ii=0;ii<n;ii++)
+           for(jj=0;jj<n;jj++)
+               {
+                   val = 0.0;
+                   for(k=0;k<m;k++)
+                       val += data.image[ID_C].array.F[ii*m+k] * data.image[ID_R].array.F[jj*m+k];
+                   data.image[ID].array.F[jj*n+ii] = val;
+               }
+       save_fits("SVDcheck", "!SVDcheck.fits");
+
+    free(arraysizetmp);
+       printf("DONE\n");
+       fflush(stdout);*/
+
+
+    printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
+
+    GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
+    for(k=0; k<GPUcnt; k++)
+        GPUdevices[k] = k+8;
+
+
+    cmsize = (uint32_t*) malloc(sizeof(uint32_t)*3);
+    cmsize[0] = WFSsize;
+    cmsize[1] = WFSsize;
+    cmsize[2] = NBmodes;
+    ID_contrM = create_image_ID("cudatestcm", 3, cmsize, _DATATYPE_FLOAT, 1, 0);
+
+    wfssize = (uint32_t*) malloc(sizeof(uint32_t)*2);
+    wfssize[0] = WFSsize;
+    wfssize[1] = WFSsize;
+    ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, _DATATYPE_FLOAT, 1, 0);
+
+    cmdmodessize = (uint32_t*) malloc(sizeof(uint32_t)*2);
+    cmdmodessize[0] = NBmodes;
+    cmdmodessize[1] = 1;
+    ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, _DATATYPE_FLOAT, 1, 0);
+
+    GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
+
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+    for(iter=0; iter<NBiter; iter++)
     {
-        printf("Testing GPU matrix multiplication speed, %ld GPUs\n", GPUcnt);
-
-
-        GPUdevices = (int*) malloc(sizeof(int)*GPUcnt);
-        for(k=0; k<GPUcnt; k++)
-            GPUdevices[k] = k+8;
-
-        //    GPUstatus = (int*) malloc(sizeof(int)*100);
-
-        cmsize = (uint32_t*) malloc(sizeof(uint32_t)*3);
-        cmsize[0] = WFSsize;
-        cmsize[1] = WFSsize;
-        cmsize[2] = NBmodes;
-        ID_contrM = create_image_ID("cudatestcm", 3, cmsize, _DATATYPE_FLOAT, 1, 0);
-
-        wfssize = (uint32_t*) malloc(sizeof(uint32_t)*2);
-        wfssize[0] = WFSsize;
-        wfssize[1] = WFSsize;
-        ID_WFS = create_image_ID("cudatestwfs", 2, wfssize, _DATATYPE_FLOAT, 1, 0);
-
-        cmdmodessize = (uint32_t*) malloc(sizeof(uint32_t)*2);
-        cmdmodessize[0] = NBmodes;
-        cmdmodessize[1] = 1;
-        ID_cmd_modes = create_image_ID("cudatestcmd", 2, cmdmodessize, _DATATYPE_FLOAT, 1, 0);
-
-        GPU_loop_MultMat_setup(0, data.image[ID_contrM].name, data.image[ID_WFS].name, data.image[ID_cmd_modes].name, GPUcnt, GPUdevices, 0, 1, 1, 0);
-
-        clock_gettime(CLOCK_REALTIME, &tnow);
-        time1sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
-
-        for(iter=0; iter<NBiter; iter++)
-        {
-            status = 0;
-            GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
-        }
-        clock_gettime(CLOCK_REALTIME, &tnow);
-        time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
-
-        printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
-
-        printf("done\n");
-        fflush(stdout);
-
-        delete_image_ID("cudatestcm");
-        delete_image_ID("cudatestwfs");
-        delete_image_ID("cudatestcmd");
-
-        free(cmsize);
-        free(wfssize);
-        free(cmdmodessize);
-        free(GPUdevices);
+        status = 0;
+        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
     }
+    clock_gettime(CLOCK_REALTIME, &tnow);
+    time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
+
+    printf("Frequ = %12.3f Hz\n", 1.0*NBiter/(time2sec-time1sec));
+
+    printf("done\n");
+    fflush(stdout);
+
+    delete_image_ID("cudatestcm");
+    delete_image_ID("cudatestwfs");
+    delete_image_ID("cudatestcmd");
+
+    free(cmsize);
+    free(wfssize);
+    free(cmdmodessize);
+    free(GPUdevices);
+
 
     return(0);
 }
+
 
 
 
@@ -737,7 +772,6 @@ void *compute_function( void *ptr )
     int *ptrstat;
     long IDtest;
     int k;
-    int kmax = 10;
     char fname[200];
     long long iter;
     long long itermax = 1;
@@ -1062,54 +1096,48 @@ int GPUloadCmat(int index)
 
 /** setup matrix multiplication using multiple GPUs */
 /*
- * 
+ *
  *  IDoutdmmodes_name  = alpha * IDcontrM_name x IDwfsim_name
- * 
+ *
  * upon setup, IDwfsim_name is the WFS ref and initWFSref = 0
- * 
+ *
 */
 
 int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb)
 {
-    long IDcontrM, IDwfsim, IDwfsref;
-    uint32_t *sizearraytmp;
     int device;
-    struct cudaDeviceProp deviceProp;
-    int n, m;
-    char sname[200];
-    char name[200];
-    int ptn;
 
-    long cnt0;
-    long cnt;
 
-    long NBiter = 100000;
-    long iter = 0;
-    
-    int cmatdim = 2; // 2D or 3D
-    
 
-    
 
-     
+
     if(gpumatmultconf[index].init == 0)
     {
+        struct cudaDeviceProp deviceProp;
+        int n, m;
+        char sname[200];
+        char name[200];
+        int ptn;
+ 
+        long IDcontrM, IDwfsim, IDwfsref;
+        uint32_t *sizearraytmp;
+
 
         printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
-    
- 
+
+
         if(IDtimerinit == 0)
-            {
-                sprintf(name, "aol%ld_looptiming", loopnb);
-                IDtiming = image_ID(name);
-            
+        {
+            sprintf(name, "aol%ld_looptiming", loopnb);
+            IDtiming = image_ID(name);
+
             if(IDtiming==-1)
                 IDtiming = create_2Dimage_ID(name, 50, 1);
-            }
- 
- 
-        
+        }
+
+
+
         if(gpumatmultconf[index].alloc == 1)
         {
             GPU_loop_MultMat_free(index);
@@ -1123,7 +1151,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         printf("USEsem = %d\n", USEsem);
         fflush(stdout);
-        
+
 
 
         gpumatmultconf[index].orientation = orientation;
@@ -1151,17 +1179,17 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         if(orientation==0)
         {
             if(data.image[IDcontrM].md[0].naxis==3)
-                {
-                    gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[2];
-                    gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
-                    cmatdim = 3;
-                }
+            {
+                gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[2];
+                gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
+             //   cmatdim = 3;
+            }
             else
-                {
-                    gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[1];
-                    gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0];
-                    cmatdim = 2;
-               }
+            {
+                gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[1];
+                gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[0];
+               // cmatdim = 2;
+            }
             printf("[0] [%ld] M = %d\n", IDcontrM, (int) gpumatmultconf[index].M);
             printf("[0] [%ld] N = %d\n", IDcontrM, (int) gpumatmultconf[index].N);
         }
@@ -1171,13 +1199,13 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             {
                 gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[0] * data.image[IDcontrM].md[0].size[1];
                 gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[2];
-                cmatdim = 3;
+             //   cmatdim = 3;
             }
             else
             {
-                  gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[0];
-                gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[1];              
-                cmatdim = 2;
+                gpumatmultconf[index].M = data.image[IDcontrM].md[0].size[0];
+                gpumatmultconf[index].N = data.image[IDcontrM].md[0].size[1];
+             //   cmatdim = 2;
             }
 
             printf("[1] [%ld] M = %d\n", IDcontrM, (int) gpumatmultconf[index].M);
@@ -1185,7 +1213,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         }
 
         gpumatmultconf[index].cMat =  data.image[IDcontrM].array.F;
-        
+
 
         /// Load Input vectors
         IDwfsim = image_ID(IDwfsim_name);
@@ -1194,9 +1222,9 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         gpumatmultconf[index].wfsRef = data.image[IDwfsref].array.F;
 
         if(orientation == 0)
-        {            
+        {
             printf("[0] Input vector size: %ld %ld\n", (long) data.image[IDwfsim].md[0].size[0], (long) data.image[IDwfsim].md[0].size[1]);
-            
+
             if(data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1] != (int) gpumatmultconf[index].N)
             {
                 printf("ERROR: CONTRmat and WFSvec size not compatible: %ld %d\n", (long) (data.image[IDwfsim].md[0].size[0]*data.image[IDwfsim].md[0].size[1]), (int) gpumatmultconf[index].N);
@@ -1216,11 +1244,11 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
                 exit(0);
             }
         }
-        
 
-		printf("Setting up gpumatmultconf\n");
-		fflush(stdout);
-		
+
+        printf("Setting up gpumatmultconf\n");
+        fflush(stdout);
+
         if((gpumatmultconf[index].IDout = image_ID(IDoutdmmodes_name)) == -1)
         {
             sizearraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
@@ -1245,13 +1273,13 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         gpumatmultconf[index].dmVecTMP = data.image[gpumatmultconf[index].IDout].array.F;
 
 
-		printf("Scanning for GPU devices ...\n");
-		fflush(stdout);
+        printf("Scanning for GPU devices ...\n");
+        fflush(stdout);
 
         cudaGetDeviceCount(&deviceCount);
         printf("%d devices found\n", deviceCount);
         fflush(stdout);
-        
+
         printf("\n");
         for (device = 0; device < deviceCount; ++device) {
             cudaGetDeviceProperties(&deviceProp, device);
@@ -1263,13 +1291,13 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             printf("\n");
         }
 
-		printf("Done scanning for GPU devices\n");
-		fflush(stdout);
+        printf("Done scanning for GPU devices\n");
+        fflush(stdout);
 
         gpumatmultconf[index].NBstreams = deviceCount;
         if(NBGPUs<deviceCount)
             gpumatmultconf[index].NBstreams = NBGPUs;
-        
+
 
 
 
@@ -1282,17 +1310,17 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             gpumatmultconf[index].Nsize[device-1] = gpumatmultconf[index].Noffset[device] - gpumatmultconf[index].Noffset[device-1];
         }
         gpumatmultconf[index].Nsize[gpumatmultconf[index].NBstreams-1] = gpumatmultconf[index].N-gpumatmultconf[index].Noffset[gpumatmultconf[index].NBstreams-1];
-     
-     
+
+
         printf("Allocating physical GPU(s) to stream(s) (index %d, NBGPU(s) = %ld)\n", index, NBGPUs);
         printf("%d stream(s)\n", gpumatmultconf[index].NBstreams);
         fflush(stdout);
-     
+
         gpumatmultconf[index].GPUdevice = (int*) malloc(sizeof(int)*NBGPUs);
-            
+
         printf("- - - - - - - - -\n");
-        fflush(stdout);    
-        
+        fflush(stdout);
+
         for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
             printf("stream %2d  ->  GPU device %2d\n", device, GPUdevice[device]);
@@ -1338,7 +1366,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         gpumatmultconf[index].semptr3 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].semptr4 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].semptr5 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
- 
+
 
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
@@ -1384,7 +1412,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             sem_init(gpumatmultconf[index].semptr5[device], 1, 0);
 
         }
-        
+
 
         for (device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
@@ -1406,8 +1434,8 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_cMat[%d] size %d x %d\n", index, device, (int) gpumatmultconf[index].M, (int) gpumatmultconf[index].Nsize[device]);
-			}
+                printf("ALLOCATED gpumatmultconf[%d].d_cMat[%d] size %d x %d\n", index, device, (int) gpumatmultconf[index].M, (int) gpumatmultconf[index].Nsize[device]);
+            }
 
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsVec[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
@@ -1418,8 +1446,8 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_wfsVec[%d] size %d\n", index, device, (int) gpumatmultconf[index].Nsize[device]);
-			}
+                printf("ALLOCATED gpumatmultconf[%d].d_wfsVec[%d] size %d\n", index, device, (int) gpumatmultconf[index].Nsize[device]);
+            }
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_wfsRef[device], sizeof(float)*gpumatmultconf[index].Nsize[device]);
             if (error != cudaSuccess)
@@ -1429,8 +1457,8 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_wfsRef[%d] size %d\n", index, device, (int) gpumatmultconf[index].Nsize[device]);
-			}
+                printf("ALLOCATED gpumatmultconf[%d].d_wfsRef[%d] size %d\n", index, device, (int) gpumatmultconf[index].Nsize[device]);
+            }
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmVec[device], sizeof(float)*gpumatmultconf[index].M);
             if (error != cudaSuccess)
@@ -1440,8 +1468,8 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             }
             else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_dmVec[%d] size %d\n", index, device, (int) gpumatmultconf[index].M);
-			}
+                printf("ALLOCATED gpumatmultconf[%d].d_dmVec[%d] size %d\n", index, device, (int) gpumatmultconf[index].M);
+            }
 
             error = cudaMalloc((void **) &gpumatmultconf[index].d_dmRef[device], sizeof(float)*gpumatmultconf[index].M);
             if (error != cudaSuccess)
@@ -1449,14 +1477,14 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
                 printf("cudaMalloc d_dmVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
-			else
+            else
             {
-				printf("ALLOCATED gpumatmultconf[%d].d_dmRef[%d] size %d\n", index, device, (int) gpumatmultconf[index].M);
-			}
+                printf("ALLOCATED gpumatmultconf[%d].d_dmRef[%d] size %d\n", index, device, (int) gpumatmultconf[index].M);
+            }
 
             stat = cublasCreate(&gpumatmultconf[index].handle[device]);
             printf("INITIALIZED CUBLAS handle index=%d device=%d\n", index, device);
-			fflush(stdout);
+            fflush(stdout);
             if (stat != CUBLAS_STATUS_SUCCESS) {
                 printf ("CUBLAS initialization failed\n");
                 return EXIT_FAILURE;
@@ -1466,13 +1494,13 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
             for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
-                {
-                    gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
-                    gpumatmultconf[index].wfsRef_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsRef[n];
-                }
+            {
+                gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
+                gpumatmultconf[index].wfsRef_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsRef[n];
+            }
 
-    // copy memory to devices
-    for(device=0; device<gpumatmultconf[index].NBstreams; device++)
+        // copy memory to devices
+        for(device=0; device<gpumatmultconf[index].NBstreams; device++)
         {
             error = cudaMemcpy(gpumatmultconf[index].d_wfsVec[device], gpumatmultconf[index].wfsVec_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
             if (error != cudaSuccess)
@@ -1480,9 +1508,9 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
                 printf("cudaMemcpy d_wfsVec wfsVec returned error code %d, line(%d)\n", error, __LINE__);
                 exit(EXIT_FAILURE);
             }
-            
-            
-            
+
+
+
             printf("COPY wfsRef_part to d_wfsRef\n");
             fflush(stdout);
             error = cudaMemcpy(gpumatmultconf[index].d_wfsRef[device], gpumatmultconf[index].wfsRef_part[device], sizeof(float)*gpumatmultconf[index].Nsize[device], cudaMemcpyHostToDevice);
@@ -1502,26 +1530,27 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].threadarray = (pthread_t*) malloc(sizeof(pthread_t)*gpumatmultconf[index].NBstreams);
-    
+
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] = 0.0;
 
-        cnt = 0;
-        iter = 0;
+       // cnt = 0;
+       // iter = 0;
         gpumatmultconf[index].init = 1;
 
         printf(". . . \n");
         fflush(stdout);
     }
-    
+
     for(device=0; device<gpumatmultconf[index].NBstreams; device++)
-       gpumatmultconf[index].refWFSinit[device] = initWFSref;
-    
-   // printf("CONFIGURATION DONE \n");
-   // fflush(stdout);
-    
+        gpumatmultconf[index].refWFSinit[device] = initWFSref;
+
+    // printf("CONFIGURATION DONE \n");
+    // fflush(stdout);
+
     return(0);
 }
+
 
 
 
@@ -1869,7 +1898,6 @@ long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *
 	float *magmaf_h_AinvA;
 
 	uint32_t *arraysizetmp;
-	uint8_t atype;
 	magma_int_t M, N;
 	
 
@@ -1902,7 +1930,6 @@ long CUDACOMP_MatMatMult_testPseudoInverse(const char *IDmatA_name, const char *
 
     IDmatA = image_ID(IDmatA_name);
     IDmatAinv = image_ID(IDmatAinv_name);
-    atype = data.image[IDmatA].md[0].atype;
 
     if(data.image[IDmatA].md[0].naxis==3)
     {
