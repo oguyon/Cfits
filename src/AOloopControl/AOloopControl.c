@@ -13306,8 +13306,6 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 	}
 	
 	
-	free(sizearray);
-	
 	fp = fopen("optgain.dat", "w");
 	for(m=0;m<NBmodes;m++)
 		fprintf(fp, "%5ld   %12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f  %6.2f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m], NOISEfactor[m]);
@@ -13417,7 +13415,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long
     long IDmodecoeff;
     long NBsamples;
     long NBmodes;
-    double SVDeps;
+    double SVDeps = 0.001;
     
     long IDtrace;
     
@@ -13426,7 +13424,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long
     long modeouto;
     long filtsize = 20;
     double val;
-    
+        
     long ii, jj, m;
     
 	#ifdef AOLOOPCONTROL_LOGFUNC
@@ -15825,7 +15823,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         for(wfsframe=1; wfsframe<NBwfsframe; wfsframe++)
             fprintf(fp, "%ld   %10.2f     %g\n", wfsframe-kkoffset, 1.0e6*(0.5*(dtarray[wfsframe]+dtarray[wfsframe-1])-dtoffset), valarray[wfsframe]);
 
-        printf("mean interval =  %10.2f ns   %lf\n", 1.0e9*(dt-dtoffset)/NBwfsframe, a);
+        printf("mean interval =  %10.2f ns\n", 1.0e9*(dt-dtoffset)/NBwfsframe);
         fflush(stdout);
 
         free(valarray);
