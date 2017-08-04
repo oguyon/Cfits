@@ -184,7 +184,7 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
     time_t lt;
     long nelement;
     struct timespec timenow;
-    char sname[200];
+    
     IMAGE_METADATA *map;
     char *mapv; // pointed cast in bytes
 
@@ -201,6 +201,9 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
     // compute total size to be allocated
     if(shared==1)
     {
+		char sname[200];
+		
+		
         // create semlog
 		size_t sharedsize = 0; // shared memory size in bytes
 
