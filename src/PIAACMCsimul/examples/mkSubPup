@@ -244,7 +244,7 @@ size=$1
 pupradpix=$2
 
 # puprad in mm
-puprad=8.82
+puprad=9.00
 
 
 
