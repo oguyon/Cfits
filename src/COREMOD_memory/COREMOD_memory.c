@@ -1850,7 +1850,7 @@ void *save_fits_function( void *ptr )
     free(imsizearray);
     pthread_exit(&tret);
     
-    free(tmsg);
+  //  free(tmsg);
 }
 
 
@@ -6068,7 +6068,9 @@ long COREMOD_MEMORY_image_NETWORKreceive(int port, int mode, int RT_priority)
         exit(EXIT_FAILURE);
     }
 
-    frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+    // this line is not needed, as frame_md is declared below
+    // frame_md = (TCP_BUFFER_METADATA*) malloc(sizeof(TCP_BUFFER_METADATA));
+    
     framesize1 = framesize + sizeof(TCP_BUFFER_METADATA);
     buff = (char*) malloc(sizeof(char)*framesize1);
 

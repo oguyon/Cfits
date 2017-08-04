@@ -8092,7 +8092,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 for(ii=0; ii<msizex*msizey; ii++)
                 {
                     data.image[ID].array.F[k*msizex*msizey+ii] -= offset/totm;
-                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmask].array.F[ii];
+                    rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]; //*data.image[IDmask].array.F[ii];
                 }
                 rms = sqrt(rms/totm);
                 printf("Mode %ld   RMS = %lf\n", k, rms);
