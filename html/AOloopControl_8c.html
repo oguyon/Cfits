@@ -672,7 +672,7 @@ Variables</h2></td></tr>
 <p>AO engine uses stream data structure</p>
 <dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>10 Jun 2017</dd></dl>
-<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000003">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000005">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a href="http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html">http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html</a> </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a19a66458a8453e9f5e6ec19a93c3e70a"></a>
@@ -2252,6 +2252,32 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Log function call (for testing / debugging only).</p>
+<p>Function calls are logged if AOLOOPCONTROL_LOGFUNC is defined</p>
+<p>Variable AOLOOPCONTROL_logfunc_level keeps track of function depth: <br />
+ it is incremented when entering a function <br />
+ decremented when exiting a function</p>
+<p>Variable AOLOOPCONTROL_logfunc_level_max sets the max depth of logging</p>
+<p>At the beginning of each function, insert this code: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, &quot;&quot;);</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;#endif</div>
+</div><!-- fragment --><p> and at the end of each function: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, &quot;&quot;);</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;#endif</div>
+</div><!-- fragment --><h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">logfuncMODE</td><td>INT Log mode, 0:entering function, 1:exiting function</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">FunctionName</td><td>char* Name of function, usually <b>FUNCTION</b> so that preprocessor fills this parameter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">line</td><td>char* Line in cource code, usually <b>LINE</b> so that preprocessor fills this parameter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">comments</td><td>char* comment string</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Carefully set depth value to avoid large output file. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>May slow down code. Only use for debugging. Output file may grow very quickly. </dd></dl>
 
 </div>
 </div>
@@ -7346,7 +7372,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8c.html">AOloopControl.c</a></li>
-    <li class="footer">Generated on Thu Aug 3 2017 15:42:25 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 4 2017 16:18:17 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

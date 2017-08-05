@@ -106,7 +106,6 @@ $(document).ready(function(){initNavTree('image__format_8c.html','');});
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
-<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">image_format.c File Reference</div>  </div>
@@ -118,17 +117,16 @@ $(document).ready(function(){initNavTree('image__format_8c.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsImage.html">sImage</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structBITMAPFILEHEADER.html">BITMAPFILEHEADER</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structBITMAPINFOHEADER.html">BITMAPINFOHEADER</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structRGBQUAD.html">RGBQUAD</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsImage.html">sImage</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">CLI bindings</div></td></tr>
 <tr class="memitem:a2fe9c57f6eb47230fa7983bf01bd7c0d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__format_8c.html#a2fe9c57f6eb47230fa7983bf01bd7c0d">image_writeBMP_auto_cli</a> ()</td></tr>
 <tr class="separator:a2fe9c57f6eb47230fa7983bf01bd7c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9e2b61fb8e8bbb565293900ee6fa50d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__format_8c.html#ac9e2b61fb8e8bbb565293900ee6fa50d">IMAGE_FORMAT_im_to_ASCII_cli</a> ()</td></tr>
@@ -145,8 +143,10 @@ Functions</h2></td></tr>
 <tr class="separator:a753779ce7f1cd3f13be9e18782b7e23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b61d6f741382a96eebc6c9eeed7f744"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__format_8c.html#a9b61d6f741382a96eebc6c9eeed7f744">IMAGE_FORMAT_loadCR2toFITSRGB_cli</a> ()</td></tr>
 <tr class="separator:a9b61d6f741382a96eebc6c9eeed7f744"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Module initialization</div></td></tr>
 <tr class="memitem:a04a60c344899c8e54c2caef2153351a5"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__format_8c.html#a04a60c344899c8e54c2caef2153351a5">init_image_format</a> ()</td></tr>
 <tr class="separator:a04a60c344899c8e54c2caef2153351a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">image_format functions</div></td></tr>
 <tr class="memitem:a96ba08dbf5a22b255a107772814cd986"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__format_8c.html#a96ba08dbf5a22b255a107772814cd986">IMAGE_FORMAT_im_to_ASCII</a> (const char *IDname, const char *foutname)</td></tr>
 <tr class="separator:a96ba08dbf5a22b255a107772814cd986"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39c3c546df5ed679bdb2c934a0760dcd"><td class="memItemLeft" align="right" valign="top">uint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__format_8c.html#a39c3c546df5ed679bdb2c934a0760dcd">setUint16</a> (uint16 x)</td></tr>
@@ -213,7 +213,7 @@ Variables</h2></td></tr>
 <p>read and write images other than FITS</p>
 <dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>7 Jul 2017</dd></dl>
-<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000018">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000021">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a87250e231d815c8206d03507b5702490"></a>
 <div class="memitem">
@@ -282,6 +282,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Convert CR2 to FITS</p>
+<dl class="section note"><dt>Note</dt><dd>assumes dcraw is installed </dd></dl>
 
 </div>
 </div>
@@ -924,6 +927,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>load CR2 file</p>
+<dl class="section note"><dt>Note</dt><dd>assumes dcraw is installed </dd></dl>
 
 </div>
 </div>
@@ -1102,6 +1108,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>reads PGM images (16 bit only)</p>
+<dl class="section note"><dt>Note</dt><dd>written to read output of "dcraw -t 0 -D -4 xxx.CR2" into FITS </dd></dl>
 
 </div>
 </div>
@@ -1172,6 +1181,19 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>This function writes out a 24-bit Windows bitmap file that is readable by Microsoft Paint. <br />
+The image data is a 1D array of (r, g, b) triples, where individual (r, g, b) values can <br />
+each take on values between 0 and 255, inclusive.</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">filename</td><td>char* A string representing the filename that will be written</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>uint32 The width, in pixels, of the bitmap</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname"></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1237,7 +1259,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_0581ea1a1599a935566a2d800eb9900d.html">image_format</a></li><li class="navelem"><a class="el" href="image__format_8c.html">image_format.c</a></li>
-    <li class="footer">Generated on Thu Aug 3 2017 15:42:26 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 4 2017 16:18:17 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

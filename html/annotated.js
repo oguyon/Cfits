@@ -32,7 +32,6 @@ var annotated =
     [ "OPTPIAACMCDESIGN", "structOPTPIAACMCDESIGN.html", "structOPTPIAACMCDESIGN" ],
     [ "OPTSYST", "structOPTSYST.html", "structOPTSYST" ],
     [ "res_node", "structres__node.html", "structres__node" ],
-    [ "RGBQUAD", "structRGBQUAD.html", "structRGBQUAD" ],
     [ "savethreadmsg", "structsavethreadmsg.html", "structsavethreadmsg" ],
     [ "SCEXAO_DISPCOMB_CONF", "structSCEXAO__DISPCOMB__CONF.html", "structSCEXAO__DISPCOMB__CONF" ],
     [ "SCEXAO_DMTURBCONF", "structSCEXAO__DMTURBCONF.html", "structSCEXAO__DMTURBCONF" ],

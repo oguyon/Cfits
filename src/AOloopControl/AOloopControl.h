@@ -274,49 +274,14 @@ typedef struct
 /* =============================================================================================== */
 /*                    LOGGING ACCESS TO FUNCTIONS                                                  */
 /* =============================================================================================== */
-/**
- * @brief Log function call (for testing / debugging only).
- *
- * Function calls are logged if AOLOOPCONTROL_LOGFUNC is defined 
- * 
- * Variable AOLOOPCONTROL_logfunc_level keeps track of function depth: \n 
- * it is incremented when entering a function \n 
- * decremented when exiting a function
- * 
- * Variable AOLOOPCONTROL_logfunc_level_max sets the max depth of logging
- * 
- * 
- * At the beginning of each function, insert this code:
- * @code
- * #ifdef AOLOOPCONTROL_LOGFUNC
- * AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, "");
- * #endif
- * @endcode
- * and at the end of each function:
- * @code
- * #ifdef AOLOOPCONTROL_LOGFUNC
- * AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, "");
- * #endif
- * @endcode
- * 
- * @param[in] logfuncMODE       Log mode, 0:entering function, 1:exiting function
- * @param[in] FunctionName      Name of function, usually __FUNCTION__ so that preprocessor fills this parameter.
- * @param[in] line              Line in cource code, usually __LINE__ so that preprocessor fills this parameter.
- *
- * @return void
- * 
- * @note Carefully set depth value to avoid large output file.
- * @warning May slow down code. Only use for debugging. Output file may grow very quickly.
- */
+
+ /** @brief Log function call (for testing / debugging only). */
 static void AOloopControl_logFunctionCall(const int logfuncMODE, const char *FunctionName, const long line, char *comments);
 
 
 
 
-
-/**
- * @brief Initialize AOloopControl command line interface.
- */
+/** @brief Initialize AOloopControl command line interface. */
 int_fast8_t init_AOloopControl();
 
 

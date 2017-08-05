@@ -104,35 +104,48 @@ $(document).ready(function(){initNavTree('00CORE_8h.html','');});
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">00CORE.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
+<p>Function prototypes for module 00CORE.  
+<a href="#details">More...</a></p>
+
 <p><a href="00CORE_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">INITIALIZATION</div></td></tr>
+<tr><td colspan="2"><div class="groupText"><p>Module initialization functions </p>
+</div></td></tr>
 <tr class="memitem:a1469340da3e86a14a43d8541390c19be"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#a1469340da3e86a14a43d8541390c19be">init_00CORE</a> ()</td></tr>
 <tr class="separator:a1469340da3e86a14a43d8541390c19be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">00CORE - 1. PRINT, ERROR REPORTING, EVENT LOGGING</div></td></tr>
 <tr class="memitem:a12386d38e0d7febb43df6adbff634fac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#a12386d38e0d7febb43df6adbff634fac">printRED</a> (char *string)</td></tr>
+<tr class="memdesc:a12386d38e0d7febb43df6adbff634fac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print string in red.  <a href="#a12386d38e0d7febb43df6adbff634fac">More...</a><br /></td></tr>
 <tr class="separator:a12386d38e0d7febb43df6adbff634fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e4b54218786b34ffbe1f70de81bc52a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#a0e4b54218786b34ffbe1f70de81bc52a">printWARNING</a> (const char *file, const char *func, int <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *warnmessage)</td></tr>
 <tr class="separator:a0e4b54218786b34ffbe1f70de81bc52a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e77ac9461466e89a13b467f64a8df67"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#a3e77ac9461466e89a13b467f64a8df67">printERROR</a> (const char *file, const char *func, int <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *errmessage)</td></tr>
 <tr class="separator:a3e77ac9461466e89a13b467f64a8df67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">00CORE - 2. CONFIGURATION AND INFORMATION</div></td></tr>
 <tr class="memitem:a93e8d81fd1fe2de3159ddff15801af81"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#a93e8d81fd1fe2de3159ddff15801af81">set_precision</a> (int vp)</td></tr>
 <tr class="separator:a93e8d81fd1fe2de3159ddff15801af81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2eef847a9eb4e38bd371170f5fdcf93"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#ad2eef847a9eb4e38bd371170f5fdcf93">CLIWritePid</a> ()</td></tr>
 <tr class="separator:ad2eef847a9eb4e38bd371170f5fdcf93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">00CORE - 3. TIME UTILITIES</div></td></tr>
 <tr class="memitem:acd8c1457583903d309e19adde6805717"><td class="memItemLeft" align="right" valign="top">struct timespec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#acd8c1457583903d309e19adde6805717">timespec_diff</a> (struct timespec start, struct timespec end)</td></tr>
 <tr class="separator:acd8c1457583903d309e19adde6805717"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa333aaba4981442f52ab55df43d76ac5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8h.html#aa333aaba4981442f52ab55df43d76ac5">timespec_diff_double</a> (struct timespec start, struct timespec end)</td></tr>
 <tr class="separator:aa333aaba4981442f52ab55df43d76ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Function prototypes for module 00CORE. </p>
+<dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>Aug 4 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000004">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="ad2eef847a9eb4e38bd371170f5fdcf93"></a>
 <div class="memitem">
 <div class="memproto">
@@ -198,6 +211,18 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Print error string</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">file</td><td>CHAR* file name from which error is issued</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">func</td><td>CHAR* function name from which error is issued</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">line</td><td>int line number from which error is issued</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">warnmessage</td><td>CHAR* error message to be printed </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -214,6 +239,17 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Print string in red. </p>
+<h2>Purpose</h2>
+<p>Print red string to stdout</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">string</td><td>CHAR* </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -252,6 +288,18 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Print warning string</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">file</td><td>CHAR* file name from which warning is issued</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">func</td><td>CHAR* function name from which warning is issued</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">line</td><td>int line number from which warning is issued</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">warnmessage</td><td>CHAR* warning message to be printed </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -268,6 +316,20 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Set default precision (single or double)</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">vp</td><td>int precision mode</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">warnmessage</td><td>CHAR* error message to be printed<ul>
+<li>0: single precision</li>
+<li>1: double precision </li>
+</ul>
+</td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -329,7 +391,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d4b8cfe83cb2a17820bf35e581cf434a.html">00CORE</a></li><li class="navelem"><a class="el" href="00CORE_8h.html">00CORE.h</a></li>
-    <li class="footer">Generated on Thu Aug 3 2017 15:42:25 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 4 2017 16:18:17 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -111,11 +111,15 @@ $(document).ready(function(){initNavTree('COREMOD__tools_8c.html','');});
 <div class="title">COREMOD_tools.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Frequently used tools.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a65786e09c3bd4c1f8f8f311e91c672c6">clock_gettime</a> (int clk_id, struct mach_timespec *t)</td></tr>
 <tr class="separator:a65786e09c3bd4c1f8f8f311e91c672c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">CLI bindings</div></td></tr>
 <tr class="memitem:af29b6a5988ec5e09c82d7bd9b80cdb3c"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#af29b6a5988ec5e09c82d7bd9b80cdb3c">COREMOD_TOOLS_mvProcCPUset_cli</a> ()</td></tr>
 <tr class="separator:af29b6a5988ec5e09c82d7bd9b80cdb3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b63992861852582ae8fac50f2c6e02b"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a1b63992861852582ae8fac50f2c6e02b">write_flot_file_cli</a> ()</td></tr>
@@ -124,8 +128,10 @@ Functions</h2></td></tr>
 <tr class="separator:a718f95db58b5790c6bb469a925b48856"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf578dc5ec1f2b4963e707eef3611ef3"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#acf578dc5ec1f2b4963e707eef3611ef3">COREMOD_TOOLS_statusStat_cli</a> ()</td></tr>
 <tr class="separator:acf578dc5ec1f2b4963e707eef3611ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Module initialization</div></td></tr>
 <tr class="memitem:a9383571be0026fd23ec4464fa50aba26"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a9383571be0026fd23ec4464fa50aba26">init_COREMOD_tools</a> ()</td></tr>
 <tr class="separator:a9383571be0026fd23ec4464fa50aba26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">TEMPLATEMODULE functions</div></td></tr>
 <tr class="memitem:a96c00530ad95330fef928a19c0367e32"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a96c00530ad95330fef928a19c0367e32">COREMOD_TOOLS_mvProcCPUset</a> (const char *csetname)</td></tr>
 <tr class="separator:a96c00530ad95330fef928a19c0367e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eb0f1e9287d62ad891cec91932b0422"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a6eb0f1e9287d62ad891cec91932b0422">create_counter_file</a> (const char *fname, long NBpts)</td></tr>
@@ -219,7 +225,13 @@ Variables</h2></td></tr>
 <tr class="memitem:a7a9031c756cc5a1da42cffc862eb783a"><td class="memItemLeft" align="right" valign="top">static FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__tools_8c.html#a7a9031c756cc5a1da42cffc862eb783a">fpgnuplot</a></td></tr>
 <tr class="separator:a7a9031c756cc5a1da42cffc862eb783a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Frequently used tools. </p>
+<p>Includes basic file I/O</p>
+<dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>Aug 2, 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000015">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a26167af6113dc8e86cdca4ee4cc237c1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1631,7 +1643,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5162902b44091c7331edbe97a61fdb6.html">COREMOD_tools</a></li><li class="navelem"><a class="el" href="COREMOD__tools_8c.html">COREMOD_tools.c</a></li>
-    <li class="footer">Generated on Thu Aug 3 2017 15:42:26 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 4 2017 16:18:17 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

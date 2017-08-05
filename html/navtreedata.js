@@ -46,7 +46,7 @@ var NAVTREEINDEX =
 "nrlmsise-00__data_8c.html#a34941bdba8aa11fb952a012ae87fd02c",
 "structASPHSURFR.html#ae2386c06994cf2b5a8090bbdee2a7957",
 "structOPTPIAACMCDESIGN.html#a5fd5d4ca057083ad662b5abac47d5140",
-"structyy__buffer__state.html#abf5c70eea75581b58c0ee7bd31b14490"
+"structyy__trans__info.html#ae0715250c2bef261e596e77e0030f13e"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
