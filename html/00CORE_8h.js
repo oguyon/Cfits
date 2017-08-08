@@ -1,6 +1,7 @@
 var 00CORE_8h =
 [
     [ "CLIWritePid", "00CORE_8h.html#ad2eef847a9eb4e38bd371170f5fdcf93", null ],
+    [ "CORE_logFunctionCall", "00CORE_8h.html#a94467a0684995d06c8c5a0bfef73a35e", null ],
     [ "init_00CORE", "00CORE_8h.html#a1469340da3e86a14a43d8541390c19be", null ],
     [ "printERROR", "00CORE_8h.html#a3e77ac9461466e89a13b467f64a8df67", null ],
     [ "printRED", "00CORE_8h.html#a12386d38e0d7febb43df6adbff634fac", null ],

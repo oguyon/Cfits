@@ -1,6 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"COREMOD__memory_8c.html#a90efa5a10c5baa2b8048922b3af4b3b8":[5,0,1,8,0,107],
 "COREMOD__memory_8c.html#a92bb4be8f7727c20b7dd450b04ec8529":[5,0,1,8,0,85],
 "COREMOD__memory_8c.html#a92cfbeabc8f13f3a58d00732d0001102":[5,0,1,8,0,66],
 "COREMOD__memory_8c.html#a93f1a24a69c29e6f136176d0aa5fb76f":[5,0,1,8,0,58],
@@ -249,5 +248,6 @@ var NAVTREEINDEX6 =
 "COREMOD__tools_8h.html#ae12e86277a8f055803d9ff6077f305df":[5,0,1,9,1,35],
 "COREMOD__tools_8h.html#ae647a10dfc3314cf3fae8c0d35c24356":[5,0,1,9,1,34],
 "COREMOD__tools_8h.html#ae726276b59abb39bfcfe60b8966a3351":[5,0,1,9,1,8],
-"COREMOD__tools_8h.html#af44741e8257916ba715bac54146354a6":[5,0,1,9,1,7]
+"COREMOD__tools_8h.html#af44741e8257916ba715bac54146354a6":[5,0,1,9,1,7],
+"COREMOD__tools_8h.html#afe5cd16046ebb47a351af77e98643730":[5,0,1,9,1,20]
 };

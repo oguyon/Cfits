@@ -105,6 +105,7 @@ $(document).ready(function(){initNavTree('00CORE_8c.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">00CORE.c File Reference</div>  </div>
@@ -116,6 +117,8 @@ $(document).ready(function(){initNavTree('00CORE_8c.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a4686db64ee8970c84b269e0425519dec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#a4686db64ee8970c84b269e0425519dec">clock_gettime</a> (int clk_id, struct mach_timespec *t)</td></tr>
+<tr class="separator:a4686db64ee8970c84b269e0425519dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Module initialization</div></td></tr>
 <tr class="memitem:a1469340da3e86a14a43d8541390c19be"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#a1469340da3e86a14a43d8541390c19be">init_00CORE</a> ()</td></tr>
 <tr class="separator:a1469340da3e86a14a43d8541390c19be"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,9 +126,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:a12386d38e0d7febb43df6adbff634fac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print string in red.  <a href="#a12386d38e0d7febb43df6adbff634fac">More...</a><br /></td></tr>
 <tr class="separator:a12386d38e0d7febb43df6adbff634fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e4b54218786b34ffbe1f70de81bc52a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#a0e4b54218786b34ffbe1f70de81bc52a">printWARNING</a> (const char *file, const char *func, int <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *warnmessage)</td></tr>
+<tr class="memdesc:a0e4b54218786b34ffbe1f70de81bc52a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print warning and continue.  <a href="#a0e4b54218786b34ffbe1f70de81bc52a">More...</a><br /></td></tr>
 <tr class="separator:a0e4b54218786b34ffbe1f70de81bc52a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e77ac9461466e89a13b467f64a8df67"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#a3e77ac9461466e89a13b467f64a8df67">printERROR</a> (const char *file, const char *func, int <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *errmessage)</td></tr>
+<tr class="memdesc:a3e77ac9461466e89a13b467f64a8df67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print error (in red) and continue.  <a href="#a3e77ac9461466e89a13b467f64a8df67">More...</a><br /></td></tr>
 <tr class="separator:a3e77ac9461466e89a13b467f64a8df67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af647d2afb4bc4b85305a53050ab19c8f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#af647d2afb4bc4b85305a53050ab19c8f">CORE_logFunctionCall</a> (const int funclevel, const int loglevel, const int logfuncMODE, const char *FileName, const char *FunctionName, const long <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *comments)</td></tr>
+<tr class="separator:af647d2afb4bc4b85305a53050ab19c8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93e8d81fd1fe2de3159ddff15801af81"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#a93e8d81fd1fe2de3159ddff15801af81">set_precision</a> (int vp)</td></tr>
 <tr class="separator:a93e8d81fd1fe2de3159ddff15801af81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae838278c08c0e2a86eaabaa30a51ed1c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="00CORE_8c.html#ae838278c08c0e2a86eaabaa30a51ed1c">CLIinfoPrint</a> ()</td></tr>
@@ -178,6 +185,130 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a4686db64ee8970c84b269e0425519dec"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int clock_gettime </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>clk_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">struct mach_timespec *&#160;</td>
+          <td class="paramname"><em>t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="af647d2afb4bc4b85305a53050ab19c8f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void CORE_logFunctionCall </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>funclevel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>loglevel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>logfuncMODE</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>FileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>FunctionName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const long&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>comments</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Log function call (for testing / debugging only).</p>
+<p>Function calls are logged if to file .FileName.funccalls.log</p>
+<p>Variable AOLOOPCONTROL_logfunc_level keeps track of function depth: <br />
+ it is incremented when entering a function <br />
+ decremented when exiting a function</p>
+<p>Variable AOLOOPCONTROL_logfunc_level_max sets the max depth of logging</p>
+<p>At the beginning of each function, insert this code: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;AOloopControl_logFunctionCall( 0, __FUNCTION__, __LINE__, &quot;&quot;);</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;#endif</div>
+</div><!-- fragment --><p> and at the end of each function: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;#ifdef AOLOOPCONTROL_LOGFUNC</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;AOloopControl_logFunctionCall( 1, __FUNCTION__, __LINE__, &quot;&quot;);</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;#endif</div>
+</div><!-- fragment --><h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">funclevel</td><td>INT Function level (0: top level, always log)</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">loglevel</td><td>INT Log level: log all function with level =&lt; loglevel</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>logfuncMODE INT Log mode, 0:entering function, 1:exiting function</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">FileName</td><td>char* Name of source file, usually <b>FILE</b> so that preprocessor fills this parameter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">FunctionName</td><td>char* Name of function, usually <b>FUNCTION</b> so that preprocessor fills this parameter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">line</td><td>char* Line in cource code, usually <b>LINE</b> so that preprocessor fills this parameter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">comments</td><td>char* comment string</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Carefully set depth value to avoid large output file. </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>May slow down code. Only use for debugging. Output file may grow very quickly. </dd></dl>
 
 </div>
 </div>
@@ -247,6 +378,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Print error (in red) and continue. </p>
 <h2>Purpose</h2>
 <p>Print error string</p>
 <h2>Arguments</h2>
@@ -324,6 +457,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Print warning and continue. </p>
 <h2>Purpose</h2>
 <p>Print warning string</p>
 <h2>Arguments</h2>
@@ -440,7 +575,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d4b8cfe83cb2a17820bf35e581cf434a.html">00CORE</a></li><li class="navelem"><a class="el" href="00CORE_8c.html">00CORE.c</a></li>
-    <li class="footer">Generated on Fri Aug 4 2017 16:18:17 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 4 2017 19:55:02 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

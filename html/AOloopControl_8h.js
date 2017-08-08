@@ -1,7 +1,5 @@
 var AOloopControl_8h =
 [
-    [ "AOLOOPCONTROL_CONF", "structAOLOOPCONTROL__CONF.html", "structAOLOOPCONTROL__CONF" ],
-    [ "THDATA_IMTOTAL", "structTHDATA__IMTOTAL.html", "structTHDATA__IMTOTAL" ],
     [ "AOcompute", "AOloopControl_8h.html#a19a66458a8453e9f5e6ec19a93c3e70a", null ],
     [ "AOcontrolLoop_TestDMSpeed", "AOloopControl_8h.html#ac3f68a9b79e43a57e11d85517a9627d1", null ],
     [ "AOcontrolLoop_TestSystemLatency", "AOloopControl_8h.html#a9ebac7ca5867f9ed5ec5e47a66144c69", null ],
@@ -39,7 +37,6 @@ var AOloopControl_8h =
     [ "AOloopControl_InjectMode", "AOloopControl_8h.html#a75fd4a66a5158dc2dd447d550bf2efc5", null ],
     [ "AOloopControl_loadCM", "AOloopControl_8h.html#abdc9cf4fdc8825eafe0f4a6ee2a8897b", null ],
     [ "AOloopControl_loadconfigure", "AOloopControl_8h.html#a365d8d6964d35b903928ae33966f2b72", null ],
-    [ "AOloopControl_logFunctionCall", "AOloopControl_8h.html#abf02c7b987ff57fa38605aafc2df2c2e", null ],
     [ "AOloopControl_logoff", "AOloopControl_8h.html#a298c97e99df82a600200beae487f6cf8", null ],
     [ "AOloopControl_logon", "AOloopControl_8h.html#adfbb7e9917d08216d9d97f243feb5f39", null ],
     [ "AOloopControl_logprocess_modeval", "AOloopControl_8h.html#a9fc28b4fe0560796be68d45b9b7f713a", null ],

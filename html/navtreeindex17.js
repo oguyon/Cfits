@@ -1,5 +1,8 @@
 var NAVTREEINDEX17 =
 {
+"structyy__buffer__state.html#afcc44872643f513e79b43c2b1f334a67":[4,0,42,11],
+"structyy__trans__info.html":[4,0,43],
+"structyy__trans__info.html#a5c9f61e770deef50bd4e697310342fe9":[4,0,43,1],
 "structyy__trans__info.html#ae0715250c2bef261e596e77e0030f13e":[4,0,43,0],
 "templatemodule_8c.html":[5,0,0,0,0],
 "templatemodule_8c.html#a065191bd59b2c989ac3b80f8adcdb59e":[5,0,0,0,0,4],

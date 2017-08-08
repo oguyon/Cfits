@@ -1,5 +1,6 @@
 var AOloopControl_8c =
 [
+    [ "THDATA_IMTOTAL", "structTHDATA__IMTOTAL.html", "structTHDATA__IMTOTAL" ],
     [ "AOcompute", "AOloopControl_8c.html#a19a66458a8453e9f5e6ec19a93c3e70a", null ],
     [ "AOcontrolLoop_TestDMSpeed", "AOloopControl_8c.html#ac3f68a9b79e43a57e11d85517a9627d1", null ],
     [ "AOcontrolLoop_TestDMSpeed_cli", "AOloopControl_8c.html#a3ac98f26c3ae9144afd92dbfdfa89785", null ],
@@ -58,9 +59,8 @@ var AOloopControl_8c =
     [ "AOloopControl_InjectMode_cli", "AOloopControl_8c.html#a95bb25b2191a72b4044eb4ad2a43d318", null ],
     [ "AOloopControl_loadCM", "AOloopControl_8c.html#abdc9cf4fdc8825eafe0f4a6ee2a8897b", null ],
     [ "AOloopControl_loadCM_cli", "AOloopControl_8c.html#a1eda34f9754d4d151a2b746acf371989", null ],
-    [ "AOloopControl_loadconfigure", "AOloopControl_8c.html#a365d8d6964d35b903928ae33966f2b72", null ],
+    [ "AOloopControl_loadconfigure", "group__AOloopControl__streams.html#ga365d8d6964d35b903928ae33966f2b72", null ],
     [ "AOloopControl_loadconfigure_cli", "AOloopControl_8c.html#a070111113671a8c8e0ba5b5898accd58", null ],
-    [ "AOloopControl_logFunctionCall", "AOloopControl_8c.html#abf02c7b987ff57fa38605aafc2df2c2e", null ],
     [ "AOloopControl_logprocess_modeval", "AOloopControl_8c.html#a9fc28b4fe0560796be68d45b9b7f713a", null ],
     [ "AOloopControl_logprocess_modeval_cli", "AOloopControl_8c.html#af44f824bd0fb68506cbfa885f4133898", null ],
     [ "AOloopControl_loopkill", "AOloopControl_8c.html#a7e0c1278a38599e95fe3a80f7f9d81d7", null ],
@@ -178,7 +178,6 @@ var AOloopControl_8c =
     [ "compute_function_dark_subtract", "AOloopControl_8c.html#a08adf8f45f2ea29016a5afc556a4de37", null ],
     [ "compute_function_imtotal", "AOloopControl_8c.html#ae528115f70c3ee4537c8c6f374ada43f", null ],
     [ "ControlMatrixMultiply", "AOloopControl_8c.html#a3682e64838d25674a308c533631fc2b8", null ],
-    [ "init_AOloopControl", "AOloopControl_8c.html#ad051291ea3a3e240dbb933eff63b9f42", null ],
     [ "Measure_Resp_Matrix", "AOloopControl_8c.html#ac9edeb536fcd625b1e3489c2be236bb4", null ],
     [ "Read_cam_frame", "AOloopControl_8c.html#a275196fb78a1b7413a18a2df3ebcf995", null ],
     [ "set_DM_modes", "AOloopControl_8c.html#a2c297aecabe48d90878ca37428bd0c71", null ],

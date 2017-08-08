@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['image_20streams',['Image streams',['../group__AOloopControl__streams.html',1,'']]],
   ['i',['i',['../calc__flex_8c.html#a139066bd9e344a8daae82c5ca919fffe',1,'calc_flex.c']]],
   ['id_5fcpafreq',['ID_CPAfreq',['../PIAACMCsimul_8c.html#a9e73e8445edf403b04c51e369d3438ca',1,'PIAACMCsimul.c']]],
   ['id_5fdm',['ID_DM',['../structOPTPIAACMCDESIGN.html#a01002138c2aeb8f60ce18ab70bac6a15',1,'OPTPIAACMCDESIGN']]],
@@ -145,7 +146,7 @@ var searchData=
   ['info_5ftime_5fdiff',['info_time_diff',['../info_8c.html#a6fb9173b416d4ca64e84793024c86a9e',1,'info_time_diff(struct timespec start, struct timespec end):&#160;info.c'],['../info_8h.html#a6fb9173b416d4ca64e84793024c86a9e',1,'info_time_diff(struct timespec start, struct timespec end):&#160;info.c']]],
   ['init',['init',['../structAOLOOPCONTROL__CONF.html#a02784d9e824c73ced85f57691d6c0834',1,'AOLOOPCONTROL_CONF::init()'],['../structGPUMATMULTCONF.html#a872ce9085af234f6c02def1c8974148c',1,'GPUMATMULTCONF::init()'],['../structASPHSURFR.html#ae2386c06994cf2b5a8090bbdee2a7957',1,'ASPHSURFR::init()'],['../structZERNIKE.html#aac9ea666bbfdae8b71b4bff01617b2c2',1,'ZERNIKE::init()']]],
   ['init_5f00core',['init_00CORE',['../00CORE_8c.html#a1469340da3e86a14a43d8541390c19be',1,'init_00CORE():&#160;00CORE.c'],['../00CORE_8h.html#a1469340da3e86a14a43d8541390c19be',1,'init_00CORE():&#160;00CORE.c']]],
-  ['init_5faoloopcontrol',['init_AOloopControl',['../AOloopControl_8c.html#ad051291ea3a3e240dbb933eff63b9f42',1,'init_AOloopControl():&#160;AOloopControl.c'],['../AOloopControl_8h.html#ad051291ea3a3e240dbb933eff63b9f42',1,'init_AOloopControl():&#160;AOloopControl.c']]],
+  ['init_5faoloopcontrol',['init_AOloopControl',['../AOloopControl_8h.html#ad051291ea3a3e240dbb933eff63b9f42',1,'AOloopControl.h']]],
   ['init_5faoloopcontrol_5fdm',['init_AOloopControl_DM',['../AOloopControl__DM_8c.html#a59c2210415bf5dcf30636d77230bcef5',1,'init_AOloopControl_DM():&#160;AOloopControl_DM.c'],['../AOloopControl__DM_8h.html#a59c2210415bf5dcf30636d77230bcef5',1,'init_AOloopControl_DM():&#160;AOloopControl_DM.c']]],
   ['init_5faosystsim',['init_AOsystSim',['../AOsystSim_8c.html#ad63110c83cfc65f22a044cb57709d6f6',1,'init_AOsystSim():&#160;AOsystSim.c'],['../AOsystSim_8h.html#ad63110c83cfc65f22a044cb57709d6f6',1,'init_AOsystSim():&#160;AOsystSim.c'],['../SCExAO__DM_8h.html#ad63110c83cfc65f22a044cb57709d6f6',1,'init_AOsystSim():&#160;AOsystSim.c']]],
   ['init_5fatmospheremodel',['init_AtmosphereModel',['../AtmosphereModel_8c.html#a6f0b7163d044558fba4a62e02ad06f98',1,'init_AtmosphereModel():&#160;AtmosphereModel.c'],['../AtmosphereModel_8h.html#a6f0b7163d044558fba4a62e02ad06f98',1,'init_AtmosphereModel():&#160;AtmosphereModel.c']]],

@@ -105,7 +105,6 @@ $(document).ready(function(){initNavTree('AOloopControl_8h.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">AOloopControl.h File Reference</div>  </div>
@@ -117,35 +116,26 @@ $(document).ready(function(){initNavTree('AOloopControl_8h.html','');});
 
 <p><a href="AOloopControl_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAOLOOPCONTROL__CONF.html">AOLOOPCONTROL_CONF</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTHDATA__IMTOTAL.html">THDATA_IMTOTAL</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:abf02c7b987ff57fa38605aafc2df2c2e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#abf02c7b987ff57fa38605aafc2df2c2e">AOloopControl_logFunctionCall</a> (const int logfuncMODE, const char *FunctionName, const long <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *comments)</td></tr>
-<tr class="memdesc:abf02c7b987ff57fa38605aafc2df2c2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log function call (for testing / debugging only).  <a href="#abf02c7b987ff57fa38605aafc2df2c2e">More...</a><br /></td></tr>
-<tr class="separator:abf02c7b987ff57fa38605aafc2df2c2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad051291ea3a3e240dbb933eff63b9f42"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ad051291ea3a3e240dbb933eff63b9f42">init_AOloopControl</a> ()</td></tr>
 <tr class="memdesc:ad051291ea3a3e240dbb933eff63b9f42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize AOloopControl command line interface.  <a href="#ad051291ea3a3e240dbb933eff63b9f42">More...</a><br /></td></tr>
 <tr class="separator:ad051291ea3a3e240dbb933eff63b9f42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">1. INITIALIZATION, configurations</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 1. INITIALIZATION, configurations</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Allocate memory, import/export configurations </p>
 </div></td></tr>
 <tr class="memitem:a365d8d6964d35b903928ae33966f2b72"><td class="memItemLeft" align="right" valign="top">static int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a365d8d6964d35b903928ae33966f2b72">AOloopControl_loadconfigure</a> (long loop, int mode, int level)</td></tr>
+<tr class="memdesc:a365d8d6964d35b903928ae33966f2b72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load configuation parameters from disk.  <a href="#a365d8d6964d35b903928ae33966f2b72">More...</a><br /></td></tr>
 <tr class="separator:a365d8d6964d35b903928ae33966f2b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00f88e3ff7676af9ffc3d9835f336055"><td class="memItemLeft" align="right" valign="top">static int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a00f88e3ff7676af9ffc3d9835f336055">AOloopControl_InitializeMemory</a> ()</td></tr>
 <tr class="memdesc:a00f88e3ff7676af9ffc3d9835f336055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize memory - function called within C code only (no CLI call)  <a href="#a00f88e3ff7676af9ffc3d9835f336055">More...</a><br /></td></tr>
 <tr class="separator:a00f88e3ff7676af9ffc3d9835f336055"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 2.1. LOAD DATA STREAMS</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 2.1. LOW LEVEL UTILITIES &amp; TOOLS - LOAD DATA STREAMS</div></td></tr>
 <tr class="memitem:a119111bd69fc11e62f5911d6daf16427"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a119111bd69fc11e62f5911d6daf16427">AOloopControl_2Dloadcreate_shmim</a> (const char *name, const char *fname, long xsize, long ysize)</td></tr>
 <tr class="separator:a119111bd69fc11e62f5911d6daf16427"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b5771f15f14e76afc4b7899378a4a63"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a6b5771f15f14e76afc4b7899378a4a63">AOloopControl_3Dloadcreate_shmim</a> (const char *name, const char *fname, long xsize, long ysize, long zsize)</td></tr>
 <tr class="separator:a6b5771f15f14e76afc4b7899378a4a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 2.2. DATA STREAMS PROCESSING</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 2.2. LOW LEVEL UTILITIES &amp; TOOLS - DATA STREAMS PROCESSING</div></td></tr>
 <tr class="memitem:a9fba32dfbf6fc91072fefb019709e5de"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a9fba32dfbf6fc91072fefb019709e5de">AOloopControl_AveStream</a> (const char *IDname, double alpha, const char *IDname_out_ave, const char *IDname_out_AC, const char *IDname_out_RMS)</td></tr>
 <tr class="separator:a9fba32dfbf6fc91072fefb019709e5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2504ada89010d0d6ed22a56a5ad0d26b"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a2504ada89010d0d6ed22a56a5ad0d26b">AOloopControl_frameDelay</a> (const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem)</td></tr>
@@ -153,7 +143,7 @@ Functions</h2></td></tr>
 <tr class="memitem:aac1ee60290e62511898ba6a0712d6e89"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aac1ee60290e62511898ba6a0712d6e89">AOloopControl_stream3Dto2D</a> (const char *in_name, const char *out_name, int NBcols, int insem)</td></tr>
 <tr class="memdesc:aac1ee60290e62511898ba6a0712d6e89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-arrange a 3D cube into an array of images into a single 2D frame.  <a href="#aac1ee60290e62511898ba6a0712d6e89">More...</a><br /></td></tr>
 <tr class="separator:aac1ee60290e62511898ba6a0712d6e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 2.3. MISC COMPUTATION ROUTINES</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 2.3. LOW LEVEL UTILITIES &amp; TOOLS - MISC COMPUTATION ROUTINES</div></td></tr>
 <tr class="memitem:ad2184079c9d0653be06f2a757f89f03b"><td class="memItemLeft" align="right" valign="top">static long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ad2184079c9d0653be06f2a757f89f03b">AOloopControl_CrossProduct</a> (const char *ID1_name, const char *ID2_name, const char *IDout_name)</td></tr>
 <tr class="separator:ad2184079c9d0653be06f2a757f89f03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae528115f70c3ee4537c8c6f374ada43f"><td class="memItemLeft" align="right" valign="top">static void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ae528115f70c3ee4537c8c6f374ada43f">compute_function_imtotal</a> (void *ptr)</td></tr>
@@ -164,14 +154,14 @@ Functions</h2></td></tr>
 <tr class="separator:aca1efa77245c9a949748aa440fd129e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06b2bff59d932e427de8e45e7f695b81"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a06b2bff59d932e427de8e45e7f695b81">AOloopControl_dm2opdmaploop</a> (char *DMdisp_name, char *OPDmap_name, int semindex)</td></tr>
 <tr class="separator:a06b2bff59d932e427de8e45e7f695b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">3. WFS INPUT</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 3. WFS INPUT</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Read camera imates </p>
 </div></td></tr>
 <tr class="memitem:a05543d5f38cc51a9724330c750452891"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a05543d5f38cc51a9724330c750452891">AOloopControl_camimage_extract2D_sharedmem_loop</a> (const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)</td></tr>
 <tr class="separator:a05543d5f38cc51a9724330c750452891"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a275196fb78a1b7413a18a2df3ebcf995"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a275196fb78a1b7413a18a2df3ebcf995">Read_cam_frame</a> (long loop, int RM, int normalize, int PixelStreamMode, int InitSem)</td></tr>
 <tr class="separator:a275196fb78a1b7413a18a2df3ebcf995"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">4. ACQUIRING CALIBRATION</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 4. ACQUIRING CALIBRATION</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Measure system response </p>
 </div></td></tr>
 <tr class="memitem:ab6baed05afd1b77dbd32314daa67db8f"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ab6baed05afd1b77dbd32314daa67db8f">AOloopControl_Measure_WFSrespC</a> (long loop, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDoutC_name, int normalize, int AOinitMode, long NBcycle)</td></tr>
@@ -185,7 +175,7 @@ Functions</h2></td></tr>
 <tr class="separator:ac9edeb536fcd625b1e3489c2be236bb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38df51aca049463698df9c0f4e6a3ae9"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a38df51aca049463698df9c0f4e6a3ae9">AOloopControl_RespMatrix_Fast</a> (const char *DMmodes_name, const char *dmRM_name, const char *imWFS_name, long semtrig, float HardwareLag, float loopfrequ, float ampl, const char *outname)</td></tr>
 <tr class="separator:a38df51aca049463698df9c0f4e6a3ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">5. COMPUTING CALIBRATION</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 5. COMPUTING CALIBRATION</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Compute control matrix, modes </p>
 </div></td></tr>
 <tr class="memitem:a8c343270c191f582f7e78bc93d14e020"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a8c343270c191f582f7e78bc93d14e020">AOloopControl_mkHadamardModes</a> (const char *DMmask_name, const char *outname)</td></tr>
@@ -221,7 +211,7 @@ Functions</h2></td></tr>
 <tr class="separator:ab38b851c264f398e041901b46fe0379c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdc9cf4fdc8825eafe0f4a6ee2a8897b"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#abdc9cf4fdc8825eafe0f4a6ee2a8897b">AOloopControl_loadCM</a> (long loop, const char *CMfname)</td></tr>
 <tr class="separator:abdc9cf4fdc8825eafe0f4a6ee2a8897b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">6. REAL TIME COMPUTING ROUTINES</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 6. REAL TIME COMPUTING ROUTINES</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>calls CPU and GPU processing </p>
 </div></td></tr>
 <tr class="memitem:a002e9ae8ce1c79e6a4ef371e9b814a9a"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a002e9ae8ce1c79e6a4ef371e9b814a9a">AOloopControl_WFSzpupdate_loop</a> (const char *IDzpdm_name, const char *IDzrespM_name, const char *IDwfszp_name)</td></tr>
@@ -252,7 +242,7 @@ Functions</h2></td></tr>
 <tr class="separator:aee12877621c3893222540cbc80ea7ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac28a204bc08926a450a9d2bad7fa6de2"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ac28a204bc08926a450a9d2bad7fa6de2">AOloopControl_dm2dm_offload</a> (const char *streamin, const char *streamout, float twait, float offcoeff, float multcoeff)</td></tr>
 <tr class="separator:ac28a204bc08926a450a9d2bad7fa6de2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">7. PREDICTIVE CONTROL</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 7. PREDICTIVE CONTROL</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Predictive control using WFS telemetry </p>
 </div></td></tr>
 <tr class="memitem:aaf78d8caa0c27cb632ea00c97e0399b4"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aaf78d8caa0c27cb632ea00c97e0399b4">AOloopControl_mapPredictiveFilter</a> (const char *IDmodecoeff_name, long modeout, double delayfr)</td></tr>
@@ -261,14 +251,14 @@ Functions</h2></td></tr>
 <tr class="separator:a366588e72f3596ce6c09dcb083d51632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acdad903dbd67f4e4fb2af1adfacd49bd"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#acdad903dbd67f4e4fb2af1adfacd49bd">AOloopControl_builPFloop_WatchInput</a> (long loop, long PFblock)</td></tr>
 <tr class="separator:acdad903dbd67f4e4fb2af1adfacd49bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">8. LOOP CONTROL INTERFACE</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8. LOOP CONTROL INTERFACE</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Set parameters </p>
 </div></td></tr>
 <tr class="memitem:a64f827e2784e3efde48ed4891d6d19f1"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a64f827e2784e3efde48ed4891d6d19f1">AOloopControl_setLoopNumber</a> (long loop)</td></tr>
 <tr class="separator:a64f827e2784e3efde48ed4891d6d19f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a066fb86fe042071a48b93697d1d29918"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a066fb86fe042071a48b93697d1d29918">AOloopControl_setparam</a> (long loop, const char *key, double value)</td></tr>
 <tr class="separator:a066fb86fe042071a48b93697d1d29918"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.1. MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Set parameters </p>
 </div></td></tr>
 <tr class="memitem:aaa36c0f5676f5945a0d89fdcc1fc881a"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aaa36c0f5676f5945a0d89fdcc1fc881a">AOloopControl_loopon</a> ()</td></tr>
@@ -281,17 +271,17 @@ Functions</h2></td></tr>
 <tr class="separator:a80e9d045d44ebe3981beb78e32c482c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a561e18ffa331146fbed2ca53a6c6fdb4"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a561e18ffa331146fbed2ca53a6c6fdb4">AOloopControl_loopreset</a> ()</td></tr>
 <tr class="separator:a561e18ffa331146fbed2ca53a6c6fdb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.2. DATA LOGGING</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.2. LOOP CONTROL INTERFACE - DATA LOGGING</div></td></tr>
 <tr class="memitem:adfbb7e9917d08216d9d97f243feb5f39"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#adfbb7e9917d08216d9d97f243feb5f39">AOloopControl_logon</a> ()</td></tr>
 <tr class="separator:adfbb7e9917d08216d9d97f243feb5f39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a298c97e99df82a600200beae487f6cf8"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a298c97e99df82a600200beae487f6cf8">AOloopControl_logoff</a> ()</td></tr>
 <tr class="separator:a298c97e99df82a600200beae487f6cf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.3. PRIMARY DM WRITE</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE</div></td></tr>
 <tr class="memitem:a857c19e62e6acda10fca64adfa7fc565"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a857c19e62e6acda10fca64adfa7fc565">AOloopControl_DMprimaryWrite_on</a> ()</td></tr>
 <tr class="separator:a857c19e62e6acda10fca64adfa7fc565"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a1d9a544f9f193c864f236f04742a54"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a2a1d9a544f9f193c864f236f04742a54">AOloopControl_DMprimaryWrite_off</a> ()</td></tr>
 <tr class="separator:a2a1d9a544f9f193c864f236f04742a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.4. INTEGRATOR AUTO TUNING</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.4. LOOP CONTROL INTERFACE - INTEGRATOR AUTO TUNING</div></td></tr>
 <tr class="memitem:a4b592751014219bf5c8afcb12c0d1a01"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a4b592751014219bf5c8afcb12c0d1a01">AOloopControl_AUTOTUNE_LIMITS_on</a> ()</td></tr>
 <tr class="separator:a4b592751014219bf5c8afcb12c0d1a01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fb5c314e68474a374f91a0a716d689d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a8fb5c314e68474a374f91a0a716d689d">AOloopControl_AUTOTUNE_LIMITS_off</a> ()</td></tr>
@@ -306,12 +296,12 @@ Functions</h2></td></tr>
 <tr class="separator:a161f9b2b9cf3fabb48103a880f2dfa32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31cadbcb286f552074469a1757fadf37"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a31cadbcb286f552074469a1757fadf37">AOloopControl_AUTOTUNE_GAINS_off</a> ()</td></tr>
 <tr class="separator:a31cadbcb286f552074469a1757fadf37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.5. PREDICTIVE FILTER ON/OFF</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.5. LOOP CONTROL INTERFACE - PREDICTIVE FILTER ON/OFF</div></td></tr>
 <tr class="memitem:aff4558a2984773735b46e129777b0ad8"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aff4558a2984773735b46e129777b0ad8">AOloopControl_ARPFon</a> ()</td></tr>
 <tr class="separator:aff4558a2984773735b46e129777b0ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26bea9d5d6452a589541c1757ff4ba21"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a26bea9d5d6452a589541c1757ff4ba21">AOloopControl_ARPFoff</a> ()</td></tr>
 <tr class="separator:a26bea9d5d6452a589541c1757ff4ba21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.6. TIMING PARAMETERS</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.6. LOOP CONTROL INTERFACE - TIMING PARAMETERS</div></td></tr>
 <tr class="memitem:a06643f59e3a58d157bdc715b5598481f"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a06643f59e3a58d157bdc715b5598481f">AOloopControl_set_loopfrequ</a> (float loopfrequ)</td></tr>
 <tr class="separator:a06643f59e3a58d157bdc715b5598481f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab34df3780e349046fc276ec2c38a7daa"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ab34df3780e349046fc276ec2c38a7daa">AOloopControl_set_hardwlatency_frame</a> (float hardwlatency_frame)</td></tr>
@@ -320,7 +310,7 @@ Functions</h2></td></tr>
 <tr class="separator:ab3d591ac4058ea11985efc9f9a13ddcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98be0f94027398487d2a6696631943e9"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a98be0f94027398487d2a6696631943e9">AOloopControl_set_wfsmextrlatency_frame</a> (float wfsmextrlatency_frame)</td></tr>
 <tr class="separator:a98be0f94027398487d2a6696631943e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">- 8.7. CONTROL LOOP PARAMETERS</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 8.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS</div></td></tr>
 <tr class="memitem:a12814ba8c8ae4ebaaa90885a93d0f33b"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a12814ba8c8ae4ebaaa90885a93d0f33b">AOloopControl_setgain</a> (float gain)</td></tr>
 <tr class="separator:a12814ba8c8ae4ebaaa90885a93d0f33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02026f2deb2e03abfc7de384afeb3974"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a02026f2deb2e03abfc7de384afeb3974">AOloopControl_setARPFgain</a> (float gain)</td></tr>
@@ -337,7 +327,7 @@ Functions</h2></td></tr>
 <tr class="separator:a626367be40aa1f1cc29dda561c60d7cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13674593e6774f6d4f00fc72cfe49448"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a13674593e6774f6d4f00fc72cfe49448">AOloopControl_scanGainBlock</a> (long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)</td></tr>
 <tr class="separator:a13674593e6774f6d4f00fc72cfe49448"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">9. STATUS / TESTING / PERF MEASUREMENT</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 9. STATUS / TESTING / PERF MEASUREMENT</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>Measure loop behavior </p>
 </div></td></tr>
 <tr class="memitem:adf77a149d6ff2d0b18e569303f0c9368"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#adf77a149d6ff2d0b18e569303f0c9368">AOloopControl_printloopstatus</a> (long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize)</td></tr>
@@ -366,21 +356,19 @@ Functions</h2></td></tr>
 <tr class="separator:ac334b00affe34ab36927ea271ca0bf46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41cb4171b617b7de790b7d28c217d945"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a41cb4171b617b7de790b7d28c217d945">AOloopControl_AnalyzeRM_sensitivity</a> (const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname)</td></tr>
 <tr class="separator:a41cb4171b617b7de790b7d28c217d945"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">10. FOCAL PLANE SPECKLE MODULATION / CONTROL</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 10. FOCAL PLANE SPECKLE MODULATION / CONTROL</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>custom FP AO routines </p>
 </div></td></tr>
 <tr class="memitem:adfb1e7d884741b9eefc631d15ff93613"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#adfb1e7d884741b9eefc631d15ff93613">AOloopControl_OptimizePSF_LO</a> (const char *psfstream_name, const char *IDmodes_name, const char *dmstream_name, long delayframe, long NBframes)</td></tr>
 <tr class="separator:adfb1e7d884741b9eefc631d15ff93613"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a8acc15a46ed4ac0ed26263a2955dd8"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a5a8acc15a46ed4ac0ed26263a2955dd8">AOloopControl_DMmodulateAB</a> (const char *IDprobeA_name, const char *IDprobeB_name, const char *IDdmstream_name, const char *IDrespmat_name, const char *IDwfsrefstream_name, double delay, long NBprobes)</td></tr>
 <tr class="separator:a5a8acc15a46ed4ac0ed26263a2955dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">11. PROCESS LOG FILES</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 11. PROCESS LOG FILES</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><p>process log files </p>
 </div></td></tr>
 <tr class="memitem:a9fc28b4fe0560796be68d45b9b7f713a"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a9fc28b4fe0560796be68d45b9b7f713a">AOloopControl_logprocess_modeval</a> (const char *IDname)</td></tr>
 <tr class="separator:a9fc28b4fe0560796be68d45b9b7f713a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">11. OBSOLETE ?</div></td></tr>
-<tr><td colspan="2"><div class="groupText"><p>These functions are no longer used </p>
-</div></td></tr>
+<tr><td colspan="2"><div class="groupHeader">AOloopControl - 12. OBSOLETE ?</div></td></tr>
 <tr class="memitem:a2d9b1c71a5514ba67d70477207b494cf"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a2d9b1c71a5514ba67d70477207b494cf">AOloopControl_setgainrange</a> (long m0, long m1, float gainval)</td></tr>
 <tr class="separator:a2d9b1c71a5514ba67d70477207b494cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88ddf773aec58b280ff76d4d89f47a7e"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a88ddf773aec58b280ff76d4d89f47a7e">AOloopControl_setlimitrange</a> (long m0, long m1, float limval)</td></tr>
@@ -1591,53 +1579,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a class="anchor" id="abf02c7b987ff57fa38605aafc2df2c2e"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void AOloopControl_logFunctionCall </td>
-          <td>(</td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>logfuncMODE</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>FunctionName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const long&#160;</td>
-          <td class="paramname"><em>line</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>comments</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log function call (for testing / debugging only). </p>
+<p>Load configuation parameters from disk. </p>
 
 </div>
 </div>
@@ -4168,7 +4110,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8h.html">AOloopControl.h</a></li>
-    <li class="footer">Generated on Fri Aug 4 2017 16:18:17 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 4 2017 19:55:02 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

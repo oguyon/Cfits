@@ -11,6 +11,12 @@
  * @bug No known bugs.
  * 
  * @see http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html
+ * 
+ * 
+ * 
+ * @defgroup AOloopControl_streams Image streams
+ * @defgroup AOloopControl_AOLOOPCONTROL_CONF AOloopControl main data structure
+ * 
  */
 
 
@@ -117,6 +123,251 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 #define MAX_MBLOCK 20
 
+#define maxNBMB 100
+#define MAX_NUMBER_TIMER 100
+
+
+
+
+/**
+ * Main AOloopControl structure. 
+ *
+ * Holds key parameters for the AO engine as well as higher level variables describing the state of the control loop
+ * 
+ * @ingroup AOloopControl_AOLOOPCONTROL_CONF
+ */
+typedef struct
+{
+	
+    /* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: TIMING 
+	 * LOOP Timing info
+	 */
+
+
+	float loopfrequ;                /**< Loop frequency [Hz] */
+
+	// Hardware latency = time from DM command issued to WFS response changed 
+	float hardwlatency;            /**< hardware latency between DM command and WFS response [sec] */ 
+	float hardwlatency_frame;      /**< hardware latency between DM command and WFS response [frame] */
+
+	// Computation time for direct WFS->DM mode through single matrix multiplication
+	float complatency;             /**< Computation latency [sec] */
+	float complatency_frame;       /**< Computation latency (main loop) from WFS image reception to DM command output [frame] */
+
+	// Computation time for full computation including open loop computation
+	float wfsmextrlatency;         /**< WFS mode extraction latency [sec] */ 
+	float wfsmextrlatency_frame;   /**< WFS mode extraction latency [frame] */
+
+    int_fast8_t status;            /**< loop status for main loop */
+    int_fast8_t statusM;           /**< loop status for modal loop */
+    int_fast8_t statusM1;          /**< loop status for modal loop */
+  
+    int_fast8_t GPUstatus[50];     /**<  GPU status index */
+    uint_fast16_t NBtimer;         /**<  Number of active timers - 1 timer per status value */
+    struct timespec timer[MAX_NUMBER_TIMER];  /**<  Timers */
+   
+    /* =============================================================================================== */
+
+
+
+    /* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: SETUP & INITIALIZATION STATE 
+	 * 
+	 */
+
+    int_fast8_t init;              /**< Has the structure been initialized ? */
+    uint_fast64_t cnt;             /**<  */
+    uint_fast64_t cntmax;          /**<  */
+    uint_fast64_t DMupdatecnt;     /**<  */
+    int_fast8_t kill;              /**<  set to 1 to kill computation loop */
+    char name[80];
+
+    int_fast8_t init_RM;           /**< Response Matrix loaded */
+    int_fast8_t init_CM;           /**< Control Matrix loaded */
+    int_fast8_t init_CMc;          /**<combine control matrix computed */
+    int_fast8_t initmapping;
+    char respMname[80];
+    char contrMname[80];
+  
+    /* =============================================================================================== */
+
+
+
+    /* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: WFS CAMERA
+	 * 
+	 */
+	
+    char WFSname[80];
+    float DarkLevel;
+    uint_fast32_t sizexWFS;
+    uint_fast32_t sizeyWFS;
+    uint_fast32_t sizeWFS;
+    uint_fast32_t activeWFScnt; // number of active WFS pixels
+    uint_fast32_t sizeWFS_active[100]; // only takes into account WFS pixels in use/active for each slice
+    uint_fast64_t WFScnt;
+    uint_fast64_t WFScntRM;
+
+    int_fast8_t WFSnormalize; // 1 if each WFS frame should be normalized to 1
+    float WFSnormfloor;
+    float WFStotalflux; // after dark subtraction
+ 
+    /* =============================================================================================== */
+
+
+
+    /* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: DEFORMABLE MIRROR
+	 * 
+	 */
+	 
+    char dmCname[80];
+    char dmdispname[80];
+    char dmRMname[80];
+    uint_fast32_t sizexDM;
+    uint_fast32_t sizeyDM;
+    uint_fast32_t sizeDM;
+    uint_fast32_t activeDMcnt;    /**< number of active actuators */
+    uint_fast32_t sizeDM_active;  /**< only takes into account DM actuators that are active/in use */
+    
+    /* =============================================================================================== */
+
+
+
+	/* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: CONTROL MODES 
+	 * 
+	 */
+
+    char DMmodesname[80];
+     // BLOCKS OF MODES
+    uint_fast16_t DMmodesNBblock; // number of mode blocks
+    uint_fast16_t NBmodes_block[100]; // number of modes within each block
+    uint_fast16_t indexmaxMB[maxNBMB]; 
+
+	uint_fast16_t NBDMmodes;
+
+    int_fast8_t init_wfsref0;    // WFS reference image loaded
+
+    float maxlimit; // maximum absolute value for mode values
+    float mult; // multiplication coefficient to be applied at each loop iteration
+ 
+	/* =============================================================================================== */
+
+
+
+
+	/* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: LOOP CONTROL
+	 * 
+	 */
+		
+    int_fast8_t on;  // goes to 1 when loop starts, put to 0 to turn loop off
+    float gain; // overall loop gain
+    uint_fast16_t framesAve; // number of frames to average
+	int_fast8_t DMprimaryWrite_ON; // primary DM write
+	
+ 
+	// MODAL AUTOTUNING 
+	// limits
+	int_fast8_t AUTOTUNE_LIMITS_ON;
+	float AUTOTUNE_LIMITS_perc; // percentile limit for autotuning
+	float AUTOTUNE_LIMITS_mcoeff; // multiplicative coeff 
+	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
+
+	int_fast8_t AUTOTUNE_GAINS_ON;
+	float AUTOTUNE_GAINS_gain; // averaging coefficient (usually about 0.1)
+	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
+   
+	/* =============================================================================================== */
+
+ 
+ 
+	/* =============================================================================================== */
+	/** @name AOLOOPCONTROL_CONF: PREDICTIVE CONTROL
+	 * 
+	 */
+	///@{  	
+    int_fast8_t ARPFon; // 1 if auto-regressive predictive filter is ON
+	float ARPFgain; 
+    ///@}
+	/* =============================================================================================== */
+
+
+
+	/* =============================================================================================== */
+ 	/** @name AOLOOPCONTROL_CONF: COMPUTATION MODES
+	 * 
+	 */
+
+    int_fast8_t GPU; // 1 if matrix multiplication  done by GPU
+    int_fast8_t GPUall; // 1 if scaling computations done by GPU
+    int_fast8_t GPUusesem; // 1 if using semaphores to control GPU
+    int_fast8_t AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
+  
+	/* =============================================================================================== */
+    
+
+    
+
+
+	/* =============================================================================================== */
+ 	/** @name AOLOOPCONTROL_CONF: BASIC LOOP TELEMETRY AND PERFORMANCE
+	 * 
+	 */
+
+    // COMPUTED BY OPEN LOOP RETRIEVAL PROCESS
+    double RMSmodes;
+    double RMSmodesCumul;
+    uint_fast64_t RMSmodesCumulcnt;
+
+	// block statistics (instantaneous)
+	double block_OLrms[100]; // open loop RMS
+	double block_Crms[100]; // correction RMS
+	double block_WFSrms[100]; // WFS residual RMS
+	double block_limFrac[100]; // fraction of mode coefficients exceeding limit
+	
+	double ALL_OLrms; // open loop RMS
+	double ALL_Crms; // correction RMS
+	double ALL_WFSrms; // WFS residual RMS
+	double ALL_limFrac; // fraction of mode coefficients exceeding limit
+	
+	// averaged
+	uint_fast32_t AveStats_NBpt; // averaging interval
+	double blockave_OLrms[100]; // open loop RMS
+	double blockave_Crms[100]; // correction RMS
+	double blockave_WFSrms[100]; // WFS residual RMS
+	double blockave_limFrac[100]; // fraction of mode coefficients exceeding limit
+
+	double ALLave_OLrms; // open loop RMS
+	double ALLave_Crms; // correction RMS
+	double ALLave_WFSrms; // WFS residual RMS
+	double ALLave_limFrac; // fraction of mode coefficients exceeding limit
+
+	/* =============================================================================================== */
+    
+
+
+
+
+    // semaphores for communication with GPU computing threads
+    //sem_t *semptr; // semaphore for this image
+
+} AOLOOPCONTROL_CONF;
+
+
+
+
+// data passed to each thread
+typedef struct
+{
+    long nelem;
+    float *arrayptr;
+    float *result; // where to white status
+} THDATA_IMTOTAL;
+
+
 
 
 
@@ -212,8 +463,17 @@ static int wcol, wrow; // window size
 /*                    aoconfID are global variables for convenience                                */
 /* =============================================================================================== */
 
+
+// Hardware connections
 static long aoconfID_wfsim = -1;
 static uint8_t WFSatype;
+static long aoconfID_dmC = -1;
+static long aoconfID_dmRM = -1;
+
+
+
+
+
 static long aoconfID_wfsdark = -1;
 static long aoconfID_imWFS0 = -1;
 static long aoconfID_imWFS0tot = -1;
@@ -221,16 +481,18 @@ static long aoconfID_imWFS1 = -1;
 static long aoconfID_imWFS2 = -1;
 static long aoconfID_wfsref0 = -1;
 static long aoconfID_wfsref = -1;
-static long aoconfID_dmC = -1;
-static long aoconfID_dmRM = -1;
+
 static long aoconfID_DMmodes = -1;
 static long aoconfID_dmdisp = -1;  // to notify DMcomb that DM maps should be summed
+
 
 // Control Modes
 static long aoconfID_cmd_modes = -1;
 static long aoconfID_meas_modes = -1; // measured
 static long aoconfID_RMS_modes = -1;
 static long aoconfID_AVE_modes = -1;
+
+
 
 // mode gains, multf, limit are set in 3 tiers
 // global gain
@@ -426,14 +688,17 @@ NOTATIONS:
 
 
 
+
+
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 1. INITIALIZATION                                                                               */
-/*                                                                                                 */
+/** @name AOloopControl - 1. INITIALIZATION, configurations
+ *  Allocate memory, import/export configurations */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_loadconfigure */
 int_fast8_t AOloopControl_loadconfigure_cli() {
     if(CLI_checkarg(1,2)==0) {
         AOloopControl_loadconfigure(data.cmdargtoken[1].val.numl, 1, 10);
@@ -447,18 +712,21 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
-/*                                                                                                 */
+/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS    
+ *  Useful tools */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/* =============================================================================================== */
+/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS */
+/* =============================================================================================== */
 
 /* =============================================================================================== */
-/* 		2.2. DATA STREAMS PROCESSING                                                               */
+/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING */
 /* =============================================================================================== */
 
 
+/** @brief CLI function for AOloopControl_stream3Dto2D */
 int_fast8_t AOloopControl_stream3Dto2D_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0) {
         AOloopControl_stream3Dto2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
@@ -469,9 +737,10 @@ int_fast8_t AOloopControl_stream3Dto2D_cli() {
 
 
 /* =============================================================================================== */
-/* 		2.3. MISC COMPUTATION ROUTINES                                                             */
+/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_CrossProduct */
 int_fast8_t AOloopControl_CrossProduct_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0) {
         AOloopControl_CrossProduct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
@@ -480,6 +749,7 @@ int_fast8_t AOloopControl_CrossProduct_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_AveStream */
 int_fast8_t AOloopControl_AveStream_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0) {
         AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
@@ -488,6 +758,7 @@ int_fast8_t AOloopControl_AveStream_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_frameDelay */
 int_fast8_t AOloopControl_frameDelay_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,2)==0)    {
@@ -497,7 +768,7 @@ int_fast8_t AOloopControl_frameDelay_cli()
     else        return 1;
 }
 
-
+/** @brief CLI function for AOloopControl_mkSimpleZpokeM */
 int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
 {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)    {
@@ -507,7 +778,7 @@ int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
     else        return 1;
 }
 
-
+/** @brief CLI function for AOloopControl_dm2opdmaploop */
 int_fast8_t AOloopControl_dm2opdmaploop_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)==0)    {
@@ -519,14 +790,15 @@ int_fast8_t AOloopControl_dm2opdmaploop_cli()
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 3. WFS INPUT                                                                                    */
-/*                                                                                                 */
+/** @name AOloopControl - 3. WFS INPUT
+ *  Read camera imates */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_camimage_extract2D_sharedmem_loop */
 int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0) {
         AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string , data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
@@ -538,14 +810,15 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 4. ACQUIRING CALIBRATION                                                                        */
-/*                                                                                                 */
+/** @name AOloopControl - 4. ACQUIRING CALIBRATION
+ *  Measure system response */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_RespMatrix_Fast */
 int_fast8_t AOloopControl_RespMatrix_Fast_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0) {
         AOloopControl_RespMatrix_Fast(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.string);
@@ -554,6 +827,7 @@ int_fast8_t AOloopControl_RespMatrix_Fast_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_Measure_WFSrespC */
 int_fast8_t AOloopControl_Measure_WFSrespC_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,5)+CLI_checkarg(7,2)+CLI_checkarg(8,2)+CLI_checkarg(9,2)==0) {
         AOloopControl_Measure_WFSrespC(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.numl);
@@ -562,6 +836,7 @@ int_fast8_t AOloopControl_Measure_WFSrespC_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_Measure_WFS_linResponse */
 int_fast8_t AOloopControl_Measure_WFS_linResponse_cli() {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,4)+CLI_checkarg(7,5)+CLI_checkarg(8,5)+CLI_checkarg(9,2)+CLI_checkarg(10,2)+CLI_checkarg(11,2)==0) {
         AOloopControl_Measure_WFS_linResponse(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.numl, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl);
@@ -570,6 +845,7 @@ int_fast8_t AOloopControl_Measure_WFS_linResponse_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_Measure_zonalRM */
 int_fast8_t AOloopControl_Measure_zonalRM_cli() {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,3)+CLI_checkarg(7,3)+CLI_checkarg(8,3)+CLI_checkarg(9,3)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,2)+CLI_checkarg(13,2)==0) {
         AOloopControl_Measure_zonalRM(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.string, data.cmdargtoken[8].val.string, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numl, data.cmdargtoken[13].val.numl);
@@ -578,6 +854,7 @@ int_fast8_t AOloopControl_Measure_zonalRM_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_Measure_Resp_Matrix */
 int_fast8_t AOloopControl_Measure_Resp_Matrix_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)+CLI_checkarg(4,2)+CLI_checkarg(5,2)==0) {
         Measure_Resp_Matrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
@@ -588,14 +865,15 @@ int_fast8_t AOloopControl_Measure_Resp_Matrix_cli() {
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 5. COMPUTING CALIBRATION                                                                        */
-/*                                                                                                 */
+/** @name AOloopControl - 5. COMPUTING CALIBRATION
+ *  Compute control matrix, modes */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_mkSlavedAct */
 int_fast8_t AOloopControl_mkSlavedAct_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)==0) {
         AOloopControl_mkSlavedAct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string);
@@ -604,6 +882,7 @@ int_fast8_t AOloopControl_mkSlavedAct_cli() {
     else	return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkloDMmodes */
 int_fast8_t AOloopControl_mkloDMmodes_cli() {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)==0) {
         AOloopControl_mkloDMmodes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl);
@@ -612,6 +891,7 @@ int_fast8_t AOloopControl_mkloDMmodes_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkCM */
 int_fast8_t AOloopControl_mkCM_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,1)==0) {
         AOloopControl_mkCM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf);
@@ -620,6 +900,7 @@ int_fast8_t AOloopControl_mkCM_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkModes */
 int_fast8_t AOloopControl_mkModes_cli() {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,2)+CLI_checkarg(11,2)+CLI_checkarg(12,1)==0) {
         AOloopControl_mkModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numl, data.cmdargtoken[11].val.numl, data.cmdargtoken[12].val.numf);
@@ -628,6 +909,7 @@ int_fast8_t AOloopControl_mkModes_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkModes_Simple */
 int_fast8_t AOloopControl_mkModes_Simple_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0) {
         AOloopControl_mkModes_Simple(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numf);
@@ -636,6 +918,7 @@ int_fast8_t AOloopControl_mkModes_Simple_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_computeCM */
 int_fast8_t AOloopControl_computeCM_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,2)+CLI_checkarg(6,1)==0) {
         compute_ControlMatrix(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, "evecM", data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numf);
@@ -644,6 +927,7 @@ int_fast8_t AOloopControl_computeCM_cli() {
     } else return 1;
 }
 
+/** @brief CLI function for AOloopControl_loadCM */
 int_fast8_t AOloopControl_loadCM_cli() {
     if(CLI_checkarg(1,3)==0) {
         AOloopControl_loadCM(LOOPNUMBER, data.cmdargtoken[1].val.string);
@@ -652,6 +936,7 @@ int_fast8_t AOloopControl_loadCM_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkHadamardModes */
 int_fast8_t AOloopControl_mkHadamardModes_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)==0) {
         AOloopControl_mkHadamardModes(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string);
@@ -660,6 +945,7 @@ int_fast8_t AOloopControl_mkHadamardModes_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_Hadamard_decodeRM */
 int_fast8_t AOloopControl_Hadamard_decodeRM_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0) {
         AOloopControl_Hadamard_decodeRM(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
@@ -668,6 +954,7 @@ int_fast8_t AOloopControl_Hadamard_decodeRM_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkCalib_map_mask */
 int_fast8_t AOloopControl_mkCalib_map_mask_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,1)+CLI_checkarg(9,1)+CLI_checkarg(10,1)+CLI_checkarg(11,1)==0) {
         AOloopControl_mkCalib_map_mask(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numf, data.cmdargtoken[9].val.numf, data.cmdargtoken[10].val.numf, data.cmdargtoken[11].val.numf);
@@ -676,6 +963,7 @@ int_fast8_t AOloopControl_mkCalib_map_mask_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_Process_zrespM */
 int_fast8_t AOloopControl_Process_zrespM_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0) {
         AOloopControl_Process_zrespM(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
@@ -684,6 +972,7 @@ int_fast8_t AOloopControl_Process_zrespM_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_ProcessZrespM */
 int_fast8_t AOloopControl_ProcessZrespM_cli() {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,3)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,1)+CLI_checkarg(6,2)==0) {
         AOloopControl_ProcessZrespM_medianfilt(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numl);
@@ -692,6 +981,7 @@ int_fast8_t AOloopControl_ProcessZrespM_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_compute_CombinedControlMatrix */
 int_fast8_t AOloopControl_compute_CombinedControlMatrix_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)+CLI_checkarg(6,3)==0) {
         compute_CombinedControlMatrix(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string);
@@ -705,12 +995,12 @@ int_fast8_t AOloopControl_compute_CombinedControlMatrix_cli() {
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 6. REAL TIME COMPUTING ROUTINES                                                                 */
-/*                                                                                                 */
+/** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES
+ *  calls CPU and GPU processing */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_WFSzpupdate_loop */
 int_fast8_t AOloopControl_WFSzpupdate_loop_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)==0) {
         AOloopControl_WFSzpupdate_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
@@ -719,6 +1009,7 @@ int_fast8_t AOloopControl_WFSzpupdate_loop_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_WFSzeropoint_sum_update_loop */
 int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop_cli() {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,4)+CLI_checkarg(4,4)==0) {
         AOloopControl_WFSzeropoint_sum_update_loop(LOOPNUMBER, data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string);
@@ -727,6 +1018,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_CompModes_loop */
 int_fast8_t AOloopControl_CompModes_loop_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,3)==0) {
         AOloopControl_CompModes_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
@@ -735,6 +1027,7 @@ int_fast8_t AOloopControl_CompModes_loop_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_GPUmodecoeffs2dm_filt */
 int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0) {
         AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
@@ -743,6 +1036,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_computeWFSresidualimage */
 int_fast8_t AOloopControl_computeWFSresidualimage_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
         AOloopControl_computeWFSresidualimage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -751,6 +1045,7 @@ int_fast8_t AOloopControl_computeWFSresidualimage_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_ComputeOpenLoopModes */
 int_fast8_t AOloopControl_ComputeOpenLoopModes_cli() {
     if(CLI_checkarg(1,2)==0) {
         AOloopControl_ComputeOpenLoopModes(data.cmdargtoken[1].val.numl);
@@ -758,6 +1053,7 @@ int_fast8_t AOloopControl_ComputeOpenLoopModes_cli() {
     } else return 1;
 }
 
+/** @brief CLI function for AOloopControl_AutoTuneGains */
 int_fast8_t AOloopControl_AutoTuneGains_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,3)==0) {
         AOloopControl_AutoTuneGains(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
@@ -766,6 +1062,7 @@ int_fast8_t AOloopControl_AutoTuneGains_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_dm2dm_offload */
 int_fast8_t AOloopControl_dm2dm_offload_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)==0) {
         AOloopControl_dm2dm_offload(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf);
@@ -774,6 +1071,7 @@ int_fast8_t AOloopControl_dm2dm_offload_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_sig2Modecoeff */
 int_fast8_t AOloopControl_sig2Modecoeff_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,3)==0) {
         AOloopControl_sig2Modecoeff(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string,  data.cmdargtoken[4].val.string);
@@ -787,12 +1085,12 @@ int_fast8_t AOloopControl_sig2Modecoeff_cli() {
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 7. PREDICTIVE CONTROL                                                                           */
-/*                                                                                                 */
+/** @name AOloopControl - 7. PREDICTIVE CONTROL
+ *  Predictive control using WFS telemetry */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_builPFloop_WatchInput */
 int_fast8_t AOloopControl_builPFloop_WatchInput_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
         AOloopControl_builPFloop_WatchInput(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
@@ -800,6 +1098,7 @@ int_fast8_t AOloopControl_builPFloop_WatchInput_cli() {
     } else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mapPredictiveFilter */
 int_fast8_t AOloopControl_mapPredictiveFilter_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0) {
         AOloopControl_mapPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
@@ -808,6 +1107,7 @@ int_fast8_t AOloopControl_mapPredictiveFilter_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_testPredictiveFilter */
 int_fast8_t AOloopControl_testPredictiveFilter_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,2)+CLI_checkarg(5,3)==0) {
         AOloopControl_testPredictiveFilter(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, 1e-10);
@@ -819,15 +1119,15 @@ int_fast8_t AOloopControl_testPredictiveFilter_cli() {
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 8. LOOP CONTROL INTERFACE                                                                       */
-/*                                                                                                 */
+/** @name AOloopControl - 8.   LOOP CONTROL INTERFACE */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
 
+/** @brief CLI function for AOloopControl_setLoopNumber */
 int_fast8_t AOloopControl_setLoopNumber_cli() {
     if(CLI_checkarg(1,2)==0) {
         AOloopControl_setLoopNumber(data.cmdargtoken[1].val.numl);
@@ -837,38 +1137,44 @@ int_fast8_t AOloopControl_setLoopNumber_cli() {
 }
 
 
-/* =============================================================================================== */
-/* 		8.1. MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET                                      */
-/* =============================================================================================== */
 
 /* =============================================================================================== */
-/* 		8.2. DATA LOGGING                                                                          */
-/* =============================================================================================== */
-
-/* =============================================================================================== */
-/* 		8.3. PRIMARY DM WRITE                                                                      */
-/* =============================================================================================== */
-
-/* =============================================================================================== */
-/* 		8.4. INTEGRATOR AUTO TUNING                                                                */
+/** @name AOloopControl - 8.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET */
 /* =============================================================================================== */
 
 
 /* =============================================================================================== */
-/* 		8.5. PREDICTIVE FILTER ON/OFF                                                              */
-/* =============================================================================================== */
-
-/* =============================================================================================== */
-/* 		8.6. TIMING PARAMETERS                                                                     */
-/* =============================================================================================== */
-
-/* =============================================================================================== */
-/* 		8.7. CONTROL LOOP PARAMETERS                                                               */
+/** @name AOloopControl - 8.2. LOOP CONTROL INTERFACE - DATA LOGGING                               */
 /* =============================================================================================== */
 
 
+/* =============================================================================================== */
+/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE                           */
+/* =============================================================================================== */
+
+/* =============================================================================================== */
+/** @name AOloopControl - 8.4. LOOP CONTROL INTERFACE - INTEGRATOR AUTO TUNING                     */
+/* =============================================================================================== */
 
 
+/* =============================================================================================== */
+/** @name AOloopControl - 8.5. LOOP CONTROL INTERFACE - PREDICTIVE FILTER ON/OFF                   */
+/* =============================================================================================== */
+
+
+/* =============================================================================================== */
+/** @name AOloopControl - 8.6. LOOP CONTROL INTERFACE - TIMING PARAMETERS                          */
+/* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/** @name AOloopControl - 8.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS                    */
+/* =============================================================================================== */
+
+
+
+/** @brief CLI function for AOloopControl_set_modeblock_gain */
 int_fast8_t AOloopControl_set_modeblock_gain_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)+CLI_checkarg(3,2)==0) {
         AOloopControl_set_modeblock_gain(LOOPNUMBER, data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.numl);
@@ -877,6 +1183,7 @@ int_fast8_t AOloopControl_set_modeblock_gain_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_loopstep */
 int_fast8_t AOloopControl_loopstep_cli() {
     if(CLI_checkarg(1,2)==0) {
         AOloopControl_loopstep(LOOPNUMBER, data.cmdargtoken[1].val.numl);
@@ -885,6 +1192,7 @@ int_fast8_t AOloopControl_loopstep_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_loopfrequ */
 int_fast8_t AOloopControl_set_loopfrequ_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_loopfrequ(data.cmdargtoken[1].val.numf);
@@ -893,6 +1201,7 @@ int_fast8_t AOloopControl_set_loopfrequ_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_hardwlatency_frame */
 int_fast8_t AOloopControl_set_hardwlatency_frame_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_hardwlatency_frame(data.cmdargtoken[1].val.numf);
@@ -901,6 +1210,7 @@ int_fast8_t AOloopControl_set_hardwlatency_frame_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_complatency_frame */
 int_fast8_t AOloopControl_set_complatency_frame_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_complatency_frame(data.cmdargtoken[1].val.numf);
@@ -909,6 +1219,7 @@ int_fast8_t AOloopControl_set_complatency_frame_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_wfsmextrlatency_frame */
 int_fast8_t AOloopControl_set_wfsmextrlatency_frame_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_wfsmextrlatency_frame(data.cmdargtoken[1].val.numf);
@@ -917,6 +1228,7 @@ int_fast8_t AOloopControl_set_wfsmextrlatency_frame_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_AUTOTUNE_LIMITS_delta */
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_AUTOTUNE_LIMITS_delta(data.cmdargtoken[1].val.numf);
@@ -925,6 +1237,7 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_AUTOTUNE_LIMITS_perc */
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_AUTOTUNE_LIMITS_perc(data.cmdargtoken[1].val.numf);
@@ -933,6 +1246,7 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_set_AUTOTUNE_LIMITS_mcoeff */
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(data.cmdargtoken[1].val.numf);
@@ -941,6 +1255,7 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setgain */
 int_fast8_t AOloopControl_setgain_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_setgain(data.cmdargtoken[1].val.numf);
@@ -949,6 +1264,7 @@ int_fast8_t AOloopControl_setgain_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setARPFgain */
 int_fast8_t AOloopControl_setARPFgain_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_setARPFgain(data.cmdargtoken[1].val.numf);
@@ -957,6 +1273,7 @@ int_fast8_t AOloopControl_setARPFgain_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setWFSnormfloor */
 int_fast8_t AOloopControl_setWFSnormfloor_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_setWFSnormfloor(data.cmdargtoken[1].val.numf);
@@ -964,6 +1281,7 @@ int_fast8_t AOloopControl_setWFSnormfloor_cli() {
     } else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setmaxlimit */
 int_fast8_t AOloopControl_setmaxlimit_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_setmaxlimit(data.cmdargtoken[1].val.numf);
@@ -972,6 +1290,7 @@ int_fast8_t AOloopControl_setmaxlimit_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setmult */
 int_fast8_t AOloopControl_setmult_cli() {
     if(CLI_checkarg(1,1)==0) {
         AOloopControl_setmult(data.cmdargtoken[1].val.numf);
@@ -980,6 +1299,7 @@ int_fast8_t AOloopControl_setmult_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setframesAve */
 int_fast8_t AOloopControl_setframesAve_cli() {
     if(CLI_checkarg(1,2)==0) {
         AOloopControl_setframesAve(data.cmdargtoken[1].val.numl);
@@ -988,6 +1308,7 @@ int_fast8_t AOloopControl_setframesAve_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setgainrange */
 int_fast8_t AOloopControl_setgainrange_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0) {
         AOloopControl_setgainrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
@@ -996,6 +1317,7 @@ int_fast8_t AOloopControl_setgainrange_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setlimitrange */
 int_fast8_t AOloopControl_setlimitrange_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0) {
         AOloopControl_setlimitrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
@@ -1004,6 +1326,7 @@ int_fast8_t AOloopControl_setlimitrange_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setmultfrange */
 int_fast8_t AOloopControl_setmultfrange_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)==0) {
         AOloopControl_setmultfrange(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf);
@@ -1012,6 +1335,7 @@ int_fast8_t AOloopControl_setmultfrange_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setgainblock */
 int_fast8_t AOloopControl_setgainblock_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
         AOloopControl_setgainblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -1020,6 +1344,7 @@ int_fast8_t AOloopControl_setgainblock_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setlimitblock */
 int_fast8_t AOloopControl_setlimitblock_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
         AOloopControl_setlimitblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -1028,6 +1353,7 @@ int_fast8_t AOloopControl_setlimitblock_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setmultfblock */
 int_fast8_t AOloopControl_setmultfblock_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
         AOloopControl_setmultfblock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -1036,6 +1362,7 @@ int_fast8_t AOloopControl_setmultfblock_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_scanGainBlock */
 int_fast8_t AOloopControl_scanGainBlock_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,2)==0) {
         AOloopControl_scanGainBlock(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numl);
@@ -1047,18 +1374,15 @@ int_fast8_t AOloopControl_scanGainBlock_cli() {
 
 
 
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 9. STATUS / TESTING / PERF MEASUREMENT                                                          */
-/*                                                                                                 */
+/** @name AOloopControl - 9. STATUS / TESTING / PERF MEASUREMENT                                   */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
 
+
+/** @brief CLI function for AOcontrolLoop_TestDMSpeed */
 int_fast8_t AOcontrolLoop_TestDMSpeed_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,2)+CLI_checkarg(4,1)==0) {
@@ -1068,6 +1392,7 @@ int_fast8_t AOcontrolLoop_TestDMSpeed_cli()
     else return 1;
 }
 
+/** @brief CLI function for AOcontrolLoop_TestSystemLatency */
 int_fast8_t AOcontrolLoop_TestSystemLatency_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0) {
         AOcontrolLoop_TestSystemLatency(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl);
@@ -1076,6 +1401,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_TestDMmodeResp */
 int_fast8_t AOloopControl_TestDMmodeResp_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,1)+CLI_checkarg(4,1)+CLI_checkarg(5,1)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,2)+CLI_checkarg(9,4)+CLI_checkarg(10,4)+CLI_checkarg(11,4)+CLI_checkarg(12,3)==0) {
         AOloopControl_TestDMmodeResp(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numf, data.cmdargtoken[5].val.numf, data.cmdargtoken[6].val.numf, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.string);
@@ -1084,6 +1410,7 @@ int_fast8_t AOloopControl_TestDMmodeResp_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_TestDMmodes_Recovery */
 int_fast8_t AOloopControl_TestDMmodes_Recovery_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,4)+CLI_checkarg(7,1)+CLI_checkarg(8,2)+CLI_checkarg(9,3)+CLI_checkarg(10,3)+CLI_checkarg(11,3)+CLI_checkarg(12,3)==0) {
         AOloopControl_TestDMmodes_Recovery(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.string, data.cmdargtoken[7].val.numf, data.cmdargtoken[8].val.numl, data.cmdargtoken[9].val.string, data.cmdargtoken[10].val.string, data.cmdargtoken[11].val.string, data.cmdargtoken[12].val.string);
@@ -1092,6 +1419,7 @@ int_fast8_t AOloopControl_TestDMmodes_Recovery_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_blockstats */
 int_fast8_t AOloopControl_blockstats_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,5)==0) {
         AOloopControl_blockstats(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
@@ -1100,6 +1428,7 @@ int_fast8_t AOloopControl_blockstats_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_InjectMode */
 int_fast8_t AOloopControl_InjectMode_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0)    {
         AOloopControl_InjectMode(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
@@ -1108,6 +1437,7 @@ int_fast8_t AOloopControl_InjectMode_cli() {
     else    return 1;
 }
 
+/** @brief CLI function for AOloopControl_loopMonitor */
 int_fast8_t AOloopControl_loopMonitor_cli() {
     if(CLI_checkarg(1,1)+CLI_checkarg(2,2)==0) {
         AOloopControl_loopMonitor(LOOPNUMBER, data.cmdargtoken[1].val.numf, data.cmdargtoken[2].val.numl);
@@ -1118,6 +1448,7 @@ int_fast8_t AOloopControl_loopMonitor_cli() {
     }
 }
 
+/** @brief CLI function for AOloopControl_statusStats */
 int_fast8_t AOloopControl_statusStats_cli() {
     if(CLI_checkarg(1,2)==0) {
         AOloopControl_statusStats(data.cmdargtoken[1].val.numl);
@@ -1126,6 +1457,7 @@ int_fast8_t AOloopControl_statusStats_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_mkTestDynamicModeSeq */
 int_fast8_t AOloopControl_mkTestDynamicModeSeq_cli()
 {
     if(CLI_checkarg(1,3)+CLI_checkarg(2,2)+CLI_checkarg(3,2)==0) {
@@ -1135,6 +1467,7 @@ int_fast8_t AOloopControl_mkTestDynamicModeSeq_cli()
     else  return 1;
 }
 
+/** @brief CLI function for AOloopControl_AnalyzeRM_sensitivity */
 int_fast8_t AOloopControl_AnalyzeRM_sensitivity_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,1)+CLI_checkarg(8,3)==0)    {
@@ -1145,14 +1478,14 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity_cli()
 }
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                                                    */
-/*                                                                                                 */
+/** @name AOloopControl - 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                             */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_DMmodulateAB */
 int_fast8_t AOloopControl_DMmodulateAB_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,4)+CLI_checkarg(5,4)+CLI_checkarg(6,1)+CLI_checkarg(7,2)==0)   {
@@ -1164,15 +1497,13 @@ int_fast8_t AOloopControl_DMmodulateAB_cli()
 
 
 
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 11. PROCESS LOG FILES                                                                           */
-/*                                                                                                 */
+/** @name AOloopControl - 11. PROCESS LOG FILES                                                    */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+/** @brief CLI function for AOloopControl_logprocess_modeval */
 int_fast8_t AOloopControl_logprocess_modeval_cli() {
     if(CLI_checkarg(1,4)==0) {
         AOloopControl_logprocess_modeval(data.cmdargtoken[1].val.string);
@@ -1276,16 +1607,25 @@ int_fast8_t AOloopControl_setparam_cli()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/*                                    FUNCTIONS SOURCE CODE                                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl functions */
 
 
-// CLI commands
-//
-// function CLI_checkarg used to check arguments
-// 1: float
-// 2: long
-// 3: string, not existing image
-// 4: existing image
-// 5: string
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 1. INITIALIZATION, configurations                                        */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 int_fast8_t init_AOloopControl()
@@ -1315,44 +1655,33 @@ int_fast8_t init_AOloopControl()
 
 
 
-
-    /* =============================================================================================== */
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /* 1. INITIALIZATION                                                                               */
-    /*                                                                                                 */
-    /* =============================================================================================== */
-    /* =============================================================================================== */
-
     RegisterCLIcommand("aolloadconf",__FILE__, AOloopControl_loadconfigure_cli, "load AO loop configuration", "<loop #>", "AOlooploadconf 1", "int AOloopControl_loadconfigure(long loopnb, 1, 10)");
 
 
 
 
-    /* =============================================================================================== */
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
-    /*                                                                                                 */
-    /* =============================================================================================== */
-    /* =============================================================================================== */
-
-    /* =============================================================================================== */
-    /* 		2.1. LOAD DATA STREAMS                                                                     */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS                                           */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
-    /* =============================================================================================== */
-    /* 		2.2. DATA STREAMS PROCESSING                                                               */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS                     */
+/* =============================================================================================== */
+
+/* =============================================================================================== */
+/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING               */
+/* =============================================================================================== */
 
     RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
 
     RegisterCLIcommand("aolstream3Dto2D", __FILE__, AOloopControl_stream3Dto2D_cli, "remaps 3D cube into 2D image", "<input 3D stream> <output 2D stream> <# cols> <sem trigger>" , "aolstream3Dto2D in3dim out2dim 4 1", "long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)");
 
-    /* =============================================================================================== */
-    /* 		2.3. MISC COMPUTATION ROUTINES                                                             */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES             */
+/* =============================================================================================== */
 
     RegisterCLIcommand("aolcrossp", __FILE__, AOloopControl_CrossProduct_cli, "compute cross product between two cubes. Apply mask if image xpmask exists", "<cube1> <cube2> <output image>", "aolcrossp imc0 imc1 crosspout", "AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
 
@@ -1361,24 +1690,28 @@ int_fast8_t init_AOloopControl()
     RegisterCLIcommand("aoldm2opdmaploop", __FILE__, AOloopControl_dm2opdmaploop_cli, "write DM disp stream [um] to OPD map stream [m], loop", "<DMdisp_name> <OPDmap_name> <sem index>", "aoldm2opdmaploop dm06disp opderr 3", "long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semindex);");
 
 
-    /* =============================================================================================== */
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /* 3. WFS INPUT                                                                                    */
-    /*                                                                                                 */
-    /* =============================================================================================== */
-    /* =============================================================================================== */
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 3. WFS INPUT                                                             */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+ 
 
     RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <optional dark> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin null imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, const char *dark_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
 
 
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*  4. ACQUIRING CALIBRATION                                                                        */
-    /*                                                                                                 */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 4. ACQUIRING CALIBRATION                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
+  
 
     RegisterCLIcommand("aolacqresp", __FILE__, AOloopControl_Measure_Resp_Matrix_cli, "acquire AO response matrix and WFS reference", "<ave# [long]> <ampl [float]> <nbloop [long]> <frameDelay [long]> <NBiter [long]>", "aolacqresp 50 0.1 5 2", "int Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)");
 
@@ -1391,12 +1724,12 @@ int_fast8_t init_AOloopControl()
     RegisterCLIcommand("aolmeaszrm",__FILE__, AOloopControl_Measure_zonalRM_cli, "measure zonal resp mat, WFS ref, DM and WFS response maps", "<ampl [float]> <delay frames [long]> <DMcommand delay us [long]> <nb frames per position [long]> <nb frames excluded [long]> <output image [string]> <output WFS ref [string]>  <output WFS response map [string]>  <output DM response map [string]> <mode> <normalize flag> <AOinitMode> <NBcycle>", "aolmeaszrm 0.05 2 135 20 zrm wfsref wfsmap dmmap 1 0 0 0", "long AOloopControl_Measure_zonalRM(long loop, double ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, char *zrespm_name, char *WFSref_name, char *WFSmap_name, char *DMmap_name, long mode, int normalize, int AOinitMode, long NBcycle)");
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 5. COMPUTING CALIBRATION                                                 */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*  5. COMPUTING CALIBRATION                                                                        */
-    /*                                                                                                 */
-    /* =============================================================================================== */
 
     RegisterCLIcommand("aolmkH", __FILE__, AOloopControl_mkHadamardModes_cli, "make Hadamard poke sequence", "<DM pixel mask> <output fname [string]>", "aolmkH dm50mask h50pokec", "long AOloopControl_mkHadamardModes(char *DMmask_name, char outname)");
 
@@ -1424,11 +1757,12 @@ int_fast8_t init_AOloopControl()
 
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*  6. REAL TIME COMPUTING ROUTINES                                                                */
-    /*                                                                                                 */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES                                          */
+/* =============================================================================================== */
+/* =============================================================================================== */
+    
 
     RegisterCLIcommand("aolrun", __FILE__, AOloopControl_run, "run AO loop", "no arg", "aolrun", "int AOloopControl_run()");
 
@@ -1443,11 +1777,13 @@ int_fast8_t init_AOloopControl()
     RegisterCLIcommand("aolsig2mcoeff", __FILE__, AOloopControl_sig2Modecoeff_cli, "convert signals to mode coeffs", "<signal data cube> <reference> <Modes data cube> <output image>", "aolsig2mcoeff wfsdata wfsref wfsmodes outim", "long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)");
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*  7. PREDICTIVE CONTROL                                                                           */
-    /*                                                                                                 */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 7. PREDICTIVE CONTROL                                                    */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
 
     RegisterCLIcommand("aolmappfilt", __FILE__, AOloopControl_mapPredictiveFilter_cli, "map/search predictive filter", "<input coeffs> <mode number> <delay [frames]>", "aolmkapfilt coeffim 23 2.4", "long AOloopControl_mapPredictiveFilter(char *IDmodecoeff_name, long modeout, double delayfr)");
 
@@ -1457,42 +1793,43 @@ int_fast8_t init_AOloopControl()
 
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*  8. LOOP CONTROL INTERFACE                                                                      */
-    /*                                                                                                 */
-    /* =============================================================================================== */
-
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.   LOOP CONTROL INTERFACE                                              */
+/* =============================================================================================== */
+/* =============================================================================================== */
+    
     RegisterCLIcommand("aolnb", __FILE__, AOloopControl_setLoopNumber_cli, "set AO loop #", "<loop nb>", "AOloopnb 0", "int AOloopControl_setLoopNumber(long loop)");
 
-    /* =============================================================================================== */
-    /* 		8.1. MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET                                      */
-    /* =============================================================================================== */
-
-    /* =============================================================================================== */
-    /* 		8.2. DATA LOGGING                                                                          */
-    /* =============================================================================================== */
-
-    /* =============================================================================================== */
-    /* 		8.3. PRIMARY DM WRITE                                                                      */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET */
+/* =============================================================================================== */
 
 
-    /* =============================================================================================== */
-    /* 		8.4. INTEGRATOR AUTO TUNING                                                                */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.2. LOOP CONTROL INTERFACE - DATA LOGGING                               */
+/* =============================================================================================== */
 
-    /* =============================================================================================== */
-    /* 		8.5. PREDICTIVE FILTER ON/OFF                                                              */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE                           */
+/* =============================================================================================== */
 
-    /* =============================================================================================== */
-    /* 		8.6. TIMING PARAMETERS                                                                     */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.4. LOOP CONTROL INTERFACE - INTEGRATOR AUTO TUNING                     */
+/* =============================================================================================== */
+  
 
-    /* =============================================================================================== */
-    /* 		8.7. CONTROL LOOP PARAMETERS                                                               */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.5. LOOP CONTROL INTERFACE - PREDICTIVE FILTER ON/OFF                   */
+/* =============================================================================================== */
+
+/* =============================================================================================== */
+/** @name AOloopControl - 8.6. LOOP CONTROL INTERFACE - TIMING PARAMETERS                          */
+/* =============================================================================================== */
+
+/* =============================================================================================== */
+/** @name AOloopControl - 8.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS                    */
+/* =============================================================================================== */
 
     RegisterCLIcommand("aolsetgain", __FILE__, AOloopControl_setgain_cli, "set gain", "<gain value>", "aolsetgain 0.1", "int AOloopControl_setgain(float gain)");
 
@@ -1543,11 +1880,11 @@ int_fast8_t init_AOloopControl()
 
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*  9. STATUS / TESTING / PERF MEASUREMENT                                                          */
-    /*                                                                                                 */
-    /* =============================================================================================== */
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 9. STATUS / TESTING / PERF MEASUREMENT                                   */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
     RegisterCLIcommand("aoldmtestsp", __FILE__, AOcontrolLoop_TestDMSpeed_cli, "test DM speed by sending circular tip-tilt", "<dmname> <delay us [long]> <NB pts> <ampl>", "aoldmtestsp dmdisp2 100 20 0.1", "long AOcontrolLoop_TestDMSpeed(char *dmname, long delayus, long NBpts, float ampl)");
 
@@ -1558,19 +1895,22 @@ int_fast8_t init_AOloopControl()
     RegisterCLIcommand("aoltestdmrec", __FILE__, AOloopControl_TestDMmodes_Recovery_cli, "Test system DM modes recovery", "<DM modes [3D im]> <ampl [um]> <DM mask [2D im]> <DM in [2D stream]> <DM out [2D stream]> <meas out [2D stream]> <lag time [us]>  <NB averages [long]>  <out ave [2D im]> <out rms [2D im]> <out meas ave [2D im]> <out meas rms [2D im]>", "aoltestdmrec DMmodesC 0.05 DMmask dmsisp2 dmoutr 2000  20 outave outrms outmave outmrms", "long AOloopControl_TestDMmodes_Recovery(char *DMmodes_name, float ampl, char *DMmask_name, char *DMstream_in_name, char *DMstream_out_name, char *DMstream_meas_name, long tlagus, long NBave, char *IDout_name, char *IDoutrms_name, char *IDoutmeas_name, char *IDoutmeasrms_name)");
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /* 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                                                    */
-    /*                                                                                                 */
-    /* =============================================================================================== */
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                             */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /* 11. PROCESS LOG FILES                                                                           */
-    /*                                                                                                 */
-    /* =============================================================================================== */
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 11. PROCESS LOG FILES                                                    */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 
@@ -1633,9 +1973,7 @@ int_fast8_t init_AOloopControl()
 
 
 
-    /* =============================================================================================== */
-    /*                                         PROCESS LOG FILES                                       */
-    /* =============================================================================================== */
+
     RegisterCLIcommand("aollogprocmodeval",__FILE__, AOloopControl_logprocess_modeval_cli, "process log image modeval", "<modeval image>", "aollogprocmodeval imc", "int AOloopControl_logprocess_modeval(const char *IDname);");
 
 
@@ -1699,12 +2037,12 @@ int_fast8_t init_AOloopControl()
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 12. OBSOLETE ?                                                           */ 
+/* =============================================================================================== */
+/* =============================================================================================== */
 
-    /* =============================================================================================== */
-    /*                                                                                                 */
-    /*                                              OBSOLETE                                           */
-    /*                                                                                                 */
-    /* =============================================================================================== */
 
 
     RegisterCLIcommand("aolinjectmode",__FILE__, AOloopControl_InjectMode_cli, "inject single mode error into RM channel", "<index> <ampl>", "aolinjectmode 20 0.1", "int AOloopControl_InjectMode()");
@@ -1737,27 +2075,37 @@ int_fast8_t init_AOloopControl()
 
 
 
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 1. INITIALIZATION                                                                               */
-/*                                                                                                 */
+/** @name AOloopControl - 1. INITIALIZATION, configurations                                        */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-
-
-//
-// load / setup configuration
-// mode = 1 loads from ./conf/ directory to shared memory
-// mode = 0 simply connects to shared memory
-//
-// level :
-//
-//  2   zonal only
-// 10+  load ALL
-//
+/**
+ * ## Purpose
+ * 
+ * load / setup configuration
+ *
+ * ## Arguments
+ * 
+ * @param[in]
+ * loop		INT
+ * 			Loop number
+ * 
+ * @param[in]
+ * mode		INT 
+ * - 1 loads from ./conf/ directory to shared memory
+ * - 0 simply connects to shared memory
+ * 
+ * @param[in]
+ * level	INT
+ * - 2 zonal only
+ * - 10+ load all
+ * 
+ * 
+ * 
+ * @ingroup AOloopControl_streams
+ */
 static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 {
     FILE *fp;
@@ -1786,7 +2134,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 #endif
 
 
-
+	// Create logfile for this function
+	//
     if((fplog=fopen("logdir/loadconf.log", "w"))==NULL)
     {
         printf("ERROR: cannot create logdir/loadconf.log\n");
@@ -1795,35 +2144,41 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     loadcreateshm_log = 1;
     loadcreateshm_fplog = fplog;
 
+	/** --- */
+	/** # Details */
+	
+	/** ## 1. Initial setup from configuration files */
 
+	/** - 1.1. Initialize memory */
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
 
+	//
+    /** ### 1.2. Set names of key streams */
+    //
+    // Here we define names of key streams used by loop
 
-    // printf("mode = %d\n", mode); // not used yet
-
-
-    // Name definitions for shared memory
-
+	/** - dmC stream  : DM control */
     if(sprintf(name, "aol%ld_dmC", loop)<1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     printf("DM control file name : %s\n", name);
     strcpy(AOconf[loop].dmCname, name);
 
-    if(sprintf(name, "aol%ld_dmdisp", loop) < 1) // used to notify dm combine that a new displacement should be computed
+	/** - dmdisp stream : total DM displacement */
+	// used to notify dm combine that a new displacement should be computed
+    if(sprintf(name, "aol%ld_dmdisp", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     printf("DM displacement file name : %s\n", name);
     strcpy(AOconf[loop].dmdispname, name);
 
+	/** - dmRM stream : response matrix */
     if(sprintf(name, "aol%ld_dmRM", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     printf("DM RM file name : %s\n", name);
     strcpy(AOconf[loop].dmRMname, name);
 
+	/** - wfsim : WFS image */
     if(sprintf(name, "aol%ld_wfsim", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("WFS file name: %s\n", name);
@@ -1833,16 +2188,19 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     // Modal control
 
+	/** - DMmodes : control modes */
     if(sprintf(name, "aol%ld_DMmodes", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("DMmodes file name: %s\n", name);
     strcpy(AOconf[loop].DMmodesname, name);
 
+	/** - respM : response matrix */
     if(sprintf(name, "aol%ld_respM", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("respM file name: %s\n", name);
     strcpy(AOconf[loop].respMname, name);
 
+	/** - contrM : control matrix */
     if(sprintf(name, "aol%ld_contrM", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("contrM file name: %s\n", name);
@@ -1850,10 +2208,16 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+
+
+
     sizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
 
 
-    // READ LOOP NAME
+    /** ### 1.3. Read loop name
+     * 
+     * - ./conf/conf_LOOPNAME.txt -> AOconf[loop].name 
+     */
 
     if((fp=fopen("./conf/conf_LOOPNAME.txt","r"))==NULL)
     {
@@ -1861,17 +2225,23 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         exit(0);
     }
     if(fscanf(fp, "%200s", content) != 1)
+    {
         printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
+		exit(0);
+	}
 
     printf("loop name : %s\n", content);
+    fflush(stdout);
     fprintf(fplog, "AOconf[%ld].name = %s\n", loop, AOconf[loop].name);
     fclose(fp);
-    fflush(stdout);
     strcpy(AOconf[loop].name, content);
 
 
-    // Normalize WFS frames ?
+    /** ### 1.4. Define WFS image normalization mode 
+     * 
+     * - conf/conf_WFSnormalize.txt -> AOconf[loop].WFSnormalize
+     */ 
+    
     if((fp=fopen("./conf/conf_WFSnormalize.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/conf_WFSnormalize.txt missing\n");
@@ -1892,7 +2262,15 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    // Timing info
+    /** ### 1.5. Read Timing info
+     * 
+     * - ./conf/conf_loopfrequ.txt    -> AOconf[loop].loopfrequ
+     * - ./conf/conf_hardwlatency.txt -> AOconf[loop].hardwlatency
+     * - AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ
+     * - ./conf/conf_complatency.txt  -> AOconf[loop].complatency
+     * - AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
+     * - ./conf/conf_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
+     */
     if((fp=fopen("./conf/conf_loopfrequ.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/conf_loopfrequ.txt missing\n");
@@ -1964,7 +2342,13 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    // USE GPUs ?
+    /** ### 1.6. Define GPU use
+     * 
+     * - ./conf/conf_GPU.txt           -> AOconf[loop].GPU (0 if missing)
+     * - ./conf/conf_GPUall.txt        -> AOconf[loop].GPUall
+     * - ./conf/conf_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
+     * 
+     */ 
 
     if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
     {
@@ -2026,7 +2410,11 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         fprintf(fplog, "AOconf[%ld].DMprimaryWrite_ON = %d\n", loop, AOconf[loop].DMprimaryWrite_ON);
     }
 
-
+	/** ### 1.7. WFS image total flux computation mode
+	 * 
+	 * - ./conf/conf_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
+	 * 
+	 */
 
     // TOTAL image done in separate thread ?
     AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
@@ -2049,9 +2437,12 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-    // CMatrix mult mode
-    // 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
-    // 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
+    /** ### 1.8. Read CMatrix mult mode
+     * 
+     * - ./conf/conf_CMmode.txt -> MATRIX_COMPUTATION_MODE
+     * 		- 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
+     * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
+     */ 
 
     if((fp=fopen("./conf/conf_CMmode.txt","r"))==NULL)
     {
@@ -2073,6 +2464,14 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
+
+
+	/** ### 1.9. Read loop frequ
+	 * 
+	 * - ./conf/conf_loopfrequ.txt -> AOconf[loop].loopfrequ
+	 * 
+	 * @warning check redundancy with earlier read
+	 */
 
     if((fp=fopen("./conf/conf_loopfrequ.txt","r"))==NULL)
     {
@@ -2096,10 +2495,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
-
-
-
+	/** ### 1.10. Setup loop timing array 
+	 */
 
     if(sprintf(name, "aol%ld_looptiming", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2110,21 +2507,32 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    // this image is read to notify when new dm displacement is ready
+
+	/** ## 2. Read/load shared memory arrays
+	 * 
+	 */ 
+
+
+    /**
+     * ### 2.1. CONNECT to existing streams
+     * 
+     * Note: these streams MUST exist
+     * 
+     *  - AOconf[loop].dmdispname  : this image is read to notify when new dm displacement is ready
+     *  - AOconf[loop].WFSname     : connect to WFS camera. This is where the size of the WFS is read 
+     */
     aoconfID_dmdisp = read_sharedmem_image(AOconf[loop].dmdispname);
     if(aoconfID_dmdisp==-1)
         fprintf(fplog, "ERROR : cannot read shared memory stream %s\n", AOconf[loop].dmdispname);
     else
         fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmdispname, aoconfID_dmdisp);
 
-    // Connect to WFS camera
-    // This is where the size of the WFS is fixed
+ 
     aoconfID_wfsim = read_sharedmem_image(AOconf[loop].WFSname);
     if(aoconfID_wfsim == -1)
         fprintf(fplog, "ERROR : cannot read shared memory stream %s\n", AOconf[loop].WFSname);
     else
         fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].WFSname, aoconfID_wfsim);
-
 
     AOconf[loop].sizexWFS = data.image[aoconfID_wfsim].md[0].size[0];
     AOconf[loop].sizeyWFS = data.image[aoconfID_wfsim].md[0].size[1];
@@ -2136,11 +2544,26 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    // The AOloopControl_xDloadcreate_shmim functions work as follows:
-    // If file already loaded, use it (we assume it's already been properly loaded)
-    // If not, attempt to read it from shared memory
-    // If not available in shared memory, create it in shared memory
-    // if "fname" exists, attempt to load it into the shared memory image
+    /**
+     * 
+     * ### 2.2. Read file to stream or connect to existing stream
+     * 
+     *  The AOloopControl_xDloadcreate_shmim functions are used, and follows these rules:
+     * 
+     * If file already loaded, use it (we assume it's already been properly loaded) \n
+     * If not, attempt to read it from shared memory \n
+     * If not available in shared memory, create it in shared memory \n
+     * if "fname" exists, attempt to load it into the shared memory image
+     *
+     * Stream names are fixed: 
+     * - aol_wfsdark
+     * - aol_imWFS0
+     * - aol_imWFS0tot
+     * - aol_imWFS1
+     * - aol_imWFS2
+     * - aol_wfsref0
+     * - aol_wfsref
+     */
 
     if(sprintf(name, "aol%ld_wfsdark", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2205,9 +2628,12 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    // Connect to DM
-    // Here the DM size is fixed
-    //
+    /** ### Connect to DM
+     * 
+     * - AOconf[loop].dmCname : DM control channel
+     * 
+     *  Here the DM size is read -> Oconf[loop].sizexDM, AOconf[loop].sizeyDM
+     */
 
 
     aoconfID_dmC = image_ID(AOconf[loop].dmCname);
@@ -2228,7 +2654,10 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     fprintf(fplog, "Connected to DM %s, size = %ld x %ld\n", AOconf[loop].dmCname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
 
 
-
+	/**
+	 * - AOconf[loop].dmRMname : DM response matrix channel
+	 * 
+	 */
     aoconfID_dmRM = image_ID(AOconf[loop].dmRMname);
     if(aoconfID_dmRM==-1)
     {
@@ -2246,9 +2675,23 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+
+	/** 
+	 * ## 3. Load DM modes (if level >= 10)
+	 * 
+	 * 
+	 * */
+
     if(level>=10) // Load DM modes (will exit if not successful)
-    {
-        aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname); // if already exists, trust it and adopt it
+    {				
+		/** 
+		 * Load AOconf[loop].DMmodesname \n
+		 * if already exists in local memory, trust it and adopt it \n
+		 * if not, load from ./conf/aol%ld_DMmodes.fits \n
+		 * 
+		 */
+		
+        aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname); 
 
         if(aoconfID_DMmodes==-1) // If not, check file
         {
@@ -2705,6 +3148,18 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /*** mode = 0 or 1. if mode == 1, simply connect */
 
 static int_fast8_t AOloopControl_InitializeMemory(int mode)
@@ -2930,14 +3385,15 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 2. LOW LEVEL UTILITIES & TOOLS                                                                  */
-/*                                                                                                 */
+/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS                                           */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
+
+
 /* =============================================================================================== */
-/* 		2.1. LOAD DATA STREAMS                                                                     */
+/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS                     */
 /* =============================================================================================== */
 
 
@@ -3311,8 +3767,9 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
 /* =============================================================================================== */
-/* 		2.2. DATA STREAMS PROCESSING                                                               */
+/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING               */
 /* =============================================================================================== */
+
 
 
 // alpha is averaging coefficient
@@ -3601,8 +4058,9 @@ long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int N
 }
 
 
+
 /* =============================================================================================== */
-/* 		2.3. MISC COMPUTATION ROUTINES                                                             */
+/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES             */
 /* =============================================================================================== */
 
 
@@ -3841,12 +4299,9 @@ long AOloopControl_dm2opdmaploop(char *DMdisp_name, char *OPDmap_name, int semin
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 3. WFS INPUT                                                                                    */
-/*                                                                                                 */
+/** @name AOloopControl - 3. WFS INPUT                                                             */
 /* =============================================================================================== */
 /* =============================================================================================== */
-
 
 
 
@@ -4441,12 +4896,9 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
 
 
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 4. ACQUIRING CALIBRATION                                                                        */
-/*                                                                                                 */
+/** @name AOloopControl - 4. ACQUIRING CALIBRATION                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -5999,11 +6451,10 @@ long AOloopControl_RespMatrix_Fast(const char *DMmodes_name, const char *dmRM_na
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 5. COMPUTING CALIBRATION                                                                        */
-/*                                                                                                 */
+/** @name AOloopControl - 5. COMPUTING CALIBRATION                                                 */
 /* =============================================================================================== */
 /* =============================================================================================== */
+
 
 
 // output:
@@ -10557,15 +11008,13 @@ long AOloopControl_loadCM(long loop, const char *CMfname)
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES                                          */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/*                                                                                                 */
-/* 6. REAL TIME COMPUTING ROUTINES                                                                 */
-/*                                                                                                 */
-/* =============================================================================================== */
-/* =============================================================================================== */
 
 
 
@@ -13240,11 +13689,10 @@ long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, fl
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 7. PREDICTIVE CONTROL                                                                           */
-/*                                                                                                 */
+/** @name AOloopControl - 7. PREDICTIVE CONTROL                                                    */
 /* =============================================================================================== */
 /* =============================================================================================== */
+
 
 
 
@@ -13630,15 +14078,13 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 8.   LOOP CONTROL INTERFACE                                              */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/*                                                                                                 */
-/* 8. LOOP CONTROL INTERFACE                                                                       */
-/*                                                                                                 */
-/* =============================================================================================== */
-/* =============================================================================================== */
 
 
 int_fast8_t AOloopControl_setLoopNumber(long loop)
@@ -13680,8 +14126,9 @@ int_fast8_t AOloopControl_setparam(long loop, const char *key, double value)
 
 
 
+
 /* =============================================================================================== */
-/* 		8.1. MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET                                      */
+/** @name AOloopControl - 8.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET  */
 /* =============================================================================================== */
 
 
@@ -13778,14 +14225,13 @@ int_fast8_t AOloopControl_loopreset()
 
 
 /* =============================================================================================== */
-/* 		8.2. DATA LOGGING                                                                          */
+/** @name AOloopControl - 8.2. LOOP CONTROL INTERFACE - DATA LOGGING                               */
 /* =============================================================================================== */
 
 
 
-
 /* =============================================================================================== */
-/* 		8.3. PRIMARY DM WRITE                                                                      */
+/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE                           */
 /* =============================================================================================== */
 
 int_fast8_t AOloopControl_DMprimaryWrite_on()
@@ -13813,7 +14259,7 @@ int_fast8_t AOloopControl_DMprimaryWrite_off()
 
 
 /* =============================================================================================== */
-/* 		8.4. INTEGRATOR AUTO TUNING                                                                */
+/** @name AOloopControl - 8.4. LOOP CONTROL INTERFACE - INTEGRATOR AUTO TUNING                     */
 /* =============================================================================================== */
 
 
@@ -13903,8 +14349,9 @@ int_fast8_t AOloopControl_AUTOTUNE_GAINS_off()
 
 
 /* =============================================================================================== */
-/* 		8.5. PREDICTIVE FILTER ON/OFF                                                              */
+/** @name AOloopControl - 8.5. LOOP CONTROL INTERFACE - PREDICTIVE FILTER ON/OFF                   */
 /* =============================================================================================== */
+
 
 int_fast8_t AOloopControl_ARPFon()
 {
@@ -13931,10 +14378,10 @@ int_fast8_t AOloopControl_ARPFoff()
 
 
 
+/* =============================================================================================== */
+/** @name AOloopControl - 8.6. LOOP CONTROL INTERFACE - TIMING PARAMETERS                          */
+/* =============================================================================================== */
 
-/* =============================================================================================== */
-/* 		8.6. TIMING PARAMETERS                                                                     */
-/* =============================================================================================== */
 
 
 int_fast8_t AOloopControl_set_loopfrequ(float loopfrequ)
@@ -13987,10 +14434,10 @@ int_fast8_t AOloopControl_set_wfsmextrlatency_frame(float wfsmextrlatency_frame)
 
 
 
+/* =============================================================================================== */
+/** @name AOloopControl - 8.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS                    */
+/* =============================================================================================== */
 
-/* =============================================================================================== */
-/* 		8.7. CONTROL LOOP PARAMETERS                                                               */
-/* =============================================================================================== */
 
 
 int_fast8_t AOloopControl_setgain(float gain)
@@ -14272,14 +14719,13 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 9. STATUS / TESTING / PERF MEASUREMENT                                   */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/*                                                                                                 */
-/* 9. STATUS / TESTING / PERF MEASUREMENT                                                          */
-/*                                                                                                 */
-/* =============================================================================================== */
-/* =============================================================================================== */
+
 
 
 
@@ -16239,16 +16685,14 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl - 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                             */
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/*                                                                                                 */
-/* 10. FOCAL PLANE SPECKLE MODULATION / CONTROL                                                    */
-/*                                                                                                 */
-/* =============================================================================================== */
-/* =============================================================================================== */
 
 
 // optimize LO - uses simulated downhill simplex
@@ -16534,13 +16978,9 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
 
 
 
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
-/*                                                                                                 */
-/* 11. PROCESS LOG FILES                                                                           */
-/*                                                                                                 */
+/** @name AOloopControl - 11. PROCESS LOG FILES                                                    */
 /* =============================================================================================== */
 /* =============================================================================================== */
 
@@ -16980,10 +17420,11 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
 
 
 /* =============================================================================================== */
-/*                                                                                                 */
-/*                                              OBSOLETE ?                                         */
-/*                                                                                                 */
 /* =============================================================================================== */
+/** @name AOloopControl - 12. OBSOLETE ?                                                           */ 
+/* =============================================================================================== */
+/* =============================================================================================== */
+
 
 
 
