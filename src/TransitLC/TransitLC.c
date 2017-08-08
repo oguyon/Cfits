@@ -1,3 +1,17 @@
+/**
+ * @file    TransitLC.c
+ * @brief   transit light curve analysis
+ * 
+ * Transit light curve processing
+ *  
+ * @author  O. Guyon
+ * @date    Aug 7 2017
+ *
+ * 
+ * @bug No known bugs.
+ * 
+ */
+
 #include <stdint.h> 
 #include <string.h>
 #include <stdio.h>
@@ -97,12 +111,9 @@ long TransitLC_mkLC(const char *IDpl_name, const char *IDout_name)
 	double dt = 10.0; // interval
 	double tstart = 0.0;
 	double tend = 3600.0*24*50.0; 
-	double lctime;
 	
 	long NBpl;
 	long pl;
-	double P, t0, w, a;
-	double pha;
 	double tmpf;
 	long ii;
 	
@@ -117,6 +128,8 @@ long TransitLC_mkLC(const char *IDpl_name, const char *IDout_name)
 	IDout = create_2Dimage_ID(IDout_name, NBpt, 3);
 	for(ii=0;ii<NBpt;ii++)
 	{
+		double lctime;
+		
 		lctime = tstart + dt*ii;
 		data.image[IDout].array.F[ii] = lctime;
 		data.image[IDout].array.F[NBpt*1 + ii] = 1.0 + noise*gauss(); // flux
@@ -133,6 +146,8 @@ long TransitLC_mkLC(const char *IDpl_name, const char *IDout_name)
 	NBpl = data.image[IDpl].md[0].size[0];
 	for(pl=0;pl<NBpl;pl++)
 		{
+			double P, t0, w, a;
+			
 			P = data.image[IDpl].array.F[NBpl*0+pl];
 			t0 = data.image[IDpl].array.F[NBpl*1+pl];
 			w = data.image[IDpl].array.F[NBpl*2+pl];
@@ -140,6 +155,8 @@ long TransitLC_mkLC(const char *IDpl_name, const char *IDout_name)
 			
 			for(ii=0;ii<NBpt;ii++)
 				{
+					double pha, lctime;
+					
 					lctime = data.image[IDout].array.F[ii];
 					pha = modf((lctime-t0)/P+1.0, &tmpf);
 					if(pha<w/P)
@@ -161,13 +178,8 @@ long TransitLC_EdgeDetect(const char *ID_name, const char *IDout_name, double ed
 {
 	long ID, IDout;
 	long NBpt, NBpt1;
-	long ii, ii1, iistart;
-	double lctime, lctime1;
-	
-	double fluxN, fluxP;
-	double fluxNcnt, fluxPcnt;
-	double alpha;
-	
+	long ii1, iistart;
+	double lctime;	
 	double tstart, tend;
 	
 	
@@ -189,6 +201,11 @@ long TransitLC_EdgeDetect(const char *ID_name, const char *IDout_name, double ed
 	printf("\n");
 	for(ii1=0; ii1<NBpt1; ii1++)
 	{
+		long ii;
+		double lctime1;
+		double fluxN, fluxP;
+		double fluxNcnt, fluxPcnt;
+		
 		printf("\r %6ld / %6ld    ", ii1, NBpt1);
 		fflush(stdout);
 		
@@ -205,6 +222,8 @@ long TransitLC_EdgeDetect(const char *ID_name, const char *IDout_name, double ed
 		ii = iistart;
 		while((data.image[ID].array.F[ii] < (lctime1+edgedt)) && (ii<NBpt))
 			{
+				double alpha;
+				
 				lctime = data.image[ID].array.F[ii];
 				alpha = (lctime-lctime1)/edgedt;
 				if(alpha<0.0)
@@ -247,7 +266,7 @@ long TransitLC_scanTE(const char *IDin_name, const char *IDout_name, double Pmin
 {
 	long IDin, IDout;
 	long t0size, Psize, wsize;
-	double t0, P, w;
+	double t0, w;
 	long ii, jj, kk;
 	double dt; // time interval in input
 	long NBpt;
@@ -276,6 +295,8 @@ long TransitLC_scanTE(const char *IDin_name, const char *IDout_name, double Pmin
 	
 	 for(ii=0;ii<Psize;ii++) // scan P [sec]
 	 {
+		 double P;
+		 
 		 P = Pmin + 1.0*ii*Pstep;
 		 
 		 printf("\rP scan  %6ld / %6ld    %f sec   (%f - %f)     ", ii, Psize, P, Pmin, Pmax);
@@ -355,9 +376,6 @@ long TransitLC_run(long index)
 	FILE *fpout;
 	FILE *fp;
 	
-	
-	double pha;
-	double tmpf;
 	
 	
 	
@@ -451,6 +469,8 @@ long TransitLC_run(long index)
 	fp = fopen("tpts.dat", "w");
 	for(ii=0;ii<lcNBpt;ii++)
 		{
+			double pha, tmpf;
+			
 			pha = (data.image[IDlc].array.F[ii]-t0val)/Pval;
 			pha = modf(pha, &tmpf);
 			while(pha<0.0)
