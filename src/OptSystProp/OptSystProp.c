@@ -82,7 +82,7 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp
     long size;
     long size2;
     long IDin_amp, IDin_pha;
-    long IDc_in, IDc_out;
+    long IDc_in;
     long IDout_amp, IDout_pha;
     uint32_t *imsizearray;
     double amp, pha, re, im;
@@ -120,6 +120,8 @@ int OptSystProp_propagateCube(OPTSYST *optsyst, long index, const char *IDin_amp
     
     for(kl=0; kl<optsyst[index].nblambda; kl++)
     {
+		long IDc_out; 
+		
         printf("kl = %d / %d  %g\n", kl, optsyst[index].nblambda, optsyst[index].lambdaarray[kl]);
         // convert from amp/phase to Re/Im
         for(ii=0; ii<size2; ii++)
@@ -170,10 +172,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 {
     char command[500];
     char imname[200];
-    char imnameamp[200];
-    char imnamepha[200];
-    char imnamere[200];
-    char imnameim[200];
+
 
     long IDx, IDy, IDr, IDPA;
     double x, y;
@@ -191,7 +190,6 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
     long ID;
     double proplim = 1.0e-4;
-    double total;
 
 
     float beamradpix;
@@ -266,6 +264,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     // or elemstart, whichever comes first
     while(elemOK==1)
     {
+		
         if(elemstart1==0)
         {
             sprintf(imnameamp_in, "WFamp%ld", index);
@@ -809,6 +808,13 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     //
     if((elem==optsyst[index].NBelem)&&(optsyst[index].endmode==0)) // Compute final focal plane image
     {
+		    char imnameamp[200];
+    char imnamepha[200];
+    char imnamere[200];
+    char imnameim[200];
+		    double total;
+		    
+		    
         printf("COMPUTING FINAL IMAGE AS FFT OF %ld\n", elem-1);
         mk_complex_from_amph(imnameamp_out, imnamepha_out, "_WFctmp", 0);
         permut("_WFctmp"); // permute as needed for FFTW
