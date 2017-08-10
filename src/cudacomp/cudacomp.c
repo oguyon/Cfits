@@ -1116,11 +1116,10 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         struct cudaDeviceProp deviceProp;
         int n, m;
         char sname[200];
-        char name[200];
         int ptn;
  
         long IDcontrM, IDwfsim, IDwfsref;
-        uint32_t *sizearraytmp;
+        
 
 
         printf("STARTING SETUP %d .....\n", index);
@@ -1129,6 +1128,8 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         if(IDtimerinit == 0)
         {
+			char name[200];
+			
             sprintf(name, "aol%ld_looptiming", loopnb);
             IDtiming = image_ID(name);
 
@@ -1251,6 +1252,8 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         if((gpumatmultconf[index].IDout = image_ID(IDoutdmmodes_name)) == -1)
         {
+			uint32_t *sizearraytmp;
+			
             sizearraytmp = (uint32_t*) malloc(sizeof(uint32_t)*2);
             sizearraytmp[0] = gpumatmultconf[index].M;
             sizearraytmp[1] = 1;
