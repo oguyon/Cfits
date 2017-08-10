@@ -24,6 +24,7 @@
 #include <fitsio.h>
 
 #include "CLIcore.h"
+#include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
 #include "COREMOD_iofits/COREMOD_iofits.h"
 #include "COREMOD_arith/COREMOD_arith.h"
@@ -193,7 +194,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
 
     float beamradpix;
-    long ID0, ID1, ID2;
+    long ID0, ID2;
     long size0, size1;
     long i, j;
 
@@ -214,7 +215,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     long elemstart1 = 0;
     int elemOK;
     double n0, n1; // refractive indices
-    int r;
+
 
     uint32_t *imsizearray;
 
@@ -264,6 +265,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     // or elemstart, whichever comes first
     while(elemOK==1)
     {
+		long ID1;
 		
         if(elemstart1==0)
         {
@@ -746,11 +748,16 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
                 // the focal plane mask is the second argument, which contains properties of the FPM
                 // that are applied as part of fft_DFTinsertFPM
                 fft_DFTinsertFPM("_WFctmp", data.image[ID].name, optsyst[index].FOCMASKarray[i].zfactor, "_WFcout");
+
                 // save diagnostics
                 sprintf(command, "mv _DFT_foca %s/_DFT_foca_%02ld.fits", savedir, elem);
-                r = system(command);
+                if(system(command) != 0)
+					printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
+
                 sprintf(command, "mv _DFT_focp %s/_DFT_focp_%02ld.fits", savedir, elem);
-                r = system(command);
+                if(system(command) != 0)
+					printERROR(__FILE__,__func__,__LINE__, "system() returns non-zero value");
+
             }
 
             i = optsyst[index].elemarrayindex[elem];

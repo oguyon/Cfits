@@ -369,7 +369,6 @@ long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
     double r, theta;
     long ID;
     long naxes[2];
-    double coeff_norm;
     long n,m;
 
     naxes[0] = SIZE;
@@ -396,6 +395,8 @@ long mk_zer_unbounded(const char *ID_name, long SIZE, long zer_nb, float rpix)
     
     if (zer_nb>0)
       {
+		  double coeff_norm;
+		  
 	make_disk("disk_tmp",SIZE,SIZE,SIZE/2,SIZE/2,rpix);
 	coeff_norm=sqrt(ssquare("disk_tmp")/ssquare(ID_name));
 	arith_image_cstmult_inplace(ID_name,coeff_norm);
