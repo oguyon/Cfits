@@ -173,7 +173,7 @@ echo ""
 fi
 
 
-
+mkdir -p $3
 
 
 Cfits -n $pname << EOF
