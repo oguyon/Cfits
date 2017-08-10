@@ -17,8 +17,6 @@
 
 
 
-
-
 /** @brief Initialize AOloopControl command line interface. */
 int_fast8_t init_AOloopControl();
 
@@ -425,7 +423,6 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
 /* =============================================================================================== */
 
 int_fast8_t AOloopControl_logprocess_modeval(const char *IDname);
-
 
 
 
