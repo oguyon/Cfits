@@ -264,13 +264,14 @@ struct timespec time_diff(struct timespec start, struct timespec end)
 int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
 {
     long ii;
-    float volt;
 
 
 
     data.image[IDvolt].md[0].write = 1;
     for(ii=0; ii<NBact; ii++)
     {
+		float volt;
+		
         volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
         if(volt>dispcombconf[0].MAXVOLT)
             volt = dispcombconf[0].MAXVOLT;
@@ -291,10 +292,10 @@ int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
 
 int SCEXAO_DM_createconf()
 {
-    int result;
-
     if( dmdispcomb_loaded == 0 )
     {
+	    int result;
+		
         printf("Create/read configuration\n");
 
         SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
@@ -384,6 +385,10 @@ int SCEXAO_DM_unloadconf()
 
 
 
+
+
+
+
 //
 // mode = 1 if DM volt computed
 //
@@ -399,9 +404,7 @@ int SCExAO_DM_CombineChannels(int mode)
     char name[200];
     long *IDch;
     long NBch = 8;
-    long cnt = 0;
     long long cntsumold;
-    long long cntsum;
     long ii;
     long IDdisp;
     long IDvolt;
@@ -409,17 +412,18 @@ int SCExAO_DM_CombineChannels(int mode)
     long ID1;
     int RT_priority = 95; //any number from 0-99
     struct sched_param schedpar;
-    int r;
     long sizexy;
     float *dmdispptr;
     float *dmdispptr_array[20];
     long IDdispt;
-    char sname[200];
+
     long nsecwait = 100000; // 100 us
 
     schedpar.sched_priority = RT_priority;
 
     #ifndef __MACH__
+    int r;
+    
     r = seteuid(euid_called); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
     r = seteuid(euid_real);//Go back to normal privileges
@@ -461,6 +465,8 @@ int SCExAO_DM_CombineChannels(int mode)
 
     if(data.image[IDdisp].sem1==0)
     {
+		char sname[200];
+		
         sprintf(sname, "%s_sem1", data.image[IDdisp].name);
         if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
             perror("semaphore 1 initilization error");
@@ -473,8 +479,10 @@ int SCExAO_DM_CombineChannels(int mode)
 
     while(dispcombconf[0].ON == 1)
     {
+	    long long cntsum;
+	
+		
         dispcombconf[0].status = 2;
-
 
         if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
             perror("clock_gettime");
@@ -498,7 +506,6 @@ int SCExAO_DM_CombineChannels(int mode)
         if(cntsum != cntsumold)
         {
             dispcombconf[0].status = 3;
-            cnt++;
 
             memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
             for(ch=1; ch<NBch; ch++)
@@ -651,11 +658,13 @@ int SCExAO_DM_dmtrigoff()
 
 int SCEXAO_DMturb_createconf()
 {
-  int result;
-  long IDc1;
 
   if( dmturb_loaded == 0 ) 
     {
+	long IDc1;
+	  int result;
+	  
+	  	
       printf("Create/read configuration\n");  
       fflush(stdout);
 
@@ -823,7 +832,6 @@ int SCExAO_DM_turb()
   struct timespec tlast;  
   struct timespec tdiff;
   struct timespec tdiff1;
-  double tdiff1v;
 
   float screen0_X = 0.0;
   float screen0_Y = 0.0;
@@ -832,13 +840,10 @@ int SCExAO_DM_turb()
   float xpix, ypix;
   float xpixf, ypixf;
   long xpix1, xpix2, ypix1, ypix2;
-  float ave;
 
   double angle = 1.0;
   double coeff = 0.001;
 
-  double RMSval;
-  long RMSvalcnt;
   double r;
 
   float pixscale = 0.1; // [m/pix]
@@ -863,6 +868,12 @@ int SCExAO_DM_turb()
 
   while(dmturbconf[0].on == 1) // computation loop
     {      
+		double tdiff1v;
+		float ave;
+		  double RMSval;
+		  long RMSvalcnt;
+		  
+		  
       usleep(dmturbconf[0].tint);
  
       tlast = dmturbconf[0].tend;

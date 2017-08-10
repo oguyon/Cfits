@@ -200,11 +200,12 @@ int_fast8_t FPAOloopControl_MakeLinComb_seq_cli(){
 int init_FPAOloopControl()
 {
 	FILE *fp;
-	int r;
 	
     if((fp=fopen("LOOPNUMBER","r"))!=NULL)
     {
-        r = fscanf(fp,"%ld", &FPLOOPNUMBER);
+        if(fscanf(fp,"%ld", &FPLOOPNUMBER) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "fscanf returns value != 1");
+		
         printf("LOOP NUMBER = %ld\n", FPLOOPNUMBER);
         fclose(fp);
     }
@@ -244,7 +245,6 @@ long FPAOloopControl_InitializeMemory(int mode)
     int SM_fd;
     struct stat file_stat;
     int create = 0;
-    int result;
     long *sizearray;
     char cntname[200];
     int k;
@@ -276,6 +276,8 @@ long FPAOloopControl_InitializeMemory(int mode)
 
     if(create==1)
     {
+		int result;
+		    
         SM_fd = open(FPAOconfname, O_RDWR | O_CREAT | O_TRUNC, (mode_t)0600);
 
         if (SM_fd == -1) {
@@ -345,7 +347,6 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
     int vOK;
     int kw;
     long k;
-    int r;
     int sizeOK;
     char command[500];
     int CreateSMim;
@@ -396,7 +397,10 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
         printf("ERROR: file ./conf/conf_LOOPNAME.txt missing\n");
         exit(0);
     }
-    r = fscanf(fp, "%s", content);
+    
+    if(fscanf(fp, "%32s", content) != 1)
+		printERROR(__FILE__,__func__,__LINE__, "fscanf returns value != 1");
+    
     printf("loop name : %s\n", content);
     fprintf(fplog, "FPAOconf[%ld].name = %s\n", loop, FPAOconf[loop].name);
     fclose(fp);
@@ -413,7 +417,10 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%f", &FPAOconf[loop].hardwlatency);
+		if(fscanf(fp, "%32f", &FPAOconf[loop].hardwlatency) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "fscanf returns value != 1");
+
+
         printf("hardwlatency : %f\n", FPAOconf[loop].hardwlatency);
         fclose(fp);
         fflush(stdout);
@@ -437,7 +444,9 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
     }
     else
     {
-        r = fscanf(fp, "%s", content);
+        if(fscanf(fp, "%32s", content) != 1)
+			printERROR(__FILE__,__func__,__LINE__, "fscanf returns value != 1");
+        
         printf("loopfrequ : %f\n", atof(content));
         fclose(fp);
         fflush(stdout);
@@ -627,11 +636,9 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
     long double tmplv1;
     double tmpf;
     long IDdark;
-    char fname[200];
     float resulttotal;
     int sval0, sval;
     void *status = 0;
-    long i;
     int semval;
     int s;
     
@@ -644,6 +651,9 @@ int FPAOloopControl_Read_cam_frame(long loop, int semindex)
  
 	if(FPcamReadInit==0)
     {
+		char fname[200];
+		long i;
+		
         arrayftmp = (float*) malloc(sizeof(float)*FPAOconf[loop].sizeWFS);
         arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*FPAOconf[loop].sizeWFS);
 
@@ -791,16 +801,15 @@ long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave,
     int r;
     long IDpokeC;
     long NBpoke;
-    long PokeIndex, PokeIndex1;
+    long PokeIndex;
 	long framesize;
 	char *ptr0; // source
 	float *arrayf;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
     int ret;
-    long cntn;
 
-	long ii, kk, kk1;
+	long ii, kk;
 
 
 
@@ -858,7 +867,7 @@ long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave,
 			data.image[IDoutC].array.F[PokeIndex*FPAOconf[loop].sizeWFS+ii] = 0.0;
 
 
-    cntn = 0;
+    
     iter = 0;
 
 
@@ -871,6 +880,10 @@ long FPAO_Measure_WFSrespC(long loop, long delayfr, long delayRM1us, long NBave,
 
     while((iter<NBiter)&&(data.signal_USR1==0))
     {
+		long PokeIndex1;
+		long kk1;
+		long cntn;
+		
         printf("iteration # %8ld    \n", iter);
         fflush(stdout);
 

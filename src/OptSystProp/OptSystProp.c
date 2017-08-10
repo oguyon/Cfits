@@ -194,7 +194,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
 
 
     float beamradpix;
-    long ID0, ID2;
+    long ID0;
     long size0, size1;
     long i, j;
 
@@ -265,7 +265,7 @@ int OptSystProp_run(OPTSYST *optsyst, long index, long elemstart, long elemend, 
     // or elemstart, whichever comes first
     while(elemOK==1)
     {
-		long ID1;
+		long ID1, ID2;
 		
         if(elemstart1==0)
         {
