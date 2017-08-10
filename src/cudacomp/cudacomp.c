@@ -980,14 +980,15 @@ void *compute_function( void *ptr )
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
 
                 printf("device %d of index %d\n", device, index);
-                printf("GPU device : %d\n", gpumatmultconf[index].GPUdevice[device]);
+                printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
 
-                printf("alpha = %f\n", cublasSgemv_alpha);
-                printf("alpha = %f\n", cublasSgemv_beta);
+                printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
+                printf("alpha                               = %f\n", cublasSgemv_alpha);
+                printf("alpha                               = %f\n", cublasSgemv_beta);
+                printf("gpumatmultconf[index].M             = %d\n", (int) gpumatmultconf[index].M);
                 printf("gpumatmultconf[index].Nsize[device] = %d\n", (int) gpumatmultconf[index].Nsize[device]);
                 fflush(stdout);
-
-                exit(EXIT_FAILURE);
+                exit(EXIT_FAILURE);				
             }
 
 
@@ -2038,9 +2039,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse_SVD(const char *ID_Rmatrix_name, con
 	float *U, *VT;			// u - mxm matrix , vt - nxn  matrix  on the  host
 	float *S1;              //  vectors  of  singular  values
 	magma_int_t  info;
-	magma_int_t  ione   = 1;
-	float  work[1], error = 1.;				// used in  difference  computations
-	float  mone =  -1.0, *h_work;           //  h_work  - workspace
+	float  work[1];				// used in  difference  computations
+	float  *h_work;           //  h_work  - workspace
 	magma_int_t  lwork;                     //  workspace  size
 	real_Double_t gpu_time , cpu_time;
 	
@@ -2314,13 +2314,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     long ii, jj, k;
     magma_int_t info;
 
-    double aux_work[1];
-    float auxf_work[1];
 
-    long ID_A, ID_AtA, ID_VT, ID_Ainv;
+    long ID_AtA, ID_VT, ID_Ainv;
 
     /// Timing tests
-    int timing = 1;                                                        /**< 1 if timing test ON, 0 otherwise */
+   // int timing = 1;                                                        /**< 1 if timing test ON, 0 otherwise */
     struct timespec t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;                /**< Timers                           */
     double t01d, t12d, t23d, t34d, t45d, t56d, t67d, t78d, t89d, t09d;     /**< Times in sec                     */
     struct timespec tdiff;
@@ -2332,7 +2330,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     long maxMode, MaxNBmodes1, mode;
     double egvlim;
     long nbmodesremoved;
-    long ID_M2;
 
     long ID_Cmatrix;
 
@@ -2351,8 +2348,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t0);
+  //  if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t0);
 
 
 	/**
@@ -2481,8 +2478,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	}
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t1);
+   // if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t1);
 
 
 	// ****************************************************
@@ -2518,6 +2515,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
     if(testmode==1)
     {
+		long ID_A;
+		
         ID_A = create_2Dimage_ID("mA", M, N);
         if(MAGMAfloat==1)
         {
@@ -2567,8 +2566,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             TESTING_FREE_CPU( magma_h_A );
     }
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t2);
+    //if(timing==1)
+        
+    clock_gettime(CLOCK_REALTIME, &t2);
 
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
@@ -2614,8 +2614,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t3);
+    //if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t3);
 
 
 	// ****************************************************    
@@ -2636,10 +2636,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	}
 	
     if(MAGMAloop_iter==0)
-    {
+    {	
         // get workspace size
         if(MAGMAfloat==1)
         {
+			float auxf_work[1];
+			
 			if(magmaXmode==1)
 				magma_ssyevdx_gpu( MagmaVec, MagmaRangeI, MagmaLower, N, NULL, N, 0.0, 1.0, N-MaxNBmodes, N, NULL, NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
 			else
@@ -2649,6 +2651,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
         else
         {
+			double aux_work[1];
+    
             magma_dsyevd_gpu( MagmaVec, MagmaLower, N, NULL, N, NULL, NULL, N, aux_work,  -1, magma_aux_iwork, -1, &info );
             magma_lwork  = (magma_int_t) MAGMA_S_REAL( aux_work[0] );
         }
@@ -2658,8 +2662,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t4);
+    //if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t4);
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 	{
@@ -2749,8 +2753,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t5);
+    //if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t5);
 
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
@@ -2900,8 +2904,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t6);
+    //if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t6);
 
 
 	// ****************************************************    
@@ -2950,6 +2954,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
     if(testmode == 1)
     {
+		 long ID_M2;
+		    
         ID_M2 = create_2Dimage_ID("mM2", N, N);
         if(MAGMAfloat==1)
         {
@@ -3084,8 +3090,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t7);
+    //if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t7);
 
     if(MAGMAfloat==1)
         magma_sgetmatrix( M, N, magmaf_d_Ainv, M, magmaf_h_Ainv, M, magmaqueue);
@@ -3111,8 +3117,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         save_fits("mAinv", "!test_mAinv.fits");
     }
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t8);
+    //if(timing==1)
+     clock_gettime(CLOCK_REALTIME, &t8);
 
 
     if(MAGMAloop_iter==0)
@@ -3174,8 +3180,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
 
-    if(timing==1)
-        clock_gettime(CLOCK_REALTIME, &t9);
+    //if(timing==1)
+    clock_gettime(CLOCK_REALTIME, &t9);
 
 
     if(LOOPmode==0)
@@ -3205,8 +3211,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     free(arraysizetmp);
 
 
-    if(timing==1)
-    {
+    //if(timing==1)
+    //{
         tdiff = info_time_diff(t0, t1);
         t01d = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
@@ -3253,7 +3259,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
       printf(" TOTAL  %12.3f ms\n", t09d*1000.0);
 		fflush(stdout);
     }
-    }
+    //}
 
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
@@ -3294,8 +3300,8 @@ int GPU_SVD_computeControlMatrix(int device, const char *ID_Rmatrix_name, const 
 {
     cusolverDnHandle_t  cudenseH = NULL;
     cublasHandle_t cublasH = NULL;
-    cublasStatus_t cublas_status = CUBLAS_STATUS_SUCCESS;
-    cusolverStatus_t cusolver_status = CUSOLVER_STATUS_SUCCESS;
+    cublasStatus_t cublas_status; // = CUBLAS_STATUS_SUCCESS;
+    cusolverStatus_t cusolver_status; // = CUSOLVER_STATUS_SUCCESS;
     struct cudaDeviceProp deviceProp;
     int k;
 
@@ -3908,6 +3914,7 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
     }
 
 
+
     loopOK = 1;
     iter = 0;
 
@@ -3976,18 +3983,28 @@ int CUDACOMP_Coeff2Map_Loop(const char *IDmodes_name, const char *IDcoeff_name, 
 
             // compute
             cublas_status = cublasSgemv(cublasH, CUBLAS_OP_N, m, NBmodes, &alpha, d_modes, m, d_coeff, 1, &beta, d_outmap, 1);
-            if (cudaStat != CUBLAS_STATUS_SUCCESS)
+            if (cublas_status != CUBLAS_STATUS_SUCCESS)
             {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-                if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
+				printf("cublasSgemv returned error code %d, line(%d)\n", cublas_status, __LINE__);
+                fflush(stdout);
+                if(cublas_status == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                if(stat == CUBLAS_STATUS_INVALID_VALUE)
+                if(cublas_status == CUBLAS_STATUS_INVALID_VALUE)
                     printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
+                if(cublas_status == CUBLAS_STATUS_ARCH_MISMATCH)
                     printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-                if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
+                if(cublas_status == CUBLAS_STATUS_EXECUTION_FAILED)
                     printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-                exit(EXIT_FAILURE);
+
+                printf("GPU index                           = %d\n", GPUindex);
+
+                printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
+                printf("alpha                               = %f\n", alpha);
+                printf("alpha                               = %f\n", beta);
+                printf("m                                   = %d\n", (int) m);
+                printf("NBmodes                             = %d\n", (int) NBmodes);
+                fflush(stdout);
+                exit(EXIT_FAILURE);								
             }
 
             // copy result
@@ -4507,18 +4524,28 @@ int CUDACOMP_extractModesLoop(const char *in_stream, const char *intot_stream, c
 
                 // compute
                 cublas_status = cublasSgemv(cublasH, CUBLAS_OP_T, m, NBmodes, &alpha, d_modes, m, d_in, 1, &beta, d_modeval, 1);
-                if (cudaStat != CUBLAS_STATUS_SUCCESS)
+                if (cublas_status != CUBLAS_STATUS_SUCCESS)
                 {
-                    printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
-                    if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
-                        printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
-                    if(stat == CUBLAS_STATUS_INVALID_VALUE)
-                        printf("   CUBLAS_STATUS_INVALID_VALUE\n");
-                    if(stat == CUBLAS_STATUS_ARCH_MISMATCH)
-                        printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
-                    if(stat == CUBLAS_STATUS_EXECUTION_FAILED)
-                        printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
-                    exit(EXIT_FAILURE);
+				printf("cublasSgemv returned error code %d, line(%d)\n", cublas_status, __LINE__);
+                fflush(stdout);
+                if(cublas_status == CUBLAS_STATUS_NOT_INITIALIZED)
+                    printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
+                if(cublas_status == CUBLAS_STATUS_INVALID_VALUE)
+                    printf("   CUBLAS_STATUS_INVALID_VALUE\n");
+                if(cublas_status == CUBLAS_STATUS_ARCH_MISMATCH)
+                    printf("   CUBLAS_STATUS_ARCH_MISMATCH\n");
+                if(cublas_status == CUBLAS_STATUS_EXECUTION_FAILED)
+                    printf("   CUBLAS_STATUS_EXECUTION_FAILED\n");
+
+                printf("GPU index                           = %d\n", GPUindex);
+
+                printf("CUBLAS_OP                           = %d\n", CUBLAS_OP_T);
+                printf("alpha                               = %f\n", alpha);
+                printf("alpha                               = %f\n", beta);
+                printf("m                                   = %d\n", (int) m);
+                printf("NBmodes                             = %d\n", (int) NBmodes);
+                fflush(stdout);
+                exit(EXIT_FAILURE);								
                 }
 
                 // copy result
