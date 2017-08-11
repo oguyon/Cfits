@@ -2,6 +2,35 @@
 
 execname="./AOloopControl"
 
+
+
+
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_DMcombON.txt"
+if [ -a $file ]; then
+	DMcombONstat=$( cat $file )
+else
+	DMcombONstat="OFF"
+	echo "$lsimONstat" > $file
+fi
+
+
+
+
+if [ "$DMcombONstat" = "OFF" ]; then
+
+echo "DM process already OFF"
+
+else
+
+
+
+
 ##########################################
 # READ REQUIRED PARAMETERS
 ##########################################
@@ -50,3 +79,5 @@ tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
 tmux send-keys -t $tmuxname "exit" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 #    tmux kill-session -t $tmuxname # not necessary - just making sure
+
+fi

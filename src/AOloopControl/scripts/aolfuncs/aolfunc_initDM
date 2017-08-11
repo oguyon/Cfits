@@ -6,10 +6,32 @@ execname="./AOloopControl"
 
 
 
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_DMcombON.txt"
+if [ -a $file ]; then
+	DMcombONstat=$( cat $file )
+else
+	DMcombONstat="OFF"
+	echo "$lsimONstat" > $file
+fi
+
+
+
+
+
+
+
+if [ "$DMcombONstat" = " ON" ]; then
+
+echo "DM process already running"
+
+else
+
 ##########################################
 # READ REQUIRED PARAMETERS
 ##########################################
-
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
@@ -28,8 +50,6 @@ if [ -a $file ]
      CPUset_mode=0 #default
      echo "$CPUset_mode" > $file
 fi
-
-
 
 
 # READ DM INDEX
@@ -256,3 +276,8 @@ fi
 file="./conf/param_NBmodeblocks.txt"
 echo "1" > $file
 NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+
+echo " ON" > ./status/stat_DMcombON.txt
+
+fi
+
