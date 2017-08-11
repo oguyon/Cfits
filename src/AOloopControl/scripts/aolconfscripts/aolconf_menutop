@@ -446,52 +446,40 @@ echo "1" > "./conf/conf_dmvolt_mode.txt"
 echo "0" > "./conf/conf_dmcombavemode.txt"
 
 echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
-aolStreamLink dmC
-#ReaddmCname
+./aolfuncs/aolfunc_StreamLink dmC
 
 echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
-aolStreamLink dmO
-#ReaddmOname
+./aolfuncs/aolfunc_StreamLink dmO
 
 echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0_name.txt
-aolStreamLink dmZP0
-#ReaddmZP0name
+./aolfuncs/aolfunc_StreamLink dmZP0
 
 echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
-aolStreamLink dmZP1
-#ReaddmZP1name
+./aolfuncs/aolfunc_StreamLink dmZP1
 
 echo "dm${DMindex}disp06" > ./conf/streamlink_dmZP2.name.txt
-aolStreamLink dmZP2
-#ReaddmZP2name
+./aolfuncs/aolfunc_StreamLink dmZP2
 
 echo "dm${DMindex}disp07" > ./conf/streamlink_dmZP3.name.txt
-aolStreamLink dmZP3
-#ReaddmZP3name
+./aolfuncs/aolfunc_StreamLink dmZP3
 
 echo "dm${DMindex}disp08" > ./conf/streamlink_dmZP4.name.txt
-aolStreamLink dmZP4
-#ReaddmZP4name
+./aolfuncs/aolfunc_StreamLink dmZP4
 
 echo "dm${DMindex}disp09" > ./conf/streamlink_dmZP5.name.txt
-aolStreamLink dmZP5
-#ReaddmZP5name
+./aolfuncs/aolfunc_StreamLink dmZP5
 
 echo "dm${DMindex}disp10" > ./conf/streamlink_dmZP6.name.txt
-aolStreamLink dmZP6
-#ReaddmZP6name
+./aolfuncs/aolfunc_StreamLink dmZP6
 
 echo "dm${DMindex}disp11" > ./conf/streamlink_dmZP7.name.txt
-aolStreamLink dmZP7
-#ReaddmZP7name
+./aolfuncs/aolfunc_StreamLink dmZP7
 
 echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
-aolStreamLink dmdisp
-#Readdmdispname
+./aolfuncs/aolfunc_StreamLink dmdisp
 
 echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation channel for RM matrix
-aolStreamLink dmRM
-#ReaddmRMname
+./aolfuncs/aolfunc_StreamLink dmRM
 ;;
 
     dmolink)
@@ -518,7 +506,7 @@ dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
 menuitems1=( " " " " )
 for i in 0 1 2 3 4 5 6 7;
         do
-dmnb=$( cat ../AOloop${dmolinknb}/conf/conf_DMindex.txt )
+dmnb=$( cat ../AOloop${dmolinknb}/conf/param_DMindex.txt )
 dmolinkchan="$i"
 dmolinkchan1=$( echo $dmolinkchan | awk '{printf("%02ld", $1+4)}')
 menuitems1+=( "$i" "offset channel $i  ( dm${dmnb}disp${dmolinkchan1} )" )

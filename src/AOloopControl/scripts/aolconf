@@ -466,45 +466,43 @@ function AOloadMem {
 
 # Custom hardware I/O functions [shared memory]
 
-ReaddmCname
-getshmimsize aol${LOOPNUMBER}_dmC   # function in aolconf_funcs
+echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
+./aolfuncs/aolfunc_StreamLink dmC
 
-ReaddmOname
-getshmimsize aol${LOOPNUMBER}_dmO
+echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
+./aolfuncs/aolfunc_StreamLink dmO
 
-ReaddmZP0name
-getshmimsize aol${LOOPNUMBER}_dmZP0
+echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0_name.txt
+./aolfuncs/aolfunc_StreamLink dmZP0
 
-ReaddmZP1name
-getshmimsize aol${LOOPNUMBER}_dmZP1
+echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP1
 
-ReaddmZP2name
-getshmimsize aol${LOOPNUMBER}_dmZP2
+echo "dm${DMindex}disp06" > ./conf/streamlink_dmZP2.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP2
 
-ReaddmZP3name
-getshmimsize aol${LOOPNUMBER}_dmZP3
+echo "dm${DMindex}disp07" > ./conf/streamlink_dmZP3.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP3
 
-ReaddmZP4name
-getshmimsize aol${LOOPNUMBER}_dmZP4
+echo "dm${DMindex}disp08" > ./conf/streamlink_dmZP4.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP4
 
-ReaddmZP5name
-getshmimsize aol${LOOPNUMBER}_dmZP5
+echo "dm${DMindex}disp09" > ./conf/streamlink_dmZP5.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP5
 
-ReaddmZP6name
-getshmimsize aol${LOOPNUMBER}_dmZP6
+echo "dm${DMindex}disp10" > ./conf/streamlink_dmZP6.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP6
 
-ReaddmZP7name
-getshmimsize aol${LOOPNUMBER}_dmZP7
+echo "dm${DMindex}disp11" > ./conf/streamlink_dmZP7.name.txt
+./aolfuncs/aolfunc_StreamLink dmZP7
 
+echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
+./aolfuncs/aolfunc_StreamLink dmdisp
 
-Readdmdispname
-getshmimsize aol${LOOPNUMBER}_dmdisp
+echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation channel for RM matrix
+./aolfuncs/aolfunc_StreamLink dmRM
 
-ReaddmRMname
-getshmimsize aol${LOOPNUMBER}_dmRM
-
-Readwfsimcamname
-getshmimsize aol${LOOPNUMBER}_wfsim
+./aolfuncs/aolfunc_StreamLink wfsim  # WFS image
 
 
 

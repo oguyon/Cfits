@@ -16,15 +16,16 @@ echo "  Writes into ./loadedSM/ what has been loaded"
 echo "  unless -f option, will not re-load unchanged files"
 echo "   "
 echo " $(tput bold)USAGE (conf name output):$(tput sgr0)"
-echo "     $0 [-hfp] <FITS file> <shared memory stream name>"
+echo "     $0 [-hfpr] <FITS file> <shared memory stream name>"
 echo " $(tput bold)USAGE (conf name input):$(tput sgr0)"
-echo "     $0 -c [-hfp] <shared memory stream name>"
+echo "     $0 -c [-hfpr] <shared memory stream name>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)           help"
 echo "     $(tput bold)-f$(tput sgr0)           force load (even if unchanged file)"
 echo "     $(tput bold)-c$(tput sgr0)           read FITS file name from ./conf/shmim_<streamname>.name.txt directory"
 echo "     $(tput bold)-p$(tput sgr0) <pref>    stream prefix"
+echo "     $(tput bold)-r$(tput sgr0)           remove / clear previous stream and associated files"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "   <FITS file>    filesystem FITS file"
@@ -100,8 +101,9 @@ done
 FORCE=0
 READFROMCONF=0
 SMPREFIX=""
+CLEARSTREAM="0"
 
-while getopts :hfcp: FLAG; do
+while getopts :hfcp:r FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -120,6 +122,9 @@ while getopts :hfcp: FLAG; do
     ;;
     p)
     SMPREFIX="$OPTARG"
+    ;;
+    r)
+    CLEARSTREAM="1"
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -183,15 +188,40 @@ STREAMname="${SMPREFIX}$1"
 FITSfname=$( cat ./conf/shmim_$1.name.txt )
 fi
 
+
+#
+# is file a link ?
+# if it is, resolve link
+#
+if [ -L "$FITSfname" ]; then
+flink=$( readlink -f $FITSfname )
+rm $FITSfname
+rsync -auL $flink $FITSfname
+fi
+
+
+
 echo "FITS file   : $FITSfname"
 echo "stream name : $STREAMname"
 
 
 
-
-
 mkdir -p conf
 mkdir -p loadedSM
+
+
+
+if [ "$CLEARSTREAM" = "1" ]; then # clear stream and associated files
+rm ./loadedSM/${STREAMname0}.*
+rm /tmp/${STREAMname}.im.shm
+rm /dev/shm/sem.${STREAMname}.*
+rm ./conf/shmim_${STREAMname0}.imsize.txt
+rm ./conf/shmim_${STREAMname0}.fits
+fi
+
+
+
+
 
 LOADfile="0"
 
@@ -280,7 +310,10 @@ echo "======= LOADfile = $LOADfile ========"
 fi
 
 
+
+
 if [ "$LOADfile" = "1" ]; then
+
 
 ./AOloopControl -n $pname << EOF
 loadfits "${FITSfname}" im
@@ -292,9 +325,8 @@ EOF
 
 # copy imsize to conf
 cp ./loadedSM/${STREAMname0}.imsize ./conf/shmim_${STREAMname0}.imsize.txt
-if [ "$VERBOSE" = "1" ]; then
-echo ">>>>>>>> cp ./loadedSM/${STREAMname0}.imsize ./conf/shmim_${STREAMname0}.imsize.txt"
-fi
+# add link to conf
+ln -s ${PWD}/${FITSfname} ./conf/shmim_${STREAMname0}.fits
 
 
 # write SM stat AFTER it has been updated
