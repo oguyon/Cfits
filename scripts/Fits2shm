@@ -17,12 +17,13 @@ echo "  unless -f option, will not re-load unchanged files"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-hf] <FITS file> <shared memory stream name>"
-echo "     $0 -c [-hf] <shared memory stream name>"
+echo "     $0 -c [-hfp] <shared memory stream name>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
-echo "     $(tput bold)-h$(tput sgr0)         help"
-echo "     $(tput bold)-f$(tput sgr0)         force load (even if unchanged file)"
-echo "     $(tput bold)-c$(tput sgr0)         read FITS file name from ./conf/conf_<streamname>_name.txt directory"
+echo "     $(tput bold)-h$(tput sgr0)           help"
+echo "     $(tput bold)-f$(tput sgr0)           force load (even if unchanged file)"
+echo "     $(tput bold)-c$(tput sgr0)           read FITS file name from ./conf/conf_<streamname>_name.txt directory"
+echo "     $(tput bold)-p$(tput sgr0) <pref>    stream prefix"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "   <FITS file>    filesystem FITS file"
@@ -34,7 +35,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Copy FITS files to shared memor\n" "$0" 
+    printf "%25s       Copy FITS files to shared memory\n" "$0" 
 }
 
 
@@ -86,7 +87,9 @@ done
 
 FORCE=1
 READFROMCONF=0
-while getopts :hfc FLAG; do
+SMPREFIX=""
+
+while getopts :hfcp: FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -102,6 +105,9 @@ while getopts :hfc FLAG; do
     ;;
     f)
     FORCE="1"
+    ;;
+    p)
+    SMPREFIX="$OPTARG"
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
@@ -148,7 +154,7 @@ echo ""
 fi
 
 
-exit
+
 
 
 
@@ -159,9 +165,15 @@ if [ "$READFROMCONF" = "0" ]; then
 FITSfname="$1"
 STREAMname="$2"
 else
-STREAMname="$1"
+STREAMname="${SMPREFIX}$1"
 FITSfname=$( cat ./conf/conf_$1_name.txt )
 fi
+
+echo "FITS file   : $FITSfname"
+echo "stream name : $STREAMname"
+
+exit
+
 
 
 mkdir -p conf
