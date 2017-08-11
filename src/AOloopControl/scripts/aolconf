@@ -275,7 +275,7 @@ aoconflog "STARTING NEW aolconf SESSION"
 
 
 # default parameters
-CPUconfRT="1" # no CPU real-time configuration
+CPUconfRT="1" # CPU real-time configuration
 
 DMindex=0
 
@@ -334,15 +334,6 @@ shmimmonexec="shmimmon"
 
 
 
-
-# ===================== TEST MODE ========================
-dmxsize=32
-dmysize=32
-
-
-
-
-
 # =================== some initial setup =======================
 
 
@@ -393,7 +384,6 @@ echo "FUNCTIONS..."
 
 . ./aolconfscripts/aolconf_logfuncs
 
-#. ./aolconfscripts/aolconf_DMfuncs
 
 . ./aolconfscripts/aolconf_configureloop_funcs
 function_configureloop_readparams

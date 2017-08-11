@@ -32,8 +32,19 @@ RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
 
 
 
-
-
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
 
 
 
@@ -44,118 +55,86 @@ RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
 
 function function_configureloop_readparams {
 
-loopfrequ="2000.0"
-if [ -f "./conf/conf_loopfrequ.txt" ]; then
-loopfrequ=$( cat ./conf/conf_loopfrequ.txt )
-fi
+ConfReadParam DMMODE "0"
+DMMODE="$paramvalue"
 
-hardwlatency="0.001"
-if [ -f "./conf/conf_hardwlatency.txt" ]; then
-hardwlatency=$( cat ./conf/conf_hardwlatency.txt )
-hardwlatency_frame=$( cat ./conf/conf_hardwlatency_frame.txt )
-fi
+ConfReadParam loopfrequ "2000.0"
+loopfrequ="$paramvalue"
 
-complatency="0.0002"
-if [ -f "./conf/conf_complatency_frame.txt" ]; then
-complatency=$( cat ./conf/conf_complatency.txt )
-complatency_frame=$( cat ./conf/conf_complatency_frame.txt )
-fi
+ConfReadParam hardwlatency "0.001"
+hardwlatency="$paramvalue"
 
-wfsmextrlatency="0.0004"
-if [ -f "./conf/conf_wfsmextrlatency.txt" ]; then
-wfsmextrlatency=$( cat ./conf/conf_wfsmextrlatency.txt )
-wfsmextrlatency_frame=$( cat ./conf/conf_wfsmextrlatency_frame.txt )
-fi
+ConfReadParam hardwlatency_frame "1.5"
+hardwlatency_frame="$paramvalue"
+
+ConfReadParam complatency "0.0002"
+complatency="$paramvalue"
+
+ConfReadParam complatency_frame "0.5"
+complatency_frame="$paramvalue"
+
+ConfReadParam wfsmextrlatency "0.0004"
+wfsmextrlatency="$paramvalue"
+
+ConfReadParam wfsmextrlatency_frame "0.5"
+wfsmextrlatency_frame="$paramvalue"
 
 
-
-wfslambdanm="800"
-if [ -f "./conf/conf_wfslambdanm.txt" ]; then
-wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
-fi
+ConfReadParam wfslambdanm "800"
+wfslambdanm="$paramvalue"
 
 
 
-file="conf/conf_MASKS_LOCK.txt"
-if [ -a $file ]
-	then
-	MASKS_LOCK=$(cat $file)
-	else
-	MASKS_LOCK="0"
-fi
+ConfReadParam MASKS_LOCK "0"
+MASKS_LOCK="$paramvalue"
 
 
-ACzrmtime="600.0"
-if [ -f "./conf/conf_ACzrmtime.txt" ]; then
-ACzrmtime=$( cat ./conf/conf_ACzrmtime.txt )
-fi
+ConfReadParam ACzrmtime "600.0"
+ACzrmtime="$paramvalue"
 
-ACzrmNBcycle="5"
-if [ -f "./conf/conf_ACzrmNBcycle.txt" ]; then
-ACzrmNBcycle=$( cat ./conf/conf_ACzrmNBcycle.txt )
-fi
+ConfReadParam ACzrmNBcycle "5"
+ACzrmNBcycle="$paramvalue"
+
 
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
-ACmrmtime="60.0"
-if [ -f "./conf/conf_ACmrmtime.txt" ]; then
-ACmrmtime=$( cat ./conf/conf_ACmrmtime.txt )
-fi
+	ConfReadParam ACmrmtime "60.0"
+	ACmrmtime="$paramvalue"
 
-ACmrmNBcycle="5"
-if [ -f "./conf/conf_ACmrmNBcycle.txt" ]; then
-ACmrmNBcycle=$( cat ./conf/conf_ACmrmNBcycle.txt )
-fi
+	ConfReadParam ACmrmNBcycle "5"
+	ACmrmNBcycle="$paramvalue"
 fi
 
 
 
-rmdelayfr=2
-if [ -f "./conf/conf_RMdelayfr.txt" ]; then
-rmdelayfr=$( cat ./conf/conf_RMdelayfr.txt )
-fi
+ConfReadParam RMdelayfr "2"
+RMelayfr="$paramvalue"
 
-rmfrave=5
-if [ -f "./conf/conf_RMfrave.txt" ]; then
-rmfrave=$( cat ./conf/conf_RMfrave.txt )
-fi
+ConfReadParam RMfrave "5"
+RMfrave="$paramvalue"
 
-rmexfr=5
-if [ -f "./conf/conf_RMexfr.txt" ]; then
-rmexfr=$( cat ./conf/conf_RMexfr.txt )
-fi
+ConfReadParam RMexfr "2"
+RMexfr="$paramvalue"
+
 
 # compute acquisition time
-RMacqTimeZ=$( echo $loopfrequ $rmfrave $rmexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
+RMacqTimeZ=$( echo $loopfrequ $RMfrave $RMexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
 
 
+ConfReadParam RMamplum "0.05"
+RMamplum="$paramvalue"
+
+ConfReadParam delayRM1us "0"
+delayRM1us="$paramvalue"
+
+ConfReadParam nblatm "100"
+nblatm="$paramvalue"
+
+ConfReadParam RMpokeMode "0"
+RMpokeMode="$paramvalue"
 
 
-rmamplum=0.05
-if [ -f "./conf/conf_RMamplum.txt" ]; then
-rmamplum=$( cat ./conf/conf_RMamplum.txt )
-fi
-
-
-delayRM1us="0"
-if [ -f "./conf/conf_delayRM1us.txt" ]; then
-delayRM1us=$( cat ./conf/conf_delayRM1us.txt )
-fi
-
-
-nblatm=100
-if [ -f "./conf/conf_nblatm.txt" ]; then
-nblatm=$( cat ./conf/conf_nblatm.txt )
-fi
-
-
-
-if [ -f "./conf/conf_RMpokeMode.txt" ]; then
-	RMpokeMode=$( cat ./conf/conf_RMpokeMode.txt )
-	else
-	RMpokeMode="0" # default
-fi
 if [ "${RMpokeMode}" -eq "0" ]; then
 	rm ./conf/RMpokeCube.fits
 	else
@@ -163,82 +142,57 @@ if [ "${RMpokeMode}" -eq "0" ]; then
 fi
 
 
-
-if [ -f "./conf/conf_WFSnormalize.txt" ]; then
-WFSnorm=$( cat ./conf/conf_WFSnormalize.txt )
-else
-WFSnorm="0" # default
-echo "0" > ./conf/conf_WFSnormalize.txt
-fi
+ConfReadParam WFSnorm "0"
+WFSnorm="$paramvalue"
 
 
 
-zrespMstat=$( cat ./status/stat_zrespM.txt )
-if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_zrespM.txt
-zrespMstat="OFF"
-fi
+
+#zrespMstat=$( cat ./status/stat_zrespM.txt )
+#if [[ -f "./status/stat_zrespM.txt" && ( "$zrespMstat" = " ON" || "$zrespMstat" = "OFF" ) ]]; then
+#echo "OK"
+#else
+#echo "OFF" > ./status/stat_zrespM.txt
+#zrespMstat="OFF"
+#fi
 
 
-zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
+#zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 
 
-
+ConfReadParam 
+="$paramvalue"
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
 
-DMmaskRMp0=0.2
-if [ -f "./conf/conf_DMmaskRMp0.txt" ]; then
-DMmaskRMp0=$( cat ./conf/conf_DMmaskRMp0.txt )
-fi
+ConfReadParam DMmaskRMp0 "0.2"
+DMmaskRMp0="$paramvalue"
 
-DMmaskRMc0=1.0
-if [ -f "./conf/conf_DMmaskRMc0.txt" ]; then
-DMmaskRMc0=$( cat ./conf/conf_DMmaskRMc0.txt )
-fi
+ConfReadParam DMmaskRMc0 "1.0"
+DMmaskRMc0="$paramvalue"
 
-DMmaskRMp1=0.5
-if [ -f "./conf/conf_DMmaskRMp1.txt" ]; then
-DMmaskRMp1=$( cat ./conf/conf_DMmaskRMp1.txt )
-fi
+ConfReadParam DMmaskRMp1 "0.5"
+DMmaskRMp1="$paramvalue"
 
-DMmaskRMc1=0.4
-if [ -f "./conf/conf_DMmaskRMc1.txt" ]; then
-DMmaskRMc1=$( cat ./conf/conf_DMmaskRMc1.txt )
-fi
+ConfReadParam DMmaskRMc1 "0.4"
+DMmaskRMc1="$paramvalue"
 
+ConfReadParam WFSmaskRMp0 "0.2"
+WFSmaskRMp0="$paramvalue"
 
+ConfReadParam WFSmaskRMc0 "1.0"
+WFSmaskRMc0="$paramvalue"
 
-WFSmaskRMp0=0.2
-if [ -f "./conf/conf_WFSmaskRMp0.txt" ]; then
-WFSmaskRMp0=$( cat ./conf/conf_WFSmaskRMp0.txt )
-fi
+ConfReadParam WFSmaskRMp1 "0.5"
+WFSmaskRMp1="$paramvalue"
 
-WFSmaskRMc0=1.0
-if [ -f "./conf/conf_WFSmaskRMc0.txt" ]; then
-WFSmaskRMc0=$( cat ./conf/conf_WFSmaskRMc0.txt )
-fi
+ConfReadParam WFSmaskRMc1 "0.4"
+WFSmaskRMc1="$paramvalue"
 
-WFSmaskRMp1=0.5
-if [ -f "./conf/conf_WFSmaskRMp1.txt" ]; then
-WFSmaskRMp1=$( cat ./conf/conf_WFSmaskRMp1.txt )
-fi
-
-WFSmaskRMc1=0.4
-if [ -f "./conf/conf_WFSmaskRMc1.txt" ]; then
-WFSmaskRMc1=$( cat ./conf/conf_WFSmaskRMc1.txt )
-fi
-
-
-
-WFSmaskSNRr=0.05
-if [ -f "./conf/conf_WFSmaskSNRr.txt" ]; then
-WFSmaskSNRr=$( cat ./conf/conf_WFSmaskSNRr.txt )
-fi
+ConfReadParam WFSmaskSNRr "0.05"
+WFSmaskSNRr="$paramvalue"
 
 else
 DMmaskRMp0=0
@@ -273,18 +227,12 @@ fi
 if [ "${RMmodal}" = " ON" ];
 then
 
-    rmMamplum=0.1
-   
-    if [ -f "./conf/conf_RMMamplum.txt" ]; then
-        rmMamplum=$( cat ./conf/conf_RMMamplum.txt )
-    fi
-   
+    ConfReadParam rmMamplum "0.1"
+	rmMamplum="$paramvalue"
 
-    rmMcpa=1.0
+    ConfReadParam rmMcpa "1.0"
+    rmMcpa="$paramvalue"
    
-    if [ -f "./conf/conf_RMMcpa.txt" ]; then
-        rmMcpa=$( cat ./conf/conf_RMMcpa.txt )
-    fi
    
 
     LOrespMstat=$( cat ./status/stat_LOrespM.txt )
