@@ -44,42 +44,16 @@ echo "$LOOPNUMBER" > LOOPNUMBER
 fi
 
 
-# READ LHS hardware latency
-file="./conf/param_linsimDelay.txt"
-if [ -a $file ]; then
-	linsimDelay=$( cat $file )
-else
-	linsimDelay="2000"
-	echo "$linsimDelay" > $file
-fi
-
-
-# READ LHS loop interval
-file="./conf/param_linsimdt.txt"
-if [ -a $file ]; then
-	linsimdt=$( cat $file )
-else
-	linsimdt="1000"
-	echo "$linsimdt" > $file
-fi
-
-
-# READ GPU index for LHS 
-file="./conf/param_GPUlinsim.txt"
-if [ -a $file ]; then
-	GPUlinsim=$( cat $file )
-else
-	GPUlinsim="7"
-	echo "$GPUlinsim" > $file
-fi
-
-
-
-
-
-
 tmuxname="aol${LOOPNUMBER}linsim"
 tmuxnameD="aol${LOOPNUMBER}linsimD"
+
+tmux send-keys -t $tmuxnameD "" C-c
+tmux send-keys -t $tmuxnameD "" C-c
+tmux send-keys -t $tmuxnameD "exit" C-m
+
+tmux send-keys -t $tmuxname "" C-c
+tmux send-keys -t $tmuxname "" C-c
+tmux send-keys -t $tmuxname "exit" C-m
 
 tmux kill-session -t ${tmuxnameD}
 tmux kill-session -t ${tmuxname}
@@ -99,8 +73,6 @@ cp ./conf/streamlink_wfsim_hardware.name.txt ./conf/streamlink_wfsim.name.txt
 #ReadWFSdarkfname
 
 #dmflat
-
-}
 
 
 echo "OFF" > ./status/stat_lsimON.txt
