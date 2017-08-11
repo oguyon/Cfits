@@ -25,7 +25,7 @@
 
 
 
-
+execname="./AOloopControl"
 
 file="./conf/streamlink_$1.name.txt"
 if [ -a $file ]; then
@@ -40,6 +40,13 @@ fi
 	streamname=$( cat $file )
 	rm /tmp/aol${LOOPNUMBER}_$1.im.shm
 	ln -s /tmp/${streamname}.im.shm /tmp/aol${LOOPNUMBER}_$1.im.shm
+
+
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_$1
+readshmimsize aol${LOOPNUMBER}_$1 "./conf/streamlink_$1.imsize"
+exitCLI
+EOF
 
 fi
 
