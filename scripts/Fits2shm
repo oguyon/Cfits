@@ -129,7 +129,7 @@ fi
 
 
 # ======================= CHECK REQUIRED FILES =================================
-if [ "$READFROMCONF" = "0" ]
+if [ "$READFROMCONF" = "0" ]; then
 checkFile $1
 else
 checkFile conf/conf_$1_name.txt
