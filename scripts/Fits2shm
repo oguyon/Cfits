@@ -97,7 +97,7 @@ singlelinehelp=1;
 done
 
 
-FORCE=1
+FORCE=0
 READFROMCONF=0
 SMPREFIX=""
 
