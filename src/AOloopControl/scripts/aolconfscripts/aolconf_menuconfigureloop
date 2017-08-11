@@ -1148,7 +1148,7 @@ esac
 exec 3>&1;
 RMamplum=$(dialog --inputbox "RM amplitude [um]" 0 0 "$RMamplum" 2>&1 1>&3);
 exec 3>&-;
-echo "$rmamplum" > ./conf/conf_RMamplum.txt
+echo "$rmamplum" > ./conf/param_RMamplum.txt
 aoconflogext "set RM amplitude $rmamplum um"
 ;;
 
@@ -1156,7 +1156,7 @@ aoconflogext "set RM amplitude $rmamplum um"
 exec 3>&1;
 RMdelayfr=$(dialog --inputbox "RM time delay [frame]" 0 0 "$RMdelayfr" 2>&1 1>&3);
 exec 3>&-;
-echo "$RMdelayfr" > ./conf/conf_RMdelayfr.txt
+echo "$RMdelayfr" > ./conf/param_RMdelayfr.txt
 aoconflogext "set RM time delay $RMdelayfr frame"
 ;;
 
@@ -1164,7 +1164,7 @@ aoconflogext "set RM time delay $RMdelayfr frame"
 exec 3>&1;
 delayRM1us=$(dialog --inputbox "RM time delay1 [us]" 0 0 "$delayRM1us" 2>&1 1>&3);
 exec 3>&-;
-echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
+echo "$delayRM1us" > ./conf/param_delayRM1us.txt
 aoconflogext "set RM time delay1 $delayRM1us us"
 ;;
 
@@ -1173,14 +1173,14 @@ aoconflogext "set RM time delay1 $delayRM1us us"
 exec 3>&1;
 rmfrave=$(dialog --inputbox "RM frame averaging" 0 0 "$rmfrave" 2>&1 1>&3);
 exec 3>&-;
-echo "$rmfrave" > ./conf/conf_RMfrave.txt
+echo "$rmfrave" > ./conf/param_RMfrave.txt
 aoconflogext "set RM NB frame average $rmfrave frames"
 ;;
 	rmexfr)
 exec 3>&1;
 RMexfr=$(dialog --inputbox "RM excluded frames" 0 0 "$RMexfr" 2>&1 1>&3);
 exec 3>&-;
-echo "$RMexfr" > ./conf/conf_RMexfr.txt
+echo "$RMexfr" > ./conf/param_RMexfr.txt
 
 echo "$hardwlatency_frame $RMexfr $loopfrequ" > tmpfile.txt
 RMdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
