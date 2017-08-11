@@ -1,0 +1,110 @@
+#!/bin/bash
+
+#########################################################################################
+##          LINEAR HARDWARE SIMULATOR  ON                                              ##
+#########################################################################################
+
+execname="./AOloopControl"
+
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_lsimON.txt"
+if [ -a $file ]; then
+	lsimONstat=$( cat $file )
+else
+	lsimONstat="OFF"
+	echo "$lsimONstat" > $file
+fi
+
+
+
+
+if [ "lsimONstat" = "OFF" ]; then
+
+echo "LHS already OFF"
+
+else
+
+
+
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+
+# READ LHS hardware latency
+file="./conf/param_linsimDelay.txt"
+if [ -a $file ]; then
+	linsimDelay=$( cat $file )
+else
+	linsimDelay="2000"
+	echo "$linsimDelay" > $file
+fi
+
+
+# READ LHS loop interval
+file="./conf/param_linsimdt.txt"
+if [ -a $file ]; then
+	linsimdt=$( cat $file )
+else
+	linsimdt="1000"
+	echo "$linsimdt" > $file
+fi
+
+
+# READ GPU index for LHS 
+file="./conf/param_GPUlinsim.txt"
+if [ -a $file ]; then
+	GPUlinsim=$( cat $file )
+else
+	GPUlinsim="7"
+	echo "$GPUlinsim" > $file
+fi
+
+
+
+
+
+
+tmuxname="aol${LOOPNUMBER}linsim"
+tmuxnameD="aol${LOOPNUMBER}linsimD"
+
+tmux kill-session -t ${tmuxnameD}
+tmux kill-session -t ${tmuxname}
+
+#rm runproc/aollinsimDelay.runproc
+#rm runproc/aollindm2wfsim.runproc
+
+cp ./conf/streamlink_wfsim_hardware.name.txt ./conf/streamlink_wfsim.name.txt
+./aolfuncs/aolfunc_StreamLink wfsim
+
+# turn on DM voltage
+#$execname << EOF
+#aoldmvoltON 0
+#exit
+#EOF
+
+#ReadWFSdarkfname
+
+#dmflat
+
+}
+
+
+echo "OFF" > ./status/stat_lsimON.txt
+
+fi
+
+
