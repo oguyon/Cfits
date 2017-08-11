@@ -16,7 +16,7 @@ if [ -a $file ]; then
 	DMcombONstat=$( cat $file )
 else
 	DMcombONstat="OFF"
-	echo "$lsimONstat" > $file
+	echo "$DMcombONstat" > $file
 fi
 
 
@@ -56,11 +56,6 @@ fi
 
 
 
-
-
-
-
-
 tmuxname="aol${LOOPNUMBER}dm${DMindex}comboff"
 
 tmux kill-session -t $tmuxname
@@ -79,5 +74,8 @@ tmuxname="aol${LOOPNUMBER}dm${DMindex}comb"
 tmux send-keys -t $tmuxname "exit" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 #    tmux kill-session -t $tmuxname # not necessary - just making sure
+
+
+echo "OFF" > "./status/stat_DMcombON.txt"
 
 fi
