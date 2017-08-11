@@ -57,7 +57,7 @@ menuitems+=( "lslat" "            WFS modes extraction Latency      ${wfsmextrla
 
 
 if [ -f $dmCfile ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmC.imsize.txt )
+sizestring=$( cat conf/stramlink_dmC.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${dmC}\Zn" )
 else
@@ -68,7 +68,7 @@ fi
 
 
 if [ -f $dmOfile ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmO.imsize.txt )
+sizestring=$( cat conf/streamlink_dmO.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmO" "[\Z2\Zr${OKstr}\Zn] DM offset channel         \Z4\Zbaol${LOOPNUMBER}_dmO\Zn -> \Z4${dmO}\Zn" )
 else
@@ -80,7 +80,7 @@ fi
 
 
 if [ -f $dmZP0file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP0.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP0.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP0\Zn -> \Z4${dmZP0}\Zn" )
 else
@@ -90,7 +90,7 @@ confOK=0
 fi
 
 if [ -f $dmZP1file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP1.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP1.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP1" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP1\Zn -> \Z4${dmZP1}\Zn" )
 else
@@ -100,7 +100,7 @@ confOK=0
 fi
 
 if [ -f $dmZP2file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP2.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP2.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP2" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP2\Zn -> \Z4${dmZP2}\Zn" )
 else
@@ -110,7 +110,7 @@ confOK=0
 fi
 
 if [ -f $dmZP3file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP3.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP3.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z4${dmZP3}\Zn" )
 else
@@ -120,7 +120,7 @@ confOK=0
 fi
 
 if [ -f $dmZP4file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP4.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP4.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP4" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP4\Zn -> \Z4${dmZP4}\Zn" )
 else
@@ -131,7 +131,7 @@ fi
 
 
 if [ -f $dmZP5file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP5.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP5.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z4${dmZP5}\Zn" )
 else
@@ -142,7 +142,7 @@ fi
 
 
 if [ -f $dmZP6file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP6.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP6.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z4${dmZP6}\Zn" )
 else
@@ -153,7 +153,7 @@ fi
 
 
 if [ -f $dmZP7file ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmZP7.imsize.txt )
+sizestring=$( cat conf/streamlink_dmZP7.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z4${dmZP7}\Zn" )
 else
@@ -166,7 +166,7 @@ fi
 
 
 if [ -f $dmdispfile ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmdisp.imsize.txt )
+sizestring=$( cat conf/streamlink_dmdisp.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z4${dmdisp}\Zn" )
 else
@@ -177,7 +177,7 @@ fi
 
 
 if [ -f $dmRMfile ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_dmRM.imsize.txt )
+sizestring=$( cat conf/streamlink_dmRM.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${dmRM}\Zn" )
 else
@@ -192,7 +192,7 @@ menuitems+=( "zerodm" "Zero all DM arrays\Zn" )
 
 
 if [ -f $wfsimcamfile ]; then
-sizestring=$( cat conf/shmim_aol${LOOPNUMBER}_wfsim.imsize.txt )
+sizestring=$( cat conf/streamlink_wfsim.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z4${wfsimcam}\Zn" )
 else
