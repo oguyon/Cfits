@@ -23,7 +23,7 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)           help"
 echo "     $(tput bold)-f$(tput sgr0)           force load (even if unchanged file)"
-echo "     $(tput bold)-c$(tput sgr0)           read FITS file name from ./conf/conf_<streamname>_name.txt directory"
+echo "     $(tput bold)-c$(tput sgr0)           read FITS file name from ./conf/shmim_<streamname>.name.txt directory"
 echo "     $(tput bold)-p$(tput sgr0) <pref>    stream prefix"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
@@ -34,8 +34,8 @@ echo " $(tput bold)EXAMPLES:$(tput sgr0)"
 echo "   $0 -f image32.fits ims10"
 echo "        Load image32.fits to stream ims10"
 echo "        -f option : force load even if image and stream have not changed"
-echo "        write \"image32.fits\" into file \"conf/conf_ims10_name.txt"
-echo "   echo \"image102.fits\" > conf/conf_ims10_name.txt"
+echo "        write \"image32.fits\" into file \"conf/shmim_ims10.name.txt"
+echo "   echo \"image102.fits\" > conf/shmim_ims10.name.txt"
 echo "   $0 -c ims10"
 echo "        Load image102.fits to stream ims10"
 echo "   $0 -c -p aol3_ ims10"
@@ -150,7 +150,7 @@ fi
 if [ "$READFROMCONF" = "0" ]; then
 checkFile $1
 else
-checkFile conf/conf_$1_name.txt
+checkFile conf/shmim_$1.name.txt
 fi
 
 
@@ -180,7 +180,7 @@ STREAMname0="$2"
 else
 STREAMname0="$1"
 STREAMname="${SMPREFIX}$1"
-FITSfname=$( cat ./conf/conf_$1_name.txt )
+FITSfname=$( cat ./conf/shmim_$1.name.txt )
 fi
 
 echo "FITS file   : $FITSfname"
@@ -291,7 +291,8 @@ exitCLI
 EOF
 
 # copy imsize to conf
-cp ./loadedSM/${STREAMname}.imsize ./conf/conf_imsize_${STREAMname0}.txt
+cp ./loadedSM/${STREAMname}.imsize ./conf/shmim_${STREAMname0}.imsize.txt
+
 
 
 # write SM stat AFTER it has been updated
