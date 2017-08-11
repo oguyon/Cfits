@@ -176,7 +176,9 @@ fi
 if [ "$READFROMCONF" = "0" ]; then
 FITSfname="$1"
 STREAMname="$2"
+STREAMname0="$2"
 else
+STREAMname0="$1"
 STREAMname="${SMPREFIX}$1"
 FITSfname=$( cat ./conf/conf_$1_name.txt )
 fi
@@ -287,6 +289,10 @@ cpsh im "${STREAMname}"
 readshmimsize ${STREAMname} "./loadedSM/${STREAMname}.imsize"
 exitCLI
 EOF
+
+# copy imsize to conf
+cp ./loadedSM/${STREAMname}.imsize ./conf/conf_imsize_${STREAMname0}.txt
+
 
 # write SM stat AFTER it has been updated
 stat -L --format "%n %s %y" /tmp/${STREAMname}.im.shm > ./loadedSM/${STREAMname}.SMinfo
