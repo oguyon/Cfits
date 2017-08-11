@@ -17,11 +17,12 @@ echo "  unless -f option, will not re-load unchanged files"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-hf] <FITS file> <shared memory stream name>"
+echo "     $0 -c [-hf] <shared memory stream name>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)         help"
 echo "     $(tput bold)-f$(tput sgr0)         force load (even if unchanged file)"
-echo "     $(tput bold)-c$(tput sgr0)         "
+echo "     $(tput bold)-c$(tput sgr0)         read FITS file name from ./conf/conf_<streamname>_name.txt directory"
 echo ""
 echo " $(tput bold)INPUT:$(tput sgr0)"
 echo "   <FITS file>    filesystem FITS file"
@@ -35,6 +36,36 @@ printHELP1 ()
 {
     printf "%25s       Copy FITS files to shared memor\n" "$0" 
 }
+
+
+
+
+
+EXITSTATUS=0
+
+function checkFile {
+if [ -f $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] File $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] File $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+function checkDir {
+if [ -d $1 ]
+  then
+    echo "[$(tput setaf 2)$(tput bold)   OK   $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) found"
+   else
+    echo "[$(tput setaf 1)$(tput bold) FAILED $(tput sgr0)] Directory $(tput bold)$1$(tput sgr0) not found"
+    EXITSTATUS=1
+fi
+}
+
+
+
+
 
 
 
@@ -54,7 +85,8 @@ done
 
 
 FORCE=1
-while getopts :hf FLAG; do
+READFROMCONF=0
+while getopts :hfc FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -64,9 +96,9 @@ while getopts :hf FLAG; do
       fi
       exit
       ;;
-    c) 
-	  
-	  
+    c) # read from conf 
+	  READFROMCONF=1
+	  NBARGS=1
     ;;
     f)
     FORCE="1"
@@ -95,6 +127,44 @@ printHELP
 fi
 
 
+
+# ======================= CHECK REQUIRED FILES =================================
+if [ "$READFROMCONF" = "0" ]
+checkFile $1
+else
+checkFile conf/conf_$1_name.txt
+fi
+
+
+
+
+if [ $EXITSTATUS -eq 1 ]; then
+echo ""
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
+echo ""
+exit
+else
+echo ""
+fi
+
+
+exit
+
+
+
+
+
+
+if [ "$READFROMCONF" = "0" ]; then
+FITSfname="$1"
+STREAMname="$2"
+else
+STREAMname="$1"
+FITSfname=$( cat ./conf/conf_$1_name.txt )
+fi
+
+
+mkdir -p conf
 mkdir -p loadedSM
 
 LOADfile="0"
