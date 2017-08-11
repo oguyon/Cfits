@@ -1207,11 +1207,11 @@ aoconflogext "set RM NB frame excluded $rmexfr frames"
 exec 3>&1;
 nblatm=$(dialog --inputbox "Latency measurement # frames :" 0 0 "$nblatm" 2>&1 1>&3);
 exec 3>&-;
-echo "$nblatm" > ./conf/conf_nblatm.txt
+echo "$nblatm" > ./conf/param_nblatm.txt
 aoconflogext "Measuring system hardware latency"
-./auxscripts/MeasureLatency "$rmamplum" "$nblatm"
-hardwlatency=$( awk '{print $1}' conf/conf_hardwlatency.txt )
-loopfrequ=$( awk '{print $1}' conf/conf_loopfrequ.txt ) 
+./auxscripts/MeasureLatency "$RMamplum" "$nblatm"
+hardwlatency=$( awk '{print $1}' conf/param_hardwlatency.txt )
+loopfrequ=$( awk '{print $1}' conf/param_loopfrequ.txt ) 
 echo "$hardwlatency $loopfrequ" > tmpfile.txt
 
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
@@ -1220,8 +1220,8 @@ hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$2) }' tmpfile.txt )
 hardwlatency1=$( awk '{ printf("%.6f\n", $1-0.5/$2) }' tmpfile.txt )
 
 rm tmpfile.txt
-echo "$hardwlatency1" > ./conf/conf_hardwlatency1.txt
-echo "$hardwlatency_frame" > ./conf/conf_hardwlatency_frame.txt
+echo "$hardwlatency1" > ./conf/param_hardwlatency1.txt
+echo "$hardwlatency_frame" > ./conf/param_hardwlatency_frame.txt
 
 $execname << EOF
 aolsethlat ${hardwlatency_frame}
