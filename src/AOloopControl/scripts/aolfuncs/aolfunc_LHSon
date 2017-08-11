@@ -11,8 +11,8 @@ execname="./AOloopControl"
 
 
 # CHECK IF ALREADY RUNNING
-mkdir -p stat
-file="./stat/stat_lsimON.txt"
+mkdir -p status
+file="./status/stat_lsimON.txt"
 if [ -a $file ]; then
 	lsimONstat=$( cat $file )
 else
