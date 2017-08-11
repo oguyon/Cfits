@@ -1284,12 +1284,12 @@ menucontrolloop_default="Hon"
 
 
     WFSNon)
-echo "1" > ./conf/param_WFSnormalize.txt
+echo "1" > ./conf/param_WFSnorm.txt
 aoconflogext "RM: set WFS normalize ON"
 menucontrolloop_default="WFSNoff"
 ;;
     WFSNoff)
-echo "0" > ./conf/param_WFSnormalize.txt
+echo "0" > ./conf/param_WFSnorm.txt
 aoconflogext "RM: set WFS normalize OFF"
 menucontrolloop_default="WFSNon"
 ;;
