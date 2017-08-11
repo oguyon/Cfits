@@ -118,7 +118,7 @@ echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/streamlink_wfsim.name.txt
 #dmdispzero 00 00
 
 #Readwfsimcamname
-./scripts/aolfuncs/aolfunc_StreamLink wfsim
+./aolfuncs/aolfunc_StreamLink wfsim
 
 echo " ON" > ./status/stat_lsimON.txt
 
