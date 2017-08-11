@@ -1184,9 +1184,9 @@ echo "$RMexfr" > ./conf/param_RMexfr.txt
 
 echo "$hardwlatency_frame $RMexfr $loopfrequ" > tmpfile.txt
 RMdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
-echo "$RMdelayfr" > ./conf/conf_RMdelayfr.txt
+echo "$RMdelayfr" > ./conf/param_RMdelayfr.txt
 delayRM1us=$( awk '{ printf("%d\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
-echo "$delayRM1us" > ./conf/conf_delayRM1us.txt
+echo "$delayRM1us" > ./conf/param_delayRM1us.txt
 aoconflogext "set RM NB frame excluded $RMexfr frames"
 ;;
 
@@ -1224,26 +1224,26 @@ cd zrespM
 exec 3>&1;
 zrespMfname=$(dialog --title "Select Zonal RM" --stdout --title "Select zonal RM" --fselect "${zrespMfname}" $nbwlines $nbwcols)
 cd ..
-echo "./zrespM/$zrespMfname" > ./conf/conf_zrespM_name.txt
-ReadConfFile "zrespM"
+echo "./zrespM/$zrespMfname" > ./conf/shmim_zrespM.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ zrespM
 
-sed -e 's/zrespM/wfsmask/g' ./conf/conf_zrespM_name.txt > ./conf/conf_wfsmask_name.txt
-ReadConfFile "wfsmask"
+sed -e 's/zrespM/wfsmask/g' ./conf/shmim_zrespM.name.txt > ./conf/shmim_wfsmask.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsmask
 
-sed -e 's/zrespM/dmmaskRM/g' ./conf/conf_zrespM_name.txt > ./conf/conf_dmmaskRM_name.txt
-ReadConfFile "dmmaskRM"
+sed -e 's/zrespM/dmmaskRM/g' ./conf/shmim_zrespM.name.txt > ./conf/shmim_dmmaskRM.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmaskRM
 
-sed -e 's/zrespM/dmmap/g' ./conf/conf_zrespM_name.txt > ./conf/conf_dmmap_name.txt
-ReadConfFile "dmmap"
+sed -e 's/zrespM/dmmap/g' ./conf/shmim_zrespM.name.txt > ./conf/shmim_dmmap.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmap
 
-sed -e 's/zrespM/wfsref0/g' ./conf/conf_zrespM_name.txt > ./conf/conf_wfsref0_name.txt
-ReadConfFile "wfsref0"
+sed -e 's/zrespM/wfsref0/g' ./conf/shmim_zrespM.name.txt > ./conf/shmim_wfsref0.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0
 
-sed -e 's/zrespM/dmslaved/g' ./conf/conf_zrespM_name.txt > ./conf/conf_dmslaved_name.txt
-ReadConfFile "dmslaved"
+sed -e 's/zrespM/dmslaved/g' ./conf/shmim_zrespM.name.txt > ./conf/shmim_dmslaved.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmslaved
 
-sed -e 's/zrespM/dmmask/g' ./conf/conf_zrespM_name.txt > ./conf/conf_dmmask_name.txt
-ReadConfFile "dmmask"
+sed -e 's/zrespM/dmmask/g' ./conf/shmim_zrespM.name.txt > ./conf/shmim_dmmask.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmask
 ;;
 	1)
 ds9 $imname &
