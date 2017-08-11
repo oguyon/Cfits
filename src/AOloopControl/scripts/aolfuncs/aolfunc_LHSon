@@ -47,7 +47,7 @@ file="./conf/param_linsimDelay.txt"
 if [ -a $file ]; then
 	linsimDelay=$( cat $file )
 else
-	linsimDelay="2000"
+	linsimDelay="3000"
 	echo "$linsimDelay" > $file
 fi
 
@@ -57,7 +57,7 @@ file="./conf/param_linsimdt.txt"
 if [ -a $file ]; then
 	linsimdt=$( cat $file )
 else
-	linsimdt="1000"
+	linsimdt="2000"
 	echo "$linsimdt" > $file
 fi
 
