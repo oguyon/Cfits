@@ -292,7 +292,9 @@ EOF
 
 # copy imsize to conf
 cp ./loadedSM/${STREAMname0}.imsize ./conf/shmim_${STREAMname0}.imsize.txt
-
+if [ "$VERBOSE" = "1" ]; then
+echo ">>>>>>>> cp ./loadedSM/${STREAMname0}.imsize ./conf/shmim_${STREAMname0}.imsize.txt"
+fi
 
 
 # write SM stat AFTER it has been updated

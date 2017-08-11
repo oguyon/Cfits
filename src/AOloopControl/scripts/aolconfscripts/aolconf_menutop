@@ -20,20 +20,20 @@ if [ $state = "menutop" ]; then
 stateok=1
 dateUTC=$( date -u )
 #aoconflog "$0 state = ${state}"
-confselected=$(cat "./conf/conf_CONFNUMBER.txt")
+confselected="0" #$(cat "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
 
 
-file="./conf/conf_dmcombavemode.txt"
-dmcombavemode=$( cat $file )
+file="./conf/param_DMcombave_mode.txt"
+DMcombave_mode=$( cat $file )
 if [[ -f "$file" && ( "$dmcombavemode" = "0" || "$dmcombavemode" = "1" || "$dmcombavemode" = "2" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmcombavemode=0
+DMcombave_mode=0
 fi
 
-DMindex=$(cat "./conf/conf_DMindex.txt")
+DMindex=$(cat "./conf/param_DMindex.txt")
 
 
 
@@ -53,10 +53,10 @@ menuitems+=( " " " ")
 
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
-dmxsize=$(cat "./conf/conf_dm${DMindex}xsize.txt")
-menuitems+=( "dmxs" "[${dmxsize}] Set DM x size (if modal control, = number of modes)" )
-dmysize=$(cat "./conf/conf_dm${DMindex}ysize.txt")
-menuitems+=( "dmys" "[${dmysize}] Set DM y size (1 if modal control)" )
+dmxsize=$(cat "./conf/param_DMxsize.txt")
+menuitems+=( "dmxs" "[${DMxsize}] Set DM x size (if modal control, = number of modes)" )
+dmysize=$(cat "./conf/param_DMysize.txt")
+menuitems+=( "dmys" "[${DMysize}] Set DM y size (1 if modal control)" )
 
 menuitems+=( " " " " )
 menuitems+=( "nolink"  "Auto-configure: main DM  (no link)             -> DM actuators are physical actuators" )
@@ -67,12 +67,12 @@ menuitems+=( " " " " )
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-DMMODEfile="conf/conf_DMMODE.txt"
-if [ -f $DMMODEfile ]; then
+file="conf/param_DMMODE.txt"
+if [ -f $file ]; then
 DMMODE=$( cat ${DMMODEfile} )
 else
 DMMODE="ZONAL"
-echo "$DMMODE" > $DMMODEfile
+echo "$DMMODE" > $file
 fi
 
 if [ "$DMMODE" = "ZONAL" ]; then
@@ -84,13 +84,13 @@ fi
 
 
 
-file="./conf/conf_dm2dm_mode.txt"
-dm2dm_mode=$( cat $file )
-if [[ -f "$file" && ( "$dm2dm_mode" = "1" || "$dm2dm_mode" = "0" ) ]]; then
+file="./conf/param_DM2DM_mode.txt"
+DM2DM_mode=$( cat $file )
+if [[ -f "$file" && ( "$DM2DM_mode" = "1" || "$DM2DM_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dm2dm_mode=0
+DM2DM_mode=0
 fi
 
 file="./conf/conf_dm2dmModes_name.txt"
@@ -694,18 +694,18 @@ menutop_default="setDMdelayON"
 
 
 	initDM)
-mkdir -p $HOME/status
-file="$HOME/status/stat_initdm${DMindex}.txt"
+mkdir -p status
+file="status/stat_initdm${DMindex}.txt"
 echo "1" > $file
-initDMfunc
+./aolfuncs/aolfunc_initDM
 menutop_default="stopDM"
 ;;
 
     stopDM)
-mkdir -p $HOME/status
-file="$HOME/status/stat_initdm${DMindex}.txt"
+mkdir -p status
+file="status/stat_initdm${DMindex}.txt"
 echo "0" > $file
-stopDMfunc
+./aolfuncs/aolfunc_stopDM
 menutop_default="initDM"
 ;;
 
