@@ -109,7 +109,7 @@ fi
 
 
 ConfReadParam RMdelayfr "2"
-RMelayfr="$paramvalue"
+RMdelayfr="$paramvalue"
 
 ConfReadParam RMfrave "5"
 RMfrave="$paramvalue"
