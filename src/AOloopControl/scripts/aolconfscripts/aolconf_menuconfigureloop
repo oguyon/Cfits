@@ -333,17 +333,17 @@ stringcenter "ACQUISITION TIMING"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
-menuitems+=( "rmamp" "            RM amplitude                    ${rmamplum} um" )
-menuitems+=( "rmdelay" "            RM time delay                   ${rmdelayfr} frame(s)" )
+menuitems+=( "rmamp" "            RM amplitude                    ${RMamplum} um" )
+menuitems+=( "rmdelay" "            RM time delay                   ${RMdelayfr} frame(s)" )
 
 
 
 menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
 
-menuitems+=( "rmnbfr" "            RM frame averaging              ${rmfrave} frame(s)" )
+menuitems+=( "rmnbfr" "            RM frame averaging              ${RMfrave} frame(s)" )
 
 
-menuitems+=( "rmexfr" "            RM excluded frames              ${rmexfr} frame(s)" )
+menuitems+=( "rmexfr" "            RM excluded frames              ${RMexfr} frame(s)" )
 
 
 menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
