@@ -23,7 +23,7 @@ fi
 
 
 
-if [ "lsimONstat" = "OFF" ]; then
+if [ "$lsimONstat" = "OFF" ]; then
 
 echo "LHS already OFF"
 

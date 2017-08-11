@@ -23,7 +23,7 @@ fi
 
 
 
-if [ "lsimONstat" = " ON" ]; then
+if [ "$lsimONstat" = " ON" ]; then
 
 echo "LHS already running"
 
