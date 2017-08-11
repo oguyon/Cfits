@@ -56,36 +56,40 @@ menuitems+=( "lslat" "            WFS modes extraction Latency      ${wfsmextrla
 
 
 
+dmCfile="/tmp/aol${LOOPNUMBER}_dmC.im.shm"
 if [ -f $dmCfile ]; then
-sizestring=$( cat conf/stramlink_dmC.imsize.txt )
+sizestring=$( cat conf/streamlink_dmC.imsize.txt )
+streamname=$( cat conf/streamlink_dmC.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${dmC}\Zn" )
+menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zb${dmCfile}\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmC" "[${OKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z1${dmC}\Zn" )
+menuitems+=( "dmC" "[${OKstr}] DM control channel        \Z4\Zb${dmCfile}\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
-
+dmOfile="/tmp/aol${LOOPNUMBER}_dmO.im.shm"
 if [ -f $dmOfile ]; then
 sizestring=$( cat conf/streamlink_dmO.imsize.txt )
+streamname=$( cat conf/streamlink_dmO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmO" "[\Z2\Zr${OKstr}\Zn] DM offset channel         \Z4\Zbaol${LOOPNUMBER}_dmO\Zn -> \Z4${dmO}\Zn" )
+menuitems+=( "dmO" "[\Z2\Zr${OKstr}\Zn] DM offset channel         \Z4\Zb${dmOfile}\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmO" "[${OKstr}] DM offset channel        \Z4\Zbaol${LOOPNUMBER}_dmO\Zn -> \Z1${dmO}\Zn" )
+menuitems+=( "dmO" "[${OKstr}] DM offset channel        \Z4\Zb${dmOfile}\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
 
-
+dmZP0file="/tmp/aol${LOOPNUMBER}_dmZP0.im.shm"
 if [ -f $dmZP0file ]; then
 sizestring=$( cat conf/streamlink_dmZP0.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP0.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP0\Zn -> \Z4${dmZP0}\Zn" )
+menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zb${dmZP0file}\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP0\Zn -> \Z1${dmZP0}\Zn" )
+menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zb${dmZP0file}\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
