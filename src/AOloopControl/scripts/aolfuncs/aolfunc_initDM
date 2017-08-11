@@ -202,7 +202,7 @@ sleep 0.2
 
 
 tmux send-keys -t $tmuxname "$execname -n aol${LOOPNUMBER}dm${DMindex}comb" C-m
-if [ "$CPUconfRT" -eq "1" ]; then
+if [ "$CPUset_mode" = "1" ]; then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 fi
     
