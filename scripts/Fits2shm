@@ -197,58 +197,58 @@ LOADfile="0"
 
 # has the file changed since last request ?
 
-cp ./loadedSM/${STREAMname}.FITSinfo ./loadedSM/${STREAMname}.FITSinfo.old
-stat -L --format "%n %s %y" ${FITSfname} > ./loadedSM/${STREAMname}.FITSinfo
+cp ./loadedSM/${STREAMname0}.FITSinfo ./loadedSM/${STREAMname0}.FITSinfo.old
+stat -L --format "%n %s %y" ${FITSfname} > ./loadedSM/${STREAMname0}.FITSinfo
 
-str1=$(cat ./loadedSM/${STREAMname}.FITSinfo.old)
-str2=$(cat ./loadedSM/${STREAMname}.FITSinfo)
+str1=$(cat ./loadedSM/${STREAMname0}.FITSinfo.old)
+str2=$(cat ./loadedSM/${STREAMname0}.FITSinfo)
 if [ "$str1" = "$str2" ]; then
 if [ "$VERBOSE" = "1" ]; then
 echo "======= FITS file unchanged ========"
 echo "======= LOADfile = $LOADfile ========"
 fi
-touch ./loadedSM/${STREAMname}.FITSsame
-rm ./loadedSM/${STREAMname}.FITSchanged &> /dev/null
+touch ./loadedSM/${STREAMname0}.FITSsame
+rm ./loadedSM/${STREAMname0}.FITSchanged &> /dev/null
 NEW="0"
 else
 if [ "$VERBOSE" = "1" ]; then
 echo "======= FITS file changed =========="
 echo "======= LOADfile = $LOADfile ========"
 fi
-rm ./loadedSM/${STREAMname}.FITSsame &> /dev/null
-touch ./loadedSM/${STREAMname}.FITSchanged
+rm ./loadedSM/${STREAMname0}.FITSsame &> /dev/null
+touch ./loadedSM/${STREAMname0}.FITSchanged
 NEW="1"
 LOADfile="1"
 fi
-rm ./loadedSM/${STREAMname}.SMloaded.old &> /dev/null
+rm ./loadedSM/${STREAMname0}.SMloaded.old &> /dev/null
 
 
 # has shared memory changed since last request ?
 
-cp ./loadedSM/${STREAMname}.SMinfo ./loadedSM/${STREAMname}.SMinfo.old
-stat -L --format "%n %s %y" /tmp/${STREAMname}.im.shm > ./loadedSM/${STREAMname}.SMinfo
-str1=$(cat ./loadedSM/${STREAMname}.SMinfo.old)
-str2=$(cat ./loadedSM/${STREAMname}.SMinfo)
+cp ./loadedSM/${STREAMname0}.SMinfo ./loadedSM/${STREAMname0}.SMinfo.old
+stat -L --format "%n %s %y" /tmp/${STREAMname}.im.shm > ./loadedSM/${STREAMname0}.SMinfo
+str1=$(cat ./loadedSM/${STREAMname0}.SMinfo.old)
+str2=$(cat ./loadedSM/${STREAMname0}.SMinfo)
 
 if [ "$str1" = "$str2" ]; then
 if [ "$VERBOSE" = "1" ]; then
 echo "======= SM file unchanged ========"
 echo "======= LOADfile = $LOADfile ========"
 fi
-touch ./loadedSM/${STREAMname}.SMsame
-rm ./loadedSM/${STREAMname}.SMchanged &> /dev/null
+touch ./loadedSM/${STREAMname0}.SMsame
+rm ./loadedSM/${STREAMname0}.SMchanged &> /dev/null
 NEW_SM="0"
 else
 if [ "$VERBOSE" = "1" ]; then
 echo "======= SM file changed =========="
 echo "======= LOADfile = $LOADfile ========"
 fi
-rm ./loadedSM/${STREAMname}.SMsame &> /dev/null
-touch ./loadedSM/${STREAMname}.SMchanged
+rm ./loadedSM/${STREAMname0}.SMsame &> /dev/null
+touch ./loadedSM/${STREAMname0}.SMchanged
 NEW_SM="1"
 LOADfile="1"
 fi
-rm ./loadedSM/${STREAMname}.SMinfo.old &> /dev/null
+rm ./loadedSM/${STREAMname0}.SMinfo.old &> /dev/null
 
 
 
@@ -259,10 +259,10 @@ if [ "$VERBOSE" = "1" ]; then
 echo "======= SM file missing =========="
 echo "======= LOADfile = $LOADfile ========"
 fi
-touch ./loadedSM/${STREAMname}.missing
+touch ./loadedSM/${STREAMname0}.missing
 LOADfile="1"
 else
-rm ./loadedSM/${STREAMname}.missing &> /dev/null
+rm ./loadedSM/${STREAMname0}.missing &> /dev/null
 fi
 
 
@@ -286,24 +286,24 @@ if [ "$LOADfile" = "1" ]; then
 loadfits "${FITSfname}" im
 readshmim "${STREAMname}"
 cpsh im "${STREAMname}"
-readshmimsize ${STREAMname} "./loadedSM/${STREAMname}.imsize"
+readshmimsize ${STREAMname} "./loadedSM/${STREAMname0}.imsize"
 exitCLI
 EOF
 
 # copy imsize to conf
-cp ./loadedSM/${STREAMname}.imsize ./conf/shmim_${STREAMname0}.imsize.txt
+cp ./loadedSM/${STREAMname0}.imsize ./conf/shmim_${STREAMname0}.imsize.txt
 
 
 
 # write SM stat AFTER it has been updated
-stat -L --format "%n %s %y" /tmp/${STREAMname}.im.shm > ./loadedSM/${STREAMname}.SMinfo
-rm ./loadedSM/${STREAMname}.kept &> /dev/null
-touch ./loadedSM/${STREAMname}.changed
+stat -L --format "%n %s %y" /tmp/${STREAMname}.im.shm > ./loadedSM/${STREAMname0}.SMinfo
+rm ./loadedSM/${STREAMname0}.kept &> /dev/null
+touch ./loadedSM/${STREAMname0}.changed
 
 else
 
-touch ./loadedSM/${STREAMname}.kept
-rm ./loadedSM/${STREAMname}.changed &> /dev/null
+touch ./loadedSM/${STREAMname0}.kept
+rm ./loadedSM/${STREAMname0}.changed &> /dev/null
 
 fi
 
