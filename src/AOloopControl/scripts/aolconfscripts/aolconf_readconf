@@ -338,52 +338,6 @@ ln -s $PWD/${respMfname} conf/aol${LOOPNUMBER}_respM.fits
 
 
 
-# arg1 : image/stream name
-#
-# Reads conf/conf_XXX_name.txt
-# -> moves file to shared mem under aol#_XXX stream
-# -> makes sym link to conf/aol#_XXX.fits
-#
-# ./loadedSM/  keeps track of what has been loaded
-#
-function ReadConfFile {
-file="./conf/conf_$1_name.txt"
-fname="null"
-if [ -f $file ]
-	then
-	fname=$(echo "$(cat $file)")
-	else
-	fname="$1.fits" #default
-fi
-aoconflog "ReadConfFile: linking $1 to ${fname}" 
-
-# is file a link ?
-if [ -L "$fname" ]; then
-flink=$( readlink -f $fname )
-rm $fname
-rsync -auL $flink $fname
-fi
-
-#./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
-rm conf/aol${LOOPNUMBER}_$1.fits
-
-rm /tmp/$1.im.shm
-rm /dev/shm/sem.$1.*
-
-if [ -f "$PWD/${fname}" ]
-then # SUCCESS
-# echo "$PWD/${fname}" > case1_$1.txt
-./auxscripts/Fits2shm ${fname} aol${LOOPNUMBER}_$1
-ln -s $PWD/${fname} conf/aol${LOOPNUMBER}_$1.fits
-else # CAN'T LOAD
-# echo "$PWD/${fname}" > case2_$1.txt
-rm /tmp/aol${LOOPNUMBER}_$1.im.shm
-rm /dev/shm/sem.$1.*
-rm conf/aol${LOOPNUMBER}_$1.fits
-fi
-}
-
-
 
 
 

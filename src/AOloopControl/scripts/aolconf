@@ -393,7 +393,7 @@ echo "FUNCTIONS..."
 
 . ./aolconfscripts/aolconf_logfuncs
 
-. ./aolconfscripts/aolconf_DMfuncs
+#. ./aolconfscripts/aolconf_DMfuncs
 
 . ./aolconfscripts/aolconf_configureloop_funcs
 function_configureloop_readparams
@@ -472,7 +472,7 @@ echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
 echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
 ./aolfuncs/aolfunc_StreamLink dmO
 
-echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0_name.txt
+echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0.name.txt
 ./aolfuncs/aolfunc_StreamLink dmZP0
 
 echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
@@ -507,47 +507,20 @@ echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation chann
 
 
 
-# LOAD SYSTEM CALIBRATION (./conf/ -> shared mem)
+# LOAD SYSTEM CALIBRATION (FITS -> shared mem)
 
-# ReadConfFile in aolconf_readconf
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsmap
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsmask
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmap
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmaskRM
+Fits2shm -c -p aol${LOOPNUMBER}_ dmslaved
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmask
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0
+Fits2shm -c -p aol${LOOPNUMBER}_ zrespM
+Fits2shm -c -p aol${LOOPNUMBER}_ LODMmodes
+Fits2shm -c -p aol${LOOPNUMBER}_ LOrespM
 
-
-ReadConfFile "wfsdark"
-getshmimsize aol${LOOPNUMBER}_wfsdark
-
-ReadConfFile "wfsmap"
-getshmimsize aol${LOOPNUMBER}_wfsmask
-
-
-ReadConfFile "wfsmask"
-getshmimsize aol${LOOPNUMBER}_wfsmask
-
-ReadConfFile "dmmap"
-getshmimsize aol${LOOPNUMBER}_dmmap
-
-ReadConfFile "dmmaskRM"
-getshmimsize aol${LOOPNUMBER}_dmmaskRM
-
-ReadConfFile "dmslaved"
-getshmimsize aol${LOOPNUMBER}_dmslaved
-
-ReadConfFile "dmmask"
-getshmimsize aol${LOOPNUMBER}_dmmask
-
-ReadConfFile "wfsref0"
-getshmimsize aol${LOOPNUMBER}_wfsref0
-
-
-
-ReadConfFile "zrespM"
-getshmimsize aol${LOOPNUMBER}_zrespM
-
-
-ReadConfFile "LODMmodes"
-getshmimsize aol${LOOPNUMBER}_LODMmodes
-
-ReadConfFile "LOrespM"
-getshmimsize aol${LOOPNUMBER}_LOrespM
 
 
 
@@ -555,38 +528,23 @@ getshmimsize aol${LOOPNUMBER}_LOrespM
 # System response and control
 ReadCPAmax
 
-ReadConfFile "DMmodes"
-getshmimsize aol${LOOPNUMBER}_DMmodes
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
+Fits2shm -c -p aol${LOOPNUMBER}_ respM
+Fits2shm -c -p aol${LOOPNUMBER}_ contrM
 
-ReadConfFile "respM"
-getshmimsize aol${LOOPNUMBER}_respM
-
-ReadConfFile "contrM"
-getshmimsize aol${LOOPNUMBER}_contrM
 
 
 if [ "$1" -eq 1 ];then
-NBblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
 NBmodes=$( cat ./conf/conf_NBmodes.txt )
-for i in `seq 0 $(( $NBblocks - 1 ))`;
+for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
-
-ReadConfFile "DMmodes${i2}"
-getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
-
-ReadConfFile "respM${i2}"
-getshmimsize aol${LOOPNUMBER}_respM${i2}
-
-ReadConfFile "contrM${i2}"
-getshmimsize aol${LOOPNUMBER}_contrM${i2}
-
-ReadConfFile "contrMc${i2}"
-getshmimsize aol${LOOPNUMBER}_contrMc${i2}
-
-ReadConfFile "contrMcact${i2}_00"
-getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
-
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ respM${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ contrM${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ contrMc${i2}
+Fits2shm -c -p aol${LOOPNUMBER}_ contrMcact${i2}_00
 done
 fi
 
