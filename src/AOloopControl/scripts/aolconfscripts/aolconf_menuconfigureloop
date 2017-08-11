@@ -1256,7 +1256,7 @@ esac
 
 
 	Hon)
-echo "1" > ./conf/conf_RMpokeMode.txt
+echo "1" > ./conf/param_RMpokeMode.txt
 
 #if [ -f "./conf/Hpoke.fits" ]; then
 #echo "OK"
@@ -1273,7 +1273,7 @@ aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
 	Hoff)
-echo "0" > ./conf/conf_RMpokeMode.txt
+echo "0" > ./conf/param_RMpokeMode.txt
 # by default, aolMeasureZrespmat2 will use a "straight poke" if these files are missing
 rm ./conf/RMpokeCube.fits
 rm ./conf/RMpixindex.fits
@@ -1284,12 +1284,12 @@ menucontrolloop_default="Hon"
 
 
     WFSNon)
-echo "1" > ./conf/conf_WFSnormalize.txt
+echo "1" > ./conf/param_WFSnormalize.txt
 aoconflogext "RM: set WFS normalize ON"
 menucontrolloop_default="WFSNoff"
 ;;
     WFSNoff)
-echo "0" > ./conf/conf_WFSnormalize.txt
+echo "0" > ./conf/param_WFSnormalize.txt
 aoconflogext "RM: set WFS normalize OFF"
 menucontrolloop_default="WFSNon"
 ;;
@@ -1361,7 +1361,7 @@ UpdateCalib_staged_zrm_tmux ${tmuxname}
 exec 3>&1;
 DMmaskRMp0=$(dialog --inputbox "DMmaskRM perc 0" 0 0 "$DMmaskRMp0" 2>&1 1>&3);
 exec 3>&-;
-echo "$DMmaskRMp0" > ./conf/conf_DMmaskRMp0.txt
+echo "$DMmaskRMp0" > ./conf/param_DMmaskRMp0.txt
 aoconflogext "set DMmaskRM perc 0 $DMmaskRMp0"
 ;;
 
@@ -1369,7 +1369,7 @@ aoconflogext "set DMmaskRM perc 0 $DMmaskRMp0"
 exec 3>&1;
 DMmaskRMc0=$(dialog --inputbox "DMmaskRM coeff 0" 0 0 "$DMmaskRMc0" 2>&1 1>&3);
 exec 3>&-;
-echo "$DMmaskRMc0" > ./conf/conf_DMmaskRMc0.txt
+echo "$DMmaskRMc0" > ./conf/param_DMmaskRMc0.txt
 aoconflogext "set DMmaskRM coeff 0 $DMmaskRMc0"
 ;;
 
@@ -1377,7 +1377,7 @@ aoconflogext "set DMmaskRM coeff 0 $DMmaskRMc0"
 exec 3>&1;
 DMmaskRMp1=$(dialog --inputbox "DMmaskRM perc 1" 0 0 "$DMmaskRMp1" 2>&1 1>&3);
 exec 3>&-;
-echo "$DMmaskRMp1" > ./conf/conf_DMmaskRMp1.txt
+echo "$DMmaskRMp1" > ./conf/param_DMmaskRMp1.txt
 aoconflogext "set DMmaskRM perc 1 $DMmaskRMp1"
 ;;
 
@@ -1385,7 +1385,7 @@ aoconflogext "set DMmaskRM perc 1 $DMmaskRMp1"
 exec 3>&1;
 DMmaskRMc1=$(dialog --inputbox "DMmaskRM coeff 1" 0 0 "$DMmaskRMc1" 2>&1 1>&3);
 exec 3>&-;
-echo "$DMmaskRMc1" > ./conf/conf_DMmaskRMc1.txt
+echo "$DMmaskRMc1" > ./conf/param_DMmaskRMc1.txt
 aoconflogext "set DMmaskRM coeff 1 $DMmaskRMc1"
 ;;
 
@@ -1394,7 +1394,7 @@ aoconflogext "set DMmaskRM coeff 1 $DMmaskRMc1"
 exec 3>&1;
 WFSmaskRMp0=$(dialog --inputbox "WFSmaskRM perc 0" 0 0 "$WFSmaskRMp0" 2>&1 1>&3);
 exec 3>&-;
-echo "$WFSmaskRMp0" > ./conf/conf_WFSmaskRMp0.txt
+echo "$WFSmaskRMp0" > ./conf/param_WFSmaskRMp0.txt
 aoconflogext "set WFSmaskRM perc 0 $WFSmaskRMp0"
 ;;
 
@@ -1402,7 +1402,7 @@ aoconflogext "set WFSmaskRM perc 0 $WFSmaskRMp0"
 exec 3>&1;
 WFSmaskRMc0=$(dialog --inputbox "WFSmaskRM coeff 0" 0 0 "$WFSmaskRMc0" 2>&1 1>&3);
 exec 3>&-;
-echo "$WFSmaskRMc0" > ./conf/conf_WFSmaskRMc0.txt
+echo "$WFSmaskRMc0" > ./conf/param_WFSmaskRMc0.txt
 aoconflogext "set WFSmaskRM coeff 0 $WFSmaskRMc0"
 ;;
 
@@ -1410,7 +1410,7 @@ aoconflogext "set WFSmaskRM coeff 0 $WFSmaskRMc0"
 exec 3>&1;
 WFSmaskRMp1=$(dialog --inputbox "WFSmaskRM perc 1" 0 0 "$WFSmaskRMp1" 2>&1 1>&3);
 exec 3>&-;
-echo "$WFSmaskRMp1" > ./conf/conf_WFSmaskRMp1.txt
+echo "$WFSmaskRMp1" > ./conf/param_WFSmaskRMp1.txt
 aoconflogext "set WFSmaskRM perc 1 $WFSmaskRMp1"
 ;;
 
@@ -1418,7 +1418,7 @@ aoconflogext "set WFSmaskRM perc 1 $WFSmaskRMp1"
 exec 3>&1;
 WFSmaskRMc1=$(dialog --inputbox "WFSmaskRM coeff 1" 0 0 "$WFSmaskRMc1" 2>&1 1>&3);
 exec 3>&-;
-echo "$WFSmaskRMc1" > ./conf/conf_WFSmaskRMc1.txt
+echo "$WFSmaskRMc1" > ./conf/param_WFSmaskRMc1.txt
 aoconflogext "set WFSmaskRM coeff 1 $WFSmaskRMc1"
 ;;
 
@@ -1427,7 +1427,7 @@ aoconflogext "set WFSmaskRM coeff 1 $WFSmaskRMc1"
 exec 3>&1;
 WFSmaskSNRr=$(dialog --inputbox "Fraction of WFS elements rejected due to poor SNR" 0 0 "$WFSmaskSNRr" 2>&1 1>&3);
 exec 3>&-;
-echo "$WFSmaskSNRr" > ./conf/conf_WFSmaskSNRr.txt
+echo "$WFSmaskSNRr" > ./conf/param_WFSmaskSNRr.txt
 aoconflogext "set WFSmakSNRr $WFSmaskSNRr"
 ;;
 
@@ -1503,16 +1503,16 @@ tmux send-keys -t aol${LOOPNUMBER}zrmcust "cp dmmask.fits dmmask/dmmask_${datest
 fi
 
 
-echo "zrespM/zrespM_${datestr}.fits" > ./conf/conf_zrespM_name.txt
-echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/conf_wfsref0_name.txt
-echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/conf_wfsmap_name.txt
-echo "dmmap/dmmap_${datestr}.fits" > ./conf/conf_dmmap_name.txt
-echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/conf_wfsmask_name.txt
+echo "zrespM/zrespM_${datestr}.fits" > ./conf/shmim_zrespM.name.txt
+echo "wfsref0/wfsref0_${datestr}.fits" > ./conf/shmim_wfsref0.name.txt
+echo "wfsmap/wfsmap_${datestr}.fits" > ./conf/shmim_wfsmap.name.txt
+echo "dmmap/dmmap_${datestr}.fits" > ./conf/shmim_dmmap.name.txt
+echo "wfsmask/wfsmask_${datestr}.fits" > ./conf/shmim_wfsmask.name.txt
 
 if [ "$DMMODE" = "ZONAL" ]; then
-echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/conf_dmmaskRM_name.txt
-echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/conf_dmslaved_name.txt
-echo "dmmaskRM/dmmask_${datestr}.fits" > ./conf/conf_dmmask_name.txt
+echo "dmmaskRM/dmmaskRM_${datestr}.fits" > ./conf/shmim_dmmaskRM.name.txt
+echo "dmslaved/dmslaved_${datestr}.fits" > ./conf/shmim_dmslaved.name.txt
+echo "dmmaskRM/dmmask_${datestr}.fits" > ./conf/shmim_dmmask.name.txt
 fi
 
 rm zrmcust.run
@@ -1540,11 +1540,11 @@ cd wfsmask
 exec 3>&1;
 wfsmaskfname=$(dialog --title "Select WFS pixel mask file name" --stdout  --fselect "${wfsmaskfname}" $nbwlines $nbwcols)
 cd ..
-echo "./wfsmask/$wfsmaskfname" > ./conf/conf_wfsmask_name.txt
-ReadConfFile "wfsmask"
+echo "./wfsmask/$wfsmaskfname" > ./conf/shmim_wfsmask.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_wfsmask
 ;;
 	1)
-imname=$( cat ./conf/conf_wfsmask_name.txt )
+imname=$( cat ./conf/shmim_wfsmask.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1560,11 +1560,11 @@ cd dmmap
 exec 3>&1;
 dmmapfname=$(dialog --title "Select DM map file name" --stdout --fselect "wfsdark/" $nbwlines $nbwcols)
 cd ..
-echo "./dmmap/$dmmapfname" > ./conf/conf_dmmap_name.txt
-ReadConfFile "dmmap"
+echo "./dmmap/$dmmapfname" > ./conf/shmim_dmmap.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmap
 ;;
 	1)
-imname=$( cat ./conf/conf_dmmap_name.txt )
+imname=$( cat ./conf/shmim_dmmap.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1579,8 +1579,8 @@ cd dmmaskRM
 exec 3>&1;
 dmmaskRMfname=$(dialog --title "Select DM act mask file name" --stdout --fselect "${dmmaskRMfname}" $nbwlines $nbwcols)
 cd ..
-echo "./dmmaskRM/$dmmaskRMfname" > ./conf/conf_dmmaskRM_name.txt
-ReadConfFile "dmmaskRM"
+echo "./dmmaskRM/$dmmaskRMfname" > ./conf/shmim_dmmaskRM.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmaskRM
 ;;
 	1)
 imname=$( cat ./conf/conf_dmmaskRM_name.txt )
@@ -1599,11 +1599,11 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 fname="dmslaved/dmslaved_${datestr}.fits"
 mkdir -p dmslaved
 cp dmslaved.fits $fname
-echo "$fname" > ./conf/conf_dmslaved_name.txt
-ReadConfFile "dmslaved"
+echo "$fname" > ./conf/shmim_dmslaved.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmslaved
 ;;
         1)
-imname =$( cat ./conf/conf_dmslaved_name.txt )
+imname =$( cat ./conf/shmim_dmslaved.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1616,11 +1616,11 @@ cd dmmask
 exec 3>&1;
 dmmaskfname=$(dialog --title "Select ext DM act mask file name" --stdout --fselect "${dmmaskfname}" $nbwlines $nbwcols)
 cd ..
-echo "./dmmask/$dmmaskfname" > ./conf/conf_dmmask_name.txt
-ReadConfFile "dmmask"
+echo "./dmmask/$dmmaskfname" > ./conf/shmim_dmmask.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ dmmask
 ;;
 	1)
-imname=$( cat ./conf/conf_dmmask_name.txt )
+imname=$( cat ./conf/shmim_dmmask.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1637,7 +1637,7 @@ exec 3>&1;
 wfsref0fname=$(dialog --title "Select WFS reference file name" --stdout --fselect "${wfsref0fname}" $nbwlines $nbwcols)
 cd ..
 echo "./wfsref0/$wfsref0fname" > ./conf/conf_wfsref0_name.txt
-ReadConfFile "wfsref0"
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0
 ;;
 	1)
 imname=$( cat ./conf/conf_wfsref_name.txt )
@@ -1647,6 +1647,8 @@ esac
 menucontrolloop_default="wfsref0"
 state="menuconfigureloop"
 ;;
+
+
 
 	awfsref0_on)
 acquwfsref0stat=" ON"
