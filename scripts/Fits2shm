@@ -203,6 +203,7 @@ str2=$(cat ./loadedSM/${STREAMname}.FITSinfo)
 if [ "$str1" = "$str2" ]; then
 if [ "$VERBOSE" = "1" ]; then
 echo "======= FITS file unchanged ========"
+echo "======= LOADfile = $LOADfile ========"
 fi
 touch ./loadedSM/${STREAMname}.FITSsame
 rm ./loadedSM/${STREAMname}.FITSchanged &> /dev/null
@@ -210,6 +211,7 @@ NEW="0"
 else
 if [ "$VERBOSE" = "1" ]; then
 echo "======= FITS file changed =========="
+echo "======= LOADfile = $LOADfile ========"
 fi
 rm ./loadedSM/${STREAMname}.FITSsame &> /dev/null
 touch ./loadedSM/${STREAMname}.FITSchanged
@@ -229,6 +231,7 @@ str2=$(cat ./loadedSM/${STREAMname}.SMinfo)
 if [ "$str1" = "$str2" ]; then
 if [ "$VERBOSE" = "1" ]; then
 echo "======= SM file unchanged ========"
+echo "======= LOADfile = $LOADfile ========"
 fi
 touch ./loadedSM/${STREAMname}.SMsame
 rm ./loadedSM/${STREAMname}.SMchanged &> /dev/null
@@ -236,6 +239,7 @@ NEW_SM="0"
 else
 if [ "$VERBOSE" = "1" ]; then
 echo "======= SM file changed =========="
+echo "======= LOADfile = $LOADfile ========"
 fi
 rm ./loadedSM/${STREAMname}.SMsame &> /dev/null
 touch ./loadedSM/${STREAMname}.SMchanged
@@ -249,6 +253,10 @@ rm ./loadedSM/${STREAMname}.SMinfo.old &> /dev/null
 
 
 if [ ! -f "/tmp/${STREAMname}.im.shm" ]; then
+if [ "$VERBOSE" = "1" ]; then
+echo "======= SM file missing =========="
+echo "======= LOADfile = $LOADfile ========"
+fi
 touch ./loadedSM/${STREAMname}.missing
 LOADfile="1"
 else
@@ -257,6 +265,10 @@ fi
 
 
 if [ "$FORCE" = "1" ]; then
+if [ "$VERBOSE" = "1" ]; then
+echo "======= FORCE MODE =========="
+echo "======= LOADfile = $LOADfile ========"
+fi
 LOADfile="1"
 fi
 
