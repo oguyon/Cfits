@@ -61,10 +61,10 @@ if [ -f $dmCfile ]; then
 sizestring=$( cat conf/streamlink_dmC.imsize.txt )
 streamname=$( cat conf/streamlink_dmC.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zb${dmCfile}\Zn -> \Z4${streamname}\Zn" )
+menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmC" "[${OKstr}] DM control channel        \Z4\Zb${dmCfile}\Zn -> \Z1${streamname}\Zn" )
+menuitems+=( "dmC" "[${OKstr}] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
@@ -73,10 +73,10 @@ if [ -f $dmOfile ]; then
 sizestring=$( cat conf/streamlink_dmO.imsize.txt )
 streamname=$( cat conf/streamlink_dmO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmO" "[\Z2\Zr${OKstr}\Zn] DM offset channel         \Z4\Zb${dmOfile}\Zn -> \Z4${streamname}\Zn" )
+menuitems+=( "dmO" "[\Z2\Zr${OKstr}\Zn] DM offset channel         \Z4\Zbaol${LOOPNUMBER}_dmO\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmO" "[${OKstr}] DM offset channel        \Z4\Zb${dmOfile}\Zn -> \Z1${streamname}\Zn" )
+menuitems+=( "dmO" "[${OKstr}] DM offset channel        \Z4\Zbaol${LOOPNUMBER}_dmO\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
@@ -86,107 +86,120 @@ if [ -f $dmZP0file ]; then
 sizestring=$( cat conf/streamlink_dmZP0.imsize.txt )
 streamname=$( cat conf/streamlink_dmZP0.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zb${dmZP0file}\Zn -> \Z4${streamname}\Zn" )
+menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP0\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zb${dmZP0file}\Zn -> \Z1${streamname}\Zn" )
+menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP0\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
+dmZP1file="/tmp/aol${LOOPNUMBER}_dmZP1.im.shm"
 if [ -f $dmZP1file ]; then
 sizestring=$( cat conf/streamlink_dmZP1.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP1.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP1" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP1\Zn -> \Z4${dmZP1}\Zn" )
+menuitems+=( "dmZP1" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP1\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP1" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP1\Zn -> \Z1${dmZP1}\Zn" )
+menuitems+=( "dmZP1" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP1\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
+dmZP2file="/tmp/aol${LOOPNUMBER}_dmZP2.im.shm"
 if [ -f $dmZP2file ]; then
 sizestring=$( cat conf/streamlink_dmZP2.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP2.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP2" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP2\Zn -> \Z4${dmZP2}\Zn" )
+menuitems+=( "dmZP2" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP2\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP2" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP2\Zn -> \Z1${dmZP2}\Zn" )
+menuitems+=( "dmZP2" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP2\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
+dmZP3file="/tmp/aol${LOOPNUMBER}_dmZP3.im.shm"
 if [ -f $dmZP3file ]; then
 sizestring=$( cat conf/streamlink_dmZP3.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP3.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z4${dmZP3}\Zn" )
+menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z1${dmZP3}\Zn" )
+menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
+dmZP4file="/tmp/aol${LOOPNUMBER}_dmZP4.im.shm"
 if [ -f $dmZP4file ]; then
 sizestring=$( cat conf/streamlink_dmZP4.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP4.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP4" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP4\Zn -> \Z4${dmZP4}\Zn" )
+menuitems+=( "dmZP4" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP4\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP4" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP4\Zn -> \Z1${dmZP4}\Zn" )
+menuitems+=( "dmZP4" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP4\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
-
+dmZP5file="/tmp/aol${LOOPNUMBER}_dmZP5.im.shm"
 if [ -f $dmZP5file ]; then
 sizestring=$( cat conf/streamlink_dmZP5.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP5.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z4${dmZP5}\Zn" )
+menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z1${dmZP5}\Zn" )
+menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
-
+dmZP6file="/tmp/aol${LOOPNUMBER}_dmZP6.im.shm"
 if [ -f $dmZP6file ]; then
 sizestring=$( cat conf/streamlink_dmZP6.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP6.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z4${dmZP6}\Zn" )
+menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z1${dmZP6}\Zn" )
+menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
-
+dmZP7file="/tmp/aol${LOOPNUMBER}_dmZP7.im.shm"
 if [ -f $dmZP7file ]; then
 sizestring=$( cat conf/streamlink_dmZP7.imsize.txt )
+streamname=$( cat conf/streamlink_dmZP7.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z4${dmZP7}\Zn" )
+menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z1${dmZP7}\Zn" )
+menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
 
 
-
+dmdispfile="/tmp/aol${LOOPNUMBER}_dmdisp.im.shm"
 if [ -f $dmdispfile ]; then
 sizestring=$( cat conf/streamlink_dmdisp.imsize.txt )
+streamname=$( cat conf/streamlink_dmdisp.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z4${dmdisp}\Zn" )
+menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z1${dmdisp}\Zn" )
+menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 
-
+dmRMfile="/tmp/aol${LOOPNUMBER}_dmRM.im.shm"
 if [ -f $dmRMfile ]; then
 sizestring=$( cat conf/streamlink_dmRM.imsize.txt )
+streamname=$( cat conf/streamlink_dmRM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${dmRM}\Zn" )
+menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmRM\Zn -> \Z1${dmRM}\Z1" )
+menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmRM\Zn -> \Z1${streamname}\Z1" )
 confOK=0
 fi
 
@@ -194,14 +207,15 @@ fi
 menuitems+=( "zerodm" "Zero all DM arrays\Zn" )
 
 
-
-if [ -f $wfsimcamfile ]; then
+wfsimfile="/tmp/aol${LOOPNUMBER}_wfsim.im.shm"
+if [ -f $wfsimfile ]; then
 sizestring=$( cat conf/streamlink_wfsim.imsize.txt )
+streamname=$( cat conf/streamlink_wfsim.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z4${wfsimcam}\Zn" )
+menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z1${wfsimcam}\Zn" )
+menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z1${streamname}\Zn" )
 confOK=0
 fi
 

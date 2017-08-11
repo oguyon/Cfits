@@ -68,19 +68,6 @@ wfsmextrlatency_frame=$( cat ./conf/conf_wfsmextrlatency_frame.txt )
 fi
 
 
-dmCfile="/tmp/aol${LOOPNUMBER}_dmC.im.shm"
-dmOfile="/tmp/aol${LOOPNUMBER}_dmO.im.shm"
-dmZP0file="/tmp/aol${LOOPNUMBER}_dmZP0.im.shm"
-dmZP1file="/tmp/aol${LOOPNUMBER}_dmZP1.im.shm"
-dmZP2file="/tmp/aol${LOOPNUMBER}_dmZP2.im.shm"
-dmZP3file="/tmp/aol${LOOPNUMBER}_dmZP3.im.shm"
-dmZP4file="/tmp/aol${LOOPNUMBER}_dmZP4.im.shm"
-dmZP5file="/tmp/aol${LOOPNUMBER}_dmZP5.im.shm"
-dmZP6file="/tmp/aol${LOOPNUMBER}_dmZP6.im.shm"
-dmZP7file="/tmp/aol${LOOPNUMBER}_dmZP7.im.shm"
-dmdispfile="/tmp/aol${LOOPNUMBER}_dmdisp.im.shm"
-dmRMfile="/tmp/aol${LOOPNUMBER}_dmRM.im.shm"
-wfsimcamfile="/tmp/aol${LOOPNUMBER}_wfsim.im.shm"
 
 wfslambdanm="800"
 if [ -f "./conf/conf_wfslambdanm.txt" ]; then
