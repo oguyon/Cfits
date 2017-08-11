@@ -39,6 +39,53 @@ fi
 
 
 
+
+
+
+
+########################################################
+# StreamLink
+#
+# Creates link to existing stream
+#
+# Argument:
+#   stream      link name (full name: aol<loop>_<stream>)
+#
+#
+# The stream to which the link will point is in:
+# ./conf/streamlink_<stream>.name.txt
+#
+# Example:
+# echo "ocam2d" > conf/streamlink_wfsim.name.txt
+# StreamLink ocam2d wfsim
+# 
+# links aol<loopnb>_wfsim to ocam2d stream
+# If conf file doesn't exist, attempts to link
+# to <stream>
+########################################################
+
+function aolStreamLink {
+file="./conf/streamlink_$1.name.txt"
+if [ -a $file ]
+	then
+	streamname=$(echo "$(cat $file)")
+	else
+	streamname="$1" #default
+fi
+aoconflog "linking $1 to ${streamname}"
+rm /tmp/aol${LOOPNUMBER}_$1.im.shm
+ln -s /tmp/${streamname}.im.shm /tmp/aol${LOOPNUMBER}_$1.im.shm
+}
+
+
+
+
+
+
+
+
+
+
 function ReaddmCname {
 file="./conf/conf_dmC_name.txt"
 if [ -a $file ]

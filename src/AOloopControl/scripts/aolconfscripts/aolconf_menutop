@@ -444,32 +444,54 @@ echo "0" > "./conf/conf_dm2dm_mode.txt"
 echo "0" > "./conf/conf_dmwfsref_mode.txt"
 echo "1" > "./conf/conf_dmvolt_mode.txt"
 echo "0" > "./conf/conf_dmcombavemode.txt"
-echo "dm${DMindex}disp03" > ./conf/conf_dmC_name.txt # DM control channel
-ReaddmCname
-echo "dm${DMindex}disp00" > ./conf/conf_dmO_name.txt # DM offset channel (flat) 
-ReaddmOname
 
-echo "dm${DMindex}disp04" > ./conf/conf_dmZP0_name.txt
-ReaddmZP0name
-echo "dm${DMindex}disp05" > ./conf/conf_dmZP1_name.txt
-ReaddmZP1name
-echo "dm${DMindex}disp06" > ./conf/conf_dmZP2_name.txt
-ReaddmZP2name
-echo "dm${DMindex}disp07" > ./conf/conf_dmZP3_name.txt
-ReaddmZP3name
-echo "dm${DMindex}disp08" > ./conf/conf_dmZP4_name.txt
-ReaddmZP4name
-echo "dm${DMindex}disp09" > ./conf/conf_dmZP5_name.txt
-ReaddmZP5name
-echo "dm${DMindex}disp10" > ./conf/conf_dmZP6_name.txt
-ReaddmZP6name
-echo "dm${DMindex}disp11" > ./conf/conf_dmZP7_name.txt
-ReaddmZP7name
+echo "dm${DMindex}disp03" > ./conf/streamlink_dmC.name.txt # DM control channel
+aolStreamLink dmC
+#ReaddmCname
 
-echo "dm${DMindex}disp" > ./conf/conf_dmdisp_name.txt # total DM displacement channel
-Readdmdispname
-echo "dm${DMindex}disp02" > ./conf/conf_dmRM_name.txt # DM actuation channel for RM matrix
-ReaddmRMname
+echo "dm${DMindex}disp00" > ./conf/streamlink_dmO.name.txt # DM offset channel (flat) 
+aolStreamLink dmO
+#ReaddmOname
+
+echo "dm${DMindex}disp04" > ./conf/streamlink_dmZP0_name.txt
+aolStreamLink dmZP0
+#ReaddmZP0name
+
+echo "dm${DMindex}disp05" > ./conf/streamlink_dmZP1.name.txt
+aolStreamLink dmZP1
+#ReaddmZP1name
+
+echo "dm${DMindex}disp06" > ./conf/streamlink_dmZP2.name.txt
+aolStreamLink dmZP2
+#ReaddmZP2name
+
+echo "dm${DMindex}disp07" > ./conf/streamlink_dmZP3.name.txt
+aolStreamLink dmZP3
+#ReaddmZP3name
+
+echo "dm${DMindex}disp08" > ./conf/streamlink_dmZP4.name.txt
+aolStreamLink dmZP4
+#ReaddmZP4name
+
+echo "dm${DMindex}disp09" > ./conf/streamlink_dmZP5.name.txt
+aolStreamLink dmZP5
+#ReaddmZP5name
+
+echo "dm${DMindex}disp10" > ./conf/streamlink_dmZP6.name.txt
+aolStreamLink dmZP6
+#ReaddmZP6name
+
+echo "dm${DMindex}disp11" > ./conf/streamlink_dmZP7.name.txt
+aolStreamLink dmZP7
+#ReaddmZP7name
+
+echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
+aolStreamLink dmdisp
+#Readdmdispname
+
+echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation channel for RM matrix
+aolStreamLink dmRM
+#ReaddmRMname
 ;;
 
     dmolink)
