@@ -9644,7 +9644,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         if(BlockNB<0)
         {
             char command[1000];
-            if(sprintf(command, "echo \"%ld\" > ./conf_staged/paraM_NBmodeblocks.txt", NBmblock) < 1)
+            if(sprintf(command, "echo \"%ld\" > ./conf_staged/param_NBmodeblocks.txt", NBmblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             if(system(command) != 0)
@@ -9664,7 +9664,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         printf("%ld blocks\n", NBmblock);
 
-
+exit(0);
 
         /// STEP 8: SVD WFS SPACE IN EACH BLOCK
         /// fmodesWFS1all, fmodes3 -> fmodesall
