@@ -336,23 +336,23 @@ tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
 #	LOzrespmat0.fits
 #	LOwfsref0.fits
 #
-tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-#tmux send-keys -t ${tmuxnameaWFSr} "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frame, $RMexfr frame excluded\" &" C-m
+#tmux send-keys -t ${tmuxnameaWFSr} "dologext $LOOPNAME START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frame, $RMexfr frame excluded &" C-m
 
 
 logRunningProcessQ "aolMeasureLOrespmat2" "${tmuxnameaWFSr}" "Acquire LO RM"
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
-    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+	echo "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" >> cmdlog.txt
+    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 else
-	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
-    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+	echo "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" >> cmdlog.txt
+    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 fi
 tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolMeasureLOrespmat2.runproc" C-m
 
-tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded\" &" C-m
-#tmux send-keys -t ${tmuxnameaWFSr} "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frame, $rmexfr frame excluded &" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frame, $RMexfr frame excluded\" &" C-m
+#tmux send-keys -t ${tmuxnameaWFSr} "dologext $LOOPNAME STOP LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frame, $RMexfr frame excluded &" C-m
 
 }
 
@@ -388,18 +388,18 @@ logRunningProcessQ "aolMeasureZrespmat2" "$tmuxnameaWFSr" "Acquire zonal RM"
 #	wfsref00.fits
 #
 
-tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"START HO RM acquision   amplitude $RMamplum um, time delay $RMdelayfr frame, NB frame average $RMfrave frame, $RMexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "date" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-	echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
-    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+	echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" >> cmdlog.txt
+    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 else
-    echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" >> cmdlog.txt
-    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" >> cmdlog.txt
+    tmux send-keys -t ${tmuxnameaWFSr} "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 fi
-tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame, NB frame average $rmfrave frame, $rmexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"STOP HO RM acquision   amplitude $RMamplum um, time delay $RMdelayfr frame, NB frame average $RMfrave frame, $RMexfr frame excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}\"" C-m
 tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/aolMeasureZrespmat2.runproc" C-m
 
 
@@ -622,15 +622,15 @@ tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"A
 #tmux new-session -d -s $tmuxname
 #if pgrep "aol${LOOPNUMBER}run" > /dev/null
 #then # use option -r to re-use AO shared memory configuration
-#    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+#    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 #else
-#    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+#    tmux send-keys -t $tmuxname "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 #fi
 
 #tmux send-keys -t ${tmuxname} "touch function_zresp_off.wait" C-m
 
-#echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${rmamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-#aoconflogext "START HO RM acquision   amplitude $rmamplum um, time delay $rmdelayfr frame(s), NB frame average $rmfrave frame(s), $rmexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
+#echo "./auxscripts/aolMeasureZrespmat -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
+#aoconflogext "START HO RM acquision   amplitude $RMamplum um, time delay $RMdelayfr frame(s), NB frame average $RMfrave frame(s), $RMexfr frame(s) excluded, delayRM1us = ${delayRM1us}, NBcycle=${ACzrmNBcycle}"
 #}
 
 
@@ -653,9 +653,9 @@ tmux send-keys -t ${tmuxnameaWFSr} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"A
 #tmux send-keys -t ${tmuxname} "rm function_zresp_off.wait" C-m
 #aoconflogext "STOP HO RM acquision in $1 sec max"
 
-#tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
+#tmux send-keys -t ${tmuxname} "./auxscripts/aolCleanZrespmat ${RMamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}" C-m
 #logRunningProcess "aolCleanZrespmat" "$tmuxname" "Process zonal response matrix"
-#tmux send-keys -t  ${tmuxname} "echo \"./auxscripts/aolCleanZrespmat ${rmamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
+#tmux send-keys -t  ${tmuxname} "echo \"./auxscripts/aolCleanZrespmat ${RMamplum} ${WFSnorm} ${DMmaskRMp0} ${DMmaskRMc0} ${DMmaskRMp1} ${DMmaskRMc1}\" >> aolcmd.txt" C-m
 
 #tmux send-keys -t ${tmuxname} "./auxscripts/aolmkMasks" C-m
 #tmux send-keys -t ${tmuxname} "./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5" C-m
@@ -897,12 +897,12 @@ tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 fi
-echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${rmdelayfr} ${rmfrave} ${rmexfr} ${WFSnorm}" > aolcmd.txt
-aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$rmdelayfr frame NBframe_average $rmfrave frames, $rmexfr frames excluded"
+echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
+aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frames, $RMexfr frames excluded"
 
 tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
 tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
@@ -928,7 +928,7 @@ tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
 tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
-echo "./auxscripts/aolCleanLOrespmat ${rmamplum} ${WFSnorm}" >> aolcmd.txt
+echo "./auxscripts/aolCleanLOrespmat ${RMamplum} ${WFSnorm}" >> aolcmd.txt
 logRunningProcess "aolCleanLOrespmat" "$1" "Process LO modal response matrix"
 
 mkdir -p LOrespM
