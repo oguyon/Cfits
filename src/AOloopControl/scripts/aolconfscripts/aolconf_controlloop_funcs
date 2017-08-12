@@ -386,8 +386,8 @@ fi
 fi
 
 
-
-CMmode=$( cat ./conf/conf_CMmode.txt )
+ConfReadParam CMmode "1"	
+CMmode="$paramvalue"
 
 
 if [[ "${GPUmode}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
