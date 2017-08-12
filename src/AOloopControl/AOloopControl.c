@@ -8801,7 +8801,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             else
                 mblock1 = mblock;
 
-//TEST 
+
             for(ii=0; ii<msizex*msizey; ii++)
                 data.image[MBLOCK_ID[mblock1]].array.F[MBLOCK_NBmode[mblock1]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
@@ -8810,6 +8810,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 //TEST
 		printf("ID = %ld\n", ID);
+		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
 		list_image_ID();
 
 /*
