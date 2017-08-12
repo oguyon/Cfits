@@ -8808,7 +8808,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             MBLOCK_NBmode[mblock1]++;
         }
 
+//TEST
+		printf("ID = %ld\n", ID);
+		list_image_ID();
 
+/*
         if(IDextrablock != -1)
         {
             mblock = extrablockIndex;
@@ -8825,7 +8829,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             NBmblock++;
         }
-
+*/
 
 
 
