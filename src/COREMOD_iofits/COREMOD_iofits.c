@@ -471,16 +471,17 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
                     if(fileOK==0)
                     {
                         if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
-                        {
-                            if(errcode!=0)
-                            {
-                                if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
-                                {
-                                    fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-                                    fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
-                                    fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-                                    list_image_ID();
-
+                        {                   
+                           if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
+                               {
+									if(PrintErrorMsg==1)
+									{
+										fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+										fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
+										fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+										list_image_ID();
+									}
+									
                                     if(ExitOnErr==1)
                                         exit(0);
 									
