@@ -3502,7 +3502,8 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
     {
         long ID1;
 
-        ID1 = load_fits(fname, "tmp2Dim", 1);
+        ID1 = load_fits(fname, "tmp2Dim", 3);
+        
         if(ID1!=-1)
         {
             sizeOK = COREMOD_MEMORY_check_2Dsize("tmp2Dim", xsize, ysize);
@@ -3684,7 +3685,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
         exit(0);
     }
 
-    ID1 = load_fits(fname, "tmp3Dim", 1);
+    ID1 = load_fits(fname, "tmp3Dim", 3);
     printf("        AOloopControl_3Dloadcreate_shmim: ===== ID1 = %ld\n", ID1);
     fflush(stdout);
     if(ID1!=-1)
