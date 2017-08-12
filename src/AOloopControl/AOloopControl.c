@@ -8809,11 +8809,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
 //TEST
-		printf("ID = %ld\n", ID);
-		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
+		printf("IDmaskRM = %ld\n", IDmaskRM);
+//		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
 		list_image_ID();
+exit(0);
 
-/*
         if(IDextrablock != -1)
         {
             mblock = extrablockIndex;
@@ -8830,7 +8830,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
             NBmblock++;
         }
-*/
+
 
 
 
@@ -8850,8 +8850,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
 			//TEST
-			sprintf(fname, "!./mkmodestmp/fmodes0_%02ld.fits", mblock);
-			save_fits(imname, fname);
+			//sprintf(fname, "!./mkmodestmp/fmodes0_%02ld.fits", mblock);
+			//save_fits(imname, fname);
 
             printf("SVD decomp ... (%ld) .... ", (long) data.image[image_ID(imname)].md[0].size[2]);
             fflush(stdout);
@@ -8909,7 +8909,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-	exit(0);//TEST
+	
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
