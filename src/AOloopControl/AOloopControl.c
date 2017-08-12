@@ -8809,8 +8809,8 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
 
 //TEST
-		printf("IDmaskRM = %ld\n", IDmaskRM);
-		save_fits("dmmaskRM", "!./mkmodestmp/_test_dmmaskRM.fits");
+		printf("ID = %ld\n", ID);
+		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
 		list_image_ID();
 exit(0);
 
