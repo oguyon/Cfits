@@ -6530,7 +6530,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
 
             index++;
         }
-    save_fits("Hpixindex", "!Hpixindex.fits");
+    save_fits("Hpixindex", "!Hpixindex.fits.gz");
 
     Hmat = (int*) malloc(sizeof(int)*Hsize*Hsize);
 
@@ -6563,7 +6563,7 @@ long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname)
         for(jj=0; jj<Hsize; jj++)
             data.image[IDtest].array.F[jj*Hsize+ii] = Hmat[jj*Hsize+ii];
 
-    save_fits("Htest", "!Hmat.fits");
+    save_fits("Htest", "!Hmat.fits.gz");
 
 
     IDout = create_3Dimage_ID(outname, xsize, ysize, Hsize);

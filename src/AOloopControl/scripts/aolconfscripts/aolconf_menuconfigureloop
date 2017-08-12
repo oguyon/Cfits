@@ -1259,21 +1259,21 @@ echo "1" > ./conf/param_RMpokeMode.txt
 #else
 ./auxscripts/mkHpoke 
 #fi
-mv Hpoke.fits ./conf/Hpoke.fits
-cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
-mv Hpixindex.fits ./conf/
-cp ./conf/Hpixindex.fits ./conf/RMpixindex.fits
-mv Hmat.fits ./conf/
-cp ./conf/Hmat.fits ./conf/RMmat.fits 
+mv Hpoke.fits.gz ./conf/Hpoke.fits.gz
+cp ./conf/Hpoke.fits.gz ./conf/RMpokeCube.fits.gz
+mv Hpixindex.fits.gz ./conf/
+cp ./conf/Hpixindex.fits.gz ./conf/RMpixindex.fits.gz
+mv Hmat.fits.gz ./conf/
+cp ./conf/Hmat.fits.gz ./conf/RMmat.fits.gz 
 aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
 	Hoff)
 echo "0" > ./conf/param_RMpokeMode.txt
 # by default, aolMeasureZrespmat2 will use a "straight poke" if these files are missing
-rm ./conf/RMpokeCube.fits
-rm ./conf/RMpixindex.fits
-rm ./conf/RMmat.fits
+rm ./conf/RMpokeCube.fits.gz
+rm ./conf/RMpixindex.fits.gz
+rm ./conf/RMmat.fits.gz
 aoconflogext "RM: set Hadamard OFF"
 menucontrolloop_default="Hon"
 ;;

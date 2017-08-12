@@ -136,7 +136,7 @@ fi
 fi
 
 ./AOloopControl << EOF
-loadfits "./conf/RM_DMmask.fits" DMmask
+loadfits "./conf/RM_DMmask.fits.gz" DMmask
 aolmkH DMmask outim
 savefits outim "!./conf/Hpoke.fits.gz"
 exitCLI

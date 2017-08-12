@@ -143,7 +143,7 @@ pname0=$0
 pname="aol${loopnb}zrespM"
 
 
-if [ ! -f ./conf/RMpokeCubeZ.fits ]; then
+if [ ! -f ./conf/RMpokeCubeZ.fits.gz ]; then
 DMxsize=$( cat ./conf/param_DMxsize.txt )
 DMysize=$( cat ./conf/param_DMysize.txt )
 ./AOloopControl << EOF
@@ -153,8 +153,8 @@ exitCLI
 EOF
 fi
 
-if [ ! -f ./conf/RMpokeCube.fits ]; then
-cp ./conf/RMpokeCubeZ.fits ./conf/RMpokeCube.fits
+if [ ! -f ./conf/RMpokeCube.fits.gz ]; then
+cp ./conf/RMpokeCubeZ.fits.gz ./conf/RMpokeCube.fits.gz
 fi
 
 
