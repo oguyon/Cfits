@@ -316,7 +316,7 @@ for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2} ; do
+for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2}_00 ; do
 echo "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" >> script_SharedMemLoadCM	
 done
 done
