@@ -275,6 +275,22 @@ listim
 exitCLI
 
 
+####################################################
+# ACQUIRE LOW ORDER RESPONSE
+####################################################
+#
+# INPUT:
+#	respM_LOmodes.fits
+#
+# OUTPUT:
+#	LOzrespmat0.fits
+#	LOwfsref0.fits
+#
+
+if [ "$RMCalibReuseMasks" = "0" ]; then
+# don't reuse modes
+function_acqWFSresp_LOmodes
+fi
 
 
 
