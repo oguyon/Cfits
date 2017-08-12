@@ -137,17 +137,17 @@ normalize_flag="$5"
 
 
 loopnb=$(cat LOOPNUMBER )
-dmindex=$(cat conf/conf_DMindex.txt)
+dmindex=$(cat conf/param_DMindex.txt)
 
 pname0=$0
 pname="aol${loopnb}zrespM"
 
 
 if [ ! -f ./conf/RMpokeCubeZ.fits ]; then
-dmxsize=$( cat ./conf/conf_dm${dmindex}xsize.txt )
-dmysize=$( cat ./conf/conf_dm${dmindex}ysize.txt )
+DMxsize=$( cat ./conf/param_DMxsize.txt )
+DMysize=$( cat ./conf/param_DMysize.txt )
 ./AOloopControl << EOF
-aolmksimplezpM ${dmxsize} ${dmysize} pokeM
+aolmksimplezpM ${DMxsize} ${DMysize} pokeM
 savefits pokeM "!./conf/RMpokeCubeZ.fits"
 exitCLI
 EOF
