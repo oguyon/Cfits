@@ -294,7 +294,7 @@ fi
 
 
 
-if [ -f "runproc/FUNCTION_nAUTOC.runproc" ]; then
+if [ -f "runproc/function_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
 else
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
@@ -982,17 +982,21 @@ cp ./conf_staged/*.txt ./conf/
 
 	calibL)
 aoconflogext "Update calibration configuration files"
+
 # zonal calib
 for imname in $RMZONALCALIBlist
 do
-./auxscripts/aolReadConfFile ${imname}	
-./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
+Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
+#./auxscripts/aolReadConfFile ${imname}	
+#./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
 done
+
 # modal calib
 for imname in $RMMODALCALIBlist
 do
-./auxscripts/aolReadConfFile ${imname}	
-./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
+Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
+#./auxscripts/aolReadConfFile ${imname}	
+#./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
 done
 ;;
 

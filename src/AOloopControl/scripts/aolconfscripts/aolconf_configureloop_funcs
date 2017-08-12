@@ -261,12 +261,12 @@ echo "ENTERING function_nAUTOC"
 
 
 
-#if [ ! -f "runproc/FUNCTION_nAUTOC.runproc" ]; then
+if [ ! -f "runproc/function_nAUTOC.runproc" ]; then
 echo "start calib"
 #aoconflogext "START AUTO CALIBRATION"
 
 tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
-#logRunningProcess "FUNCTION_nAUTOC" "$tmuxname" "=== ACQUIRE RM(s) ==="
+logRunningProcess "function_nAUTOC" "$tmuxnameaWFSr" "ACQUIRE RM(s)"
 
 
 # archive
@@ -296,13 +296,23 @@ tmux new-session -d -s ${tmuxnameaWFSr}
 sleep 0.2
 tmux send-keys -t ${tmuxnameaWFSr} "./aolfuncs/aolfunc_acqWFSresp" C-m
 
-#tmux send-keys -t ${tmuxname} "rm runproc/FUNCTION_nAUTOC.runproc" C-m
+tmux send-keys -t ${tmuxnameaWFSr} "rm runproc/function_nAUTOC.runproc" C-m
 
-#else
-#echo "already running"
-#fi
+else
+echo "already running"
+fi
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
