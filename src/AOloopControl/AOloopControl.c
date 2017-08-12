@@ -8854,7 +8854,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
             {
-				printf("( %ld -> %f )\n", m, data.image[IDSVDcoeff].array.F[m]);
+				printf("( %ld -> %g )\n", m, data.image[IDSVDcoeff].array.F[m]);
                 if(data.image[IDSVDcoeff].array.F[m] > SVDlim00*svdcoeff0)
                     cnt++;
             }
