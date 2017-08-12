@@ -119,7 +119,7 @@ name="$1"
 textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
 fname=$( cat ./conf/shmim_${name}.name.txt )
-if [ -f "$fname" ] && [ -f "./conf/conf_${name}_name.txt" ]; then
+if [ -f "$fname" ] && [ -f "./conf/shmim_${name}.name.txt" ]; then
 #getshmimsize "aol${LOOPNUMBER}_${name}"
 sizestring=$( cat conf/shmim_${name}.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
