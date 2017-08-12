@@ -9664,7 +9664,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         printf("%ld blocks\n", NBmblock);
 
-exit(0);
+
 
         /// STEP 8: SVD WFS SPACE IN EACH BLOCK
         /// fmodesWFS1all, fmodes3 -> fmodesall
