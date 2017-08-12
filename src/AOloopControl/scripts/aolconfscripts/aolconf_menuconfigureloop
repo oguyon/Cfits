@@ -969,7 +969,6 @@ menucontrolloop_default="sACmrmN"
 nAUTOC)
 RMCalibReuseMasks=0
 echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
-
 function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
 
