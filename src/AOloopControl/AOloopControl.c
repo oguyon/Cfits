@@ -8853,9 +8853,12 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             IDSVDcoeff = image_ID("svdcoeff");
             float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
-                if(data.image[IDSVDcoeff].array.F[m]>SVDlim00*svdcoeff0)
+            {
+				printf("( %ld -> %f )\n", m, data.image[IDSVDcoeff].array.F[m]);
+                if(data.image[IDSVDcoeff].array.F[m] > SVDlim00*svdcoeff0)
                     cnt++;
-            printf("BLOCK %ld/%ld: keeping %ld / %ld modes  ( %f %f ) [%ld]\n", mblock, NBmblock, cnt, m, SVDlim00, svdcoeff0, data.image[IDSVDcoeff].md[0].size[0]);
+            }
+            printf("BLOCK %ld/%ld: keeping %ld / %ld modes  ( %f %f ) [%ld]\n", mblock, NBmblock, cnt, m, SVDlim00, svdcoeff0, (long) data.image[IDSVDcoeff].md[0].size[0]);
             fflush(stdout);
 
             if(sprintf(imname1, "fmodes1_%02ld", mblock) < 1)
