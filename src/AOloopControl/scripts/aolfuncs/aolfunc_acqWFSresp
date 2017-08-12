@@ -239,7 +239,7 @@ $execname
 readshmim aol${LOOPNUMBER}_dmC
 im0=0*aol${LOOPNUMBER}_dmC
 dmmaskRM=1.0+im0
-savefits dmmaskRM \"!dmmaskRM.fits\"
+savefits dmmaskRM "!dmmaskRM.fits"
 exitCLI
 fi
 
@@ -354,13 +354,13 @@ mkdir -p $dir
 if [ "$DMMODE" = "ZONAL" ]; then
 	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
 	do
-		echo \"${imname}/${imname}_${aCALIBdatestr}.fits\" > ./${dir}/shmim_${imname}.name.txt
+		echo "${imname}/${imname}_${aCALIBdatestr}.fits" > ./${dir}/shmim_${imname}.name.txt
 		mv ${imname}.fits ./${dir}/
 	done
 else
 	for imname in $RMZONALCALIBlist
 	do
-		echo \"${imname}/${imname}_${aCALIBdatestr}.fits\" > ./${dir}/shmim_${imname}.name.txt
+		echo "${imname}/${imname}_${aCALIBdatestr}.fits" > ./${dir}/shmim_${imname}.name.txt
 		mv ${imname}.fits ./${dir}/
 	done
 fi
