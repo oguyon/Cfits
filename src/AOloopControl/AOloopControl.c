@@ -8407,7 +8407,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             for(ii=0; ii<msizex*msizey; ii++)
             {
                 data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDmaskRM].array.F[ii])*(1.0-data.image[IDslaved].array.F[ii]);
-                data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
+            //    data.image[IDmask].array.F[ii] = 1.0 - (1.0-data.image[IDslaved].array.F[ii]);
                 if(data.image[IDmask].array.F[ii]>1.0)
                     data.image[IDmask].array.F[ii] = 1.0;
             }
@@ -8460,6 +8460,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
         printf("SAVING MODES : %s...\n", ID_name);
         save_fits(ID_name, "!./mkmodestmp/fmodes0all_00.fits");
+
+
+//TEST
+		printf("ID = %ld\n", ID);
+		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
+		list_image_ID();
+exit(0);
 
 
 
@@ -8537,11 +8544,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
-//TEST
-		printf("ID = %ld\n", ID);
-		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
-		list_image_ID();
-exit(0);
 
 
 
@@ -8789,6 +8791,8 @@ exit(0);
         for(mblock=0; mblock<MAX_MBLOCK; mblock++)
             MBLOCK_NBmode[mblock] = 0;
 
+
+		ID = image_ID("fmodes");
         for(m=0; m<data.image[ID].md[0].size[2]; m++)
         {
             long mblock1;
