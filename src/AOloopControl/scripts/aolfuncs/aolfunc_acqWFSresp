@@ -333,13 +333,8 @@ echo "####################################################"
 for imname in $RMMODALCALIBlist
 do
 	mkdir -p ${imname}
-	tmux send-keys -t ${tmuxnameaWFSr} "cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits" C-m
+	cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits
 done
-
-
-else
-tmux send-keys -t ${tmuxnameaWFSr} "# DMMODE is MODAL = $DMMODE" C-m
-fi
 
 fi # end of if [ "$DMMODE" = "ZONAL" ]; then
 
