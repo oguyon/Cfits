@@ -214,9 +214,10 @@ fi
 
 CMmode=$( cat ./conf/param_CMmode.txt )
 
-
 if [[ "${GPU}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
- if [ "${GPUallmode}" = "0" ]; then
+
+ConfReadParam GPUall "0"; GPUall="$paramvalue"
+ if [ "${GPUall}" = "0" ]; then
   menuitems+=( "GPUaon" "[GPUall is OFF]    CURRENTLY USING CPU(s) + GPU(s)       -> Turn on GPUall mode" )
  else
   menuitems+=( "GPUaoff" "\Z5\Zr[GPUall is  ON]\Zn    CURRENTLY USING GPU(S) FOR ALL        -> Turn off GPUall mode" )
