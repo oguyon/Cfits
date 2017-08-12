@@ -93,6 +93,9 @@ RMexfr="$paramvalue"
 ConfReadParam WFSnorm "1"
 WFSnorm="$paramvalue"
 
+ConfReadParam rmMamplum "0.1"
+rmMamplum="$paramvalue"
+
 
 ConfReadParam RMCalibReuseMasks "0"
 RMCalibReuseMasks="$paramvalue"
