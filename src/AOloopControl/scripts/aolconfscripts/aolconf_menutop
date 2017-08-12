@@ -53,9 +53,9 @@ menuitems+=( " " " ")
 
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
-dmxsize=$(cat "./conf/param_DMxsize.txt")
+DMxsize=$(cat "./conf/param_DMxsize.txt")
 menuitems+=( "dmxs" "[${DMxsize}] Set DM x size (if modal control, = number of modes)" )
-dmysize=$(cat "./conf/param_DMysize.txt")
+DMysize=$(cat "./conf/param_DMysize.txt")
 menuitems+=( "dmys" "[${DMysize}] Set DM y size (1 if modal control)" )
 
 menuitems+=( " " " " )
@@ -428,7 +428,7 @@ echo "$DMysize" > ./conf/param_DMysize.txt
 	dmxs)
 exec 3>&1;DMxsize=$(dialog --inputbox "DM xsize" 0 0 "$DMxsize" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmxsize" > ./conf/param_DMxsize.txt
+echo "$DMxsize" > ./conf/param_DMxsize.txt
 #aoconflog "set DMsize = $DMxsize"
 ;;
 
@@ -525,12 +525,12 @@ dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
 
 # set external loop DM modes controlled by this loop 
 $execname << EOF
-loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$dmxsize]" im
+loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$DMxsize]" im
 savefits im "!./conf/conf_dm2dmM.fits" 
-cpsh im aol${dmolinknb}_modes0_$dmxsize
+cpsh im aol${dmolinknb}_modes0_$DMxsize
 quit
 EOF
-dm2dmM="aol${dmolinknb}_modes0_$dmxsize"
+dm2dmM="aol${dmolinknb}_modes0_$DMxsize"
 echo "$dm2dmM" > ./conf/streamlink_dm2dmM.name.txt
 ./aolfuncs/aolfunc_StreamLink dm2dmM
 
@@ -545,12 +545,12 @@ echo "$dm2dmO" > ./conf/streamlink_dm2dmO.name.txt
 
 # external loop WFS response of modes controlled by this loop
 $execname << EOF
-loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$dmxsize]" im
+loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$DMxsize]" im
 savefits im "!./conf/conf_dmwrefRM.fits" 
-cpsh im aol${dmolinknb}_modesWFS0_$dmxsize
+cpsh im aol${dmolinknb}_modesWFS0_$DMxsize
 quit
 EOF
-dmwrefRM="aol${dmolinknb}_modesWFS0_$dmxsize"
+dmwrefRM="aol${dmolinknb}_modesWFS0_$DMxsize"
 echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM_name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefRM
 
