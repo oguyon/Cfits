@@ -118,10 +118,10 @@ function makemenuitemstringaolshm {
 name="$1"
 textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
-fname=$( cat ./conf/conf_${name}_name.txt )
+fname=$( cat ./conf/shmim_${name}.name.txt )
 if [ -f "$fname" ] && [ -f "./conf/conf_${name}_name.txt" ]; then
 #getshmimsize "aol${LOOPNUMBER}_${name}"
-sizestring=$( cat conf/conf_imsize_aol${LOOPNUMBER}_${name}.txt )
+sizestring=$( cat conf/shmim_${name}.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
 else
