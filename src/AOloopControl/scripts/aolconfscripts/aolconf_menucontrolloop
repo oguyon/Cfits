@@ -64,51 +64,71 @@ fi
 
 
 if [ "0" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev0 "0"
+GPUset0dev0="$paramvalue"
 menuitems+=( "GPU0" "            [ $GPUset0dev0 ]    GPU #0 device" )
 fi
 
 
 if [ "1" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev1 "0"
+GPUset0dev1="$paramvalue"
 menuitems+=( "GPU1" "            [ $GPUset0dev1 ]    GPU #1 device" )
 fi
 
 
 if [ "2" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev2 "0"
+GPUset0dev2="$paramvalue"
 menuitems+=( "GPU2" "            [ $GPUset0dev2 ]    GPU #2 device" )
 fi
 
 
 if [ "3" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev3 "0"
+GPUset0dev3="$paramvalue"
 menuitems+=( "GPU3" "            [ $GPUset0dev3 ]    GPU #3 device" )
 fi
 
 
 if [ "4" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev4 "0"
+GPUset0dev4="$paramvalue"
 menuitems+=( "GPU4" "            [ $GPUset0dev4 ]    GPU #4 device" )
 fi
 
 
 if [ "5" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev5 "0"
+GPUset0dev5="$paramvalue"
 menuitems+=( "GPU5" "            [ $GPUset0dev5 ]    GPU #5 device" )
 fi
 
 
 if [ "6" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev6 "0"
+GPUset0dev6="$paramvalue"
 menuitems+=( "GPU6" "            [ $GPUset0dev6 ]    GPU #6 device" )
 fi
 
 
 if [ "7" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev7 "0"
+GPUset0dev7="$paramvalue"
 menuitems+=( "GPU7" "            [ $GPUset0dev7 ]    GPU #7 device" )
 fi
 
 
 if [ "8" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev8 "0"
+GPUset0dev8="$paramvalue"
 menuitems+=( "GPU8" "            [ $GPUset0dev8 ]    GPU #8 device" )
 fi
 
 
 if [ "9" -lt "$GPU" ]; then
+ConfReadParam GPUset0dev9 "0"
+GPUset0dev9="$paramvalue"
 menuitems+=( "GPU9" "            [ $GPUset0dev9 ]    GPU #9 device" )
 fi
 
