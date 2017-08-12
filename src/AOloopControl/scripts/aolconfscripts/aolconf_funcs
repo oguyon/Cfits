@@ -132,31 +132,6 @@ fi
 
 
 
-function Fits2shm {
-aoconflog "Move FITS to shared memory : $1 -> $2"
-
-# is file a link ?
-if [ -L "$1" ]; then
-flink=$( readlink -f $1 )
-rm $1
-rsync -auL $flink $1
-fi
-
-if [ "$CPUconfRT" -eq "1" ];then
-$execname << EOF # move file to shared memory
-csetpmove system
-loadfits "$1" im
-imcp2shm im $2
-quit
-EOF
-else
-$execname << EOF # move file to shared memory
-loadfits "$1" im
-imcp2shm im $2
-quit
-EOF
-fi
-}
 
 
 
