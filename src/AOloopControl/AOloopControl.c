@@ -8462,11 +8462,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits(ID_name, "!./mkmodestmp/fmodes0all_00.fits");
 
 
-//TEST
-		printf("ID = %ld\n", ID);
-		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
-		list_image_ID();
-exit(0);
+
 
 
 
