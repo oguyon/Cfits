@@ -433,10 +433,17 @@ if [ "$CMMODE" = "MODAL" ]; then
 	NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 	
 	string=$( printf "% 3d" "${NBblockmodes}" )
+
 	menuitems+=( " "       "         \Zb\Zr======= BLOCK #${i2}  - ($string modes) ============\Zn" )
+
+	ConfReadParam gainb${i2} "0.000"	
+	${gainb[10#${i2}]}="$paramvalue"
 	menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ]   Modal block ${i2} gain" )
+
 	menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit" )
+
 	menuitems+=( "mb${i2}" "[ ${multfb[10#${i2}]} ]   Modal block ${i2} multf" )
+
 	done
 	else
 	menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
