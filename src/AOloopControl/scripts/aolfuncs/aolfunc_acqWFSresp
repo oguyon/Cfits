@@ -29,6 +29,10 @@ fi
 echo " ON" > "./status/stat_acqWFSON.txt"
 
 
+RMZONALCALIBlist="wfsref0 zrespM wfsmap dmmap wfsmask dmmaskRM dmslaved dmmask"
+RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
+
+
 aCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 # STAGING DIRECTORIES
@@ -57,9 +61,9 @@ fi
 
 
 
-##########################################
-# READ REQUIRED PARAMETERS
-##########################################
+echo "##########################################"
+echo "# READ REQUIRED PARAMETERS                "
+echo "##########################################"
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
@@ -139,9 +143,10 @@ fi
 
 
 
-##########################################
-# ACQUIRE ZONAL RESPONSE MATRIX
-##########################################
+echo "##########################################"
+echo "# ACQUIRE ZONAL RESPONSE MATRIX           "
+echo "##########################################"
+
 # ACQUIRE HIGH ORDER WFS RESPONSE: 
 #
 # INPUT:
@@ -161,9 +166,9 @@ fi
 
 
 
-##########################################
-# ACQUIRE MODAL LO RESPONSE MATRIX
-##########################################
+echo "##########################################"
+echo "# ACQUIRE MODAL LO RESPONSE MATRIX        "
+echo "##########################################"
 
 if [ "$DMMODE" = "ZONAL" ]; then
 	if [ "$RMCalibReuseMasks" = "1" ]; then
@@ -178,9 +183,9 @@ fi
 
 
 
-##########################################
-# PROCESS & DECODE HIGH ORDER WFS RESPONSE
-##########################################
+echo "##########################################"
+echo "# PROCESS & DECODE HIGH ORDER WFS RESPONSE"
+echo "##########################################"
 #
 # INPUT:
 #	zrespmat0.fits
@@ -211,9 +216,10 @@ cp dmmap.fits $stageddir
 
 
 if [ "$RMCalibReuseMasks" = "0" ]; then
-##########################################
-# MAKE MASKS  
-##########################################
+
+echo "##########################################"
+echo "# MAKE MASKS                              "
+echo "##########################################"
 # 
 # INPUT:
 #     ./conf_zrm_staged/zrespM.fits
@@ -248,8 +254,8 @@ $execname << EOF
 readshmim aol${LOOPNUMBER}_dmC
 im0=0*aol${LOOPNUMBER}_dmC
 dmmask=1.0+im0
-savefits dmmask \"!dmmask.fits\"
-savefits im0 \"!dmslaved.fits\"
+savefits dmmask "!dmmask.fits"
+savefits im0 "!dmslaved.fits"
 exitCLI
 EOF
 fi
@@ -258,9 +264,9 @@ fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
 
 
 
-####################################################
-# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask 
-####################################################
+echo "####################################################"
+echo "# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask    "
+echo "####################################################"
 # 
 # INPUT
 #	wfsref00.fits
@@ -274,15 +280,34 @@ loadfits wfsref00.fits im0
 loadfits wfsmask.fits wfm
 a=itot(im0)/itot(im0*wfm)
 im1=im0*a
-savefits im1 \"!wfsref0.fits\"
+savefits im1 "!wfsref0.fits"
 listim
 exitCLI
 EOF
 
 
-####################################################
-# ACQUIRE LOW ORDER RESPONSE
-####################################################
+echo "####################################################"
+echo "# COPY TO ARCHIVE                                   "
+echo "####################################################"
+
+for imname in $RMZONALCALIBlist
+do
+	mkdir -p ${imname}
+	cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits
+done
+
+
+
+
+
+
+
+
+if [ "$DMMODE" = "ZONAL" ]; then
+
+echo "####################################################"
+echo "# ACQUIRE LOW ORDER RESPONSE                        "
+echo "####################################################"
 #
 # INPUT:
 #	respM_LOmodes.fits
@@ -296,6 +321,60 @@ if [ "$RMCalibReuseMasks" = "0" ]; then
 # don't reuse modes
 function_acqWFSresp_LOmodes
 fi
+
+echo "####################################################"
+echo "# COPY LOW ORDER RESPONSE TO ARCHIVE                "
+echo "####################################################"
+for imname in $RMMODALCALIBlist
+do
+	mkdir -p ${imname}
+	tmux send-keys -t ${tmuxnameaWFSr} "cp ${imname}.fits ${imname}/${imname}_${aCALIBdatestr}.fits" C-m
+done
+
+
+else
+tmux send-keys -t ${tmuxnameaWFSr} "# DMMODE is MODAL = $DMMODE" C-m
+fi
+
+fi # end of if [ "$DMMODE" = "ZONAL" ]; then
+
+
+
+
+
+
+
+echo "######################################################################"
+echo "# copy file names in conf_<name>_name.txt files in staged directory   "
+echo "######################################################################"
+
+dir="$dir_conf_staged"
+mkdir -p $dir
+
+if [ "$DMMODE" = "ZONAL" ]; then
+	for imname in $RMZONALCALIBlist $RMMODALCALIBlist
+	do
+		echo \"${imname}/${imname}_${aCALIBdatestr}.fits\" > ./${dir}/shmim_${imname}.name.txt
+		mv ${imname}.fits ./${dir}/
+	done
+else
+	for imname in $RMZONALCALIBlist
+	do
+		echo \"${imname}/${imname}_${aCALIBdatestr}.fits\" > ./${dir}/shmim_${imname}.name.txt
+		mv ${imname}.fits ./${dir}/
+	done
+fi
+
+
+
+
+
+# =============================================================================================================
+#       AT THIS POINT, EVERYTHING IS IN STAGED DIRECTORY AS FITS FILES WITH TIME STAMPED NAMES
+#             FILES ARE ALSO PRESENT IN CURRENT DIRECTORY, WITHOUT TIME STAMP
+# =============================================================================================================
+
+
 
 
 
