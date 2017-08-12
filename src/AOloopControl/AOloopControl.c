@@ -2150,14 +2150,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	/** ## 1. Initial setup from configuration files */
 
 	/** - 1.1. Initialize memory */
+	fprintf(fplog, "\n\n============== 1.1. Initialize memory ===================\n\n");
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-
+	
 	//
     /** ### 1.2. Set names of key streams */
     //
     // Here we define names of key streams used by loop
+
+	fprintf(fplog, "\n\n============== 1.2. Set names of key streams ===================\n\n");
 
 	/** - dmC stream  : DM control */
     if(sprintf(name, "aol%ld_dmC", loop)<1)
@@ -2218,6 +2221,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * 
      * - ./conf/conf_LOOPNAME.txt -> AOconf[loop].name 
      */
+	fprintf(fplog, "\n\n============== 1.3. Read loop name ===================\n\n");
 
     if((fp=fopen("./conf/conf_LOOPNAME.txt","r"))==NULL)
     {
@@ -2241,6 +2245,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * 
      * - conf/param_WFSnorm.txt -> AOconf[loop].WFSnormalize
      */ 
+    fprintf(fplog, "\n\n============== 1.4. Define WFS image normalization mode ===================\n\n");
     
     if((fp=fopen("./conf/param_WFSnorm.txt", "r"))==NULL)
     {
@@ -2271,6 +2276,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * - AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
      * - ./conf/param_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
      */
+     fprintf(fplog, "\n\n============== 1.5. Read Timing info ===================\n\n");
+     
     if((fp=fopen("./conf/param_loopfrequ.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
@@ -2349,7 +2356,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
      * 
      */ 
-
+	fprintf(fplog, "\n\n============== 1.6. Define GPU use ===================\n\n");
+	
     if((fp=fopen("./conf/param_GPU.txt","r"))==NULL)
     {
         printf("WARNING: file ./conf/param_GPU.txt missing\n");
@@ -2415,6 +2423,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	 * - ./conf/param_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
 	 * 
 	 */
+	 fprintf(fplog, "\n\n============== 1.7. WFS image total flux computation mode ===================\n\n");
 
     // TOTAL image done in separate thread ?
     AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
@@ -2444,6 +2453,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
      */ 
 
+`	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
+
     if((fp=fopen("./conf/param_CMmode.txt","r"))==NULL)
     {
         printf("WARNING: file ./conf/param_CMmode.txt missing\n");
@@ -2472,6 +2483,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	 * 
 	 * @warning check redundancy with earlier read
 	 */
+	fprintf(fplog, "\n\n============== 1.9. Read loop frequ ===================\n\n");
 
     if((fp=fopen("./conf/param_loopfrequ.txt","r"))==NULL)
     {
@@ -2497,6 +2509,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	/** ### 1.10. Setup loop timing array 
 	 */
+	fprintf(fplog, "\n\n============== 1.10. Setup loop timing array ===================\n\n");
 
     if(sprintf(name, "aol%ld_looptiming", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2511,7 +2524,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	/** ## 2. Read/load shared memory arrays
 	 * 
 	 */ 
-
+	fprintf(fplog, "\n\n============== 2. Read/load shared memory arrays ===================\n\n");
 
     /**
      * ### 2.1. CONNECT to existing streams
@@ -2521,6 +2534,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      *  - AOconf[loop].dmdispname  : this image is read to notify when new dm displacement is ready
      *  - AOconf[loop].WFSname     : connect to WFS camera. This is where the size of the WFS is read 
      */
+     
+     fprintf(fplog, "\n\n============== 2.1. CONNECT to existing streams  ===================\n\n");
+     
     aoconfID_dmdisp = read_sharedmem_image(AOconf[loop].dmdispname);
     if(aoconfID_dmdisp==-1)
         fprintf(fplog, "ERROR : cannot read shared memory stream %s\n", AOconf[loop].dmdispname);
@@ -2564,6 +2580,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * - aol_wfsref0
      * - aol_wfsref
      */
+     
+     
+	fprintf(fplog, "\n\n============== 2.2. Read file to stream or connect to existing stream  ===================\n\n");
 
     if(sprintf(name, "aol%ld_wfsdark", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2681,6 +2700,12 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	 * 
 	 * 
 	 * */
+
+	fprintf(fplog, "\n\n============== 3. Load DM modes (if level >= 10)  ===================\n\n");
+
+	list_image_ID();
+	fclose(fplog);
+	exit(0);
 
     if(level>=10) // Load DM modes (will exit if not successful)
     {				
@@ -11334,7 +11359,7 @@ int_fast8_t AOloopControl_run()
     printf("SETTING UP...\n");
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
-	exit(0);
+	
 
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall;
 
