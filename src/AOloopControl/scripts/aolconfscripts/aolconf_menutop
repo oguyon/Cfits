@@ -26,7 +26,7 @@ menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
 
 file="./conf/param_DMcombave_mode.txt"
 DMcombave_mode=$( cat $file )
-if [[ -f "$file" && ( "$dmcombavemode" = "0" || "$dmcombavemode" = "1" || "$dmcombavemode" = "2" ) ]]; then
+if [[ -f "$file" && ( "$DMcombave_mode" = "0" || "$DMcombave_mode" = "1" || "$DMcombave_mode" = "2" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
@@ -186,26 +186,26 @@ fi
 
 
 file="./conf/conf_dmvolt_mode.txt"
-dmvoltmode=$( cat $file )
-if [[ -f "$file" && ( "$dmvoltmode" = "1" || "$dmvoltmode" = "0" ) ]]; then
+DMvolt_mode=$( cat $file )
+if [[ -f "$file" && ( "$DMvolt_mode" = "1" || "$DMvolt_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmvoltmode=0
+DMvolt_mode=0
 fi
 
 menuitems+=( " " " ")
-if [ "${dmvoltmode}" = "0" ];
+if [ "${DMvolt_mode}" = "0" ];
 then
 menuitems+=( "dmvolt1" " [  OFF  ] Activate DM volt output [-> dmvolt]" )
 fi
-if [ "${dmvoltmode}" = "1" ];
+if [ "${DMvolt_mode}" = "1" ];
 then
 menuitems+=( "dmvolt0" " [   ON  ] De-activate DM volt output [-> dmvolt]" )
 fi
 menuitems+=( " " " ")
 
-menuitems+=( "dmcombam" "[${dmcombavemode}] DM combination averaging mode" )
+menuitems+=( "dmcombam" "[${DMcombave_mode}] DM combination averaging mode" )
 
 
 menuitems+=( " " " ")
