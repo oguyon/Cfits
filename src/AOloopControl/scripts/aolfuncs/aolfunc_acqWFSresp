@@ -1,0 +1,103 @@
+#!/bin/bash
+
+#########################################################################################
+##          ACQUIRE WFS RESPONSE                                                       ##
+#########################################################################################
+
+execname="./AOloopControl"
+
+
+
+
+# CHECK IF ALREADY RUNNING
+mkdir -p status
+file="./status/stat_acqWFSON.txt"
+if [ -a $file ]; then
+	acqWFSONstat=$( cat $file )
+else
+	acqWFSONstat="OFF"
+	echo "$acqWFSONstat" > $file
+fi
+
+
+if "$acqWFSONstat" = " ON" ]; then
+echo "LHS already running"
+exit
+fi
+
+
+aCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+
+# STAGING DIRECTORIES
+dir_conf_staged="conf_staged"
+
+
+
+
+
+
+
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+
+ConfReadParam ACzrmNBcycle "5"
+ACzrmNBcycle="$paramvalue"
+
+ConfReadParam delayRM1us "0"
+delayRM1us="$paramvalue"
+
+ConfReadParam RMamplum "0.05"
+RMamplum="$paramvalue"
+
+ConfReadParam RMdelayfr "2"
+RMdelayfr="$paramvalue"
+
+ConfReadParam RMfrave "5"
+RMfrave="$paramvalue"
+
+ConfReadParam RMexfr "2"
+RMexfr="$paramvalue"
+
+ConfReadParam WFSnorm "1"
+WFSnorm="$paramvalue"
+
+if pgrep "aol${LOOPNUMBER}run" > /dev/null  # is aolrun running ?
+then # use option -r to re-use AO shared memory configuration
+	./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
+else
+    ./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
+fi
+
+
+
+
+
+
+

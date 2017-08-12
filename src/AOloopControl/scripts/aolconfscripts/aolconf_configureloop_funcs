@@ -380,7 +380,7 @@ logRunningProcessQ "aolMeasureZrespmat2" "$tmuxnameaWFSr" "Acquire zonal RM"
 # ACQUIRE HIGH ORDER WFS RESPONSE: 
 #
 # INPUT:
-# 	conf/RMpokeCube.fits  (poke sequence)
+# 	conf/RMpokeCube.fits.gz  (poke sequence)
 #		if file does not exist, create straight poke sequence (one actuator at a time) 
 #
 # OUTPUT: 

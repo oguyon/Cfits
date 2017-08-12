@@ -1260,11 +1260,11 @@ echo "1" > ./conf/param_RMpokeMode.txt
 ./auxscripts/mkHpoke 
 #fi
 mv Hpoke.fits.gz ./conf/Hpoke.fits.gz
-cp ./conf/Hpoke.fits.gz ./conf/RMpokeCube.fits.gz
+ln -s ./conf/Hpoke.fits.gz ./conf/RMpokeCube.fits.gz
 mv Hpixindex.fits.gz ./conf/
-cp ./conf/Hpixindex.fits.gz ./conf/RMpixindex.fits.gz
+ln -s ./conf/Hpixindex.fits.gz ./conf/RMpixindex.fits.gz
 mv Hmat.fits.gz ./conf/
-cp ./conf/Hmat.fits.gz ./conf/RMmat.fits.gz 
+ln -s ./conf/Hmat.fits.gz ./conf/RMmat.fits.gz 
 aoconflogext "RM: set Hadamard ON"
 menucontrolloop_default="Hoff"
 ;;
