@@ -425,8 +425,8 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
     int fileOK;
     int try;
     int NBtry = 3;
-	int PrintErrorMsg = 1;
-	int ExitOnErr = 0;
+    int PrintErrorMsg = 1;
+    int ExitOnErr = 0;
 
     nulval = 0;
     anynul = 0;
@@ -442,59 +442,61 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
 
     fileOK = 0;
 
-	if(errcode==0){
-		PrintErrorMsg = 0;
-		ExitOnErr = 0;
-	}
+    if(errcode==0) {
+        PrintErrorMsg = 0;
+        ExitOnErr = 0;
+    }
 
-	if(errcode==1){
-		PrintErrorMsg = 1;
-		ExitOnErr = 0;
-	}
+    if(errcode==1) {
+        PrintErrorMsg = 1;
+        ExitOnErr = 0;
+    }
 
-	if(errcode==2){
-		PrintErrorMsg = 1;
-		ExitOnErr = 1;
-	}
-	
-	if(errcode==3)
-		{
-			NBtry = 1;
-			PrintErrorMsg = 0;
-			ExitOnErr = 0;
-		}
+    if(errcode==2) {
+        PrintErrorMsg = 1;
+        ExitOnErr = 1;
+    }
+
+    if(errcode==3)
+    {
+        NBtry = 1;
+        PrintErrorMsg = 0;
+        ExitOnErr = 0;
+    }
 
 
 
     for(try=0; try<NBtry; try++)
+        {
+            if(fileOK==0)
                 {
-                    if(fileOK==0)
-                    {
-                        if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
-                        {                   
-                           if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
-                               {
-									if(PrintErrorMsg==1)
-									{
-										fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-										fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
-										fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
-										list_image_ID();
-									}
-									
-                                    if(ExitOnErr==1)
-                                        exit(0);
-									
-									if(try!=NBtry-1) // don't wait on last try
-										usleep(10000);
+                    if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
+                        {
+                            if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
+                            {
+                                if(PrintErrorMsg==1)
+                                {
+                                    fprintf(stderr, "%c[%d;%dm Error while calling \"fits_open_file\" %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+                                    fprintf(stderr, "%c[%d;%dm within load_fits ( %s, %s ) %c[%d;m\n", (char) 27, 1, 31, ID_name, file_name, (char) 27, 0);
+                                    fprintf(stderr, "%c[%d;%dm Printing Cfits image buffer content: %c[%d;m\n", (char) 27, 1, 31, (char) 27, 0);
+                                    list_image_ID();
                                 }
+
+                                if(ExitOnErr==1)
+                                    exit(0);
+
+                                if(try!=NBtry-1) // don't wait on last try
+                                        usleep(10000);
                             }
-                            ID = -1;
-                        }
-                        else
-                            fileOK = 1;
+                        
+                      ID = -1;
                     }
-                }
+                    else
+                        fileOK = 1;
+					}
+        }
+
+
 
     if(fileOK==1)
     {
