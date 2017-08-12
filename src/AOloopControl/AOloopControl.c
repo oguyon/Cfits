@@ -8801,9 +8801,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             else
                 mblock1 = mblock;
 
-
+//TEST 
             for(ii=0; ii<msizex*msizey; ii++)
-                data.image[MBLOCK_ID[mblock1]].array.F[MBLOCK_NBmode[mblock1]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii]+m;
+                data.image[MBLOCK_ID[mblock1]].array.F[MBLOCK_NBmode[mblock1]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
 
             MBLOCK_NBmode[mblock1]++;
         }
@@ -8862,7 +8862,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                 if(data.image[IDSVDcoeff].array.F[m] > SVDlim00*svdcoeff0)
                     cnt++;
             }
-            printf("BLOCK %ld/%ld: keeping %ld / %ld modes  ( %f %f ) [%ld]\n", mblock, NBmblock, cnt, m, SVDlim00, svdcoeff0, (long) data.image[IDSVDcoeff].md[0].size[0]);
+            printf("BLOCK %ld/%ld: keeping %ld / %ld modes  ( %f %f ) [%ld  %ld %ld]\n", mblock, NBmblock, cnt, m, SVDlim00, svdcoeff0, (long) data.image[IDSVDcoeff].md[0].size[0], msizex, msizey);
             fflush(stdout);
 
             if(sprintf(imname1, "fmodes1_%02ld", mblock) < 1)
@@ -8904,7 +8904,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodes1all", "!./mkmodestmp/fmodes1all.fits");
 
 
-
+	exit(0);//TEST
 
 
         /// STEP 4: REMOVE MODES THAT ARE CONTAINED IN PREVIOUS BLOCKS, AND ENFORCE DM-SPACE ORTHOGONALITY BETWEEN BLOCKS -> fmodes2all.fits  (DM space)
