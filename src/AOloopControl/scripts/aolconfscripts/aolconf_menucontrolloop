@@ -49,7 +49,7 @@ menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
 
-#echo "GPU mode = $GPUmode"
+#echo "GPU = $GPU"
 
 ConfReadParam GPU "0"
 GPU="$paramvalue"
@@ -58,57 +58,57 @@ if [ "${GPU}" = "0" ];
 then
 menuitems+=( "GPUsel" "[ GPU is OFF  ]    CONTROL MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU mode" )
 else
-menuitems+=( "GPUsel" " CONTROL MATRIX MULT CURRENTLY USING \Z5\Zr $GPUmode \Zn GPU(S)" )
+menuitems+=( "GPUsel" " CONTROL MATRIX MULT CURRENTLY USING \Z5\Zr $GPU \Zn GPU(S)" )
 fi
 
 
 
-if [ "0" -lt "$GPUmode" ]; then
+if [ "0" -lt "$GPU" ]; then
 menuitems+=( "GPU0" "            [ $GPU0device ]    GPU #0 device" )
 fi
 
 
-if [ "1" -lt "$GPUmode" ]; then
+if [ "1" -lt "$GPU" ]; then
 menuitems+=( "GPU1" "            [ $GPU1device ]    GPU #1 device" )
 fi
 
 
-if [ "2" -lt "$GPUmode" ]; then
+if [ "2" -lt "$GPU" ]; then
 menuitems+=( "GPU2" "            [ $GPU2device ]    GPU #2 device" )
 fi
 
 
-if [ "3" -lt "$GPUmode" ]; then
+if [ "3" -lt "$GPU" ]; then
 menuitems+=( "GPU3" "            [ $GPU3device ]    GPU #3 device" )
 fi
 
 
-if [ "4" -lt "$GPUmode" ]; then
+if [ "4" -lt "$GPU" ]; then
 menuitems+=( "GPU4" "            [ $GPU4device ]    GPU #4 device" )
 fi
 
 
-if [ "5" -lt "$GPUmode" ]; then
+if [ "5" -lt "$GPU" ]; then
 menuitems+=( "GPU5" "            [ $GPU5device ]    GPU #5 device" )
 fi
 
 
-if [ "6" -lt "$GPUmode" ]; then
+if [ "6" -lt "$GPU" ]; then
 menuitems+=( "GPU6" "            [ $GPU6device ]    GPU #6 device" )
 fi
 
 
-if [ "7" -lt "$GPUmode" ]; then
+if [ "7" -lt "$GPU" ]; then
 menuitems+=( "GPU7" "            [ $GPU7device ]    GPU #7 device" )
 fi
 
 
-if [ "8" -lt "$GPUmode" ]; then
+if [ "8" -lt "$GPU" ]; then
 menuitems+=( "GPU8" "            [ $GPU8device ]    GPU #8 device" )
 fi
 
 
-if [ "9" -lt "$GPUmode" ]; then
+if [ "9" -lt "$GPU" ]; then
 menuitems+=( "GPU9" "            [ $GPU9device ]    GPU #9 device" )
 fi
 
@@ -195,7 +195,7 @@ fi
 CMmode=$( cat ./conf/param_CMmode.txt )
 
 
-if [[ "${GPUmode}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
+if [[ "${GPU}" -ne "0" ]]; then   #&& "${CMmode}" = "1" ]]; then
  if [ "${GPUallmode}" = "0" ]; then
   menuitems+=( "GPUaon" "[GPUall is OFF]    CURRENTLY USING CPU(s) + GPU(s)       -> Turn on GPUall mode" )
  else
