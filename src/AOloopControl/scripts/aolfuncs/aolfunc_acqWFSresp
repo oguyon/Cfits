@@ -241,13 +241,14 @@ fi
 if [ "$DMMODE" = "ZONAL" ]; then
 ./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
 else # set dmmask to 1, dmslaved to 0
-$execname
+$execname << EOF
 readshmim aol${LOOPNUMBER}_dmC
 im0=0*aol${LOOPNUMBER}_dmC
 dmmask=1.0+im0
 savefits dmmask \"!dmmask.fits\"
 savefits im0 \"!dmslaved.fits\"
 exitCLI
+EOF
 fi
 
 fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
@@ -265,7 +266,7 @@ fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
 # OUTPUT
 #	wfsref0.fits
 #
-$execname
+$execname << EOF
 loadfits wfsref00.fits im0
 loadfits wfsmask.fits wfm
 a=itot(im0)/itot(im0*wfm)
@@ -273,6 +274,7 @@ im1=im0*a
 savefits im1 \"!wfsref0.fits\"
 listim
 exitCLI
+EOF
 
 
 ####################################################
