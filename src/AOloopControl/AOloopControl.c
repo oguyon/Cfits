@@ -11334,7 +11334,7 @@ int_fast8_t AOloopControl_run()
     printf("SETTING UP...\n");
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
-
+	exit(0);
 
     COMPUTE_GPU_SCALING = AOconf[loop].GPUall;
 
