@@ -111,31 +111,35 @@ then
 menuitems+=( "dm2dmMode0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
 
 
-Readdm2dmMname
-dm2dmMfile="/tmp/${dm2dmM}.im.shm"
-if [ -f $dm2dmMfile ]; then
-getshmimsize ${dm2dmM}
+
+dm2dmMfile="/tmp/aol${LOOPNUMBER}_dm2dmM.im.shm"
+if [ -f $dmd2dmMfile ]; then
+sizestring=$( cat conf/streamlink_dm2dmM.imsize.txt )
+streamname=$( cat conf/streamlink_dm2dmM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${dm2dmM}\Zn" )
+menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn] DM to DM output modes        \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dm2dmM" "[${OKstr}]  DM to DM output modes          \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${dm2dmM}\Zn" )
+menuitems+=( "dm2dmM" "[${OKstr}] DM to DM output modes        \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z1${streamname}\Zn" )
 fi
 
 
-Readdm2dmOname
-dm2dmOfile="/tmp/${dm2dmO}.im.shm"
-if [ -f $dm2dmOfile ]; then
-getshmimsize ${dm2dmO}
+dm2dmOfile="/tmp/aol${LOOPNUMBER}_dm2dmO.im.shm"
+if [ -f $dmd2dmMfile ]; then
+sizestring=$( cat conf/streamlink_dm2dmO.imsize.txt )
+streamname=$( cat conf/streamlink_dm2dmO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn]  DM output stream                 \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${dm2dmO}\Zn" )
+menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dm2dmO" "[${OKstr}]  DM output stream                 \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${dm2dmO}\Zn" )
+menuitems+=( "dm2dmO" "[${OKstr}] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z1${streamname}\Zn" )
 fi
 
 
+
 fi
+
+
 
 
 
@@ -869,14 +873,12 @@ tmux send-keys -t ${tmuxnameC0} "./aolconfscripts/aollog -e \"$LOOPNAME\" \"Upda
 # zonal calib
 for imname in $RMZONALCALIBlist
 do
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameC0} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m	
 done
 # modal calib
 for imname in $RMMODALCALIBlist
 do
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxnameC0} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameC0} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m	
 done
 
 

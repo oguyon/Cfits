@@ -77,46 +77,6 @@ rm runproc/MeasLoopModeResp.runproc
 
 
 
-#########################################################################################
-##          LINEAR SIMULATOR  ON                                                       ##
-#########################################################################################
-
-function function_lsim_on {
-lsimONstat=" ON"
-tmuxname="aol${LOOPNUMBER}linsim"
-tmuxnameD="aol${LOOPNUMBER}linsimD"
-echo " ON" > ./status/stat_lsimON.txt
-logRunningProcess "aollinsimDelay" "$tmuxnameD" "Add delay to simulation"
-logRunningProcess "aollindm2wfsim" "$tmuxname" "linear computation of simulated WFS from DM"
-sleep 0.2
-tmux new-session -d -s ${tmuxnameD}
-sleep 0.2
-tmux new-session -d -s ${tmuxname}
-sleep 0.2
-aoconflog "Start linear WFS simulator"
-tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
-tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlinsim}" C-m
-cp ./conf/conf_wfsim_name.txt ./conf/conf_wfsimhardware_name.txt
-echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/conf_wfsim_name.txt
-
-# turn off DM voltage 
-$execname << EOF
-aoldmvoltOFF 0
-exit
-EOF
-
-# set dark to zero
-$execname << EOF
-readshmim aol${LOOPNUMBER_wfsdark
-imzero aol${LOOPNUMBER_wfsdark
-exit
-EOF
-
-dmdispzero 00 00
-
-Readwfsimcamname
-}
-
 
 
 
@@ -640,16 +600,14 @@ zrespMlinsim)
 	exec 3>&1;
 	zrespMlinsimfname=$(dialog --title "linear simulation: Select Zonal RM" --stdout --title "linear simulation: select zonal RM" --fselect "${zrespMlinsimfname}" $nbwlines $nbwcols)
 	echo "$zrespMlinsimfname" > ./conf/conf_zrespMlinsim_name.txt
-	ReadConfFile "zrespMlinsim"
-	getshmimsize "aol${LOOPNUMBER}_zrespMlinsim"
+	Fits2shm -c -p aol${LOOPNUMBER}_ zrespMlinsim
 ;;
 
 wfsref0linsim)
 	exec 3>&1;
 	wfsref0linsimfname=$(dialog --title "linear simulation: Select WFS ref" --stdout --title "linear simulation: select WFS ref" --fselect "${wfsref0linsimfname}" $nbwlines $nbwcols)
 	echo "$wfsref0linsimfname" > ./conf/conf_wfsref0linsim_name.txt
-	ReadConfFile "wfsref0linsim"
-	getshmimsize "aol${LOOPNUMBER}_wfsref0linsim"
+	Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0linsim
 ;;
 
 
@@ -686,14 +644,14 @@ menucontrolloop_default="linsimDelay"
 
 
 	lsimon)
-ReadConfFile "zrespMlinsim"
-ReadConfFile "wfsref0linsim"
-function_lsim_on
+Fits2shm -c -p aol${LOOPNUMBER}_ zrespMlinsim
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0linsim
+./aolfuncs/aolfunc_LHSon
 menutestmode_default="lsimoff"
 ;;
 
 	lsimoff)
-function_lsim_off
+./aolfuncs/aolfunc_LHSoff
 menutestmode_default="lsimon"
 ;;
 
