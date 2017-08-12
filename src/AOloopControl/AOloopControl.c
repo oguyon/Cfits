@@ -2704,10 +2704,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	fprintf(fplog, "\n\n============== 3. Load DM modes (if level >= 10)  ===================\n\n");
 
-	//TEST
-	list_image_ID();
-	fclose(fplog);
-	exit(0);
+
 	
     if(level>=10) // Load DM modes (will exit if not successful)
     {				
