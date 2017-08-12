@@ -2693,7 +2693,19 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
+	/// Connect to DM modes shared mem
+	aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname);
+	if(aoconfID_DMmodes==-1)
+    {
+        printf("connect to %s\n", AOconf[loop].DMmodesname);
+        aoconfID_dmRM = read_sharedmem_image(AOconf[loop].DMmodesname);
+        if(aoconfID_DMmodes==-1)
+        {
+            printf("ERROR: cannot connect to shared memory %s\n", AOconf[loop].DMmodesname);
+            exit(0);
+        }
+    }
+    fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmRMname, aoconfID_DMmodes);
 
 
 	/** 
@@ -2716,11 +2728,15 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 		 */
 		
         aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname); 
+		
 
-        if(aoconfID_DMmodes==-1) // If not, check file
+
+        if(aoconfID_DMmodes == -1) // If not, check file
         {
             long ID1tmp, ID2tmp;
             int vOK;
+
+			
 
             if(sprintf(fname, "./conf/aol%ld_DMmodes.fits", loop) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
