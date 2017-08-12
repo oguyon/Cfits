@@ -363,7 +363,8 @@ menuitems+=( "m" "actuator max lim  =   ${loopmaxlim}" )
 
 
 
-
+ConfReadParam DMprimWriteON "0"
+DMprimWriteON="$paramvalue"
 if [ "$DMprimWriteON" = "0" ]; then
 menuitems+=( "DMpWon" " DM Primary Write is OFF - press to START" )
 else
