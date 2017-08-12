@@ -2239,13 +2239,13 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.4. Define WFS image normalization mode 
      * 
-     * - conf/conf_WFSnormalize.txt -> AOconf[loop].WFSnormalize
+     * - conf/param_WFSnorm.txt -> AOconf[loop].WFSnormalize
      */ 
     
-    if((fp=fopen("./conf/conf_WFSnormalize.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_WFSnorm.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_WFSnormalize.txt missing\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_WFSnormalize.txt missing. Assuming WFSnormalize = 1\n");
+        printf("WARNING: file ./conf/param_WFSnorm.txt missing\n");
+        fprintf(fplog, "WARNING: file ./conf/param_WFSnorm.txt missing. Assuming WFSnormalize = 1\n");
         AOconf[loop].WFSnormalize = 1;
     }
     else
@@ -2264,16 +2264,16 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.5. Read Timing info
      * 
-     * - ./conf/conf_loopfrequ.txt    -> AOconf[loop].loopfrequ
-     * - ./conf/conf_hardwlatency.txt -> AOconf[loop].hardwlatency
+     * - ./conf/param_loopfrequ.txt    -> AOconf[loop].loopfrequ
+     * - ./conf/param_hardwlatency.txt -> AOconf[loop].hardwlatency
      * - AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ
-     * - ./conf/conf_complatency.txt  -> AOconf[loop].complatency
+     * - ./conf/param_complatency.txt  -> AOconf[loop].complatency
      * - AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
-     * - ./conf/conf_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
+     * - ./conf/param_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
      */
-    if((fp=fopen("./conf/conf_loopfrequ.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_loopfrequ.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_loopfrequ.txt missing\n");
+        printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
     }
     else
     {
@@ -2288,9 +2288,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    if((fp=fopen("./conf/conf_hardwlatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_hardwlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_hardwlatency.txt missing\n");
+        printf("WARNING: file ./conf/param_hardwlatency.txt missing\n");
     }
     else
     {
@@ -2306,9 +2306,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ;
 
 
-    if((fp=fopen("./conf/conf_complatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_complatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_complatency.txt missing\n");
+        printf("WARNING: file ./conf/param_complatency.txt missing\n");
     }
     else
     {
@@ -2323,9 +2323,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
 
 
-    if((fp=fopen("./conf/conf_wfsmextrlatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_wfsmextrlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_wfsmextrlatency.txt missing\n");
+        printf("WARNING: file ./conf/param_wfsmextrlatency.txt missing\n");
     }
     else
     {
@@ -2344,17 +2344,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.6. Define GPU use
      * 
-     * - ./conf/conf_GPU.txt           -> AOconf[loop].GPU (0 if missing)
-     * - ./conf/conf_GPUall.txt        -> AOconf[loop].GPUall
-     * - ./conf/conf_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
+     * - ./conf/param_GPU.txt           -> AOconf[loop].GPU (0 if missing)
+     * - ./conf/param_GPUall.txt        -> AOconf[loop].GPUall
+     * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
      * 
      */ 
 
-    if((fp=fopen("./conf/conf_GPU.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_GPU.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_GPU.txt missing\n");
+        printf("WARNING: file ./conf/param_GPU.txt missing\n");
         printf("Using CPU only\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_GPU.txt missing. Using CPU only\n");
+        fprintf(fplog, "WARNING: file ./conf/param_GPU.txt missing. Using CPU only\n");
         AOconf[loop].GPU = 0;
     }
     else
@@ -2371,11 +2371,11 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     // Skip CPU image scaling and go straight to GPUs ?
 
-    if((fp=fopen("./conf/conf_GPUall.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_GPUall.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_GPUall.txt missing\n");
+        printf("WARNING: file ./conf/param_GPUall.txt missing\n");
         printf("Using CPU for image scaling\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_GPUall.txt missing. Using CPU for image scaling\n");
+        fprintf(fplog, "WARNING: file ./conf/param_GPUall.txt missing. Using CPU for image scaling\n");
         AOconf[loop].GPUall = 0;
     }
     else
@@ -2391,11 +2391,11 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
     // Direct DM write ?
-    if((fp=fopen("./conf/conf_DMprimWriteON.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_DMprimWriteON.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_DMprimWriteON.txt missing\n");
+        printf("WARNING: file ./conf/param_DMprimWriteON.txt missing\n");
         printf("Setting DMprimaryWrite_ON = 1\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_DMprimWriteON.txt missing. Setting to 1\n");
+        fprintf(fplog, "WARNING: file ./conf/param_DMprimWriteON.txt missing. Setting to 1\n");
         AOconf[loop].DMprimaryWrite_ON = 1;
     }
     else
@@ -2412,17 +2412,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	/** ### 1.7. WFS image total flux computation mode
 	 * 
-	 * - ./conf/conf_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
+	 * - ./conf/param_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
 	 * 
 	 */
 
     // TOTAL image done in separate thread ?
     AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
-    if((fp=fopen("./conf/conf_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt missing\n");
+        printf("WARNING: file ./conf/param_COMPUTE_TOTAL_ASYNC.txt missing\n");
         printf("Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
-        fprintf(fplog, "WARNING: file ./conf/conf_COMPUTE_TOTAL_ASYNC.txt missing. Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
+        fprintf(fplog, "WARNING: file ./conf/param_COMPUTE_TOTAL_ASYNC.txt missing. Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
     }
     else
     {
@@ -2439,17 +2439,17 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.8. Read CMatrix mult mode
      * 
-     * - ./conf/conf_CMmode.txt -> MATRIX_COMPUTATION_MODE
+     * - ./conf/param_CMmode.txt -> MATRIX_COMPUTATION_MODE
      * 		- 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
      * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
      */ 
 
-    if((fp=fopen("./conf/conf_CMmode.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_CMmode.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_CMmode.txt missing\n");
+        printf("WARNING: file ./conf/param_CMmode.txt missing\n");
         printf("Using combined matrix\n");
         MATRIX_COMPUTATION_MODE = 1;  // by default, use combined matrix
-        fprintf(fplog, "WARNING: file ./conf/conf_CMmode.txt missing. Using combined matrix\n");
+        fprintf(fplog, "WARNING: file ./conf/param_CMmode.txt missing. Using combined matrix\n");
     }
     else
     {
@@ -2468,16 +2468,16 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	/** ### 1.9. Read loop frequ
 	 * 
-	 * - ./conf/conf_loopfrequ.txt -> AOconf[loop].loopfrequ
+	 * - ./conf/param_loopfrequ.txt -> AOconf[loop].loopfrequ
 	 * 
 	 * @warning check redundancy with earlier read
 	 */
 
-    if((fp=fopen("./conf/conf_loopfrequ.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_loopfrequ.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_loopfrequ.txt missing\n");
+        printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
         printf("Using default loop speed\n");
-        fprintf(fplog, "WARNING: file ./conf/conf_loopfrequ.txt missing. Using default loop speed\n");
+        fprintf(fplog, "WARNING: file ./conf/param_loopfrequ.txt missing. Using default loop speed\n");
         AOconf[loop].loopfrequ = 2000.0;
     }
     else
@@ -2964,9 +2964,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_CM = 1;
 
-        if((fp=fopen("conf/conf_NBmodeblocks.txt", "r"))==NULL)
+        if((fp=fopen("conf/param_NBmodeblocks.txt", "r"))==NULL)
         {
-            printf("Cannot open conf/conf_NBmodeblocks.txt.... assuming 1 block\n");
+            printf("Cannot open conf/param_NBmodeblocks.txt.... assuming 1 block\n");
             AOconf[loop].DMmodesNBblock = 1;
         }
         else
@@ -2975,7 +2975,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 AOconf[loop].DMmodesNBblock = tmpl;
             else
             {
-                printf("Cannot read conf/conf_NBmodeblocks.txt.... assuming 1 block\n");
+                printf("Cannot read conf/param_NBmodeblocks.txt.... assuming 1 block\n");
                 AOconf[loop].DMmodesNBblock = 1;
             }
             fclose(fp);
@@ -3106,7 +3106,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             AOconf[loop].indexmaxMB[k] = AOconf[loop].indexmaxMB[k-1] + AOconf[loop].NBmodes_block[k];
     }
 
-    if(sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", (long) 0) < 1)
+    if(sprintf(fname, "./conf/param_blockoffset_%02ld.txt", (long) 0) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     fp = fopen(fname, "w");
     fprintf(fp, "   0\n");
@@ -3114,7 +3114,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     fclose(fp);
     for(k=1; k<AOconf[loop].DMmodesNBblock; k++)
     {
-        if(sprintf(fname, "./conf/conf_blockoffset_%02ld.txt", k) < 1)
+        if(sprintf(fname, "./conf/param_blockoffset_%02ld.txt", k) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         fp = fopen(fname, "w");
         fprintf(fp, "%4ld\n", AOconf[loop].indexmaxMB[k-1]);
@@ -3326,7 +3326,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             FILE *fp;
             char fname[200];
 
-            if(sprintf(fname, "./conf/conf_GPUset0_dev%d.txt", (int) k) < 1)
+            if(sprintf(fname, "./conf/param_GPUset0_dev%d.txt", (int) k) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             fp = fopen(fname, "r");
             if(fp!=NULL)
@@ -3348,7 +3348,7 @@ static int_fast8_t AOloopControl_InitializeMemory(int mode)
             FILE *fp;
             char fname[200];
 
-            if(sprintf(fname, "./conf/conf_GPUset1_dev%d.txt", (int) k) < 1)
+            if(sprintf(fname, "./conf/param_GPUset1_dev%d.txt", (int) k) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             fp = fopen(fname, "r");
             if(fp!=NULL)
@@ -8351,14 +8351,14 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
                     rms += data.image[ID].array.F[k*msizex*msizey+ii]*data.image[ID].array.F[k*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
                 }
                 rms = sqrt(rms/totm);
-                printf("Mode %ld   RMS = %lf\n", k, rms);
+                printf("\r Mode %ld   RMS = %lf   ", k, rms);
                 fprintf(fp, " %g\n", rms);
 
                 for(ii=0; ii<msizex*msizey; ii++)
                     data.image[ID].array.F[k*msizex*msizey+ii] /= rms;
             }
             fclose(fp);
-
+			printf("\n");
 
 
             if(MaskMode==1)
@@ -8746,7 +8746,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         {
             extrablockIndex = 4;
 
-            fp = fopen("./conf/conf_extrablockIndex.txt", "r");
+            fp = fopen("./conf/param_extrablockIndex.txt", "r");
             if(fp != NULL)
             {
                 if(fscanf(fp, "%50ld", &extrablockIndex) != 1)
@@ -9630,7 +9630,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         if(BlockNB<0)
         {
             char command[1000];
-            if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodeblocks.txt", NBmblock) < 1)
+            if(sprintf(command, "echo \"%ld\" > ./conf_staged/paraM_NBmodeblocks.txt", NBmblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             if(system(command) != 0)
@@ -9638,9 +9638,9 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
         else
         {
-            if((fp = fopen("./conf/conf_NBmodeblocks.txt", "r"))==NULL)
+            if((fp = fopen("./conf/param_NBmodeblocks.txt", "r"))==NULL)
             {
-                printf("ERROR: cannot read file ./conf_staged/conf_NBmodeblocks.txt\n");
+                printf("ERROR: cannot read file ./conf_staged/param_NBmodeblocks.txt\n");
                 exit(0);
             }
             if(fscanf(fp, "%50ld", &NBmblock) != 1)
@@ -10047,7 +10047,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         	}
 
         		char command[1000];
-                if(sprintf(command, "echo \"%ld\" > ./conf_staged/conf_NBmodes.txt", cnt) < 1)
+                if(sprintf(command, "echo \"%ld\" > ./conf_staged/param_NBmodes.txt", cnt) < 1)
         			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                 if(system(command) != 0)
@@ -10120,7 +10120,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
     {
         MBLOCK_blockend[0] = NBmodes;
 
-        if(sprintf(fname, "./conf_staged/conf_block00end.txt") < 1)
+        if(sprintf(fname, "./conf_staged/param_block00end.txt") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
         fp = fopen(fname, "w");
@@ -10131,7 +10131,7 @@ long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmb
     {
         for(mblock=0; mblock<NBmblock; mblock++)
         {
-            if(sprintf(fname, "./conf_staged/conf_block%02ldend.txt", mblock) < 1)
+            if(sprintf(fname, "./conf_staged/param_block%02ldend.txt", mblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
             fp = fopen(fname, "r");
@@ -13931,7 +13931,7 @@ long AOloopControl_builPFloop_WatchInput(long loop, long PFblock)
 
 
     // read PF block parameters
-    if(sprintf(fname, "conf/conf_PFblock_%03ld.txt", PFblock) < 1)
+    if(sprintf(fname, "conf/param_PFblock_%03ld.txt", PFblock) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     if((fp = fopen(fname, "r"))==NULL)
@@ -15319,14 +15319,14 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 
     if(updateconf==1)
     {
-        fp = fopen("conf/conf_loopfrequ.txt", "w");
+        fp = fopen("conf/param_loopfrequ.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].loopfrequ);
         fclose(fp);
     }
 
-    if((fp=fopen("./conf/conf_hardwlatency.txt", "r"))==NULL)
+    if((fp=fopen("./conf/param_hardwlatency.txt", "r"))==NULL)
     {
-        printf("WARNING: file ./conf/conf_hardwlatency.txt missing\n");
+        printf("WARNING: file ./conf/param_hardwlatency.txt missing\n");
     }
     else
     {
@@ -15343,23 +15343,23 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     {
         AOconf[LOOPNUMBER].hardwlatency_frame = AOconf[LOOPNUMBER].hardwlatency * AOconf[LOOPNUMBER].loopfrequ;
 
-        fp = fopen("conf/conf_hardwlatency_frame.txt", "w");
+        fp = fopen("conf/param_hardwlatency_frame.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].hardwlatency_frame);
         fclose(fp);
 
-        fp = fopen("conf/conf_complatency.txt", "w");
+        fp = fopen("conf/param_complatency.txt", "w");
         fprintf(fp, "%8.6f", AOconf[LOOPNUMBER].complatency);
         fclose(fp);
 
-        fp = fopen("conf/conf_complatency_frame.txt", "w");
+        fp = fopen("conf/param_complatency_frame.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].complatency_frame);
         fclose(fp);
 
-        fp = fopen("conf/conf_wfsmextrlatency.txt", "w");
+        fp = fopen("conf/param_wfsmextrlatency.txt", "w");
         fprintf(fp, "%8.6f", AOconf[LOOPNUMBER].wfsmextrlatency);
         fclose(fp);
 
-        fp = fopen("conf/conf_wfsmextrlatency_frame.txt", "w");
+        fp = fopen("conf/param_wfsmextrlatency_frame.txt", "w");
         fprintf(fp, "%8.3f", AOconf[LOOPNUMBER].wfsmextrlatency_frame);
         fclose(fp);
     }
