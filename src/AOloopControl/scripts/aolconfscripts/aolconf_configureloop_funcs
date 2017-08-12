@@ -265,7 +265,7 @@ echo "ENTERING function_nAUTOC"
 echo "start calib"
 #aoconflogext "START AUTO CALIBRATION"
 
-#tmuxname="aol${LOOPNUMBER}arespM"
+tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
 #logRunningProcess "FUNCTION_nAUTOC" "$tmuxname" "=== ACQUIRE RM(s) ==="
 
 
@@ -290,7 +290,11 @@ cp -rf conf_staged conf_staged.000
 # this function populates conf_staged directory
 #function_acqWFSresp
 
-./aolfuncs/aolfunc_acqWFSresp
+tmux kill-session -t ${tmuxnameaWFSr}
+sleep 0.2
+tmux new-session -d -s ${tmuxnameaWFSr}
+sleep 0.2
+tmux send-keys -t ${tmuxnameaWFSr} "./aolfuncs/aolfunc_acqWFSresp" C-m
 
 #tmux send-keys -t ${tmuxname} "rm runproc/FUNCTION_nAUTOC.runproc" C-m
 
