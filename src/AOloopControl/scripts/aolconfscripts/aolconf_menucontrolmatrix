@@ -141,9 +141,9 @@ if [ "$DMMODE" = "ZONAL" ]; then
 
 
  if [ "$CMMODE" = "ZONAL" ]; then
- menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
+ menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is $CMMODE\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
  else
- menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
+ menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is $CMMODE\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
  fi
 
 
