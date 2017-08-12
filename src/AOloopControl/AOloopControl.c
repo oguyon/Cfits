@@ -2708,6 +2708,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmRMname, aoconfID_DMmodes);
 
 
+	exit(0);
+
 	/** 
 	 * ## 3. Load DM modes (if level >= 10)
 	 * 
