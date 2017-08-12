@@ -2453,7 +2453,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
      */ 
 
-`	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
+ 	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
 
     if((fp=fopen("./conf/param_CMmode.txt","r"))==NULL)
     {
@@ -2703,6 +2703,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	fprintf(fplog, "\n\n============== 3. Load DM modes (if level >= 10)  ===================\n\n");
 
+	//TEST
 	list_image_ID();
 	fclose(fplog);
 	exit(0);
