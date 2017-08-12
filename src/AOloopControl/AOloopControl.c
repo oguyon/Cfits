@@ -8537,6 +8537,13 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
 
+//TEST
+		printf("ID = %ld\n", ID);
+		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
+		list_image_ID();
+exit(0);
+
+
 
 
         long IDmodes0all = image_ID(ID_name);
@@ -8808,11 +8815,6 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             MBLOCK_NBmode[mblock1]++;
         }
 
-//TEST
-		printf("ID = %ld\n", ID);
-		save_fits("fmodes", "!./mkmodestmp/_test_fmodes.fits");
-		list_image_ID();
-exit(0);
 
         if(IDextrablock != -1)
         {
