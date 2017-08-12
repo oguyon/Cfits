@@ -94,6 +94,9 @@ ConfReadParam WFSnorm "1"
 WFSnorm="$paramvalue"
 
 
+ConfReadParam RMCalibReuseMasks "0"
+RMCalibReuseMasks="$paramvalue"
+
 
 if [ "$DMMODE" = "ZONAL" ]; then
 	ConfReadParam ACmrmtime "60.0"
@@ -165,6 +168,111 @@ if [ "$DMMODE" = "ZONAL" ]; then
 	function_acqWFSresp_LOmodes
 	fi
 fi
+
+
+
+
+
+
+
+##########################################
+# PROCESS & DECODE HIGH ORDER WFS RESPONSE
+##########################################
+#
+# INPUT:
+#	zrespmat0.fits
+#	wfsref00.fits 
+#	
+# OPTIONAL INPUT:
+# 	./conf/RMpokeCube.fits
+#	./conf/RMmat.fits
+#	./conf/RMpixindex.fits
+#		if these 3 files exist, use them to decode the zrespmat0.fits
+#	
+# OUTPUT:
+#	./conf_zrm_staged/zrespM.fits
+#	./conf_zrm_staged/wfsmap.fits
+#	./conf_zrm_staged/dmmap.fits   
+#
+./auxscripts/aolCleanZrespmat2
+stageddir="conf_zrm_staged"
+mkdir -p $stageddir
+cp zrespM.fits $stageddir
+cp wfsmap.fits $stageddir
+cp dmmap.fits $stageddir
+
+
+
+
+
+
+
+if [ "$RMCalibReuseMasks" = "0" ]; then
+##########################################
+# MAKE MASKS  
+##########################################
+# 
+# INPUT:
+#     ./conf_zrm_staged/zrespM.fits
+# OUTPUT:
+#     wfsmask.fits  (overwrite)
+#     dmmaskRM.fits (overwrite)
+#
+./auxscripts/aolmkMasks
+
+if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
+$execname
+readshmim aol${LOOPNUMBER}_dmC
+im0=0*aol${LOOPNUMBER}_dmC
+dmmaskRM=1.0+im0
+savefits dmmaskRM \"!dmmaskRM.fits\"
+exitCLI
+fi
+
+# MAKE SLAVED ACTUATOR DM MASK: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
+# 
+# INPUT:
+#	dmmaskRM.fits
+# OUTPUT:
+#	dmslaved.fits  (overwrite)
+#	dmmask.fits    (overwrite)
+#
+
+if [ "$DMMODE" = "ZONAL" ]; then
+./auxscripts/mkDMslaveActprox dmmaskRM.fits 2.5
+else # set dmmask to 1, dmslaved to 0
+$execname
+readshmim aol${LOOPNUMBER}_dmC
+im0=0*aol${LOOPNUMBER}_dmC
+dmmask=1.0+im0
+savefits dmmask \"!dmmask.fits\"
+savefits im0 \"!dmslaved.fits\"
+exitCLI
+fi
+
+fi  # end of if [ "$RMCalibReuseMasks" = "0" ]; then
+
+
+
+####################################################
+# UPDATE wfsref00 TO NORMALIZE FLUX OVER wfsmask 
+####################################################
+# 
+# INPUT
+#	wfsref00.fits
+#	wfsmask.fits
+#
+# OUTPUT
+#	wfsref0.fits
+#
+$execname
+loadfits wfsref00.fits im0
+loadfits wfsmask.fits wfm
+a=itot(im0)/itot(im0*wfm)
+im1=im0*a
+savefits im1 \"!wfsref0.fits\"
+listim
+exitCLI
 
 
 

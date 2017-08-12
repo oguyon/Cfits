@@ -731,6 +731,7 @@ C00)
 tmuxnameC00="aol${LOOPNUMBER}calib00"
 
 RMCalibReuseMasks=1
+echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
 
 echo "Start session ${tmuxnameC00}"
 echo " command: tmux new-session -d -s ${tmuxnameC00}"
@@ -763,6 +764,8 @@ function_computeModesCM # in aolconf_controlmatrix_funcs
 C0)
 echo "CALIBRATE ALL"
 RMCalibReuseMasks=0
+echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
+
 # block computeModesCM until this file is removed (will be done after RMs acquisition)
 touch FUNCTION_computeModesCM.block
 if [ $C0test -eq 0 ]; then
