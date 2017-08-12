@@ -51,7 +51,10 @@ menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 
 #echo "GPU mode = $GPUmode"
 
-if [ "${GPUmode}" = "0" ];
+ConfReadParam GPU "0"
+GPU="$paramvalue"
+
+if [ "${GPU}" = "0" ];
 then
 menuitems+=( "GPUsel" "[ GPU is OFF  ]    CONTROL MATRIX MULT CURRENTLY NOT USING CPU(s) -> Turn on GPU mode" )
 else
