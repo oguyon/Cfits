@@ -20,7 +20,7 @@ else
 fi
 
 
-if "$acqWFSONstat" = " ON" ]; then
+if [ "$acqWFSONstat" = " ON" ]; then
 echo "LHS already running"
 exit
 fi
@@ -90,7 +90,8 @@ WFSnorm="$paramvalue"
 
 
 echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}"
-exit
+
+
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null  # is aolrun running ?
 then # use option -r to re-use AO shared memory configuration
@@ -102,6 +103,6 @@ fi
 
 
 
-
+echo "OFF" > "./status/stat_acqWFSON.txt"
 
 
