@@ -36,7 +36,8 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " " )
 
 
-
+ConfReadParam SVDlimall "0.01"
+SVDlimall=${paramvalue}
 menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
 
 
