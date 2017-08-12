@@ -437,15 +437,15 @@ if [ "$CMMODE" = "MODAL" ]; then
 	menuitems+=( " "       "         \Zb\Zr======= BLOCK #${i2}  - ($string modes) ============\Zn" )
 
 	ConfReadParam gainb${i2} "0.100"	
-	gainb[${10#${i2}}]="$paramvalue"	
+	gainb[10#${i2}]="$paramvalue"	
 	menuitems+=( "gb${i2}" "[ ${gainb[10#${i2}]} ]   Modal block ${i2} gain" )
 
 	ConfReadParam limitb${i2} "0.100"	
-	limitb[${10#${i2}}]="$paramvalue"
+	limitb[10#${i2}]="$paramvalue"
 	menuitems+=( "lb${i2}" "[ ${limitb[10#${i2}]} ] Modal block ${i2} limit" )
 
 	ConfReadParam multfb${i2} "0.990"	
-	multfb[${10#${i2}}]="$paramvalue"
+	multfb[10#${i2}]="$paramvalue"
 	menuitems+=( "mb${i2}" "[ ${multfb[10#${i2}]} ]   Modal block ${i2} multf" )
 
 	done
