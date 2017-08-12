@@ -312,6 +312,17 @@ shmimmonexec="shmimmon"
 
 
 
+
+# GLOBAL DECLARATIONS
+
+RMZONALCALIBlist="wfsref0 zrespM wfsmap dmmap wfsmask dmmaskRM dmslaved dmmask"
+RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
+
+
+
+
+
+
 . ./aolconfscripts/aolconf_readconf
 
 
@@ -469,19 +480,18 @@ function AOloadMem {
 ./aolfuncs/aolfunc_StreamLink dmRM
 ./aolfuncs/aolfunc_StreamLink wfsim  # WFS image
 
-# LOAD SYSTEM CALIBRATION (FITS -> shared mem)
-Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
-Fits2shm -c -p aol${LOOPNUMBER}_ wfsmap
-Fits2shm -c -p aol${LOOPNUMBER}_ wfsmask
-Fits2shm -c -p aol${LOOPNUMBER}_ dmmap
-Fits2shm -c -p aol${LOOPNUMBER}_ dmmaskRM
-Fits2shm -c -p aol${LOOPNUMBER}_ dmslaved
-Fits2shm -c -p aol${LOOPNUMBER}_ dmmask
-Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0
-Fits2shm -c -p aol${LOOPNUMBER}_ zrespM
-Fits2shm -c -p aol${LOOPNUMBER}_ LODMmodes
-Fits2shm -c -p aol${LOOPNUMBER}_ LOrespM
 
+# LOAD SYSTEM CALIBRATION (FITS -> shared mem)
+
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
+
+for imname in $RMZONALCALIBlist; do
+Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
+done
+
+for imname in $RMMODALCALIBlist; do
+Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
+done
 
 
 # System response and control

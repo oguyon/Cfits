@@ -987,16 +987,12 @@ aoconflogext "Update calibration configuration files"
 for imname in $RMZONALCALIBlist
 do
 Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
-#./auxscripts/aolReadConfFile ${imname}	
-#./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
 done
 
 # modal calib
 for imname in $RMMODALCALIBlist
 do
 Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
-#./auxscripts/aolReadConfFile ${imname}	
-#./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}
 done
 ;;
 
@@ -1452,13 +1448,6 @@ state="menuconfigureloop"
 
 
 
-
-
-upzrm) # update zonal response matrix calibration to latest
-aoconflogext "update zonal response matrix calibration to latest"
-tmuxname="aol${LOOPNUMBER}zrespMc"
-function_upzrm_tmux ${tmuxname}
-;;
 
 
 SMloadzrm) # load files into shared memory
