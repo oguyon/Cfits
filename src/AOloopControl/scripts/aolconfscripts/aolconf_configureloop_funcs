@@ -160,8 +160,7 @@ WFSnorm="$paramvalue"
 #zrespmatnbiter=$( cat zresptmp/zrespmat_nbiter.txt )
 
 
-ConfReadParam 
-="$paramvalue"
+
 
 
 if [ "$DMMODE" = "ZONAL" ]; then

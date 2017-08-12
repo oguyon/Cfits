@@ -21,7 +21,7 @@ fi
 
 
 if [ "$acqWFSONstat" = " ON" ]; then
-echo "LHS already running"
+echo "WFS RM acquisition already running"
 exit
 fi
 
@@ -69,6 +69,8 @@ LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER
 fi
 
+ConfReadParam DMMODE "0"
+DMMODE="$paramvalue"
 
 ConfReadParam ACzrmNBcycle "5"
 ACzrmNBcycle="$paramvalue"
@@ -92,16 +94,79 @@ ConfReadParam WFSnorm "1"
 WFSnorm="$paramvalue"
 
 
-echo "./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}"
+
+if [ "$DMMODE" = "ZONAL" ]; then
+	ConfReadParam ACmrmtime "60.0"
+	ACmrmtime="$paramvalue"
+
+	ConfReadParam ACmrmNBcycle "5"
+	ACmrmNBcycle="$paramvalue"
+fi
 
 
 
+
+##############################################
+# FUNCTION: ACQUIRE MODAL LO RESPONSE MATRIX
+##############################################
+# ACQUIRE LOW ORDER RESPONSE
+#
+# INPUT:
+#	respM_LOmodes.fits
+#
+# OUTPUT:
+#	LOzrespmat0.fits
+#	LOwfsref0.fits
+#
+function function_acqWFSresp_LOmodes {
+
+if pgrep "aol${LOOPNUMBER}run" > /dev/null # is aolrun running ?
+then # use option -r to re-use AO shared memory configuration
+    ./auxscripts/aolMeasureLOrespmat2 -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
+else
+    ./auxscripts/aolMeasureLOrespmat2 -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
+fi
+}
+
+
+
+
+
+
+##########################################
+# ACQUIRE ZONAL RESPONSE MATRIX
+##########################################
+# ACQUIRE HIGH ORDER WFS RESPONSE: 
+#
+# INPUT:
+# 	conf/RMpokeCube.fits.gz  (poke sequence)
+#		if file does not exist, create straight poke sequence (one actuator at a time) 
+#
+# OUTPUT: 
+# 	zrespmat0.fits
+#	wfsref00.fits
+#
 if pgrep "aol${LOOPNUMBER}run" > /dev/null  # is aolrun running ?
 then # use option -r to re-use AO shared memory configuration
 	./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -r -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
 else
     ./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
 fi
+
+
+
+##########################################
+# ACQUIRE MODAL LO RESPONSE MATRIX
+##########################################
+
+if [ "$DMMODE" = "ZONAL" ]; then
+	if [ "$RMCalibReuseMasks" = "1" ]; then
+	# reuse modes
+	function_acqWFSresp_LOmodes
+	fi
+fi
+
+
 
 
 
