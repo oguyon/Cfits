@@ -243,15 +243,30 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 
 
+ConfReadParam LOOPPROCESS_EXTRWFSMODES "0"; LOOPPROCESS_EXTRWFSMODES="$paramvalue"
+ConfReadParam LOOPPROCESS_EXTROLMODES "0"; LOOPPROCESS_EXTROLMODES="$paramvalue"
+ConfReadParam LOOPPROCESS_DMFILTWB "0"; LOOPPROCESS_DMFILTWB="$paramvalue"
+ConfReadParam LOOPPROCESS_ZPO "0"; LOOPPROCESS_ZPO="$paramvalue"
+ConfReadParam LOOPPROCESS_DMCAVE "0"; LOOPPROCESS_DMCAVE="$paramvalue"
+ConfReadParam LOOPPROCESS_WFSRESAVE "0"; LOOPPROCESS_WFSRESAVE="$paramvalue"
+#ConfReadParam  "0"; ="$paramvalue"
+
 
 if [ "${procONstat}" = "OFF" ]; then
  menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
+ 
  menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+ 
  menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+ 
  menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
+ 
  menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
+ 
  menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
+ 
  menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
+
 else
  menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
 
@@ -349,16 +364,13 @@ menuitems+=( " " " " )
 stringcenter "LOOP SETTING "
 menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
-ConfReadParam loopgain "0.000"
-loopgain="$paramvalue"
+ConfReadParam loopgain "0.000"; loopgain="$paramvalue"
 menuitems+=( "g" "loop gain         =   ${loopgain}" )
 
-ConfReadParam loopmultcoeff "0.000"
-loopmultcoeff="$paramvalue"
+ConfReadParam loopmultcoeff "0.000"; loopmultcoeff="$paramvalue"
 menuitems+=( "e" "mult coeff        =   ${loopmultcoeff}" )
 
-ConfReadParam loopmaxlim "0.000"
-loopmaxlim="$paramvalue"
+ConfReadParam loopmaxlim "0.000"; loopmaxlim="$paramvalue"
 menuitems+=( "m" "actuator max lim  =   ${loopmaxlim}" )
 
 
@@ -377,21 +389,27 @@ fi
 menuitems+=( " " " " )
 
 menuitems+=( "limreset" "Reset mode limit coefficients to 1.0" )
-       
+
+ConfReadParam AUTOTUNELIMITS_ON "OFF"; AUTOTUNELIMITS_ON="$paramvalue"       
 if [ "$AUTOTUNELIMITS_ON" = "OFF" ]; then
   menuitems+=( "ONatlim" "[$AUTOTUNELIMITS_ON]  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
 else
   menuitems+=( "OFFatlim" "[$AUTOTUNELIMITS_ON] \Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
 fi
 
+ConfReadParam AUTOTUNELIMITS_ON "OFF"; AUTOTUNELIMITS_ON="$paramvalue"
 menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMITperc}" )
+
+ConfReadParam AUTOTUNELIMITmcoeff "0.0"; AUTOTUNELIMITmcoeff="$paramvalue"
 menuitems+=( "atlm" "AUTOTUNE_LIMIT_mcoeff       =   ${AUTOTUNELIMITmcoeff}" )
+
+ConfReadParam AUTOTUNELIMITdelta "0.0"; AUTOTUNELIMITdelta="$paramvalue"
 menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMITdelta}" )
 
 
 
 
-
+ConfReadParam AUTOTUNEGAINS_ON "OFF"; AUTOTUNEGAINS_ON="$paramvalue"
 if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
   then
   menuitems+=( "ONatgain" "  \Zb\Zu ==== START AUTOTUNE GAINS loop ====\ZB\ZU" )
@@ -404,12 +422,14 @@ fi
 
 menuitems+=( " " " " )
 
+ConfReadParam ARPFon "OFF"; ARPFon="$paramvalue"
 if [ "$ARPFon" = "OFF" ]; then
 menuitems+=( "ARPFon" " Predictive control (ARPF) is OFF - press to START" )
 else
 menuitems+=( "ARPFoff" "\Z1\Zr Predictive control (ARPF) is  ON - press to STOP\Zn  " )
 fi
 
+ConfReadParam ARPFg "0.0"; ARPFg="$paramvalue"
 menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
 
 
