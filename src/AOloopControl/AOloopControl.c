@@ -2903,6 +2903,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         ID = image_ID(name);
         printf("STEP 000----------- (%ld) --\n", AOconf[loop].NBDMmodes);
         fflush(stdout);
+        list_image_ID();
         aoconfID_cmd_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1);
         printf("STEP 001------------\n");
         fflush(stdout);
