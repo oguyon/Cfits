@@ -148,7 +148,7 @@ DMxsize=$( cat ./conf/param_DMxsize.txt )
 DMysize=$( cat ./conf/param_DMysize.txt )
 ./AOloopControl << EOF
 aolmksimplezpM ${DMxsize} ${DMysize} pokeM
-savefits pokeM "!./conf/RMpokeCubeZ.fits"
+savefits pokeM "!./conf/RMpokeCubeZ.fits.gz"
 exitCLI
 EOF
 fi
@@ -161,7 +161,7 @@ fi
 ./AOloopControl -n $pname << EOF
 aolnb $loopnb
 csetpmove ${CPUset}
-loadfits "./conf/RMpokeCube.fits" RMpokeCube
+loadfits "./conf/RMpokeCube.fits.gz" RMpokeCube
 #savefits RMpokeCube "!_RMpokeCube_test00.fits"
 aolmeaslWFSrespC ${PokeAmpl} ${PokeDelay_fr} ${delayRM1us} ${PokeAveNB_fr} ${PokeNBExcl_fr} RMpokeCube wfsresp wfsref ${normalize_flag} ${AOinitMode} ${NBpokeCycle}
 savefits wfsresp "!zrespmat0.fits"
