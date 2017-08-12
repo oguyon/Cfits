@@ -2706,9 +2706,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         }
     }
     fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmRMname, aoconfID_DMmodes);
+	AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
+	printf("NBmodes = %ld\n", AOconf[loop].NBDMmodes);
 
-
-exit(0);
 
 	/** 
 	 * ## 3. Load DM modes (if level >= 10)
