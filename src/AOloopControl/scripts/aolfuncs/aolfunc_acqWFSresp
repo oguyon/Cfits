@@ -26,6 +26,9 @@ exit
 fi
 
 
+echo " ON" > "./status/stat_acqWFSON.txt"
+
+
 aCALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 # STAGING DIRECTORIES
