@@ -8803,7 +8803,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
 
 
             for(ii=0; ii<msizex*msizey; ii++)
-                data.image[MBLOCK_ID[mblock1]].array.F[MBLOCK_NBmode[mblock1]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii];
+                data.image[MBLOCK_ID[mblock1]].array.F[MBLOCK_NBmode[mblock1]*msizex*msizey+ii] = data.image[ID].array.F[m*msizex*msizey+ii]*data.image[IDmaskRM].array.F[ii]+m;
 
             MBLOCK_NBmode[mblock1]++;
         }
@@ -8844,6 +8844,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             if(sprintf(imname, "fmodes0_%02ld", mblock) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
+			//TEST
 			sprintf(fname, "!./mkmodestmp/fmodes0_%02ld.fits", mblock);
 			save_fits(imname, fname);
 
@@ -8857,7 +8858,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
             float svdcoeff0 = data.image[IDSVDcoeff].array.F[0];
             for(m=0; m<data.image[IDSVDcoeff].md[0].size[0]; m++)
             {
-				printf("( %ld -> %g )\n", m, data.image[IDSVDcoeff].array.F[m]);
+				//printf("( %ld -> %g )\n", m, data.image[IDSVDcoeff].array.F[m]);
                 if(data.image[IDSVDcoeff].array.F[m] > SVDlim00*svdcoeff0)
                     cnt++;
             }
