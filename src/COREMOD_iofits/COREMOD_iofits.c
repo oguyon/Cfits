@@ -472,7 +472,7 @@ long load_fits(const char *file_name, const char *ID_name, int errcode)
                 {
                     if (fits_open_file(&fptr, file_name, READONLY, &FITSIO_status))
                         {
-                            if(check_FITSIO_status(__FILE__, __func__, __LINE__, 1) != 0)
+                            if(check_FITSIO_status(__FILE__, __func__, __LINE__, PrintErrorMsg) != 0)
                             {
                                 if(PrintErrorMsg==1)
                                 {
