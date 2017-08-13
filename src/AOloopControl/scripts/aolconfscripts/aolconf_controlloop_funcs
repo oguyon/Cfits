@@ -8,12 +8,12 @@ exit
 fi
 
 
-# is the loop control in ZONAL CM or MODAL CM mode ?
-CMMODEfile="conf/conf_CMMODE.txt"
+# is the loop control in combined/ZONAL CM or MODAL CM mode ?
+CMMODEfile="conf/param_CMMODE.txt"
 if [ -f $CMMODEfile ]; then
 CMMODE=$( cat ${CMMODEfile} )
 else
-CMMODE="MODAL"
+CMMODE="0"
 echo "$CMMODE" > $CMMODEfile
 fi
 

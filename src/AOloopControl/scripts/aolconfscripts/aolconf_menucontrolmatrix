@@ -140,10 +140,10 @@ menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVD
 if [ "$DMMODE" = "ZONAL" ]; then
 
 
- if [ "$CMMODE" = "ZONAL" ]; then
- menuitems+=( "CMmodeM" "\Zb\Zrcurrent CM mode is $CMMODE\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
+ if [ "$CMMODE" = "1" ]; then
+ menuitems+=( "CMmode0" "\Zb\Zrcurrent Combined mode is $CMMODE\Zn  WFSpix -> ACT                       (select to toggle)" )
  else
- menuitems+=( "CMmodeZ" "\Zb\Zrcurrent CM mode is $CMMODE\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
+ menuitems+=( "CMmode1" "\Zb\Zrcurrent Combined mode is $CMMODE\Zn  WFSpix -> MODES                     (select to toggle)" )
  fi
 
 
@@ -485,18 +485,18 @@ echo "$block10end" > ./conf/param_block10end.txt
 ;;
 
 
-CMmodeM)
-CMMODE="MODAL"
+CMmode0)
+CMMODE="0"
 CMMODEfile="conf/param_CMMODE.txt"
 echo "$CMMODE" > $CMMODEfile
-menucontrolmatrix_default="CMmodeZ"
+menucontrolmatrix_default="CMmode1"
 ;;
 
-CMmodeZ)
-CMMODE="ZONAL"
+CMmode1)
+CMMODE="1"
 CMMODEfile="conf/param_CMMODE.txt"
 echo "$CMMODE" > $CMMODEfile
-menucontrolmatrix_default="CMmodeM"
+menucontrolmatrix_default="CMmode0"
 ;;
 
 
@@ -599,7 +599,7 @@ mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
 echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM.name.txt
 cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
-CMMODE="ZONAL"
+CMMODE="1"
 echo "$CMMODE" > $CMMODEfile
 
 
@@ -639,7 +639,7 @@ state="menu_mkFModes"
 mkModesMODE=0; # full computation
 menucontrolmatrix_default="mkModes0"
 aoconflogext "START control matrix computation mkModesMODE 0"
-CMMODE="MODAL"
+CMMODE="0"
 echo "$CMMODE" > $CMMODEfile
 function_computeModesCM
 ;;
@@ -648,7 +648,7 @@ function_computeModesCM
 mkModesMODE=1; # re-use previous DM modes
 menucontrolmatrix_default="mkModes1"
 aoconflogext "START control matrix computation mkModesMODE 1"
-CMMODE="MODAL"
+CMMODE="0"
 echo "$CMMODE" > $CMMODEfile
 function_computeModesCM
 ;;

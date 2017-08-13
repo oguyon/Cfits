@@ -8,8 +8,8 @@ exit
 fi
 
 
-
-function function_controlmatrix_readparams {
+# TO BE RETIRED
+function RETIRED_function_controlmatrix_readparams {
 
 
 SVDlimall=0.01
