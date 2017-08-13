@@ -104,7 +104,8 @@ confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 csetname="aol${loopnb}RT"
 
 
-#rm /tmp/aol${loopnb}_respM.im.shm
+# Reload/update respM if needed
+Fits2shm -c -p aol${loopnb}_ respM
 
 
 $execname -n $pname << EOF
