@@ -1751,7 +1751,7 @@ menucontrolloop_default="RMMon"
 exec 3>&1;
 RMMamplum=$(dialog --inputbox "modal RM amp [um]" 0 0 "$RMMamplum" 2>&1 1>&3);
 exec 3>&-;
-echo "$rmMamplum" > ./conf/param_RMMamplum.txt
+echo "$RMMamplum" > ./conf/param_RMMamplum.txt
 aoconflogext "set LO RM amplitude $RMMamplum um"
 ;;
 
