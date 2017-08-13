@@ -241,7 +241,7 @@ menuitems+=( "wfsdark" "$menustring" )
 
 menuitems+=( "adark_on" "             Acquire WFS dark -> ./wfsdark/wfsdark_<date>.fits" )
 
-
+menuitems+=( "updark"   "             Load Dark to SHM" )
 
 if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( " " " " )
@@ -868,8 +868,13 @@ menucontrolloop_default="adark_on"
 
 	updark)
 Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
+menucontrolloop_default="updark"
 ;;
 
+	zerodark)
+# TO BE WRITTEN
+menucontrolloop_default="zerodark"
+;;
 
 	smlock) # set masks lock files (from conf file)
 aoconflogext "Set masks lock files"
