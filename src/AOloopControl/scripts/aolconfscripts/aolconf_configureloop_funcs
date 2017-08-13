@@ -33,7 +33,7 @@ fi
 
 
 
-function function_configureloop_readparams {
+function RETIRED_function_configureloop_readparams {
 
 ConfReadParam DMMODE "0"
 DMMODE="$paramvalue"
