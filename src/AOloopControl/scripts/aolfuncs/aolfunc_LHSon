@@ -5,29 +5,47 @@
 #########################################################################################
 
 execname="./AOloopControl"
-
-
-
+statusfile="./status/stat_lsimON.txt"
 
 
 # CHECK IF ALREADY RUNNING
 mkdir -p status
-file="./status/stat_lsimON.txt"
-if [ -a $file ]; then
-	lsimONstat=$( cat $file )
+if [ -a $statusfile ]; then
+	lsimONstat=$( cat $statusfile )
 else
 	lsimONstat="OFF"
-	echo "$lsimONstat" > $file
+	echo "$lsimONstat" > $statusfile
 fi
 
 
 
-
 if [ "$lsimONstat" = " ON" ]; then
-
 echo "LHS already running"
+fi
 
+
+
+##############################################
+# FUNCTION: READ PARAMETER FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
 else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
+
 
 ##########################################
 # READ REQUIRED PARAMETERS
@@ -41,40 +59,10 @@ LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER
 fi
 
-
-# READ LHS hardware latency
-file="./conf/param_linsimDelay.txt"
-if [ -a $file ]; then
-	linsimDelay=$( cat $file )
-else
-	linsimDelay="3000"
-	echo "$linsimDelay" > $file
-fi
-
-
-# READ LHS loop interval
-file="./conf/param_linsimdt.txt"
-if [ -a $file ]; then
-	linsimdt=$( cat $file )
-else
-	linsimdt="2000"
-	echo "$linsimdt" > $file
-fi
-
-
-# READ GPU index for LHS 
-file="./conf/param_GPUlinsim.txt"
-if [ -a $file ]; then
-	GPUlinsim=$( cat $file )
-else
-	GPUlinsim="7"
-	echo "$GPUlinsim" > $file
-fi
-
-
-
-
-
+ConfReadParam linsimDelay "3000"; linsimDelay="$paramvalue" # READ LHS hardware latency [us]
+ConfReadParam linsimdt "2000"; linsimdt="$paramvalue" # READ LHS loop interval [us]
+ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS 
+ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
 
 
 
@@ -82,7 +70,6 @@ fi
 
 tmuxname="aol${LOOPNUMBER}linsim"
 tmuxnameD="aol${LOOPNUMBER}linsimD"
-
 
 #logRunningProcess "aollinsimDelay" "$tmuxnameD" "Add delay to simulation"
 #logRunningProcess "aollindm2wfsim" "$tmuxname" "linear computation of simulated WFS from DM"
@@ -98,30 +85,33 @@ sleep 0.2
 tmux send-keys -t $tmuxnameD "./auxscripts/aollinsimDelay ${linsimDelay}" C-m
 tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlinsim}" C-m
 
+# Save current (hardware) WFS camera name & write new simulated WFS camera name
 cp ./conf/streamlink_wfsim.name.txt ./conf/streamlink_wfsim_hardware.name.txt
-
 echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/streamlink_wfsim.name.txt
 
+
+
 # turn off DM voltage 
-#$execname << EOF
-#aoldmvoltOFF 0
-#exitCLI
-#EOF
+$execname << EOF
+aoldmvoltOFF ${DMindex}
+exitCLI
+EOF
 
 # set dark to zero
-#$execname << EOF
-#readshmim aol${LOOPNUMBER_wfsdark
-#imzero aol${LOOPNUMBER_wfsdark
-#exitCLI
-#EOF
+$execname << EOF
+readshmim aol${LOOPNUMBER_wfsdark
+imzero aol${LOOPNUMBER_wfsdark
+exitCLI
+EOF
 
-#dmdispzero 00 00
+# remove flat
+dmdispzero ${DMindex} 00
 
-#Readwfsimcamname
+# connect to camera
 ./aolfuncs/aolfunc_StreamLink wfsim
 
-echo " ON" > ./status/stat_lsimON.txt
+echo " ON" > $statusfile
 
-fi
+
 
 

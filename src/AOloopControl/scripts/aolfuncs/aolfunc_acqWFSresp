@@ -44,6 +44,9 @@ dir_conf_staged="conf_staged"
 
 
 
+##############################################
+# FUNCTION: READ PARAMETER FROM FILE
+##############################################
 # arg 1: parameter name
 # arg 2: default value
 # 
