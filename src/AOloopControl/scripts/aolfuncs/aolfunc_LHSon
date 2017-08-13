@@ -13,6 +13,58 @@ statusfile="./status/stat_lsimON.txt"
 LHSwfsref0namefile="./conf/shmim_wfsref0linsim.name.txt"
 LHSzrepMnamefile="./conf/shmim_zrespMlinsim.name.txt"
 
+
+
+
+
+
+
+
+
+##############################################
+# FUNCTION: READ STATUS FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function StatReadStat {
+mkdir -p status
+file="./status/stat_$1.txt"
+if [ -f "$file" ]; then
+statusvalue=$( cat $file )
+else
+statusvalue="$2"
+echo "$2" > $file
+fi
+}
+
+##############################################
+# FUNCTION: READ PARAMETER FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "paramvalue"
+function ConfReadParam {
+file="./conf/param_$1.txt"
+if [ -f "$file" ]; then
+paramvalue=$( cat $file )
+else
+paramvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
+
+
+
+
+
+
 ##########################################
 # IF EMPTY, SET LHS CONF TO CURRENT CONF
 ##########################################
@@ -207,49 +259,6 @@ checkFile $execname
 
 
 
-
-
-
-
-
-
-
-
-
-##############################################
-# FUNCTION: READ STATUS FROM FILE
-##############################################
-# arg 1: parameter name
-# arg 2: default value
-# 
-# param value is stored in variable "paramvalue"
-function StatReadStat {
-mkdir -p status
-file="./status/stat_$1.txt"
-if [ -f "$file" ]; then
-statusvalue=$( cat $file )
-else
-statusvalue="$2"
-echo "$2" > $file
-fi
-}
-
-##############################################
-# FUNCTION: READ PARAMETER FROM FILE
-##############################################
-# arg 1: parameter name
-# arg 2: default value
-# 
-# param value is stored in variable "paramvalue"
-function ConfReadParam {
-file="./conf/param_$1.txt"
-if [ -f "$file" ]; then
-paramvalue=$( cat $file )
-else
-paramvalue="$2"
-echo "$2" > $file
-fi
-}
 
 
 
