@@ -154,6 +154,8 @@ fi
 
 # ======================= CHECK REQUIRED DIRS & FILES =================================
 echo ""
+checkFile $LHSwfsref0_FIT
+checkFile $LHSzrespM_FITS
 
 
 # ============================= CHECK IF COMMAND EXISTS ==========================
