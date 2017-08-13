@@ -52,6 +52,8 @@ echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary" 
 echo "   -f                    force don't check status"
 echo "   -g <GPUindex>         set GPU device"
+echo "   -i <loopinterval>     loop interval [us]"
+echo "   -d <loopdelay>        delay/latency [us]"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -121,7 +123,7 @@ done
 
 
 ### Start getopts code ###
-while getopts :hfg: FLAG; do
+while getopts :hfg:i:d: FLAG; do
   case $FLAG in
     h)  #show help
 	if [ "$singlelinehelp" -eq "0" ]; then
@@ -137,6 +139,12 @@ while getopts :hfg: FLAG; do
     ;;
     g)
     echo "$OPTARG" > conf/param_GPUlinsim.txt
+    ;;
+    i)
+    echo "$OPTARG" > conf/param_linsimdt.txt
+    ;;
+    d)
+    echo "$OPTARG" > conf/param_linsimDelay.txt
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
