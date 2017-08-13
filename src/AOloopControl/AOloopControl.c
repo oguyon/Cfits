@@ -2991,6 +2991,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf(" AOconf[loop].activeWFScnt = %ld\n", AOconf[loop].activeWFScnt );
         printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
 
+list_image_ID();
 exit(0);//
         AOconf[loop].init_RM = 0;
         if(sprintf(fname, "conf/aol%ld_respM.fits", loop) < 1)
