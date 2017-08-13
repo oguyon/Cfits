@@ -435,7 +435,7 @@ menuitems+=( " " " " )
 stringcenter "MODAL BLOCK GAINS AND LIMITS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
-if [ "$CMMODE" = "0" ]; then
+#if [ "$CMMODE" = "0" ]; then
 	menuitems+=( "gball" "Set all block to same gain")
 	menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
 	menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
@@ -472,7 +472,7 @@ if [ "$CMMODE" = "0" ]; then
 	done
 	else
 	menuitems+=( " " "LOOP CONTROL IS IN ZONAL MODE - NO ACCESS TO MODAL GAINS OR LIMITS" )
-fi
+#fi
 
 
 
