@@ -68,14 +68,7 @@ menuitems+=( " " " " )
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-file="conf/param_DMMODE.txt"
-if [ -f $file ]; then
-DMMODE=$( cat ${DMMODEfile} )
-else
-DMMODE="ZONAL"
-echo "$DMMODE" > $file
-fi
-
+ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue"
 if [ "$DMMODE" = "ZONAL" ]; then
 menuitems+=( "DMmodeM" "\Zb\Zr DM is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
 else
