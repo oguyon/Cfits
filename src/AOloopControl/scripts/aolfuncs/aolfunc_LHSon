@@ -12,8 +12,23 @@ statusfile="./status/stat_lsimON.txt"
 LHSwfsref0namefile="./conf/shmim_wfsref0linsim.name.txt"
 LHSzrepMnamefile="./conf/shmim_zrespMlinsim.name.txt"
 
+##########################################
+# IF EMPTY, SET LHS CONF TO CURRENT CONF
+##########################################
+if [ ! -f $LHSwfsref0namefile ]; then
+cp  ./conf/shmim_wfsref0.name.txt $LHSwfsref0namefile
+fi
+
+if [ ! -f $LHSzrepMnamefile ]; then
+cp  ./conf/shmim_zrespM.name.txt $LHSzrepMnamefile
+fi
+
+
 LHSwfsref0_FITS=$( cat $LHSwfsref0namefile )
 LHSzrespM_FITS=$( cat $LHSzrepMnamefile )
+
+
+
 
 printHELP ()
 {
@@ -23,10 +38,9 @@ echo "$(tput bold) $pname : START LINEAR HARDWARE SIMULATOR $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo " "
 echo "Current values:"
-echo " $(tput bold)LOOPNUMBER  :$(tput sgr0)  $LOOPNUMBER"
-echo " $(tput bold)LOOPNAME    :$(tput sgr0)  $LOOPNAME"
 echo " $(tput bold)LHS wfsref0 :$(tput sgr0)  $LHSwfsref0_FITS"
 echo " $(tput bold)LHS zrespM  :$(tput sgr0)  $LHSzrespM_FITS"
+echo "If current configuration is empty, script has set it to current hardware configuration"
 echo " "
 echo " "
 echo " $(tput bold)USAGE:$(tput sgr0)"
@@ -238,6 +252,9 @@ paramvalue="$2"
 echo "$2" > $file
 fi
 }
+
+
+
 
 
 
