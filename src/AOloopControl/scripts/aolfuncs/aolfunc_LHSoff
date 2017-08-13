@@ -17,7 +17,7 @@ printHELP ()
 {
 echo
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : START LINEAR HARDWARE SIMULATOR $(tput sgr0)"
+echo "$(tput bold) $pname : STOP LINEAR HARDWARE SIMULATOR $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo " "
 echo "Current values:"
@@ -40,7 +40,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-	printf "%20s       AO Start linear hardware simulator\n" "$0" 
+	printf "%20s       AO Stop linear hardware simulator\n" "$0" 
 }
 
 
@@ -102,7 +102,7 @@ done
 
 
 ### Start getopts code ###
-while getopts :hH:l:CcL:N:xe:n FLAG; do
+while getopts :h FLAG; do
   case $FLAG in
     h)  #show help
 	if [ "$singlelinehelp" -eq "0" ]; then
@@ -210,7 +210,7 @@ StatReadStat lsimON "OFF"; lsimONstat="$statusvalue"
 
 if [ "$lsimONstat" = "OFF" ]; then
 echo "LHS already OFF"
-echo "remove ./status/stat_lsimON.txt to force"
+echo "set ./status/stat_lsimON.txt to \" ON\" to force"
 exit
 fi
 
