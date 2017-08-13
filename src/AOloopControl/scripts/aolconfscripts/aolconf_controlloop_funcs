@@ -186,7 +186,7 @@ fi
 
 
 
-if [ "$CMMODE" -eq "0" ]; then  # if CM multiplication outputs modes
+if [ "$CMMODE" = "0" ]; then  # if CM multiplication outputs modes
 #echo "Linking    /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm  - /tmp/aol${LOOPNUMBER}_modeval.im.shm"
 echo "rm /tmp/aol${LOOPNUMBER}_modeval.im.shm" >> $scriptfile
 echo "ln -s /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm /tmp/aol${LOOPNUMBER}_modeval.im.shm" >> $scriptfile
