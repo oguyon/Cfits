@@ -84,6 +84,23 @@ echo "$2" > $file
 fi
 }
 
+##############################################
+# FUNCTION: READ STATUS FROM FILE
+##############################################
+# arg 1: status name
+# arg 2: default value
+# 
+# param value is stored in variable "statusvalue"
+function StatReadStat {
+mkdir -p status
+file="./status/stat_$1.txt"
+if [ -f "$file" ]; then
+statusvalue=$( cat $file )
+else
+statusvalue="$2"
+echo "$2" > $file
+fi
+}
 
 
 

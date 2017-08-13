@@ -242,8 +242,8 @@ ConfReadParam LOOPPROCESS_DMFILTWB "0"; LOOPPROCESS_DMFILTWB="$paramvalue"
 ConfReadParam LOOPPROCESS_ZPO "0"; LOOPPROCESS_ZPO="$paramvalue"
 ConfReadParam LOOPPROCESS_DMCAVE "0"; LOOPPROCESS_DMCAVE="$paramvalue"
 ConfReadParam LOOPPROCESS_WFSRESAVE "0"; LOOPPROCESS_WFSRESAVE="$paramvalue"
-#ConfReadParam  "0"; ="$paramvalue"
 
+StatReadStat procON "OFF"; procONstat="$statusvalue"
 
 if [ "${procONstat}" = "OFF" ]; then
  menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )

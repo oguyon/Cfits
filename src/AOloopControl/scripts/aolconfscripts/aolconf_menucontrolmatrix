@@ -28,7 +28,7 @@ For all configurations files (not including Hardware I/O links) :\n
 "
 
 
-function_controlmatrix_readparams
+#function_controlmatrix_readparams
 
 confOK=1
 stringcenter "HELP"
@@ -36,73 +36,83 @@ menuitems=( "H" "\Zb\Zr\Z4$string\Zn" )
 menuitems+=( " " " " )
 
 
-ConfReadParam SVDlimall "0.01"
-SVDlimall=${paramvalue}
+ConfReadParam SVDlimall "0.01"; SVDlimall=${paramvalue}
 menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall}" )
 
 
 
-
-
+# to read variable:
+# ConfReadParam  ""; =${paramvalue}
 
 
 if [ "$DMMODE" = "MODAL" ]; then
 
-
+ConfReadParam NBmodeblocks "0"; NBmodeblocks=${paramvalue}
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
 
 
 if [ "0" -lt "$NBmodeblocks" ]; then
+ConfReadParam block00end "1"; block00end=${paramvalue}
 menuitems+=( "bl00e" "            [ $block00end ]    block 00:  000 -> $block00end" )
 fi
 
 
 if [ "1" -lt "$NBmodeblocks" ]; then
+ConfReadParam block01end "2"; block01end=${paramvalue}
 menuitems+=( "bl01e" "            [ $block01end ]    block 01:  $block00end -> $block01end" )
 fi
 
 
 if [ "2" -lt "$NBmodeblocks" ]; then
+ConfReadParam block02end "3"; block02end=${paramvalue}
 menuitems+=( "bl02e" "            [ $block02end ]    block 02:  $block01end -> $block02end" )
 fi
 
 
 if [ "3" -lt "$NBmodeblocks" ]; then
+ConfReadParam block03end "4"; block03end=${paramvalue}
 menuitems+=( "bl03e" "            [ $block03end ]    block 03:  $block02end -> $block03end" )
 fi
 
 
 if [ "4" -lt "$NBmodeblocks" ]; then
+ConfReadParam block04end "5"; block04end=${paramvalue}
 menuitems+=( "bl04e" "            [ $block04end ]    block 04:  $block03end -> $block04end" )
 fi
 
 
 if [ "5" -lt "$NBmodeblocks" ]; then
+ConfReadParam block05end "6"; block05end=${paramvalue}
 menuitems+=( "bl05e" "            [ $block05end ]    block 05:  $block04end -> $block05end" )
 fi
 
 
 if [ "6" -lt "$NBmodeblocks" ]; then
+ConfReadParam block06end "7"; block06end=${paramvalue}
 menuitems+=( "bl06e" "            [ $block06end ]    block 06:  $block05end -> $block06end" )
 fi
 
 
 if [ "7" -lt "$NBmodeblocks" ]; then
+ConfReadParam block07end "8"; block07end=${paramvalue}
 menuitems+=( "bl07e" "            [ $block07end ]    block 07:  $block06end -> $block07end" )
 fi
 
 
 if [ "8" -lt "$NBmodeblocks" ]; then
+ConfReadParam block08end "9"; block08end=${paramvalue}
 menuitems+=( "bl08e" "            [ $block08end ]    block 08:  $block07end -> $block08end" )
 fi
 
 
 if [ "9" -lt "$NBmodeblocks" ]; then
+ConfReadParam  block09end"10"; block09end=${paramvalue}
 menuitems+=( "bl09e" "            [ $block09end ]    block 09:  $block08end -> $block09end" )
 fi
 
 
 if [ "10" -lt "$NBmodeblocks" ]; then
+ConfReadParam block10end "11"; block10end=${paramvalue}
 menuitems+=( "bl10e" "            [ $block10end ]    block 10:  $block09end -> $block10end" )
 fi
 
@@ -129,17 +139,17 @@ makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
 menuitems+=( "zRM" "$menustring" )
 
 
-
+#Q? ConfReadParam SVDNBmodes "00"; SVDNBmodes=${paramvalue}
 menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVDNBmodes} modes kept]  (./conf_staged/aol${LOOPNUMBER}_zrespM.fits -> ./conf_staged/shmim_contrM.name.txt)" )
 
 
 
 
 
-
+ConfReadParam DMMODE "ZONAL"; DMMODE=${paramvalue}
 if [ "$DMMODE" = "ZONAL" ]; then
 
-
+ConfReadParam CMMODE "0"; CMMODE=${paramvalue}
  if [ "$CMMODE" = "1" ]; then
  menuitems+=( "CMmode0" "\Zb\Zrcurrent Combined mode is $CMMODE\Zn  WFSpix -> ACT                       (select to toggle)" )
  else
@@ -175,7 +185,10 @@ if [ "$DMMODE" = "ZONAL" ]; then
 
 
  menuitems+=( " " " " )
+ 
+ConfReadParam cpamax "00"; cpamax=${paramvalue}
  menuitems+=( "modeCPA" "[$cpamax] Select maximum CPA" )
+
  menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
  #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
