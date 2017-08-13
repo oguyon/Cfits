@@ -126,7 +126,7 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary" 
 echo "   -f                    force don't check status"
-echo "   -g <GPUindex>         set GPU device "
+echo "   -g <GPUindex>         set GPU device"
 echo "   -i <linsimdt>         loop interval [us]"
 echo "   -d <linsimDelay>      delay/latency [us]"
 echo ""
@@ -214,12 +214,15 @@ while getopts :hfg:i:d: FLAG; do
     ;;
     g)
     echo "$OPTARG" > conf/param_GPUlinsim.txt
+    GPUlinsim="${OPTARG}"
     ;;
     i)
     echo "$OPTARG" > conf/param_linsimdt.txt
+    linsimdt="${OPTARG}"
     ;;
     d)
     echo "$OPTARG" > conf/param_linsimDelay.txt
+    linsimDelay="${OPTARG}"
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
