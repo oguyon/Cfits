@@ -53,9 +53,10 @@ menuitems+=( " " " ")
 
 menuitems+=( "S" "[${DMindex}] Set DM index" )
 
-DMxsize=$(cat "./conf/param_DMxsize.txt")
+ConfReadParam DMxsize "0"; DMxsize="$paramvalue"
 menuitems+=( "dmxs" "[${DMxsize}] Set DM x size (if modal control, = number of modes)" )
-DMysize=$(cat "./conf/param_DMysize.txt")
+
+ConfReadParam DMysize "0"; DMysize="$paramvalue"
 menuitems+=( "dmys" "[${DMysize}] Set DM y size (1 if modal control)" )
 
 menuitems+=( " " " " )
@@ -84,15 +85,6 @@ fi
 
 
 
-file="./conf/param_DM2DM_mode.txt"
-DM2DM_mode=$( cat $file )
-if [[ -f "$file" && ( "$DM2DM_mode" = "1" || "$DM2DM_mode" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-DM2DM_mode=0
-fi
-
 file="./conf/conf_dm2dmModes_name.txt"
 dm2dmModesMast=$( cat $file )
 
@@ -100,7 +92,9 @@ dm2dmModesMast=$( cat $file )
 
 
 menuitems+=( " " " ")
-if [ "${dm2dm_mode}" = "0" ];
+
+ConfReadParam DM2DM_mode "0"; DM2DM_mode="$paramvalue"
+if [ "${DM2DM_mode}" = "0" ];
 then
 menuitems+=( "dm2dmMode1" " [  OFF  ] DM-to-DM is OFF (select to activate virtual (modal) DM to physical DM mode)" )
 menuitems+=( " " " ")

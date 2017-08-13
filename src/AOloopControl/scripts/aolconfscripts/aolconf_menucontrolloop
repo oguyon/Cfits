@@ -196,13 +196,13 @@ ConfReadParam DM2DM_mode "0"; DM2DM_mode="$paramvalue"
 if [ "${DM2DM_mode}" = "0" ]; then
 
 ConfReadParam GPUmodesextrwfs "0"; GPUmodesextrwfs="$paramvalue"
- menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
+menuitems+=( "GPUmewfs" "[ $GPUmodesextrwfs ]    WFS mode coefficients extraction: GPU device" )
 
 ConfReadParam GPUdmfwb "0"; GPUdmfwb="$paramvalue"
- menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU device" )
+menuitems+=( "GPUdmfwb" "[ $GPUdmfwb ]    DM modal write (post-filtering): GPU device" )
 
 ConfReadParam GPUzpoffsetZ "0"; GPUzpoffsetZ="$paramvalue"
- menuitems+=( "GPUzpZ" "[ $GPUzpoffsetZ ]    Zonal WFS zero point offset loop: GPU device" )
+menuitems+=( "GPUzpZ" "[ $GPUzpoffsetZ ]    Zonal WFS zero point offset loop: GPU device" )
 fi
 
 if [ "${DM2DM_mode}" = "1" ]; then
