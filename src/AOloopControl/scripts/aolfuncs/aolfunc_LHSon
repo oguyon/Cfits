@@ -281,6 +281,14 @@ ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS
 ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
 
 
+##########################################
+# LOAD LIN SIM CALIB
+##########################################
+
+Fits2shm -c -p aol${LOOPNUMBER}_ zrespMlinsim 
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0linsim
+
+
 
 
 
