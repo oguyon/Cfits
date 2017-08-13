@@ -231,7 +231,7 @@ fi
 # CHECK IF ALREADY RUNNING
 ##########################################
 
-StatReadStat lsimON " ON"; lsimONstat="$statusvalue"
+StatReadStat lsimON "OFF"; lsimONstat="$statusvalue"
 
 if [ "$lsimONstat" = " ON" ]; then
 echo ""
