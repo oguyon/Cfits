@@ -2991,7 +2991,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf(" AOconf[loop].activeWFScnt = %ld\n", AOconf[loop].activeWFScnt );
         printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
 
-
+exit(0);//
         AOconf[loop].init_RM = 0;
         if(sprintf(fname, "conf/aol%ld_respM.fits", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
