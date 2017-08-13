@@ -51,6 +51,7 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary" 
 echo "   -f                    force don't check status"
+echo "   -g <GPUindex>         set GPU device"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -120,7 +121,7 @@ done
 
 
 ### Start getopts code ###
-while getopts :hf FLAG; do
+while getopts :hfg: FLAG; do
   case $FLAG in
     h)  #show help
 	if [ "$singlelinehelp" -eq "0" ]; then
@@ -133,6 +134,9 @@ while getopts :hf FLAG; do
     f)
     echo "Removing $statusfile"
     rm $statusfile
+    ;;
+    g)
+    echo "$OPTARG" > conf/param_GPUlinsim.txt
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
