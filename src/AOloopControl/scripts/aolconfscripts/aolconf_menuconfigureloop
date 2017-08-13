@@ -1050,8 +1050,7 @@ echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 case $retval in
    0) # button
 mkdir -p "${confname}"
-rsync -a --no-links conf ${confname}
-#cp conf/* "${confname}/"
+rsync -a --no-links conf/* ${confname}
 ;;
 esac
 ;;
