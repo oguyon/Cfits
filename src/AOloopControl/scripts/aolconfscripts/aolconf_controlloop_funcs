@@ -19,7 +19,7 @@ fi
 
 
 
-
+# TO RETIRE ... READ PARAMS AS NEEDED
 function function_controlloop_readparams 
 {
 
