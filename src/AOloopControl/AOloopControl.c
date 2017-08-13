@@ -2149,13 +2149,15 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	
 	/** ## 1. Initial setup from configuration files */
 
+list_image_ID();
+exit(0);//
+
 	/** - 1.1. Initialize memory */
 	fprintf(fplog, "\n\n============== 1.1. Initialize memory ===================\n\n");
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
-list_image_ID();
-exit(0);//
+
 
 	
 	//
