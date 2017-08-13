@@ -801,7 +801,6 @@ esac
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP5
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP6
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmZP7
-./auxscripts/shmimzero aol${LOOPNUMBER}_dmdisp
 ./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 aoconflogext "Zero all DM arrays"
 ;;
@@ -979,6 +978,8 @@ tmux send-keys -t ${tmuxnameaWFSr} "" C-c
 tmux send-keys -t ${tmuxnameaWFSr} "exit" C-m
 tmux kill-session -t ${tmuxnameaWFSr}
 rm runproc/function_nAUTOC.runproc
+echo "OFF" > ./status/stat_acqWFSON.txt
+./auxscripts/shmimzero aol${LOOPNUMBER}_dmRM
 ;;
 
 
