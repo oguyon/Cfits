@@ -313,6 +313,8 @@ menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 if [ "${procONstat}" = " ON" ]; then
 
+ StatReadStat loopON "OFF"; loopONstat="$statusvalue"
+
  if [ "${loopONstat}" = "OFF" ]; then
   menuitems+=( "Nloopon" "  \Zb\Zu ==== START control loop ====\ZB\ZU" )
  else
@@ -321,11 +323,11 @@ if [ "${procONstat}" = " ON" ]; then
  
  menuitems+=( "Z" "LOOP Zero" )
  
- #Q: loopNBstep as param ?
+ConfReadParam loopNBstep "1"; loopNBstep="$paramvalue"
  menuitems+=( "nbstep" "[$loopNBstep] set loopNBsteps" )
  menuitems+=( "tstep" "Advance $loopNBstep step(s)" )
  
- #Q: read stat vars as conf/param ?
+ StatReadStat procWFSres2refON "OFF"; procWFSres2refONstat="$statusvalue"
  if [ "$procWFSres2refONstat" = "OFF" ]; then
   menuitems+=( "wresolON" "WFS residual offload to wfsref is OFF, press to START" )
  else
@@ -435,7 +437,8 @@ menuitems+=( " " " " )
 stringcenter "MODAL BLOCK GAINS AND LIMITS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
-if [ "$CMMODE" = "0" ]; then
+ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue"
+if [ "$DMMODE" = "ZONAL" ]; then
 	menuitems+=( "gball" "Set all block to same gain")
 	menuitems+=( "gball01" "Custom gain set 01 (alpha = 0.1)")
 	menuitems+=( "gball02" "Custom gain set 02 (alpha = 0.2)")
