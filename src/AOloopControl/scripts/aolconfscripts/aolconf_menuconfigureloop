@@ -295,7 +295,7 @@ fi
 
 
 if [ -f "runproc/function_nAUTOC.runproc" ]; then
-menuitems+=( "nAUTOC" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING\Zn")
+menuitems+=( "nAUTOCk" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING - Press to KILL\Zn")
 else
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
 fi
@@ -972,6 +972,14 @@ echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
 function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
 
+nAUTOCk)
+tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
+tmux send-keys -t ${tmuxnameaWFSr} "" C-c
+tmux send-keys -t ${tmuxnameaWFSr} "" C-c
+tmux send-keys -t ${tmuxnameaWFSr} "exit" C-m
+tmux kill-session -t ${tmuxnameaWFSr}
+rm runproc/function_nAUTOC.runproc
+;;
 
 
 	confUp)
