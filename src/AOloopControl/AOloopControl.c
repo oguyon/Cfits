@@ -2154,6 +2154,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
 
+list_image_ID();
+exit(0);//
+
 	
 	//
     /** ### 1.2. Set names of key streams */
@@ -2991,8 +2994,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf(" AOconf[loop].activeWFScnt = %ld\n", AOconf[loop].activeWFScnt );
         printf(" AOconf[loop].activeDMcnt = %ld\n", AOconf[loop].activeDMcnt );
 
-list_image_ID();
-exit(0);//
+
         AOconf[loop].init_RM = 0;
         if(sprintf(fname, "conf/aol%ld_respM.fits", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
