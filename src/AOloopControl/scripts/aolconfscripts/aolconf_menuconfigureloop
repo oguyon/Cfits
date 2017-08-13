@@ -371,7 +371,7 @@ fi
 
 
 
-
+ConfReadParam WFSnorm "1"; WFSnorm="$paramvalue"
 if [ "${WFSnorm}" -eq "0" ]; then
 menuitems+=( "WFSNon" "\ZbWFS normalize is OFF\ZB   press to turn on")
 else
