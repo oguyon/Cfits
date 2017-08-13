@@ -206,11 +206,11 @@ fi
 if [ "${RMmodal}" = " ON" ];
 then
 
-    ConfReadParam rmMamplum "0.1"
-	rmMamplum="$paramvalue"
+    ConfReadParam RMMamplum "0.1"
+	RMMamplum="$paramvalue"
 
-    ConfReadParam rmMcpa "1.0"
-    rmMcpa="$paramvalue"
+    ConfReadParam RMMcpa "1.0"
+    RMMcpa="$paramvalue"
    
    
 
@@ -465,16 +465,16 @@ sleep 0.2
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t $1 "echo \" ON\" > ./status/stat_LOrespM.txt" C-m
 logRunningProcess "aolMeasureLOrespmat" "$1" "Acquiring LO modal response matrix"
-tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${rmMcpa}" C-m
+tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${RMMcpa}" C-m
 
 if pgrep "aol${LOOPNUMBER}run" > /dev/null
 then # use option -r to re-use AO shared memory configuration
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -r -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 else
-    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
+    tmux send-keys -t $1 "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" C-m
 fi
-echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${rmMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
-aoconflogext "START LO RM acquisition   CPA=$rmMcpa  amp=$rmMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frames, $RMexfr frames excluded"
+echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
+aoconflogext "START LO RM acquisition   CPA=$RMMcpa  amp=$RMMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frames, $RMexfr frames excluded"
 
 tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
 tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
@@ -499,7 +499,7 @@ tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 tmux send-keys -t $1 "sleep 0.2" C-m
 tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
 aoconflogext "STOP LO RM acquisition"
-tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${rmMamplum} ${WFSnorm}" C-m
+tmux send-keys -t $1 "./auxscripts/aolCleanLOrespmat ${RMMamplum} ${WFSnorm}" C-m
 echo "./auxscripts/aolCleanLOrespmat ${RMamplum} ${WFSnorm}" >> aolcmd.txt
 logRunningProcess "aolCleanLOrespmat" "$1" "Process LO modal response matrix"
 

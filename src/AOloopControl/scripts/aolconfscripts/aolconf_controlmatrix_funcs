@@ -248,6 +248,7 @@ echo "echo \"respM/respM_${datestr}.fits\" > ./conf_staged/shmim_respM.name.txt"
 echo "cp ./mkmodestmp/cmatall.fits contrM/contrM_${datestr}.fits"  >> $computeModesCMscriptfile
 echo "echo \"contrM/contrM_${datestr}.fits\" > ./conf_staged/shmim_contrM.name.txt"  >> $computeModesCMscriptfile
 
+echo "cp ./mkmodestmp/NBmodes.txt ./conf_staged/param_NBmodes.txt" >> $computeModesCMscriptfile
 
 for i in `seq 0 20`;
 do
