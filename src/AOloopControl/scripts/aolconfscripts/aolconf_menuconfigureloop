@@ -866,7 +866,9 @@ aoconflogext "taking dark"
 menucontrolloop_default="adark_on"
 ;;
 
-
+	updark)
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
+;;
 
 
 	smlock) # set masks lock files (from conf file)
