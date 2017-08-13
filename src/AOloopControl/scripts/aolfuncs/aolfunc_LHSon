@@ -49,6 +49,7 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary" 
+echo "   -f                    force don't check status"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -118,7 +119,7 @@ done
 
 
 ### Start getopts code ###
-while getopts :h FLAG; do
+while getopts :hf FLAG; do
   case $FLAG in
     h)  #show help
 	if [ "$singlelinehelp" -eq "0" ]; then
@@ -128,6 +129,9 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+    f)
+    rm statusfile
+    ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -228,8 +232,10 @@ fi
 StatReadStat lsimON " ON"; lsimONstat="$statusvalue"
 
 if [ "$lsimONstat" = " ON" ]; then
+echo ""
 echo "LHS already ON"
-echo "remove ./status/stat_lsimON.txt to force"
+echo "USE -f option to force (removes ./status/stat_lsimON.txt)"
+echo ""
 exit
 fi
 
