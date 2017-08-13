@@ -104,7 +104,9 @@ confnb=$(cat ./conf/conf_CONFNUMBER.txt)
 csetname="aol${loopnb}RT"
 
 
-rm /tmp/aol${loopnb}_respM.im.shm
+#rm /tmp/aol${loopnb}_respM.im.shm
+
+
 $execname -n $pname << EOF
 csetpmove ${csetname}
 aolnb $loopnb

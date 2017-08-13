@@ -11356,7 +11356,6 @@ int_fast8_t AOloopControl_run()
     int semval;
 
 
-
     /*    float tmpv, tmpv1, tmpv2;
         float range1 = 0.1; // limit single iteration motion
         float rangec = 0.3; // limit cumulative motion
@@ -11374,8 +11373,6 @@ int_fast8_t AOloopControl_run()
     loop = LOOPNUMBER;
 
 
-list_image_ID();
-exit(0);//
 
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(0);
