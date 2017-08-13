@@ -296,8 +296,8 @@ EOF
 
 # set dark to zero
 $execname << EOF
-readshmim aol${LOOPNUMBER_wfsdark
-imzero aol${LOOPNUMBER_wfsdark
+readshmim aol${LOOPNUMBER}_wfsdark
+imzero aol${LOOPNUMBER}_wfsdark
 exitCLI
 EOF
 
