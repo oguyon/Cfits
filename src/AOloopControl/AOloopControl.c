@@ -2402,7 +2402,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
     // Direct DM write ?
-    if((fp=fopen("./conf/param_DMprimWriteON.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_DMprimWriteON.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_DMprimWriteON.txt missing\n");
         printf("Setting DMprimaryWrite_ON = 1\n");
@@ -2420,6 +2420,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].DMprimaryWrite_ON = atoi(content);
         fprintf(fplog, "AOconf[%ld].DMprimaryWrite_ON = %d\n", loop, AOconf[loop].DMprimaryWrite_ON);
     }
+    
+    
 
 	/** ### 1.7. WFS image total flux computation mode
 	 * 
@@ -2451,19 +2453,19 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.8. Read CMatrix mult mode
      * 
-     * - ./conf/param_CMmode.txt -> MATRIX_COMPUTATION_MODE
+     * - ./conf/param_CMMMODE.txt -> MATRIX_COMPUTATION_MODE
      * 		- 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
      * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
      */ 
 
  	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
 
-    if((fp=fopen("./conf/param_CMmode.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_CMMODE.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/param_CMmode.txt missing\n");
+        printf("WARNING: file ./conf/param_CMMODE.txt missing\n");
         printf("Using combined matrix\n");
         MATRIX_COMPUTATION_MODE = 1;  // by default, use combined matrix
-        fprintf(fplog, "WARNING: file ./conf/param_CMmode.txt missing. Using combined matrix\n");
+        fprintf(fplog, "WARNING: file ./conf/param_CMMODE.txt missing. Using combined matrix\n");
     }
     else
     {
@@ -10092,7 +10094,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
         save_fits("cmatall", "!./mkmodestmp/cmatall.fits");
 
-		
+
 
 
         // COMPUTE OVERALL CONTROL MATRIX
@@ -11652,6 +11654,9 @@ int_fast8_t AOloopControl_run()
 
     return(0);
 }
+
+
+
 
 
 
