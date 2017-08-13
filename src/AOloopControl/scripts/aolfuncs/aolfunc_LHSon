@@ -4,6 +4,7 @@
 ##          LINEAR HARDWARE SIMULATOR  ON                                              ##
 #########################################################################################
 
+NBARGS=0
 execname="./AOloopControl"
 statusfile="./status/stat_lsimON.txt"
 
@@ -130,7 +131,7 @@ while getopts :hf FLAG; do
       exit
       ;;
     f)
-    rm statusfile
+    rm $statusfile
     ;;
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
