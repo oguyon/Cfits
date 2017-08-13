@@ -31,6 +31,25 @@ LHSzrespM_FITS=$( cat $LHSzrepMnamefile )
 
 
 
+##########################################
+# READ REQUIRED PARAMETERS
+##########################################
+
+# READ LOOP NUMBER
+if [ -f LOOPNUMBER ]; then
+LOOPNUMBER=$( cat LOOPNUMBER )
+else
+LOOPNUMBER="7"
+echo "$LOOPNUMBER" > LOOPNUMBER
+fi
+
+ConfReadParam linsimDelay "3000"; linsimDelay="$paramvalue" # READ LHS hardware latency [us]
+ConfReadParam linsimdt "2000"; linsimdt="$paramvalue" # READ LHS loop interval [us]
+ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS 
+ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
+
+
+
 printHELP ()
 {
 echo
@@ -39,9 +58,13 @@ echo "$(tput bold) $pname : START LINEAR HARDWARE SIMULATOR $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo " "
 echo "Current values:"
-echo " $(tput bold)LHS wfsref0 :$(tput sgr0)  $LHSwfsref0_FITS"
-echo " $(tput bold)LHS zrespM  :$(tput sgr0)  $LHSzrespM_FITS"
-echo "If current configuration is empty, script has set it to current hardware configuration"
+echo "     $(tput bold)LHS wfsref0 :$(tput sgr0)  $LHSwfsref0_FITS"
+echo "     $(tput bold)LHS zrespM  :$(tput sgr0)  $LHSzrespM_FITS"
+echo "            If current configuration is empty, script has set it to current hardware configuration"
+echo "     $(tput bold)GPUlinsim   :$(tput sgr0)  $GPUlinsim"
+echo "     $(tput bold)limsimdt    :$(tput sgr0)  $linsimdt"
+echo "     $(tput bold)linsimDelay :$(tput sgr0)  $linsimDelay"
+echo ""
 echo " "
 echo " "
 echo " $(tput bold)USAGE:$(tput sgr0)"
@@ -51,9 +74,9 @@ echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "   --help -h             print (h)elp and exit"
 echo "   --help1               print 1 line summary" 
 echo "   -f                    force don't check status"
-echo "   -g <GPUindex>         set GPU device"
-echo "   -i <loopinterval>     loop interval [us]"
-echo "   -d <loopdelay>        delay/latency [us]"
+echo "   -g <GPUindex>         set GPU device "
+echo "   -i <linsimdt>         loop interval [us]"
+echo "   -d <linsimDelay>      delay/latency [us]"
 echo ""
 echo "------------------------------------------------------------------------"
 }
@@ -283,22 +306,6 @@ fi
 
 
 
-##########################################
-# READ REQUIRED PARAMETERS
-##########################################
-
-# READ LOOP NUMBER
-if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
-else
-LOOPNUMBER="7"
-echo "$LOOPNUMBER" > LOOPNUMBER
-fi
-
-ConfReadParam linsimDelay "3000"; linsimDelay="$paramvalue" # READ LHS hardware latency [us]
-ConfReadParam linsimdt "2000"; linsimdt="$paramvalue" # READ LHS loop interval [us]
-ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS 
-ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
 
 
 ##########################################
