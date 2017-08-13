@@ -131,6 +131,7 @@ while getopts :hf FLAG; do
       exit
       ;;
     f)
+    echo "Removing $statusfile"
     rm $statusfile
     ;;
     \?) #unrecognized option - show help
