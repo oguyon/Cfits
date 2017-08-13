@@ -10067,6 +10067,11 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         save_fits("fmodesWFSall", "!./mkmodestmp/fmodesWFSall.fits");
 
 
+		fp = fopen("./mkmodestmp/NBmodes.txt", "w");
+        fprintf(fp, "%ld\n", cnt);
+        fclose(fp);		
+		
+		
         cnt = 0;
         for(mblock=0; mblock<NBmblock; mblock++)
             cnt += MBLOCK_NBmode[mblock];
@@ -10087,7 +10092,7 @@ long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float 
         }
         save_fits("cmatall", "!./mkmodestmp/cmatall.fits");
 
-
+		
 
 
         // COMPUTE OVERALL CONTROL MATRIX

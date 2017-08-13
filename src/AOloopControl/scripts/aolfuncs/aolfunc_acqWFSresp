@@ -73,29 +73,21 @@ LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER
 fi
 
-ConfReadParam DMMODE "0"
-DMMODE="$paramvalue"
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue"
 
-ConfReadParam ACzrmNBcycle "5"
-ACzrmNBcycle="$paramvalue"
+ConfReadParam ACzrmNBcycle "5"; ACzrmNBcycle="$paramvalue"
 
-ConfReadParam delayRM1us "0"
-delayRM1us="$paramvalue"
+ConfReadParam delayRM1us "0"; delayRM1us="$paramvalue"
 
-ConfReadParam RMamplum "0.05"
-RMamplum="$paramvalue"
+ConfReadParam RMamplum "0.05"; RMamplum="$paramvalue"
 
-ConfReadParam RMdelayfr "2"
-RMdelayfr="$paramvalue"
+ConfReadParam RMdelayfr "2"; RMdelayfr="$paramvalue"
 
-ConfReadParam RMfrave "5"
-RMfrave="$paramvalue"
+ConfReadParam RMfrave "5"; RMfrave="$paramvalue"
 
-ConfReadParam RMexfr "2"
-RMexfr="$paramvalue"
+ConfReadParam RMexfr "2"; RMexfr="$paramvalue"
 
-ConfReadParam WFSnorm "1"
-WFSnorm="$paramvalue"
+ConfReadParam WFSnorm "1"; WFSnorm="$paramvalue"
 
 
 ConfReadParam RMCalibReuseMasks "0"
