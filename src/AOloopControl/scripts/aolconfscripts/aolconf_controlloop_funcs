@@ -20,7 +20,7 @@ fi
 
 
 # TO RETIRE ... READ PARAMS AS NEEDED
-function function_controlloop_readparams 
+function RETIRED_function_controlloop_readparams 
 {
 
 file="./conf/conf_loopgain.txt"
