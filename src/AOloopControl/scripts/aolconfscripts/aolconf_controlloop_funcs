@@ -294,6 +294,10 @@ fi
 }
 
  
+ 
+ 
+ 
+ 
 
 
 # argument is tmux session name within which command should be executed
@@ -419,24 +423,22 @@ echo "./setupAOloopON" >> $scriptfile
 
 if [ "$1" = "NULL" ]; then
 ./$scriptfile
+
 loopONstat=" ON"
-file="./conf/conf_logmode.txt"
-logMode=$( cat $file )
-if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logMode=0
-fi
-if [ "$logMode" = "1" ] || [ "$logMode" =  "2" ] ;
-then
+
+
+ConfReadParam logMode "0"; logMode="$paramvalue" # LOG mode
+if [ "$logMode" = "1" ]; then   # log when loop is closed
 start_Telemetrylog_all
 fi
+
 else
 tmux send-keys -t $1 "./$scriptfile" C-m
 fi
 
 }
+
+
 
 
 
@@ -460,23 +462,16 @@ echo "./setupAOloopOFF" >> $scriptfile
 
 
 
-
-
 if [ "$1" = "NULL" ]; then
 ./$scriptfile
 loopONstat="OFF"
-file="./conf/conf_logmode.txt"
-logMode=$( cat $file )
-if [[ -f "$file" && ( "$logMode" = "0" || "$logMode" = "1" || "$logMode" = "2" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logMode=0
-fi
-if [ "$logMode" = "0" ] || [ "$logMode" =  "1" ] ;
-then
+
+ConfReadParam logMode "0"; logMode="$paramvalue" # LOG mode
+
+if [ "$logMode" =  "1" ]; then  # log when loop is closed
 stop_Telemetrylog_all
 fi
+
 else
 tmux send-keys -t $1 "./$scriptfile" C-m
 fi
