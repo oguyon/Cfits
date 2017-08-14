@@ -209,7 +209,7 @@ int_fast8_t AOloopControl_DM_setDClevel_cli() {
         return 0;}    else        return 1;}
 
 int_fast8_t AOloopControl_DM_setAveMode_cli() {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
         AOloopControl_DM_setAveMode(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
         return 0;}    else        return 1;}
         
@@ -435,7 +435,7 @@ int init_AOloopControl_DM()
     data.cmd[data.NBcmd].fp = AOloopControl_DM_setAveMode_cli;
     strcpy(data.cmd[data.NBcmd].info,"set DM averaging mode [0,1 or 2]");
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <AveMode>");
-    strcpy(data.cmd[data.NBcmd].example,"aolsetdmAveM 0");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmAveM 00 1");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setAveMode(long DMindex, int AveMode)");
     data.NBcmd++;
 
