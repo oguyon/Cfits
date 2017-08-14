@@ -68,13 +68,28 @@ fi
 
 function DMturb_WriteToFile {
 echo " ON" > ./status/stat_turb2fileWriteON.txt
+
+
 tmuxname="aosim${LOOPNUMBER}dm${DMindex}mkturb"
 logRunningProcess "dmmkturb2file" "$tmuxname" "Creating DM turbulence sequence"
 tmux kill-session -t $tmuxname
 sleep 0.2
 tmux new-session -d -s $tmuxname
 sleep 0.2
+
+ConfReadParam dmturbampl "0.01"; dmturbampl="$paramvalue"
+
+ConfReadParam dmturbws "0"; dmturbws="$paramvalue"
+
+ConfReadParam dmturblo "10"; dmturblo="$paramvalue"
+
+ConfReadParam dmturbtint "1000"; dmturbtint="$paramvalue"
+
 tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} ${dmturbampl}" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturws ${DMindex} ${dmturbws}" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturlo ${DMindex} ${dmturblo}" C-m
+tmux send-keys -t $tmuxname "aoloopcontroldmturtint ${DMindex} ${dmturbtint}" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturb2im ${DMindex} wftout $1" C-m
 tmux send-keys -t $tmuxname "savefits wftout \"!wfturbC.fits\"" C-m
 tmux send-keys -t $tmuxname "exitCLI" C-m
