@@ -341,7 +341,7 @@ fi
 
 menuitems+=( " " " " )
 
-ConfReadParam testDMperMn "100";testDMperMn ="$paramvalue"
+ConfReadParam testDMperMn "100"; testDMperMn ="$paramvalue"
 menuitems+=( "spmsn" "[${testDMperMn}] Set Periodic DM Modal Sequence number of modes" )
 
 ConfReadParam testDMperMdt "10000"; testDMperMdt="$paramvalue"
