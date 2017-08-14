@@ -44,13 +44,19 @@ menuitems+=( " " " " )
 stringcenter "HARDWARE INFO AND I/O LINKS [shared memory sim links]"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
-
+ConfReadParam loopfrequ "1000.0"; loopfrequ="$paramvalue"
 menuitems+=( "lfreq" "            Loop Frequ                        ${loopfrequ} Hz" )
 
+ConfReadParam hardwlatency "0.001"; hardwlatency="$paramvalue"
+ConfReadParam hardwlatency_frame "2.0"; hardwlatency_frame="$paramvalue"
 menuitems+=( "lhlat" "            Hardware Latency                  ${hardwlatency} sec -> ${hardwlatency_frame} frame" )
 
+ConfReadParam complatency "0.0003"; complatency="$paramvalue"
+ConfReadParam complatency_frame "0.4"; complatency_frame="$paramvalue"
 menuitems+=( "lclat" "            Computing Latency                 ${complatency} sec -> ${complatency_frame} frame" )
 
+ConfReadParam wfsmextrlatency "0.0004"; wfsmextrlatency="$paramvalue"
+ConfReadParam wfsmextrlatency_frame "0.5"; wfsmextrlatency_frame="$paramvalue"
 menuitems+=( "lslat" "            WFS modes extraction Latency      ${wfsmextrlatency} sec -> ${wfsmextrlatency_frame} frame" )
 
 
@@ -220,7 +226,7 @@ confOK=0
 fi
 
 
-
+ConfReadParam wfslambdanm "800"; wfslambdanm="$paramvalue"
 menuitems+=( "swfsl" "[${wfslambdanm} nm] WFS lambda" )
 
 
