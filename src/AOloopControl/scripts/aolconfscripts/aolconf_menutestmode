@@ -497,7 +497,7 @@ menutestmode_default="DMt2f"
 ;;
 
 	DMtf2sON)
-echo "SON" > ./status/testdm${DMindex}turbstatus.txt
+echo " ON" > ./status/stat_turbONstat.txt
 tmuxname="dm${DMindex}turbstream"
 tmux kill-session -t $tmuxname
 sleep 0.2
@@ -512,7 +512,7 @@ menutestmode_default="DMtf2sOFF"
 ;;
 
 	DMtf2sOFF)
-echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
+echo "OFF" > ./status/stat_turbONstat.txt
 tmuxname="dm${DMindex}turbstream"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
@@ -526,7 +526,7 @@ menutestmode_default="DMtf2sON"
 ;;
 
 	DMtf2sFRE)
-echo "OFF" > ./status/testdm${DMindex}turbstatus.txt
+echo "OFF" > ./status/stat_turbONstat.txt
 tmuxname="dm${DMindex}turbstream"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
