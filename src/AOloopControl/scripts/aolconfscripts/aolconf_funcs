@@ -103,6 +103,23 @@ fi
 }
 
 
+##############################################
+# FUNCTION: READ INSTRUMENT CONG VAL FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "instconfvalue"
+function ConfReadInstConf {
+file="./conf/instconf_$1.txt"
+if [ -f "$file" ]; then
+instconfvalue=$( cat $file )
+else
+instconfvalue="$2"
+echo "$2" > $file
+fi
+}
+
 
 
 

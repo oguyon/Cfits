@@ -198,6 +198,38 @@ fi
 }
 
 
+##############################################
+# FUNCTION: READ INSTRUMENT CONF VAL FROM FILE
+##############################################
+# arg 1: parameter name
+# arg 2: default value
+# 
+# param value is stored in variable "instconfvalue"
+function ConfReadInstConf {
+file="./conf/instconf_$1.txt"
+if [ -f "$file" ]; then
+instconfvalue=$( cat $file )
+else
+instconfvalue="$2"
+echo "$2" > $file
+fi
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##########################################
@@ -264,8 +296,9 @@ tmux kill-session -t ${tmuxname}
 cp ./conf/streamlink_wfsim_hardware.name.txt ./conf/streamlink_wfsim.name.txt
 ./aolfuncs/aolfunc_StreamLink wfsim
 cp ./conf/instconf_dmDCum_hardware.txt ./conf/instconf_dmDCum.txt
-ConfReadParam dmDCum "00"; dmDCum="$paramvalue" # DM index 
 
+
+ConfReadInstConf dmDCum "0.0"; dmDCum="$instconfvalue"
 # turn on DM voltage
 $execname << EOF
 aoldmvoltON ${DMindex}
