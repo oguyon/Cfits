@@ -269,7 +269,7 @@ ConfReadParam dmDCum "00"; dmDCum="$paramvalue" # DM index
 # turn on DM voltage
 $execname << EOF
 aoldmvoltON ${DMindex}
-aoldmsetAveMode ${DMindex} 0
+aoldmsetAveMode ${DMindex} 1
 aoldmsetDM ${dmDCum}
 exit
 EOF
