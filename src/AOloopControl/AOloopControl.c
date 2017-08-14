@@ -24,7 +24,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-#define _PRINT_TEST
+//#define _PRINT_TEST
 
 
 
@@ -2460,7 +2460,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
  	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
 
-    if((fp=fopen("./conf/param_CMMODE.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_CMMODE.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_CMMODE.txt missing\n");
         printf("Using combined matrix\n");
