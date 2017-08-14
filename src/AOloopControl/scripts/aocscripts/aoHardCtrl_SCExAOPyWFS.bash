@@ -124,7 +124,7 @@ menuname="HARDWARE CONTROL - LOOP ${LOOPNAME} ($LOOPNUMBER})\n"
 
 
 
-file="./conf/conf_dmVmax.txt"
+file="./conf/instconf_dmVmax.txt"
 if [ -f $file ]; then
 dmVmax=$(cat $file)
 else
@@ -132,7 +132,7 @@ dmVmax="125"
 echo "$dmVmax" > $file
 fi
 
-file="./conf/conf_dmDCum.txt"
+file="./conf/instconf_dmDCum.txt"
 if [ -f $file ]; then
 dmDCum=$(cat $file)
 else
@@ -283,7 +283,7 @@ aoconflogext "DM scexao2 comm kill"
 	dmVmax025)
 dmVmax=" 25"
 aoconflogext "Set DM max = $dmVmax V"
-echo "${dmVmax}" > ./conf/conf_dmVmax.txt
+echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum025}
@@ -294,7 +294,7 @@ EOF
 	dmVmax050)
 dmVmax=" 50"
 aoconflogext "Set DM max = $dmVmax V"
-echo "${dmVmax}" > ./conf/conf_dmVmax.txt
+echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum050}
@@ -305,7 +305,7 @@ EOF
 	dmVmax075)
 dmVmax=" 75"
 aoconflogext "Set DM max = $dmVmax V"
-echo "${dmVmax}" > ./conf/conf_dmVmax.txt
+echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum075}
@@ -316,7 +316,7 @@ EOF
 	dmVmax100)
 dmVmax="100"
 aoconflogext "Set DM max = $dmVmax V"
-echo "${dmVmax}" > ./conf/conf_dmVmax.txt
+echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum100}
@@ -327,7 +327,7 @@ EOF
 	dmVmax125)
 dmVmax="125"
 aoconflogext "Set DM max = $dmVmax V"
-echo "${dmVmax}" > ./conf/conf_dmVmax.txt
+echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum125}
@@ -338,7 +338,7 @@ EOF
 	dmVmax150)
 dmVmax="150"
 aoconflogext "Set DM max = $dmVmax V"
-echo "${dmVmax}" > ./conf/conf_dmVmax.txt
+echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum150}

@@ -208,6 +208,11 @@ int_fast8_t AOloopControl_DM_setDClevel_cli() {
         AOloopControl_DM_setDClevel(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
         return 0;}    else        return 1;}
 
+int_fast8_t AOloopControl_DM_setAveMode_cli() {
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
+        AOloopControl_DM_setAveMode(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
+        return 0;}    else        return 1;}
+        
 int_fast8_t AOloopControl_DM_setTrigMode_cli() {
     if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
         AOloopControl_DM_setTrigMode(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
@@ -423,6 +428,15 @@ int init_AOloopControl_DM()
     strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <DC level [um]>");
     strcpy(data.cmd[data.NBcmd].example,"aolsetdmDC 0.5");
     strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setDClevel(long DMindex, float DClevel)");
+    data.NBcmd++;
+
+	strcpy(data.cmd[data.NBcmd].key,"aolsetdmAveM");
+    strcpy(data.cmd[data.NBcmd].module,__FILE__);
+    data.cmd[data.NBcmd].fp = AOloopControl_DM_setAveMode_cli;
+    strcpy(data.cmd[data.NBcmd].info,"set DM averaging mode [0,1 or 2]");
+    strcpy(data.cmd[data.NBcmd].syntax,"<DMindex (0-9)> <AveMode>");
+    strcpy(data.cmd[data.NBcmd].example,"aolsetdmAveM 0");
+    strcpy(data.cmd[data.NBcmd].Ccall,"int AOloopControl_DM_setAveMode(long DMindex, int AveMode)");
     data.NBcmd++;
 
 	strcpy(data.cmd[data.NBcmd].key,"aolsetdmTrigMode");
@@ -1679,6 +1693,16 @@ int AOloopControl_DM_setDClevel(long DMindex, float DClevel)
 {
     AOloopControl_DM_loadconf();
     dmdispcombconf[DMindex].DClevel = DClevel;
+	AOloopControl_printDMconf();
+
+    return 0;
+}
+
+
+int AOloopControl_DM_setDClevel(long DMindex, int AveMode)
+{
+    AOloopControl_DM_loadconf();
+    dmdispcombconf[DMindex].AveMode = AveMode;
 	AOloopControl_printDMconf();
 
     return 0;
