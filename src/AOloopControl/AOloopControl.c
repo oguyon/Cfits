@@ -14610,12 +14610,14 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
     printf("AOconf[loop].DMmodesNBblock = %ld\n", AOconf[loop].DMmodesNBblock);
     fflush(stdout);
 
-    if(MATRIX_COMPUTATION_MODE==0)
+    /*if(MATRIX_COMPUTATION_MODE==0)
     {
         printf("Command has no effect: modeblock gain not compatible with MATRIX_COMPUTATION_MODE = 0\n");
         fflush(stdout);
     }
-    else if (AOconf[loop].DMmodesNBblock<2)
+    else*/
+     
+    if (AOconf[loop].DMmodesNBblock<2)
     {
         if(sprintf(name2, "aol%ld_contrMc00", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
