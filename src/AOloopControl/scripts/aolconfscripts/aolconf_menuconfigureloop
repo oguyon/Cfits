@@ -256,6 +256,7 @@ menuitems+=( " " " " )
 menuitems+=( "smlock" "Set locked masks to current ./conf/shmim_<mask>.name.txt masks (dmmaskRM, dmmask, dmslaved, wfsmask)")
 
 
+ConfReadParam MASKS_LOCK "0"; MASKS_LOCK="$paramvalue"
 if [ "$MASKS_LOCK" -eq "1" ]; then
 menuitems+=( "mlock" "\Z1\Zr[$MASKS_LOCK] WFS/DMmask LOCK is ON\Zn   - press to toggle Lock OFF" )
 else
@@ -276,19 +277,22 @@ stringcenter "AUTOMATIC SYSTEM CALIBRATION"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-
+ConfReadParam ACzrmtime "10"; ACzrmtime="$paramvalue"
 menuitems+=( "sACzrmt" "            Zonal RM maximum running time          ${ACzrmtime} sec" )
 
-
+ConfReadParam ACzrmNBcycle "10"; ACzrmNBcycle="$paramvalue"
 menuitems+=( "sACzrmN" "            Zonal RM maximum number of Cycles      ${ACzrmNBcycle} cycle(s)" )
 
 
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
+ConfReadParam ACmrmtime "10"; ACmrmtime="$paramvalue"
 menuitems+=( "sACmrmt" "            Modal RM maximum running time          ${ACmrmtime} sec" )
 
+ConfReadParam ACmrmNBcycle "10"; ACmrmNBcycle="$paramvalue"
 menuitems+=( "sACmrmN" "            Modal RM maximum number of Cycles      ${ACmrmNBcycle} cycle(s)" )
+
 fi
 
 
@@ -303,6 +307,7 @@ fi
 if [ -f "runproc/function_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOCk" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING - Press to KILL\Zn")
 else
+ConfReadParam RMacqTimeZ "0"; RMacqTimeZ="$paramvalue"
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
 fi
 
@@ -312,46 +317,36 @@ menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
 
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn" )
 
-
-file="conf/param_conflastloaded_name.txt"
-if [ -f "$file" ]; then
-confnameloaded=$( cat $file )
-else
-confnameloaded=" "
-fi
-
-file="conf/param_conflastloaded_time.txt"
-if [ -f "$file" ]; then
-confloadedtime=$( cat $file )
-else
-confloadedtime=" "
-fi
-
+ConfReadParam conflastloaded_name "0"; conflastloaded_name="$paramvalue"
+ConfReadParam conflastloaded_time "0"; conflastloaded_time="$paramvalue"
 
 menuitems+=( " " " Last loaded/saved: ${confnameloaded} on ${confloadedtime}" )
 menuitems+=( " " " " )
 
 
 
-
+#ConfReadParam  "0"; ="$paramvalue"
 
 stringcenter "ACQUISITION TIMING"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-
+ConfReadParam RMamplum "0.1"; RMamplum="$paramvalue"
 menuitems+=( "rmamp" "            RM amplitude                    ${RMamplum} um" )
+
+ConfReadParam RMdelayfr "0"; RMdelayfr="$paramvalue"
 menuitems+=( "rmdelay" "            RM time delay                   ${RMdelayfr} frame(s)" )
 
 
-
+ConfReadParam delayRM1us "0"; delayRM1us="$paramvalue"
 menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
 
+ConfReadParam RMfrave "0"; RMfrave="$paramvalue"
 menuitems+=( "rmnbfr" "            RM frame averaging              ${RMfrave} frame(s)" )
 
-
+ConfReadParam RMexfr "0"; RMexfr="$paramvalue"
 menuitems+=( "rmexfr" "            RM excluded frames              ${RMexfr} frame(s)" )
 
-
+ConfReadParam nblatm "100"; nblatm="$paramvalue"
 menuitems+=( "mlat" "            Measure Hardware Latency    sample ${nblatm} frame(s)" )
 
 
