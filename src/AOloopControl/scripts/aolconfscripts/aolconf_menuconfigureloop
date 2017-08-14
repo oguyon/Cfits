@@ -415,14 +415,31 @@ menuitems+=(" " " ")
 
 if [ "$DMMODE" = "ZONAL" ]; then
 
+ConfReadParam DMmaskRMp0 "0"; DMmaskRMp0="$paramvalue"
 menuitems+=( "DMmaskRMp0"  "            DM mask RM: low level percentile                                ${DMmaskRMp0}" )
+
+ConfReadParam DMmaskRMc0 "0"; DMmaskRMc0="$paramvalue"
 menuitems+=( "DMmaskRMc0"  "            DM mask RM: low level coefficient                               ${DMmaskRMc0}" )
+
+ConfReadParam DMmaskRMp1 "0"; DMmaskRMp1="$paramvalue"
 menuitems+=( "DMmaskRMp1"  "            DM mask RM: high level percentile                               ${DMmaskRMp1}" )
+
+ConfReadParam DMmaskRMc1 "0"; DMmaskRMc1="$paramvalue"
 menuitems+=( "DMmaskRMc1"  "            DM mask RM: high level coefficient                              ${DMmaskRMc1}" )
+
+ConfReadParam WFSmaskRMp0 "0"; WFSmaskRMp0="$paramvalue"
 menuitems+=( "WFSmaskRMp0" "            WFS mask RM: low level percentile                               ${WFSmaskRMp0}" )
+
+ConfReadParam WFSmaskRMc0 "0"; WFSmaskRMc0="$paramvalue"
 menuitems+=( "WFSmaskRMc0" "            WFS mask RM: low level coefficient                              ${WFSmaskRMc0}" )
+
+ConfReadParam WFSmaskRMp1 "0"; WFSmaskRMp1="$paramvalue"
 menuitems+=( "WFSmaskRMp1" "            WFS mask RM: high level percentile                              ${WFSmaskRMp1}" )
+
+ConfReadParam WFSmaskRMc1 "0"; WFSmaskRMc1="$paramvalue"
 menuitems+=( "WFSmaskRMc1" "            WFS mask RM: high level coefficient                             ${WFSmaskRMc1}" )
+
+ConfReadParam WFSmaskSNRr "0"; WFSmaskSNRr="$paramvalue"
 menuitems+=( "WFSmaskSNRr" "            WFS mask RN: fraction of pixels rejected for poor SNR           ${WFSmaskSNRr}" )
 
 
