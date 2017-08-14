@@ -307,7 +307,7 @@ fi
 if [ -f "runproc/function_nAUTOC.runproc" ]; then
 menuitems+=( "nAUTOCk" "        \Zr\Z1AUTO SYSTEM CALIBRATION RUNNING - Press to KILL\Zn")
 else
-ConfReadParam RMacqTimeZ "0"; RMacqTimeZ="$paramvalue"
+RMacqTimeZ=$( echo $loopfrequ $RMfrave $RMexfr $ACzrmNBcycle | awk '{printf("%8.3f", 2.0*($2+$3)*$4/$1*2048)}' )
 menuitems+=( "nAUTOC" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (new)\Zn - Acquisition time = ${RMacqTimeZ} s -> ./conf_staged/  (running in tmux session aol${LOOPNUMBER}arespM)" )
 fi
 
