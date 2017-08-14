@@ -182,7 +182,7 @@ else
 fi
 	
 if [ "${fturbONstat}" = "OFF" ]; then
-	if [ "$turb2fileWriteON" = "OFF" ]; then
+	if [ "$turb2fileWriteONstat" = "OFF" ]; then
 	menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
 	menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
 	else
