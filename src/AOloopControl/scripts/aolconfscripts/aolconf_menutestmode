@@ -193,10 +193,10 @@ fi
 ConfReadParam dmturbampl "0.01"; dmturbampl="$paramvalue"
 menuitems+=( "DMtamp" "DM turbulence amplitude      = ${dmturbampl} um" )
 
-ConfReadParam  "0"; ="$paramvalue"
+ConfReadParam dmturbws "0"; dmturbws="$paramvalue"
 menuitems+=( "DMtws" "DM turbulence wind speed      = ${dmturbws} m/s" )
 
-ConfReadParam dmturbws "10"; dmturbws="$paramvalue"
+ConfReadParam dmturblo "10"; dmturblo="$paramvalue"
 menuitems+=( "DMtlo" "DM turbulence low order coeff = ${dmturblo}" )
 
 ConfReadParam dmturbtint "1000"; dmturbtint="$paramvalue"
