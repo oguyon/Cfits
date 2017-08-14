@@ -284,6 +284,7 @@ aoconflogext "DM scexao2 comm kill"
 dmVmax=" 25"
 aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
+echo "${dmDCum025}" > ./conf/instconf_dmDCum.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum025}
@@ -295,6 +296,7 @@ EOF
 dmVmax=" 50"
 aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
+echo "${dmDCum050}" > ./conf/instconf_dmDCum.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum050}
@@ -306,6 +308,7 @@ EOF
 dmVmax=" 75"
 aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
+echo "${dmDCum075}" > ./conf/instconf_dmDCum.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum075}
@@ -317,6 +320,7 @@ EOF
 dmVmax="100"
 aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
+echo "${dmDCum100}" > ./conf/instconf_dmDCum.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum100}
@@ -328,6 +332,7 @@ EOF
 dmVmax="125"
 aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
+echo "${dmDCum125}" > ./conf/instconf_dmDCum.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum125}
@@ -339,6 +344,7 @@ EOF
 dmVmax="150"
 aoconflogext "Set DM max = $dmVmax V"
 echo "${dmVmax}" > ./conf/instconf_dmVmax.txt
+echo "${dmDCum150}" > ./conf/instconf_dmDCum.txt
 Cfits << EOF
 aolsetdmvoltmax 00 ${dmVmax}
 aolsetdmDC 00 ${dmDCum150}
