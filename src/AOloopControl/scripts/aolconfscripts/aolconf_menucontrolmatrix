@@ -135,7 +135,7 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM ZONAL RESPONSE -> CONTROL MATRIX"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
-makemenuitemstringaolshm "zrespM" "Zodal Response Matrix"
+makemenuitemstringaolshm "zrespM" "Zonal Response Matrix"
 menuitems+=( "zRM" "$menustring" )
 
 
@@ -168,17 +168,18 @@ ConfReadParam CMMODE "0"; CMMODE=${paramvalue}
  menuitems+=( " " " " )
 
 
+ConfReadParam extrablockIndex "5"; extrablockIndex=${paramvalue}
  menuitems+=( "setexbi" "[$extrablockIndex] Set extra block index" )
 
 
- if [ -f "./extrablockM.fits" ]; then
-	if [ -f "./conf/extrablockM.fits" ]; then
-	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits)" )
+ if [ -f "./extrablockM.fits.gz" ]; then
+	if [ -f "./conf/extrablockM.fits.gz" ]; then
+	menuitems+=( "extBlOFF" "Remove link to custom extra modal block (./extrablockM.fits.gz)" )
 	else
-	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits)" )
+	menuitems+=( "extBlON" "Link to custom extra modal block (./extrablockM.fits.gz)" )
 	fi
  else
- menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits does not exist)" )
+ menuitems+=( "" "Extra modal block not available (File ./extrablockM.fits.gz does not exist)" )
  fi
 
 
@@ -196,6 +197,12 @@ fi
 
 
 
+
+staged_mkmodesdatestr=$(stat -c %y ./conf_staged/param_NBmodeblocks.txt)
+staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
+staged_NBmodeblocks=$( cat ./conf_staged/param_NBmodeblocks.txt )
+staged_NBmodes=$( cat ./conf_staged/param_NBmodes.txt )
+
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update (cp conf_staged/*.txt ./conf/) \Zn" )
@@ -204,7 +211,14 @@ menuitems+=( "confUp" "\Z1 Configuration Update (cp conf_staged/*.txt ./conf/) \
 menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
 
 
+#mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
+#NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 
+mkmodesdatestr=$(stat -c %y ./conf/param_NBmodeblocks.txt)
+mkmodesdatestr=${mkmodesdatestr% *}
+
+ConfReadParam NBmodeblocks "00"; NBmodeblocks=${paramvalue}
+ConfReadParam NBmodes "00"; NBmodes=${paramvalue}
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 

@@ -6658,7 +6658,7 @@ long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, c
     IDhad = image_ID(Hmatname);
     if((data.image[IDhad].md[0].size[0]!=NBframes)||(data.image[IDhad].md[0].size[1]!=NBframes))
     {
-        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames\n", (long) data.image[IDhad].md[0].size[0], (long) data.image[IDhad].md[0].size[1]);
+        printf("ERROR: size of Hadamard matrix [%ld x %ld] does not match available number of frames [%ld]\n", (long) data.image[IDhad].md[0].size[0], (long) data.image[IDhad].md[0].size[1], NBframes);
         exit(0);
     }
 

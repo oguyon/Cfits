@@ -426,7 +426,7 @@ else
 menuitems+=( "ARPFoff" "\Z1\Zr Predictive control (ARPF) is  ON - press to STOP\Zn  " )
 fi
 
-ConfReadParam ARPFg "0.0"; ARPFg="$paramvalue"
+ConfReadParam ARPFgain "0.0"; ARPFgain="$paramvalue"
 menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
 
 
