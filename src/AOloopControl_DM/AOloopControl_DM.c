@@ -1699,7 +1699,7 @@ int AOloopControl_DM_setDClevel(long DMindex, float DClevel)
 }
 
 
-int AOloopControl_DM_setDClevel(long DMindex, int AveMode)
+int AOloopControl_DM_setAveMode(long DMindex, int AveMode)
 {
     AOloopControl_DM_loadconf();
     dmdispcombconf[DMindex].AveMode = AveMode;
