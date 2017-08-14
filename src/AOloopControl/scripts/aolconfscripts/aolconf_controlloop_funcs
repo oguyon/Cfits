@@ -185,7 +185,7 @@ echo "tmux send-keys -t $tmuxname \"aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol$
 fi
 
 
-
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue" # DM index 
 if [ "$CMMODE" = "0" ]; then  # if CM multiplication outputs modes
 #echo "Linking    /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm  - /tmp/aol${LOOPNUMBER}_modeval.im.shm"
 echo "rm /tmp/aol${LOOPNUMBER}_modeval.im.shm" >> $scriptfile
@@ -203,7 +203,7 @@ echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
 logRunningProcessQ0 "modesextractwfs" "$tmuxname" "AO loop extract WFS modes"
 echo "tmux send-keys -t ${tmuxname} \"mv runproc/modesextractwfs.runprocQ runproc/modesextractwfs.runproc\" C-m" >> $scriptfile
-if [ "$CMmode" -eq "1" ]; then
+if [ "$CMMODE" -eq "1" ]; then
 echo "tmux send-keys -t $tmuxname \"./auxscripts/modesextractwfs ${GPUmodesextrwfs}\" C-m" >> $scriptfile
 else
 echo "tmux send-keys -t $tmuxname \"./auxscripts/modesextractwfs -r ${GPUmodesextrwfs}\" C-m" >> $scriptfile
