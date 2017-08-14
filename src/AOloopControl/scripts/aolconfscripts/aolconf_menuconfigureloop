@@ -300,7 +300,8 @@ fi
 
 
 
-
+ConfReadParam RMfrave "0"; RMfrave="$paramvalue"
+ConfReadParam RMexfr "0"; RMexfr="$paramvalue"
 
 
 
@@ -340,10 +341,8 @@ menuitems+=( "rmdelay" "            RM time delay                   ${RMdelayfr}
 ConfReadParam delayRM1us "0"; delayRM1us="$paramvalue"
 menuitems+=( "delayRM1us" "            RM time delay1                  ${delayRM1us} us" )
 
-ConfReadParam RMfrave "0"; RMfrave="$paramvalue"
 menuitems+=( "rmnbfr" "            RM frame averaging              ${RMfrave} frame(s)" )
 
-ConfReadParam RMexfr "0"; RMexfr="$paramvalue"
 menuitems+=( "rmexfr" "            RM excluded frames              ${RMexfr} frame(s)" )
 
 ConfReadParam nblatm "100"; nblatm="$paramvalue"
