@@ -242,7 +242,6 @@ menuitems+=( "CM" "$menustring" )
 
 
 
-
 menuitems+=( " " " " )
 stringcenter " ACTIVE CONFIGURATION : BLOCK DECOMPOSITION (ACTIVE CONFIGURATION)"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
@@ -254,6 +253,7 @@ i2=$(printf "%02d" "$i")
 
 NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
 
+SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
 menuitems+=( "SetSVD${i2}" "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes - SVD = ${SVDlim[10#${i2}]}\Zn")
 
 makemenuitemstringaolshm "DMmodes${i2}" "DM control modes"
