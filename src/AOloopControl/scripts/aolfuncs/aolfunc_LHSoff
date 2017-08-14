@@ -308,7 +308,7 @@ EOF
 
 #ReadWFSdarkfname
 
-dmflat
+#dmflat
 
 
 echo "OFF" > ./status/stat_lsimON.txt
