@@ -363,7 +363,7 @@ menuitems+=( "zrespM" "$menustring" )
 
 
 
-
+ConfReadParam RMpokeMode "1"; RMpokeMode="$paramvalue"
 if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
 	else
