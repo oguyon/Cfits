@@ -173,7 +173,7 @@ menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 StatReadStat turbON "OFF"; turbONstat="$statusvalue"
 StatReadStat fturbON "OFF"; fturbONstat="$statusvalue"
 
-
+StatReadStat turb2fileWriteON "OFF"; turb2fileWriteONstat="$statusvalue"
 
 if [ "${turbONstat}" = "OFF" ]; then
 	menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
@@ -182,8 +182,13 @@ else
 fi
 	
 if [ "${fturbONstat}" = "OFF" ]; then
+	if [ "$turb2fileWriteON" = "OFF" ]; then
 	menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
 	menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
+	else
+	menuitems+=( "" "\Zr\Z2[runnning]\Zn    \Zr\Z1 ==== WRITE simulated turbulence -> File ====\Zn ")
+	menuitems+=( "" "\Zr\Z2[runnning]\Zn    \Zr\Z1 WAIT UNTIL FILE WRITTEN TO START TURBULENCE\Zn ")
+	fi
 else
 #		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
 #		menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
