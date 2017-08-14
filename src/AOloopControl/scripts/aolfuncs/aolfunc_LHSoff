@@ -263,11 +263,14 @@ tmux kill-session -t ${tmuxname}
 # revert to hardware camera
 cp ./conf/streamlink_wfsim_hardware.name.txt ./conf/streamlink_wfsim.name.txt
 ./aolfuncs/aolfunc_StreamLink wfsim
+cp ./conf/instconf_dmDCum_hardware.txt ./conf/instconf_dmDCum.txt
+ConfReadParam dmDCum "00"; dmDCum="$paramvalue" # DM index 
 
 # turn on DM voltage
 $execname << EOF
 aoldmvoltON ${DMindex}
 aoldmsetAveMode ${DMindex} 0
+aoldmsetDM ${dmDCum}
 exit
 EOF
 

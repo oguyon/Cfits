@@ -351,12 +351,13 @@ tmux send-keys -t $tmuxname "./auxscripts/aollindm2wfsim -w ${linsimdt} ${GPUlin
 # Save current (hardware) WFS camera name & write new simulated WFS camera name
 cp ./conf/streamlink_wfsim.name.txt ./conf/streamlink_wfsim_hardware.name.txt
 echo "aol${LOOPNUMBER}_linsimWFS" > ./conf/streamlink_wfsim.name.txt
-
+cp ./conf/instconf_dmDCum.txt > ./conf/instconf_dmDCum_hardware.txt
 
 
 # turn off DM voltage 
 $execname << EOF
 aoldmvoltOFF ${DMindex}
+aolsetdmDC 0.0
 aolsetdmAveMode ${DMindex} 2
 exitCLI
 EOF
