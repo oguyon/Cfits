@@ -255,13 +255,9 @@ menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " "  " " ) 
 
-file="./conf/conf_mzRMsensAmpnm.txt"
-if [ -a $file ]
-	then
-	mzRMsensAmpnm=$(echo "$(cat $file)")
-	else
-	mzRMsensAmpnm="100"
-fi
+
+
+ConfReadParam mzRMsensAmpnm "100"; mzRMsensAmpnm="$paramvalue"
 menuitems+=( "mzRMsA" "[${mzRMsensAmpnm} nm] RM sensitivity measurement amplitude [nm]" )
 
 menuitems+=( "mzRMs"  "Measure current response matrix sensitivity (ampl = ${mzRMsensAmpnm} nm) -> perfMeas" ) 
@@ -270,40 +266,16 @@ menuitems+=( "mzRMs"  "Measure current response matrix sensitivity (ampl = ${mzR
 menuitems+=( " "  " " ) 
 
 
-file="./conf/conf_testModeNb.txt"
-if [ -a $file ]
-	then
-	testModeNb=$(echo "$(cat $file)")
-	else
-	testModeNb="1"
-fi
+ConfReadParam testModeNb "1"; testModeNb="$paramvalue"
 menuitems+=( "settmn" "[${testModeNb}] Set test mode number" )
 
-file="./conf/conf_testModeAmp.txt"
-if [ -a $file ]
-	then
-	testModeAmp=$(echo "$(cat $file)")
-	else
-	testModeAmp="0.1"
-fi
+ConfReadParam testModeAmp "0.1"; testModeAmp="$paramvalue"
 menuitems+=( "settma" "[${testModeAmp}] Set test mode amplitude" )
 
-file="./conf/conf_testModeDelay.txt"
-if [ -a $file ]
-	then
-	testModeDelay=$(echo "$(cat $file)")
-	else
-	testModeDelay="1000000"
-fi
+ConfReadParam testModeDelay "1000000"; testModeDelay="$paramvalue"
 menuitems+=( "settmd" "[${testModeDelay}] Set test mode delay [us]" )
 
-file="./conf/conf_testModeAve.txt"
-if [ -a $file ]
-	then
-	testModeAve=$(echo "$(cat $file)")
-	else
-	testModeAve="50"
-fi
+ConfReadParam testModeAve "50"; testModeAve="$paramvalue"
 menuitems+=( "setave" "[${testModeAve}] Number of WFS frames averaged" )
 
 
@@ -318,13 +290,7 @@ menuitems+=( "-" " STATIC TEST " )
 menuitems+=( "inj0" "Inject single mode ${testModeNb} (fmodes0all basis), amplitude ${testModeAmp} to RM channel" )
 
 
-inj0pONstat=$( cat ./status/stat_inj0pON.txt )
-if [[ -f "./status/stat_inj0pON.txt" && ( "$inj0pONstat" = " ON" || "$inj0pONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_inj0pON.txt
-inj0pONstat="OFF"
-fi
+StatReadStat inj0pON "OFF"; inj0pONstat="$statusvalue"
 if [ "$inj0pONstat" = "OFF" ]; then
 menuitems+=( "inj0pON" "\Zb\Zu ==== START Test mode periodic inject ====\ZB\ZU" )
 else
@@ -334,14 +300,7 @@ fi
 menuitems+=( "inj" "Inject single mode ${testModeNb} (fmodesall basis), amplitude ${testModeAmp} to RM channel" )
 
 
-
-mrecONstat=$( cat ./status/stat_mrecON.txt )
-if [[ -f "./status/stat_mrecON.txt" && ( "$mrecONstat" = " ON" || "$mrecONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_mrecON.txt
-mrecONstat="OFF"
-fi
+StatReadStat mrecON "OFF"; mrecONstat="$statusvalue"
 if [ "$mrecONstat" = "OFF" ]; then
 menuitems+=( "mrec_on" "\Zb\Zu ==== START Test mode recovery (all modes) ====\ZB\ZU  <MeasDMmodesRec ${testModeAmp} ${testModeDelay} ${testModeAve}>" )
 else
@@ -356,53 +315,23 @@ menuitems+=( "clr" "Clear RM channel" )
 menuitems+=( "-" " " )
 menuitems+=( "-" " DYNAMIC TEST" )
 menuitems+=( "-" " " )
-file="./conf/conf_testModefmin.txt"
-if [ -a $file ]
-	then
-	testModefmin=$(echo "$(cat $file)")
-	else
-	testModefmin="0.1"
-fi
+
+
+ConfReadParam testModefmin "0.1"; testModefmin="$paramvalue"
 menuitems+=( "settmf0" "[${testModefmin}] Set test mode min temporal frequ" )
 
-file="./conf/conf_testModefmax.txt"
-if [ -a $file ]
-	then
-	testModefmax=$(echo "$(cat $file)")
-	else
-	testModefmax="1.0"
-fi
+ConfReadParam testModefmax "1.0"; testModefmax="$paramvalue"
 menuitems+=( "settmf1" "[${testModefmax}] Set test mode max temporal frequ" )
 
-file="./conf/conf_testModefmstep.txt"
-if [ -a $file ]
-	then
-	testModefmstep=$(echo "$(cat $file)")
-	else
-	testModefmstep="1.5"
-fi
+ConfReadParam testModefmstep "1.5"; testModefmstep="$paramvalue"
 menuitems+=( "settmfs" "[${testModefmstep}] Set test mode mult frequ step" )
 
-
-file="./conf/conf_testModeetime.txt"
-if [ -a $file ]
-	then
-	testModeetime=$(echo "$(cat $file)")
-	else
-	testModeetime="2.0"
-fi
+ConfReadParam testModeetime "2.0"; testModeetime="$paramvalue"
 menuitems+=( "settmet" "[${testModeetime}] Set test mode measurement time per frequ" )
 
 
 
-
-dmmtrONstat=$( cat ./status/stat_dmmtrON.txt )
-if [[ -f "./status/stat_dmmtrON.txt" && ( "$dmmtrONstat" = " ON" || "$dmmtrONstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > ./status/stat_dmmtrON.txt
-dmmtrONstat="OFF"
-fi
+StatReadStat dmmtrON "OFF"; dmmtrONstat="$statusvalue"
 if [ "$dmmtrONstat" = "OFF" ]; then
 menuitems+=( "dmmtr_on" "\Zb\Zu ==== START DM mode temporal response test ====\ZB\ZU" )
 else
@@ -412,55 +341,20 @@ fi
 
 menuitems+=( " " " " )
 
-
-file="./conf/conf_testDMperMn.txt"
-if [ -a $file ]
-	then
-	testDMperMn=$(echo "$(cat $file)")
-	else
-	testDMperMn="100"
-fi
+ConfReadParam testDMperMn "100";testDMperMn ="$paramvalue"
 menuitems+=( "spmsn" "[${testDMperMn}] Set Periodic DM Modal Sequence number of modes" )
 
-file="./conf/conf_testDMperMdt.txt"
-if [ -a $file ]
-	then
-	testDMperMdt=$(echo "$(cat $file)")
-	else
-	testDMperMdt="10000"
-fi
+ConfReadParam testDMperMdt "10000"; testDMperMdt="$paramvalue"
 menuitems+=( "spmsdt" "[${testDMperMdt}] Set Periodic DM Modal Sequence update interval [us]" )
 
-
-file="./conf/conf_testDMperMfr.txt"
-if [ -a $file ]
-	then
-	testDMperMfr=$(echo "$(cat $file)")
-	else
-	testDMperMfr="10000"
-fi
+ConfReadParam testDMperMfr "10000"; testDMperMfr="$paramvalue"
 menuitems+=( "spmsfr" "[${testDMperMfr}] Set Periodic DM Modal Sequence frequency [Hz]" )
 
-
-file="./conf/conf_testDMperMamp.txt"
-if [ -a $file ]
-	then
-	testDMperMamp=$(echo "$(cat $file)")
-	else
-	testDMperMamp="0.001"
-fi
+ConfReadParam testDMperMamp "0.001"; testDMperMamp="$paramvalue"
 menuitems+=( "spmsamp" "[${testDMperMamp}] Set Periodic DM Modal Sequence amplitude per mode [um]" )
 
 
-
-file="./status/stat_testDMperM.txt"
-testDMperMstat=$( cat $file )
-if [[ -f "$file" && ( "$testDMperMstat" = " ON" || "$testDMperMstat" = "OFF" ) ]]; then
-echo "OK"
-else
-echo "OFF" > "$file"
-testDMperMstat="OFF"
-fi
+StatReadStat testDMperM "OFF"; testDMperMstat="$statusvalue"
 if [ "$testDMperMstat" = "OFF" ]; then
 menuitems+=( "spmsON" "Start Periodic DM Modal Sequence" )
 else
@@ -651,25 +545,25 @@ tmux a -t aosim${LOOPNUMBER}dm${DMindex}turbctrl
 	DMtamp)
 exec 3>&1;dmturbampl=$(dialog --inputbox "DM turbulence amplitude [um]" 0 0 "$dmturbampl" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbampl" > ./conf/conf_dmturbampl.txt
+echo "$dmturbampl" > ./conf/param_dmturbampl.txt
 aoconflog "dmturbampl = ${dmturbampl}"
 ;;
 	DMtws)
 exec 3>&1;dmturbws=$(dialog --inputbox "DM turbulence wind speed [m/s]" 0 0 "$dmturbws" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbws" > ./conf/conf_dmturbws.txt
+echo "$dmturbws" > ./conf/param_dmturbws.txt
 aoconflog "dmturbws = $dmturbws"
 ;;
     DMtlo)
 exec 3>&1;dmturblo=$(dialog --inputbox "DM turbulence low order coeff" 0 0 "$dmturblo" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturblo" > ./conf/conf_dmturblo.txt
+echo "$dmturblo" > ./conf/param_dmturblo.txt
 aoconflog "dmturblo = $dmturblo"
 ;;
 	DMttint)
 exec 3>&1;dmturbtint=$(dialog --inputbox "DM turbulence interval [us]" 0 0 "$dmturbtint" 2>&1 1>&3);
 exec 3>&-;
-echo "$dmturbtint" > ./conf/conf_dmturbtint.txt
+echo "$dmturbtint" > ./conf/param_dmturbtint.txt
 aoconflog "dmturbtint = $dmturbtint"
 ;;
 
@@ -690,21 +584,21 @@ menutestmode_default="dm1m"
     settax)
 exec 3>&1; testActx=$(dialog --inputbox "Set test actuator x" 0 0 "$testActx" 2>&1 1>&3);
 exec 3>&-;
-echo "$testActx" > ./conf/conf_testActx.txt
+echo "$testActx" > ./conf/param_testActx.txt
 aoconflog "testActx = $testActx"
 ;;
 
     settay)
 exec 3>&1; testActy=$(dialog --inputbox "Set test actuator y" 0 0 "$testActx" 2>&1 1>&3);
 exec 3>&-;
-echo "$testActy" > ./conf/conf_testActy.txt
+echo "$testActy" > ./conf/param_testActy.txt
 aoconflog "testActy = $testActy"
 ;;
 
     settaa)
 exec 3>&1; testActa=$(dialog --inputbox "Set test actuator a" 0 0 "$testActa" 2>&1 1>&3);
 exec 3>&-;
-echo "$testActa" > ./conf/conf_testActa.txt
+echo "$testActa" > ./conf/param_testActa.txt
 aoconflog "testActa = $testActa"
 ;;
 
