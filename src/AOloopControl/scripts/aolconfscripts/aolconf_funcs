@@ -104,7 +104,7 @@ fi
 
 
 ##############################################
-# FUNCTION: READ INSTRUMENT CONG VAL FROM FILE
+# FUNCTION: READ INSTRUMENT CONF VAL FROM FILE
 ##############################################
 # arg 1: parameter name
 # arg 2: default value
