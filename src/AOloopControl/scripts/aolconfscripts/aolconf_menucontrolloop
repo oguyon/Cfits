@@ -394,7 +394,7 @@ else
   menuitems+=( "OFFatlim" "[$AUTOTUNELIMITS_ON] \Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
 fi
 
-ConfReadParam AUTOTUNELIMITS_ON "OFF"; AUTOTUNELIMITS_ON="$paramvalue"
+ConfReadParam AUTOTUNELIMITperc "OFF"; AUTOTUNELIMITperc="$paramvalue"
 menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMITperc}" )
 
 ConfReadParam AUTOTUNELIMITmcoeff "0.0"; AUTOTUNELIMITmcoeff="$paramvalue"
