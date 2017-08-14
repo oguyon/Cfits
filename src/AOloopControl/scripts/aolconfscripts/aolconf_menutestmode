@@ -171,22 +171,25 @@ stringcenter "TURBULENCE  -> dm${DMindex}disp10  (tmux aosim${LOOPNUMBER}dm${DMi
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 StatReadStat turbON "OFF"; turbONstat="$statusvalue"
-if [ "${turbONstat}" = "OFF" ];
-then
+StatReadStat fturbON "OFF"; fturbONstat="$statusvalue"
+
+
+
+if [ "${turbONstat}" = "OFF" ]; then
 	menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
+else
+	menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
+fi
+	
+if [ "${fturbONstat}" = "OFF" ]; then
 	menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
 	menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
 else
-	if [ "${turbONstat}" = " ON" ];
-	then
-		menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
-		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
-		menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
-	else
+#		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
+#		menuitems+=( "tvdmtc" "view tmux session aolsim${LOOPNUMBER}turbctrl (type CTRL-B + D to exit)")
 		menuitems+=( "DMtf2sOFF" "\Z1\Zr             STOP turbulence streaming & zero              \Zn" )
 		menuitems+=( "DMtf2sFRE" "\Z1\Zr             STOP turbulence streaming                     \Zn" )
-		menuitems+=( "-" " " )
-	fi
+#		menuitems+=( "-" " " )
 fi
 
 
@@ -482,10 +485,12 @@ menutestmode_default="lsimon"
 	tv)
 tmux a -t aol${LOOPNUMBER}test
 ;;
+
 	DMton)
 TestStartTurb
 menutestmode_default="DMtoff"
 ;;
+
 	DMtoff)
 TestStopTurb
 menutestmode_default="DMton"
@@ -497,7 +502,7 @@ menutestmode_default="DMt2f"
 ;;
 
 	DMtf2sON)
-echo " ON" > ./status/stat_turbON.txt
+echo " ON" > ./status/stat_fturbON.txt
 tmuxname="dm${DMindex}turbstream"
 tmux kill-session -t $tmuxname
 sleep 0.2
@@ -512,7 +517,7 @@ menutestmode_default="DMtf2sOFF"
 ;;
 
 	DMtf2sOFF)
-echo "OFF" > ./status/stat_turbON.txt
+echo "OFF" > ./status/stat_fturbON.txt
 tmuxname="dm${DMindex}turbstream"
 tmux send-keys -t $tmuxname "" C-c
 tmux send-keys -t $tmuxname "exit" C-m
