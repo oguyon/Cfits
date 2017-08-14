@@ -97,54 +97,32 @@ rm runproc/MeasLoopModeResp.runproc
 
 if [ $state = "menutestmode" ]; then
 stateok=1
-lsimstatus="OFF"
-testloopstatus="OFF"
-testdmturbstatus="OFF"
-
-file="./status/stat_lsimON.txt"
-if [ -a $file ]
-	then
-	lsimstatus=$(echo "$(cat $file)")
-	else
-	lsimstatus="OFF"
-fi
 
 
-file="./status/testloopstatus.txt"
-if [ -a $file ]
-	then
-	testloopstatus=$(echo "$(cat $file)")
-	else
-	testloopstatus="OFF"
-fi
-
-file="./status/testdm${DMindex}turbstatus.txt"
-if [ -a $file ]
-	then
-	testdmturbstatus=$(echo "$(cat $file)")
-	else
-	testdmturbstatus="OFF"
-fi
 
 
-ReadTestDMsize
 
-ReadDMturbampl
-ReadDMturbws
-ReadDMturbtint
-ReadDMturblo
+#ReadTestDMsize
 
-ReadTMsync    # sync mode
-ReadTMdelayus # delay [us]
+#ReadDMturbampl
+#ReadDMturbws
+#ReadDMturbtint
+#ReadDMturblo
 
-menuname="TEST MODE [${testloopstatus}]"
+#ReadTMsync    # sync mode
+#ReadTMdelayus # delay [us]
+
+menuname="TEST MODE"
 
 stringcenter "HELP"
 menuitems=( "H" "\Zb\Zr$string\Zn" )
 
 
 
-### LINEAR SIMULATOR
+
+##########################################
+# LINEAR SIMULATOR
+##########################################
 
 menuitems+=( "-" " " )
 stringcenter "LINEAR SIMULATOR"
@@ -157,44 +135,21 @@ menuitems+=( "zrespMlinsim" "$menustring" )
 makemenuitemstringaolshm "wfsref0linsim" "linear simulation WFS reference"
 menuitems+=( "wfsref0linsim" "$menustring" )
 
-file="./conf/conf_GPUlinsim.txt"
-GPUlinsim=$( cat $file )
-if [[ -f "$file" && ${GPUlinsim} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-GPUlinsim="0"
-fi
+
+
+ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS 
 menuitems+=( "GPUlinsim" "[ $GPUlinsim ]    Linear WFS simulation: GPU device" )
 
-
-
-
-file="./conf/conf_linsimdt.txt"
-if [ -a $file ]
-	then
-	linsimdt=$(echo "$(cat $file)")
-	else
-	linsimdt="10000"
-fi
+ConfReadParam linsimdt "2000"; linsimdt="$paramvalue" # READ LHS loop interval [us]
 menuitems+=( "linsimdt" "[${linsimdt}] Set Linear WFS update interval [us]" )
 
-
-
-file="./conf/conf_linsimDelay.txt"
-linsimDelay=$( cat $file )
-if [[ -f "$file" && ${linsimDelay} =~ [0-9]$ ]]; then
-echo "OK"
-else
-echo "0" > $file
-linsimDelay="0"
-fi
+ConfReadParam linsimDelay "3000"; linsimDelay="$paramvalue" # READ LHS hardware latency [us]
 menuitems+=( "linsimDelay" "[ $linsimDelay ]    Linear WFS simulation: loop lag [us]" )
 
 
 
-
-if [ "${lsimstatus}" = "OFF" ];
+StatReadStat lsimON "OFF"; lsimONstat="$statusvalue"
+if [ "${lsimONstat}" = "OFF" ];
 then
 menuitems+=( "lsimon"  "\Zb[   OFF  ]\ZB    \Zb\Zu ===== START linear simulator =====\ZB\ZU -> aol#_linsimWFS" )
 else
@@ -204,18 +159,25 @@ fi
 
 
 
+
+
+
+##########################################
+# TURBULENCE SIMULATOR
+##########################################
+
 menuitems+=( "-" " " )
 stringcenter "TURBULENCE  -> dm${DMindex}disp10  (tmux aosim${LOOPNUMBER}dm${DMindex}turb)"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
-
-if [ "${testdmturbstatus}" = "OFF" ];
+StatReadStat turbON "OFF"; turbONstat="$statusvalue"
+if [ "${turbONstat}" = "OFF" ];
 then
 	menuitems+=( "DMton" "\Zb\Zu        ==== START simulated turbulence ->  DM  ==== \ZB\ZU" )
 	menuitems+=( "DMt2f" "\Zb\Zu        ==== WRITE simulated turbulence -> File ==== \ZB\ZU" )
 	menuitems+=( "DMtf2sON" "\Zb\Zu        ==== START turbulence streaming (from file) ->  DM  ==== \ZB\ZU")
 else
-	if [ "${testdmturbstatus}" = " ON" ];
+	if [ "${turbONstat}" = " ON" ];
 	then
 		menuitems+=( "DMtoff" "\Z1\Zr             STOP simulated turbulence                      \Zn" )
 		menuitems+=( "tvdmt" "view tmux session aolsim${LOOPNUMBER}turb (type CTRL-B + D to exit)")
@@ -228,86 +190,49 @@ else
 fi
 
 
+ConfReadParam dmturbampl "0.01"; dmturbampl="$paramvalue"
 menuitems+=( "DMtamp" "DM turbulence amplitude      = ${dmturbampl} um" )
+
+ConfReadParam  "0"; ="$paramvalue"
 menuitems+=( "DMtws" "DM turbulence wind speed      = ${dmturbws} m/s" )
+
+ConfReadParam dmturbws "10"; dmturbws="$paramvalue"
 menuitems+=( "DMtlo" "DM turbulence low order coeff = ${dmturblo}" )
+
+ConfReadParam dmturbtint "1000"; dmturbtint="$paramvalue"
 menuitems+=( "DMttint" "DM turbulence interval  = ${dmturbtint} us" )
 
 menuitems+=( "dm1v" "View DM chan 10 (turbulence) stream" )
 menuitems+=( "dm1m" "Monitor DM chan 10 (turbulence) stream" )
 
-menuitems+=( "-" " " )
-stringcenter "START/STOP SIMULATOR   (tmux ao${LOOPNUMBER}test)"
-menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
-
-
-if [ "${testloopstatus}" = "OFF" ];
-then
-menuitems+=( "Start" "             START simulated WFS               " )
-menuitems+=( "-" " ")
-else
-menuitems+=( "Stop" "\Z1\Zr             STOP simulated WFS                             \Zn" )
-menuitems+=( "tv" "view tmux session aol${LOOPNUMBER}test (type CTRL-B + D to exit)")
-fi
-#fi
-menuitems+=( "TMsync" "[${AOsystsimsync}] WFS sync mode")
-menuitems+=( "TMdelay" "[${AOsystsimWFSdelayus} us] WFS delay")
 
 
 
 
-
-
-
-
-
-
+##########################################
+# SINGLE ACTUATOR POKE
+##########################################
 
 menuitems+=( "-" " " )
 stringcenter "SINGLE ACTUATOR POKE"
-menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-file="./conf/conf_testActx.txt"
-if [ -a $file ]
-	then
-	testActx=$(echo "$(cat $file)")
-	else
-	testActx="1"
-fi
+
+ConfReadParam testActx "1"; testActx="$paramvalue"
 menuitems+=( "settax" "[${testActx}] Set test actuator x coord" )
 
-file="./conf/conf_testActy.txt"
-if [ -a $file ]
-	then
-	testActy=$(echo "$(cat $file)")
-	else
-	testActy="1"
-fi
+ConfReadParam testActy "1"; testActy="$paramvalue"
 menuitems+=( "settay" "[${testActy}] Set test actuator y coord" )
 
-
-file="./conf/conf_testActa.txt"
-if [ -a $file ]
-	then
-	testActa=$(echo "$(cat $file)")
-	else
-	testActa="0.1"
-fi
+ConfReadParam testActa "0.1"; testActa="$paramvalue"
 menuitems+=( "settaa" "[${testActa}] Set test actuator Amplitude" )
 
 
 
 
-
-testactstat=$( cat ./status/stat_testact.txt )
-if [[ -f "./status/stat_testact.txt" && ( "$testactstat" = "1" || "$testactstat" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > ./status/stat_testact.txt
-fi
-
-if [ "${testactstat}" = "0" ];
+StatReadStat testactON "0"; testactONstat="$statusvalue"
+if [ "${testactONstat}" = "0" ];
 then
 menuitems+=( "testact1" "             Apply actuator command               " )
 else
@@ -318,12 +243,14 @@ fi
 
 
 
-
+##########################################
+# SYSTEM RESPONSE TEST / CALIBRATION
+##########################################
 
 
 menuitems+=( "-" " " )
 stringcenter "SYSTEM RESPONSE TEST / CALIBRATION"
-menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
+menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 
 menuitems+=( " "  " " ) 
@@ -756,33 +683,6 @@ $shmimmonexec dm${DMindex}disp10
 menutestmode_default="dm1m"
 ;;   
 
-   	 Start)
-#if [ $testloopstatus = "OFF" ]; then
-TestModeStart
-#fi
-menutestmode_default="Stop"
-;;   
-   	 Stop) 
-#if [ $testloopstatus = " ON" ]; then
-TestModeStop
-#fi
-menutestmode_default="Start"
-;;  
-	TMsync)
-exec 3>&1;AOsystsimsync=$(dialog --inputbox "Sync mode" 0 0 "$AOsystsimsync" 2>&1 1>&3);
-exec 3>&-;
-echo "$AOsystsimsync" > ./conf/conf_AOsystsimsync.txt
-aoconflog "AOsystsimsync = $AOsystsimsync"
-menutestmode_default="TMsync"
-;;
-	TMdelay)
-exec 3>&1;AOsystsimWFSdelayus=$(dialog --inputbox "WFS cam delay [us]" 0 0 "$AOsystsimWFSdelayus" 2>&1 1>&3);
-exec 3>&-;
-echo "$AOsystsimWFSdelayus" > ./conf/conf_AOsystsimWFSdelayus.txt
-aoconflog "AOsystsimWFSdelayus = $AOsystsimWFSdelayus"
-menutestmode_default="TMdelay"
-;;
-
 
 
 
@@ -825,7 +725,7 @@ exit
 EOF
 fi
 
-echo "1" > ./status/stat_testact.txt
+echo "1" > ./status/stat_testactON.txt
 aoconflog "testact = 1"
 menutestmode_default="testact0"
 ;;
@@ -845,7 +745,7 @@ setpix ${dmRM} 0.0 $testActx $testActy
 exit
 EOF
 fi
-echo "0" > ./status/stat_testact.txt
+echo "0" > ./status/stat_testactON.txt
 aoconflog "testact = 0"
 menutestmode_default="testact1"
 ;;
