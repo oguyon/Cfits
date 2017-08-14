@@ -2241,11 +2241,11 @@ int AOloopControl_DM_dmturb(long DMindex, int mode, const char *IDout_name, long
                 if(ypix1>size_sy-1)
                     ypix1 = size_sy-1;
 
-				if((k%100==0))
-				{
-					if(((ii==0)&&(jj==0))) //||((ii==DM_Xsize-1)&&(jj==DM_Ysize-1)))
-						printf("%05ld %20f (%6ld)   %5ld %5ld   %20f %20f   %4ld %4ld   %ld  [%ld %ld] [%ld %ld]\n", k, tdiff1v, dmturbconf[DMindex].tint, ii, jj, screen0_X, screen0_Y, xpix1, ypix1, IDs1, DM_Xsize, DM_Ysize, size_sx, size_sy);
-				}
+			//	if((k%100==0))
+			//	{
+			//		if(((ii==0)&&(jj==0))) //||((ii==DM_Xsize-1)&&(jj==DM_Ysize-1)))
+			//			printf("%05ld %20f (%6ld)   %5ld %5ld   %20f %20f   %4ld %4ld   %ld  [%ld %ld] [%ld %ld]\n", k, tdiff1v, dmturbconf[DMindex].tint, ii, jj, screen0_X, screen0_Y, xpix1, ypix1, IDs1, DM_Xsize, DM_Ysize, size_sx, size_sy);
+			//	}
 
 				
                 data.image[IDturbs1].array.F[ii1] = 1.0*xpix1;
