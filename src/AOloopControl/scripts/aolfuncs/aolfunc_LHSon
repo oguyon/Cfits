@@ -357,8 +357,8 @@ cp ./conf/instconf_dmDCum.txt > ./conf/instconf_dmDCum_hardware.txt
 # turn off DM voltage 
 $execname << EOF
 aoldmvoltOFF ${DMindex}
-aolsetdmDC 0.0
-aolsetdmAveMode ${DMindex} 2
+aolsetdmDC ${DMindex} 0.0
+aolsetdmAveM ${DMindex} 2
 exitCLI
 EOF
 
