@@ -428,20 +428,20 @@ syncmode:\n
 zrespMlinsim)
 	exec 3>&1;
 	zrespMlinsimfname=$(dialog --title "linear simulation: Select Zonal RM" --stdout --title "linear simulation: select zonal RM" --fselect "${zrespMlinsimfname}" $nbwlines $nbwcols)
-	echo "$zrespMlinsimfname" > ./conf/conf_zrespMlinsim_name.txt
+	echo "$zrespMlinsimfname" > ./conf/param_zrespMlinsim_name.txt
 	Fits2shm -c -p aol${LOOPNUMBER}_ zrespMlinsim
 ;;
 
 wfsref0linsim)
 	exec 3>&1;
 	wfsref0linsimfname=$(dialog --title "linear simulation: Select WFS ref" --stdout --title "linear simulation: select WFS ref" --fselect "${wfsref0linsimfname}" $nbwlines $nbwcols)
-	echo "$wfsref0linsimfname" > ./conf/conf_wfsref0linsim_name.txt
+	echo "$wfsref0linsimfname" > ./conf/param_wfsref0linsim_name.txt
 	Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0linsim
 ;;
 
 
     GPUlinsim)
-file="./conf/conf_GPUlinsim.txt"
+file="./conf/param_GPUlinsim.txt"
 exec 3>&1;
 GPUlinsim=$(dialog --inputbox "linear WFS simulation GPU device" 0 0 "$GPUlinsim" 2>&1 1>&3);
 exec 3>&-;
@@ -451,7 +451,7 @@ menucontrolloop_default="GPUlinsim"
 ;;
 
 linsimdt)
-file="./conf/conf_linsimdt.txt"
+file="./conf/param_linsimdt.txt"
 exec 3>&1;
 linsimdt=$(dialog --inputbox "linear WFS simulation time interval [us]" 0 0 "$linsimdt" 2>&1 1>&3);
 exec 3>&-;
@@ -461,7 +461,7 @@ menucontrolloop_default="linsimdt"
 ;;
 
 linsimDelay)
-file="./conf/conf_linsimDelay.txt"
+file="./conf/param_linsimDelay.txt"
 exec 3>&1;
 linsimDelay=$(dialog --inputbox "linear WFS simulation DM lag [us]" 0 0 "$linsimDelay" 2>&1 1>&3);
 exec 3>&-;
@@ -658,19 +658,14 @@ menutestmode_default="testact1"
 	mzRMsA)
 exec 3>&1;mzRMsensAmpnm=$(dialog --inputbox "Set zRM sensitivity measurement amplitude" 0 0 "$mzRMsensAmpnm" 2>&1 1>&3);
 exec 3>&-;
-echo "$mzRMsensAmpnm" > ./conf/conf_mzRMsensAmpnm.txt
+echo "$mzRMsensAmpnm" > ./conf/param_mzRMsensAmpnm.txt
 aoconflog "mzRMsensAmpnm = $mzRMsensAmpnm"
 ;;
 
 
 mzRMs)
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
-
-wfslambdanm="800"
-if [ -f "./conf/conf_wfslambdanm.txt" ]; then
-wfslambdanm=$( cat ./conf/conf_wfslambdanm.txt )
-fi
-
+ConfReadParam wfslambdanm "800"; wfslambdanm="$paramvalue"
 ./auxscripts/aolRMmeas_sensitivity ${mzRMsensAmpnm} ${wfslambdanm}
 
 file="conf/conf_conflastloaded_name.txt"
@@ -704,26 +699,26 @@ mv WFSmodesXP.fits ./perfMeas/${outfname}_WFSmodesXP.fits
 	settmn)
 exec 3>&1;testModeNb=$(dialog --inputbox "Set test DM mode number" 0 0 "$testModeNb" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeNb" > ./conf/conf_testModeNb.txt
+echo "$testModeNb" > ./conf/param_testModeNb.txt
 aoconflog "testModeNb = $testModeNb"
 ;;
 	settma)
 exec 3>&1;testModeAmp=$(dialog --inputbox "Set test DM mode amplitude" 0 0 "$testModeAmp" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeAmp" > ./conf/conf_testModeAmp.txt
+echo "$testModeAmp" > ./conf/param_testModeAmp.txt
 aoconflog "testModeAmp = $testModeAmp"
 ;;
 
 	settmd)
 exec 3>&1;testModeDelay=$(dialog --inputbox "Set test DM mode delay [us]" 0 0 "$testModeDelay" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeDelay" > ./conf/conf_testModeDelay.txt
+echo "$testModeDelay" > ./conf/param_testModeDelay.txt
 aoconflog "testModeDelay = $testModeDelay"
 ;;
 	setave)
 exec 3>&1;testModeAve=$(dialog --inputbox "Set number of frames averaged" 0 0 "$testModeAve" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeAve" > ./conf/conf_testModeAve.txt
+echo "$testModeAve" > ./conf/param_testModeAve.txt
 aoconflog "testModeAve = $testModeAve"
 ;;
 
@@ -853,25 +848,25 @@ tmux send-keys -t $tmuxname "exit" C-m
 	settmf0)
 exec 3>&1;testModefmin=$(dialog --inputbox "Set test DM mode freq min" 0 0 "$testModefmin" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModefmin" > ./conf/conf_testModefmin.txt
+echo "$testModefmin" > ./conf/param_testModefmin.txt
 aoconflog "testModefmin = $testModefmin"
 ;;
 	settmf1)
 exec 3>&1;testModefmax=$(dialog --inputbox "Set test DM mode freq max" 0 0 "$testModefmax" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModefmax" > ./conf/conf_testModefmax.txt
+echo "$testModefmax" > ./conf/param_testModefmax.txt
 aoconflog "testModefmax = $testModefmax"
 ;;
 	settmfs)
 exec 3>&1;testModefmstep=$(dialog --inputbox "Set test DM mode freq mult step" 0 0 "$testModefmstep" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModefmstep" > ./conf/conf_testModefmstep.txt
+echo "$testModefmstep" > ./conf/param_testModefmstep.txt
 aoconflog "testModefmstep = $testModefmstep"
 ;;
 	settmet)
 exec 3>&1;testModeetime=$(dialog --inputbox "Set test DM mode measurement time" 0 0 "$testModeetime" 2>&1 1>&3);
 exec 3>&-;
-echo "$testModeetime" > ./conf/conf_testModeetime.txt
+echo "$testModeetime" > ./conf/param_testModeetime.txt
 aoconflog "testModeetime = $testModeetime"
 ;;
 
@@ -892,7 +887,7 @@ menutestmode_default="dmmtr_on"
 exec 3>&1;
 testDMperMn=$(dialog --inputbox "set test DM periodic mode sequence number of modes" 0 0 "$testDMperMn" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMn" > ./conf/conf_testDMperMn.txt
+echo "$testDMperMn" > ./conf/param_testDMperMn.txt
 aoconflog "testDMperMn = $testDMperMn"
 menutestmode_default="spmsn"
 ;;
@@ -901,7 +896,7 @@ menutestmode_default="spmsn"
 exec 3>&1;
 testDMperMdt=$(dialog --inputbox "set test DM periodic mode sequence dt [us]" 0 0 "$testDMperMdt" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMdt" > ./conf/conf_testDMperMdt.txt
+echo "$testDMperMdt" > ./conf/param_testDMperMdt.txt
 aoconflog "testDMperMdt = $testDMperMdt"
 menutestmode_default="spmsdt"
 ;;
@@ -910,7 +905,7 @@ menutestmode_default="spmsdt"
 exec 3>&1;
 testDMperMfr=$(dialog --inputbox "set test DM periodic mode sequence frequency [Hz]" 0 0 "$testDMperMfr" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMfr" > ./conf/conf_testDMperMfr.txt
+echo "$testDMperMfr" > ./conf/param_testDMperMfr.txt
 aoconflog "testDMperMfr = $testDMperMfr"
 menutestmode_default="spmsfr"
 ;;
@@ -919,7 +914,7 @@ menutestmode_default="spmsfr"
 exec 3>&1;
 testDMperMamp=$(dialog --inputbox "set test DM periodic mode sequence ampl [um]" 0 0 "$testDMperMamp" 2>&1 1>&3);
 exec 3>&-;
-echo "$testDMperMamp" > ./conf/conf_testDMperMamp.txt
+echo "$testDMperMamp" > ./conf/param_testDMperMamp.txt
 aoconflog "testDMperMamp = $testDMperMamp"
 menutestmode_default="spmsamp"
 ;;
