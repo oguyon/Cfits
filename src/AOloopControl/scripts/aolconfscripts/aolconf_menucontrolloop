@@ -342,17 +342,17 @@ StatReadStat procON "OFF"; procONstat="$statusvalue"
 if [ "${procONstat}" = "OFF" ]; then
  menuitems+=( "S" "\Zb\Zu ==== START loop processes ====\ZB\ZU" )
  
- menuitems+=( "LPmewfs" "  [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+ menuitems+=( "LPmewfs" " MEWFS [$LOOPPROCESS_EXTRWFSMODES] Toggle loop process : extract WFS modes       -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
  
- menuitems+=( "LPmeol" "  [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+ menuitems+=( "LPmeol" " MEXOL [$LOOPPROCESS_EXTROLMODES] Toggle loop process : extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
  
- menuitems+=( "DMfWB" "  [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
+ menuitems+=( "DMfWB" " DMFWB [$LOOPPROCESS_DMFILTWB] Toggle DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
  
- menuitems+=( "LPzpo" "  [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
+ menuitems+=( "LPzpo" " ZPOLP [$LOOPPROCESS_ZPO] Toggle loop process : Zero pt offset" )
  
- menuitems+=( "LPdmCa" "  [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
+ menuitems+=( "LPdmCa" " DMCAV [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
  
- menuitems+=( "LPwfsresa" "  [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
+ menuitems+=( "LPwfsresa" " WFSAV [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
 
 else
  menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
