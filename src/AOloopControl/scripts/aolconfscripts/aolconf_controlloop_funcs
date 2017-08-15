@@ -123,15 +123,15 @@ echo "sleep 1" >> $scriptfile
 if [ "0" -lt "$NBblocks" ]; then
 ConfReadParam limitb00 "1.0"; limitb00="$paramvalue"
 limitb[00]=${limitb00}
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb ${gi} ${limitb[10#${gi}]}\" C-m" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 00 ${limitb[00]}\" C-m" >> $scriptfile
 
 ConfReadParam multfb00 "1.0"; multfb00="$paramvalue"
 multfb[00]=${multfb00}
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb ${gi} ${multfb[10#${gi}]}\" C-m" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 00 ${multfb[00]}\" C-m" >> $scriptfile
 
 ConfReadParam gainb00 "1.0"; gainb00="$paramvalue"
 gainb[00]=${gainb00}
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb ${gi} ${gainb[10#${gi}]}\" C-m" >> $scriptfile
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 00 ${gainb[00]}\" C-m" >> $scriptfile
 fi
 
 
