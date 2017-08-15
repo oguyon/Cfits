@@ -266,8 +266,8 @@ typedef struct
     int_fast8_t on;  // goes to 1 when loop starts, put to 0 to turn loop off
     float gain; // overall loop gain
     uint_fast16_t framesAve; // number of frames to average
-//	int_fast8_t DMprimaryWrite_ON; // primary DM write
-	
+	int_fast8_t DMprimaryWrite_ON; // primary DM write
+	int_fast8_t CMMODE;
  
 	// MODAL AUTOTUNING 
 	// limits
@@ -456,7 +456,7 @@ static int PIXSTREAM_SLICE; // slice index 0 = all pixels
 
 static long ti; // thread index
 
-static int MATRIX_COMPUTATION_MODE = 0;
+// static int MATRIX_COMPUTATION_MODE = 0;
 // 0: compute sequentially modes and DM commands
 // 1: use combined control matrix
 
@@ -2484,7 +2484,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.8. Read CMatrix mult mode
      * 
-     * - ./conf/param_CMMMODE.txt -> MATRIX_COMPUTATION_MODE
+     * - ./conf/param_CMMMODE.txt -> CMMODE
      * 		- 0 : WFS signal -> Mode coeffs -> DM act values  (2 sequential matrix multiplications)
      * 		- 1 : WFS signal -> DM act values  (1 combined matrix multiplication)
      */ 
@@ -2495,7 +2495,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     {
         printf("WARNING: file ./conf/param_CMMODE.txt missing\n");
         printf("Using combined matrix\n");
-        MATRIX_COMPUTATION_MODE = 1;  // by default, use combined matrix
+        AOconf[loop].CMMODE = 1;  // by default, use combined matrix
         fprintf(fplog, "WARNING: file ./conf/param_CMMODE.txt missing. Using combined matrix\n");
     }
     else
@@ -2506,8 +2506,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printf("Matrix mult mode : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
-        MATRIX_COMPUTATION_MODE = atoi(content);
-        fprintf(fplog, "MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
+        AOconf[loop].CMMODE = atoi(content);
+        fprintf(fplog, "CMMODE = %d\n", AOconf[loop].CMMODE);
     }
 
 
@@ -11577,11 +11577,11 @@ int_fast8_t AOloopControl_run()
                 data.image[aoconfID_looptiming].array.F[12] = tdiffv;
 
 #ifdef _PRINT_TEST
-                printf("TEST -  MATRIX_COMPUTATION_MODE = %d\n", MATRIX_COMPUTATION_MODE);
+                printf("TEST -  CMMODE = %d\n", AOconf[loop].CMMODE);
                 fflush(stdout);
 #endif
 
-                if(MATRIX_COMPUTATION_MODE==0)  // 2-step : WFS -> mode coeffs -> DM act
+                if(AOconf[loop].CMMODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
 #ifdef _PRINT_TEST
                     printf("TEST -  DMprimaryWrite_ON = %d\n", AOconf[loop].DMprimaryWrite_ON);
@@ -12015,10 +12015,10 @@ int_fast8_t AOcompute(long loop, int normalize)
 
     if(AOconf[loop].GPU0 == 0)   // run in CPU
     {
-        if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
+            printf("TEST - CM mult: GPU=0, CMMODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
             fflush(stdout);
 #endif
 
@@ -12031,7 +12031,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         else // (*)
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=0, MATRIX_COMPUTATION_MODE=1 - using matrix %s\n", data.image[aoconfID_contrMc].md[0].name);
+            printf("TEST - CM mult: GPU=0, CMMODE=1 - using matrix %s\n", data.image[aoconfID_contrMc].md[0].name);
             fflush(stdout);
 #endif
 
@@ -12046,10 +12046,10 @@ int_fast8_t AOcompute(long loop, int normalize)
     else
     {
 #ifdef HAVE_CUDA
-        if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
+            printf("TEST - CM mult: GPU=1, CMMODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
             fflush(stdout);
 #endif
 
@@ -12101,7 +12101,7 @@ int_fast8_t AOcompute(long loop, int normalize)
         else // direct pixel -> actuators linear transformation
         {
 #ifdef _PRINT_TEST
-            printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1\n");
+            printf("TEST - CM mult: GPU=1, CMMODE=1\n");
             fflush(stdout);
 #endif
 
@@ -12123,7 +12123,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 if(COMPUTE_GPU_SCALING==1) // (**)
                 {
 #ifdef _PRINT_TEST
-                    printf("TEST - CM mult: GPU=1, MATRIX_COMPUTATION_MODE=1, COMPUTE_GPU_SCALING=1\n");
+                    printf("TEST - CM mult: GPU=1, CMMODE=1, COMPUTE_GPU_SCALING=1\n");
                     fflush(stdout);
 #endif
 
@@ -12223,7 +12223,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     data.image[aoconfID_looptiming].array.F[11] = tdiffv;
 
-    if(MATRIX_COMPUTATION_MODE==0)
+    if(AOconf[loop].CMMODE==0)
     {
         AOconf[loop].RMSmodes = 0;
         long k;
@@ -14656,9 +14656,9 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
     printf("AOconf[loop].DMmodesNBblock = %ld\n", AOconf[loop].DMmodesNBblock);
     fflush(stdout);
 
-    /*if(MATRIX_COMPUTATION_MODE==0)
+    /*if(AOconf[loop].CMMODE==0)
     {
-        printf("Command has no effect: modeblock gain not compatible with MATRIX_COMPUTATION_MODE = 0\n");
+        printf("Command has no effect: modeblock gain not compatible with CMMODE = 0\n");
         fflush(stdout);
     }
     else*/
@@ -15257,7 +15257,8 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 
     FILE *fp;
 
-
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
 
     statusdef[0] = "LOAD IMAGE";
     statusdef[1] = "DARK SUBTRACT";
@@ -15272,7 +15273,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     statusdef[10] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
     statusdef[11] = "MULTIPLYING BY GAINS";
 
-    if(MATRIX_COMPUTATION_MODE==0)
+    if(AOconf[loop].CMMODE==0)
     {
         statusdef[12] = "ENTER SET DM MODES";
         statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
@@ -15329,8 +15330,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     usec0 = 50.0;
     usec1 = 150.0;
 
-    if(AOloopcontrol_meminit==0)
-        AOloopControl_InitializeMemory(1);
+
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -15523,7 +15523,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
         }
 
         printf("\n");
-        if(MATRIX_COMPUTATION_MODE == 0)
+        if(AOconf[loop].CMMODE == 0)
         {
             printf("          ----1--------2--------3--------4--------5--------6----\n");
             for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
