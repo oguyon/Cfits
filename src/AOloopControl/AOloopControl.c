@@ -4216,6 +4216,7 @@ static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_nam
 
 
 
+
 static void *compute_function_imtotal( void *ptr )
 {
     long ii;
@@ -4245,6 +4246,7 @@ static void *compute_function_imtotal( void *ptr )
     }
 
 }
+
 
 
 
@@ -12595,6 +12597,8 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
 
     return(IDout);
 }
+
+
 
 
 long AOloopControl_computeWFSresidualimage(long loop, float alpha)
