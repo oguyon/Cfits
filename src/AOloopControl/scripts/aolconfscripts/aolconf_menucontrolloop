@@ -299,7 +299,7 @@ fi
 
 
 
-if [[ "${GPU}" -ne "0" ]]; then   
+if [[ "${GPU0}" -ne "0" ]]; then   
 
 ConfReadParam GPUall "0"; GPUall="$paramvalue"
  if [ "${GPUall}" = "0" ]; then
