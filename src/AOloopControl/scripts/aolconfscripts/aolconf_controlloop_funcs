@@ -120,45 +120,65 @@ echo "sleep 1" >> $scriptfile
 
 
 
-for i in `seq 0 $(( $NBblocks - 1 ))`;
-do
-	     gi=$(printf "%02d" "$i")
+if [ "0" -lt "$NBblocks" ]; then
+ConfReadParam limitb00 "1.0"; limitb00="$paramvalue"
+limitb[00]=${limitb00}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb ${gi} ${limitb[10#${gi}]}\" C-m" >> $scriptfile
 
-		ConfReadParam limitb${gi} "1.0"; limitb${gi}="$paramvalue"
+ConfReadParam multfb00 "1.0"; multfb00="$paramvalue"
+multfb[00]=${multfb00}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb ${gi} ${multfb[10#${gi}]}\" C-m" >> $scriptfile
+
+ConfReadParam gainb00 "1.0"; gainb00="$paramvalue"
+gainb[00]=${gainb00}
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb ${gi} ${gainb[10#${gi}]}\" C-m" >> $scriptfile
+fi
+
+
+
+
+#for i in `seq 0 $(( $NBblocks - 1 ))`;
+#do
+#	     gi=$(printf "%02d" "$i")
+
+#		ConfReadParam limitb${gi} "1.0"; limitb${gi}="$paramvalue"
 
 #		file="./conf/conf_limitb${gi}.txt"
 #		if [ ! -f "$file" ]; then
 #		echo "1.0" > $file
 #		fi
-	     limitb[10#${gi}]=${limitb${gi}}
-	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb ${gi} ${limitb[10#${gi}]}\" C-m" >> $scriptfile
+#	     limitb[10#${gi}]=${limitb${gi}}
+#	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb ${gi} ${limitb[10#${gi}]}\" C-m" >> $scriptfile
 
 
-		ConfReadParam multfb${gi} "1.0"; multfb${gi}="$paramvalue"
+#		ConfReadParam multfb${gi} "1.0"; multfb${gi}="$paramvalue"
 #		file="./conf/conf_multfb${gi}.txt"
 #		if [ ! -f "$file" ]; then
 #		echo "1.0" > $file
 #		fi
-	     multfb[10#${gi}]=${multfb${gi}}
-	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb ${gi} ${multfb[10#${gi}]}\" C-m" >> $scriptfile
+#	     multfb[10#${gi}]=${multfb${gi}}
+#	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb ${gi} ${multfb[10#${gi}]}\" C-m" >> $scriptfile
 
-		ConfReadParam gainb${gi} "0.0"; gainb${gi}="$paramvalue"	     
+#		ConfReadParam gainb${gi} "0.0"; gainb${gi}="$paramvalue"	     
 #		file="./conf/conf_gainb${gi}.txt"
 #		if [ ! -f "$file" ]; then
 #		echo "1.0" > $file
 #		fi
-	     gainb[10#${gi}]=${gainb${gi}}
+#	     gainb[10#${gi}]=${gainb${gi}}
 	     
-	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 0\" C-m" >> $scriptfile
-	 done
-gi="00"
-file="./conf/conf_gainb${gi}.txt"
-if [ ! -f "$file" ]; then
-echo "echo \"1.0\" > $file" >> $scriptfile
-fi
-gainb[10#${gi}]=$(cat $file )
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 1\" C-m" >> $scriptfile
-echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"# test: ${gainb[10#${gi}]}\" C-m" >> $scriptfile
+#	     echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 0\" C-m" >> $scriptfile
+#	 done
+
+#gi="00"
+#file="./conf/conf_gainb${gi}.txt"
+#if [ ! -f "$file" ]; then
+#echo "echo \"1.0\" > $file" >> $scriptfile
+#fi
+#gainb[10#${gi}]=$(cat $file )
+#echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 1\" C-m" >> $scriptfile
+#echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"# test: ${gainb[10#${gi}]}\" C-m" >> $scriptfile
+
+
 
 
 #  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
