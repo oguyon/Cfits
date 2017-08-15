@@ -2678,11 +2678,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-list_image_ID();
-fclose(fplog);
-exit(0);
-
-
 
 
     /** ### Connect to DM
