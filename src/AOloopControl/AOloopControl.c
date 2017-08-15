@@ -2554,7 +2554,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
+fclose(fplog);
+exit(0);
 
 
 
@@ -12601,6 +12602,34 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
 
 
 
+/**
+ * ## Purpose
+ * 
+ * Computes average of residual in WFS
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * loop		INT
+ * 			loop number
+ * 
+ * @param[in]
+ * alpha	FLOAT
+ * 			averaging coefficient
+ * 
+ * 
+ * ## Output files
+ * 
+ * - aol_wfsres_ave
+ * - aol_wfsres_ave
+ * - aol_wfsresm
+ * - aol_wfsresm_ave
+ * - aol_wfsres_rms
+ * 
+ * 
+ * 
+ */
+
 long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 {
     long IDimWFS0, IDwfsref, IDwfsmask, IDtot, IDout, IDoutave, IDoutm, IDoutmave, IDoutrms;
@@ -14636,6 +14665,7 @@ int_fast8_t AOloopControl_setframesAve(long nbframes)
 
     return 0;
 }
+
 
 
 
