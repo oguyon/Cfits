@@ -15523,7 +15523,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
         }
 
         printf("\n");
-        if(AOconf[loop].CMMODE == 0)
+        if(AOconf[LOOPNUMBER].CMMODE == 0)
         {
             printf("          ----1--------2--------3--------4--------5--------6----\n");
             for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
