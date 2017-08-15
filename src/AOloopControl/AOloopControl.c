@@ -266,7 +266,7 @@ typedef struct
     int_fast8_t on;  // goes to 1 when loop starts, put to 0 to turn loop off
     float gain; // overall loop gain
     uint_fast16_t framesAve; // number of frames to average
-	int_fast8_t DMprimaryWrite_ON; // primary DM write
+//	int_fast8_t DMprimaryWrite_ON; // primary DM write
 	
  
 	// MODAL AUTOTUNING 
@@ -301,7 +301,15 @@ typedef struct
 	 * 
 	 */
 
-    int_fast8_t GPU; // 1 if matrix multiplication  done by GPU
+    int_fast8_t GPU0; // NB of GPU devices in set 0. 1+ if matrix multiplication done by GPU (set 0)
+    int_fast8_t GPU1; // NB of GPU devices in set 1. 1+ if matrix multiplication done by GPU (set 1)
+    int_fast8_t GPU2; // NB of GPU devices in set 2. 1+ if matrix multiplication done by GPU (set 2)
+    int_fast8_t GPU3; // NB of GPU devices in set 3. 1+ if matrix multiplication done by GPU (set 3)    
+    int_fast8_t GPU4; // NB of GPU devices in set 4. 1+ if matrix multiplication done by GPU (set 4)
+    int_fast8_t GPU5; // NB of GPU devices in set 5. 1+ if matrix multiplication done by GPU (set 5)
+    int_fast8_t GPU6; // NB of GPU devices in set 6. 1+ if matrix multiplication done by GPU (set 6)
+    int_fast8_t GPU7; // NB of GPU devices in set 7. 1+ if matrix multiplication done by GPU (set 7)
+            
     int_fast8_t GPUall; // 1 if scaling computations done by GPU
     int_fast8_t GPUusesem; // 1 if using semaphores to control GPU
     int_fast8_t AOLCOMPUTE_TOTAL_ASYNC; // 1 if performing image total in separate thread (runs faster, but image total dates from last frame)
@@ -2354,31 +2362,54 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     /** ### 1.6. Define GPU use
      * 
-     * - ./conf/param_GPU.txt           -> AOconf[loop].GPU (0 if missing)
+     * - ./conf/param_GPU0.txt           > AOconf[loop].GPU0 (0 if missing)
      * - ./conf/param_GPUall.txt        -> AOconf[loop].GPUall
      * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
      * 
      */ 
 	fprintf(fplog, "\n\n============== 1.6. Define GPU use ===================\n\n");
 	
-    if((fp=fopen("./conf/param_GPU.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_GPU0.txt","r"))==NULL)
     {
-        printf("WARNING: file ./conf/param_GPU.txt missing\n");
+        printf("WARNING: file ./conf/param_GPU0.txt missing\n");
         printf("Using CPU only\n");
-        fprintf(fplog, "WARNING: file ./conf/param_GPU.txt missing. Using CPU only\n");
-        AOconf[loop].GPU = 0;
+        fprintf(fplog, "WARNING: file ./conf/param_GPU0.txt missing. Using CPU only\n");
+        AOconf[loop].GPU0 = 0;
     }
     else
     {
         if(fscanf(fp, "%200s", content) != 1)
             printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
 
-        printf("GPU : %d\n", atoi(content));
+        printf("GPU0 : %d\n", atoi(content));
         fclose(fp);
         fflush(stdout);
-        AOconf[loop].GPU = atoi(content);
-        fprintf(fplog, "AOconf[%ld].GPU = %d\n", loop, AOconf[loop].GPU);
+        AOconf[loop].GPU0 = atoi(content);
+        fprintf(fplog, "AOconf[%ld].GPU0 = %d\n", loop, AOconf[loop].GPU0);
     }
+
+    if((fp=fopen("./conf/param_GPU1.txt","r"))==NULL)
+    {
+        printf("WARNING: file ./conf/param_GPU1.txt missing\n");
+        printf("Using CPU only\n");
+        fprintf(fplog, "WARNING: file ./conf/param_GPU1.txt missing. Using CPU only\n");
+        AOconf[loop].GPU1 = 0;
+    }
+    else
+    {
+        if(fscanf(fp, "%200s", content) != 1)
+            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+
+        printf("GPU1 : %d\n", atoi(content));
+        fclose(fp);
+        fflush(stdout);
+        AOconf[loop].GPU1 = atoi(content);
+        fprintf(fplog, "AOconf[%ld].GPU1 = %d\n", loop, AOconf[loop].GPU1);
+    }
+
+
+
+
 
     // Skip CPU image scaling and go straight to GPUs ?
 
@@ -11437,13 +11468,24 @@ int_fast8_t AOloopControl_run()
     COMPUTE_PIXELSTREAMING = 0; // TEST
 
 
-    printf("GPU = %d\n", AOconf[loop].GPU);
-    if(AOconf[loop].GPU>1)
+    printf("GPU0 = %d\n", AOconf[loop].GPU0);
+    if(AOconf[loop].GPU0>1)
     {
         uint8_t k;
-        for(k=0; k<AOconf[loop].GPU; k++)
-            printf("stream %2d      GPUset0 = %2d    GPUset1 = %2d\n", (int) k, GPUset0[k], GPUset1[k]);
+        for(k=0; k<AOconf[loop].GPU0; k++)
+            printf("stream %2d      GPUset0 = %2d\n", (int) k, GPUset0[k]);
     }
+
+    printf("GPU1 = %d\n", AOconf[loop].GPU1);
+    if(AOconf[loop].GPU1>1)
+    {
+        uint8_t k;
+        for(k=0; k<AOconf[loop].GPU1; k++)
+            printf("stream %2d      GPUset1 = %2d\n", (int) k, GPUset1[k]);
+    }
+
+
+
 
 
 
@@ -11671,6 +11713,9 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
 }
 
 
+
+
+
 int_fast8_t set_DM_modes(long loop)
 {
     double a;
@@ -11678,7 +11723,7 @@ int_fast8_t set_DM_modes(long loop)
     int semval;
 
 
-    if(AOconf[loop].GPU == 0)
+    if(AOconf[loop].GPU1 == 0)
     {
         float *arrayf;
         long i, j, k;
@@ -11710,7 +11755,7 @@ int_fast8_t set_DM_modes(long loop)
 #ifdef HAVE_CUDA
 
 
-        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);
+        GPU_loop_MultMat_setup(1, data.image[aoconfID_DMmodes].name, data.image[aoconfID_cmd_modes].name, data.image[aoconfID_dmC].name, AOconf[loop].GPU1, GPUset1, 1, AOconf[loop].GPUusesem, 1, loop);
         AOconf[loop].status = 12;
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
@@ -11733,6 +11778,7 @@ int_fast8_t set_DM_modes(long loop)
 
     return(0);
 }
+
 
 
 
@@ -11967,7 +12013,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 
-    if(AOconf[loop].GPU == 0)
+    if(AOconf[loop].GPU0 == 0)   // run in CPU
     {
         if(MATRIX_COMPUTATION_MODE==0)  // goes explicitely through modes, slow but useful for tuning
         {
@@ -12034,9 +12080,9 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
             if(COMPUTE_GPU_SCALING==1)
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS0].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS0].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
             else
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
 
             initWFSref_GPU[PIXSTREAM_SLICE] = 1;
 
@@ -12061,7 +12107,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
             if(1==0)
             {
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
@@ -12136,7 +12182,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                     initWFSref_GPU[PIXSTREAM_SLICE] = 0;
 
 
-                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
+                GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].name, data.image[aoconfID_imWFS2_active[PIXSTREAM_SLICE]].name, data.image[aoconfID_meas_act_active].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
 
 
                 initWFSref_GPU[PIXSTREAM_SLICE] = 1;
@@ -12787,7 +12833,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
     // CONNECT to arrays holding gain, limit, and multf values for blocks
-
     if(aoconfID_gainb == -1)
     {
         if(sprintf(imname, "aol%ld_gainb", loop) < 1)
@@ -12815,7 +12860,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
     // CONNECT to arrays holding gain, limit and multf values for individual modes
-
     if(aoconfID_GAIN_modes == -1)
     {
         if(sprintf(imname, "aol%ld_DMmode_GAIN", LOOPNUMBER) < 1)
@@ -13292,6 +13336,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
     return(IDout);
 }
+
+
 
 
 //
@@ -14737,6 +14783,8 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 }
 
 
+
+
 int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)
 {
     long k, kg;
@@ -14856,7 +14904,7 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     kmax = (wrow-28)*(nbcol);
 
 
-    printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU, kmax);
+    printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU0, kmax);
     printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm mcoeff=%4.2f) GAIN = %d\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta, AOconf[loop].AUTOTUNE_LIMITS_mcoeff, AOconf[loop].AUTOTUNE_GAINS_ON);
     printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardwlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
     nbl++;
@@ -15289,7 +15337,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
 #endif
 
-    nbgpu = AOconf[LOOPNUMBER].GPU;
+    nbgpu = AOconf[LOOPNUMBER].GPU0;
 
 
     printf("Measuring loop status distribution \n");
@@ -15339,7 +15387,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
             statuscnt[st]++;
         if(stM<statusmax)
             statusMcnt[stM]++;
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             // 1st matrix mult
             st = 10*gpu + AOconf[LOOPNUMBER].GPUstatus[gpu];
@@ -15446,14 +15494,14 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
 
 
 
-    if(AOconf[LOOPNUMBER].GPU!=0)
+    if(AOconf[LOOPNUMBER].GPU0!=0)
     {
         printf("\n");
         printf("          ----1--------2--------3--------4--------5--------6----\n");
         printf("                   wait im | ->GPU |     COMPUTE     |   ->CPU  \n");
         printf("          ------------------------------------------------------\n");
 
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             printf("GPU %2d  : ", gpu);
             printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+1]/NBkiter);
@@ -15463,7 +15511,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
             printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
             printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
         }
-        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+        for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             printf("GPU %2d  : ", gpu);
             printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+1]/NBkiter);
@@ -15478,7 +15526,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
         if(MATRIX_COMPUTATION_MODE == 0)
         {
             printf("          ----1--------2--------3--------4--------5--------6----\n");
-            for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU; gpu++)
+            for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
             {
                 printf("GPU %2d  : ", gpu);
                 printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBkiter);
@@ -15529,6 +15577,9 @@ int_fast8_t AOloopControl_resetRMSperf()
 
 
 
+
+
+
 int_fast8_t AOloopControl_showparams(long loop)
 {
 
@@ -15539,7 +15590,7 @@ int_fast8_t AOloopControl_showparams(long loop)
     else
         printf("loop is OFF\n");
 
-    printf("Global gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU);
+    printf("Global gain = %f   maxlim = %f\n  multcoeff = %f  GPU = %d\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].mult, AOconf[loop].GPU0);
     printf("    Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE: lim %d gain %d\n", AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON,  AOconf[loop].AUTOTUNE_GAINS_ON);
     printf("WFS norm floor = %f\n", AOconf[loop].WFSnormfloor);
 
