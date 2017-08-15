@@ -14736,7 +14736,7 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
                 if(sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk) < 1)
                     printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-                printf("adding %ld / %ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
+                printf("Adding %4ld / %4ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
 
                 //ID = image_ID(name1);
 
