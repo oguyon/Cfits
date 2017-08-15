@@ -888,103 +888,103 @@ case $retval in
 
 
 
-	GPUsel)
+	GPU0sel)
 exec 3>&1;
-nbGPU=$(dialog --inputbox "Number of GPU(s) (0 = CPU mode)" 0 0 "$nbGPU" 2>&1 1>&3);
+nbGPU0=$(dialog --inputbox "Number of GPU(s) (0 = CPU mode)" 0 0 "$GPU0" 2>&1 1>&3);
 exec 3>&-;
-echo "$nbGPU" > ./conf/param_GPU.txt
-aoconflog "set nbGPU = ${nbGPU}"
+echo "$nbGPU0" > ./conf/param_GPU0.txt
+aoconflog "set GPU0 = ${GPU0}"
 ;;
 
 
-    GPU0)
+    GPU0d0)
 exec 3>&1;
 GPUset0dev0=$(dialog --inputbox "GPUset0dev0" 0 0 "$GPUset0dev0" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev0" > ./conf/param_GPUset0dev0.txt
 aoconflog "set GPUset0dev0 = ${GPUset0dev0}"
-menucontrolloop_default="GPU0"
+menucontrolloop_default="GPU0d0"
 ;;
 
-    GPU1)
+    GPU0d1)
 exec 3>&1;
 GPUset0dev1=$(dialog --inputbox "GPUset0dev1" 0 0 "$GPUset0dev1" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev1" > ./conf/param_GPUset0dev1.txt
 aoconflog "set GPUset0dev1 = ${GPUset0dev1}"
-menucontrolloop_default="GPU1"
+menucontrolloop_default="GPU0d1"
 ;;
 
-    GPU2)
+    GPU0d2)
 exec 3>&1;
 GPUset0dev2=$(dialog --inputbox "GPUset0dev2" 0 0 "$GPUset0dev2" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev2" > ./conf/param_GPUset0dev2.txt
 aoconflog "set GPUset0dev2 = ${GPUset0dev2}"
-menucontrolloop_default="GPU2"
+menucontrolloop_default="GPU0d2"
 ;;
 
-    GPU3)
+    GPU0d3)
 exec 3>&1;
 GPUset0dev3=$(dialog --inputbox "GPUset0dev3" 0 0 "$GPUset0dev3" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev3" > ./conf/param_GPUset0dev3.txt
 aoconflog "set GPUset0dev3 = ${GPUset0dev3}"
-menucontrolloop_default="GPU3"
+menucontrolloop_default="GPU0d3"
 ;;
 
-    GPU4)
+    GPU0d4)
 exec 3>&1;
 GPUset0dev4=$(dialog --inputbox "GPUset0dev4" 0 0 "$GPUset0dev4" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev4" > ./conf/param_GPUset0dev4.txt
 aoconflog "set GPUset0dev4 = ${GPUset0dev4}"
-menucontrolloop_default="GPU4"
+menucontrolloop_default="GPU0d4"
 ;;
 
-    GPU5)
+    GPU0d5)
 exec 3>&1;
 GPUset0dev5=$(dialog --inputbox "GPUset0dev5" 0 0 "$GPUset0dev5" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev5" > ./conf/param_GPUset0dev5.txt
 aoconflog "set GPUset0dev5 = ${GPUset0dev5}"
-menucontrolloop_default="GPU5"
+menucontrolloop_default="GPU0d5"
 ;;
 
-    GPU6)
+    GPU0d6)
 exec 3>&1;
 GPUset0dev6=$(dialog --inputbox "GPUset0dev6" 0 0 "$GPUset0dev6" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev6" > ./conf/param_GPUset0dev6.txt
 aoconflog "set GPUset0dev6 = ${GPUset0dev6}"
-menucontrolloop_default="GPU6"
+menucontrolloop_default="GPU0d6"
 ;;
 
-    GPU7)
+    GPU0d7)
 exec 3>&1;
 GPUset0dev7=$(dialog --inputbox "GPUset0dev7" 0 0 "$GPUset0dev7" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev7" > ./conf/param_GPUset0dev7.txt
 aoconflog "set GPUset0dev7 = ${GPUset0dev7}"
-menucontrolloop_default="GPU7"
+menucontrolloop_default="GPU0d7"
 ;;
 
-    GPU8)
+    GPU0d8)
 exec 3>&1;
 GPUsetdev8=$(dialog --inputbox "GPUset0dev8" 0 0 "$GPUset0dev8" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev8" > ./conf/param_GPUset0dev8.txt
 aoconflog "set GPUset0dev8 = ${GPUset0dev8}"
-menucontrolloop_default="GPU8"
+menucontrolloop_default="GPU0d8"
 ;;
 
-    GPU9)
+    GPU0d9)
 exec 3>&1;
 GPUset0dev9=$(dialog --inputbox "GPUset0dev8" 0 0 "$GPUset0dev9" 2>&1 1>&3);
 exec 3>&-;
 echo "$GPUset0dev9" > ./conf/param_GPUset0dev9.txt
 aoconflog "set GPUset0dev9 = ${GPUset0dev9}"
-menucontrolloop_default="GPU9"
+menucontrolloop_default="GPU0d9"
 ;;
 
 
