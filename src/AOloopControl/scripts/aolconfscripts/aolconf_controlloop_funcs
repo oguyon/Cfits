@@ -260,15 +260,15 @@ fi
 if [ "8" -lt "$NBblocks" ]; then
 
 ConfReadParam gainb08 "1.0"; gainb08="$paramvalue"
-gainb[08]=${gainb08}
+gainb[10#08]=${gainb08}
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 08 ${gainb[08]}\" C-m" >> $scriptfile
 
 ConfReadParam limitb08 "1.0"; limitb08="$paramvalue"
-limitb[08]=${limitb08}
+limitb[10#08]=${limitb08}
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 08 ${limitb[08]}\" C-m" >> $scriptfile
 
 ConfReadParam multfb08 "1.0"; multfb08="$paramvalue"
-multfb[08]=${multfb08}
+multfb[10#08]=${multfb08}
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 08 ${multfb[08]}\" C-m" >> $scriptfile
 
 fi
@@ -278,15 +278,15 @@ fi
 if [ "9" -lt "$NBblocks" ]; then
 
 ConfReadParam gainb09 "1.0"; gainb09="$paramvalue"
-gainb[09]=${gainb09}
+gainb[10#09]=${gainb09}
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetgainb 09 ${gainb[09]}\" C-m" >> $scriptfile
 
 ConfReadParam limitb09 "1.0"; limitb09="$paramvalue"
-limitb[09]=${limitb09}
+limitb[10#09]=${limitb09}
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetlimitb 09 ${limitb[09]}\" C-m" >> $scriptfile
 
 ConfReadParam multfb09 "1.0"; multfb09="$paramvalue"
-multfb[09]=${multfb09}
+multfb[10#09]=${multfb09}
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 09 ${multfb[09]}\" C-m" >> $scriptfile
 
 fi
