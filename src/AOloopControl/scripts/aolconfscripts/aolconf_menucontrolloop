@@ -358,40 +358,40 @@ else
  menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
 
  if [ "$LOOPPROCESS_EXTRWFSMODES" -eq "1" ]; then
-  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace\Zn" )
+  menuitems+=( " " " MEWFS    \Z1\Zr[$LOOPPROCESS_EXTRWFSMODES] ---  RUNNING    ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace\Zn" )
  else
-  menuitems+=( " " "     [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
+  menuitems+=( " " " MEWFS    [$LOOPPROCESS_EXTRWFSMODES] --- not running ---   extract WFS modes -> aol${LOOPNUMBER}_modeval .._ave .._rms .._tace" )
  fi
 
  if [ "$LOOPPROCESS_EXTROLMODES" -eq "1" ]; then
-  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now\Zn" )
+  menuitems+=( " " " MEXOL    \Z1\Zr[$LOOPPROCESS_EXTROLMODES] ---  RUNNING    ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now\Zn" )
  else
-  menuitems+=( " " "     [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
+  menuitems+=( " " " MEXOL    [$LOOPPROCESS_EXTROLMODES] --- not running ---   extract open loop modes -> aol${LOOPNUMBER}_modeval_ol .._dm_now" )
  fi
 
  if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
-  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMFILTWB] ---  RUNNING    ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC\Zn" )
+  menuitems+=( " " " DMFWB    \Z1\Zr[$LOOPPROCESS_DMFILTWB] ---  RUNNING    ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC\Zn" )
  else
-  menuitems+=( " " "     [$LOOPPROCESS_DMFILTWB] --- not running ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
+  menuitems+=( " " " DMFWB    [$LOOPPROCESS_DMFILTWB] --- not running ---   DM filtering write back process -> aol${LOOPNUMBER}_dmC" )
  fi
 
 
  if [ "$LOOPPROCESS_ZPO" -eq "1" ]; then
-  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_ZPO] ---  RUNNING    ---   Zero pt offset\Zn" )
+  menuitems+=( " " " ZPOLP    \Z1\Zr[$LOOPPROCESS_ZPO] ---  RUNNING    ---   Zero pt offset\Zn" )
  else
-  menuitems+=( " " "     [$LOOPPROCESS_ZPO] --- not running ---   Zero pt offset" )
+  menuitems+=( " " " ZPOLP    [$LOOPPROCESS_ZPO] --- not running ---   Zero pt offset" )
  fi
 
  if [ "$LOOPPROCESS_DMCAVE" -eq "1" ]; then
-  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_DMCAVE] ---  RUNNING    ---   Running average of dmC\Zn" )
+  menuitems+=( " " " DMCAV    \Z1\Zr[$LOOPPROCESS_DMCAVE] ---  RUNNING    ---   Running average of dmC\Zn" )
  else
-  menuitems+=( " " "     [$LOOPPROCESS_DMCAVE] --- not running ---   Running average of dmC" )
+  menuitems+=( " " " DMCAV    [$LOOPPROCESS_DMCAVE] --- not running ---   Running average of dmC" )
  fi
 
  if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
-  menuitems+=( " " "     \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn" )
+  menuitems+=( " " " WFSAV    \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn" )
  else
-  menuitems+=( " " "     [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres" )
+  menuitems+=( " " " WFSAV    [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres" )
  fi
 
 fi
