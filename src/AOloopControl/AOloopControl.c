@@ -15273,7 +15273,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     statusdef[10] = "CONTROL MATRIX MULT: INCREMENT COUNTER AND EXIT FUNCTION";
     statusdef[11] = "MULTIPLYING BY GAINS";
 
-    if(AOconf[loop].CMMODE==0)
+    if(AOconf[LOOPNUMBER].CMMODE==0)
     {
         statusdef[12] = "ENTER SET DM MODES";
         statusdef[13] = "START DM MODES MATRIX MULTIPLICATION";
