@@ -2554,9 +2554,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-fclose(fplog);
-exit(0);
-
 
 
 	/** ## 2. Read/load shared memory arrays
@@ -2681,6 +2678,9 @@ exit(0);
     }
 
 
+list_image_ID();
+fclose(fplog);
+exit(0);
 
 
 
