@@ -326,6 +326,7 @@ EOF
 # copy imsize to conf
 cp ./loadedSM/${STREAMname0}.imsize ./conf/shmim_${STREAMname0}.imsize.txt
 # add link to conf
+rm ./conf/shmim_${STREAMname0}.fits
 ln -s ${PWD}/${FITSfname} ./conf/shmim_${STREAMname0}.fits
 
 
