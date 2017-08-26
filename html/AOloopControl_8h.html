@@ -105,7 +105,9 @@ $(document).ready(function(){initNavTree('AOloopControl_8h.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">AOloopControl.h File Reference</div>  </div>
 </div><!--header-->
@@ -116,6 +118,11 @@ $(document).ready(function(){initNavTree('AOloopControl_8h.html','');});
 
 <p><a href="AOloopControl_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAOLOOPCONTROL__CONF.html">AOLOOPCONTROL_CONF</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ad051291ea3a3e240dbb933eff63b9f42"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ad051291ea3a3e240dbb933eff63b9f42">init_AOloopControl</a> ()</td></tr>
@@ -130,22 +137,6 @@ Functions</h2></td></tr>
 <tr class="memitem:a00f88e3ff7676af9ffc3d9835f336055"><td class="memItemLeft" align="right" valign="top">static int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a00f88e3ff7676af9ffc3d9835f336055">AOloopControl_InitializeMemory</a> ()</td></tr>
 <tr class="memdesc:a00f88e3ff7676af9ffc3d9835f336055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize memory - function called within C code only (no CLI call)  <a href="#a00f88e3ff7676af9ffc3d9835f336055">More...</a><br /></td></tr>
 <tr class="separator:a00f88e3ff7676af9ffc3d9835f336055"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">AOloopControl - 2.1. LOW LEVEL UTILITIES &amp; TOOLS - LOAD DATA STREAMS</div></td></tr>
-<tr class="memitem:a119111bd69fc11e62f5911d6daf16427"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a119111bd69fc11e62f5911d6daf16427">AOloopControl_2Dloadcreate_shmim</a> (const char *name, const char *fname, long xsize, long ysize)</td></tr>
-<tr class="memdesc:a119111bd69fc11e62f5911d6daf16427"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load 2D image in shared memory.  <a href="#a119111bd69fc11e62f5911d6daf16427">More...</a><br /></td></tr>
-<tr class="separator:a119111bd69fc11e62f5911d6daf16427"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b5771f15f14e76afc4b7899378a4a63"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a6b5771f15f14e76afc4b7899378a4a63">AOloopControl_3Dloadcreate_shmim</a> (const char *name, const char *fname, long xsize, long ysize, long zsize)</td></tr>
-<tr class="memdesc:a6b5771f15f14e76afc4b7899378a4a63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load 3D image in shared memory.  <a href="#a6b5771f15f14e76afc4b7899378a4a63">More...</a><br /></td></tr>
-<tr class="separator:a6b5771f15f14e76afc4b7899378a4a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><div class="groupHeader">AOloopControl - 2.2. LOW LEVEL UTILITIES &amp; TOOLS - DATA STREAMS PROCESSING</div></td></tr>
-<tr class="memitem:a9fba32dfbf6fc91072fefb019709e5de"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a9fba32dfbf6fc91072fefb019709e5de">AOloopControl_AveStream</a> (const char *IDname, double alpha, const char *IDname_out_ave, const char *IDname_out_AC, const char *IDname_out_RMS)</td></tr>
-<tr class="memdesc:a9fba32dfbf6fc91072fefb019709e5de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Average data stream.  <a href="#a9fba32dfbf6fc91072fefb019709e5de">More...</a><br /></td></tr>
-<tr class="separator:a9fba32dfbf6fc91072fefb019709e5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2504ada89010d0d6ed22a56a5ad0d26b"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a2504ada89010d0d6ed22a56a5ad0d26b">AOloopControl_frameDelay</a> (const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem)</td></tr>
-<tr class="separator:a2504ada89010d0d6ed22a56a5ad0d26b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac1ee60290e62511898ba6a0712d6e89"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aac1ee60290e62511898ba6a0712d6e89">AOloopControl_stream3Dto2D</a> (const char *in_name, const char *out_name, int NBcols, int insem)</td></tr>
-<tr class="memdesc:aac1ee60290e62511898ba6a0712d6e89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-arrange a 3D cube into an array of images into a single 2D frame.  <a href="#aac1ee60290e62511898ba6a0712d6e89">More...</a><br /></td></tr>
-<tr class="separator:aac1ee60290e62511898ba6a0712d6e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">AOloopControl - 2.3. LOW LEVEL UTILITIES &amp; TOOLS - MISC COMPUTATION ROUTINES</div></td></tr>
 <tr class="memitem:ad2184079c9d0653be06f2a757f89f03b"><td class="memItemLeft" align="right" valign="top">static long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ad2184079c9d0653be06f2a757f89f03b">AOloopControl_CrossProduct</a> (const char *ID1_name, const char *ID2_name, const char *IDout_name)</td></tr>
 <tr class="memdesc:ad2184079c9d0653be06f2a757f89f03b"><td class="mdescLeft">&#160;</td><td class="mdescRight">compute cross product between two 3D arrays  <a href="#ad2184079c9d0653be06f2a757f89f03b">More...</a><br /></td></tr>
@@ -389,13 +380,25 @@ Functions</h2></td></tr>
 <tr class="separator:acaa7ada51992e69ac63fa26012e116aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4875a7b1ba20facd8e0f8a2af632569"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#ab4875a7b1ba20facd8e0f8a2af632569">AOloopControl_AutoTune</a> ()</td></tr>
 <tr class="separator:ab4875a7b1ba20facd8e0f8a2af632569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aaf72f213eb3c9694c75a9ea54ddb4b4c"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#aaf72f213eb3c9694c75a9ea54ddb4b4c">loadcreateshm_log</a> = 0</td></tr>
+<tr class="separator:aaf72f213eb3c9694c75a9ea54ddb4b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10851f6142513c8b1b074d564acaeeea"><td class="memItemLeft" align="right" valign="top">static FILE *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="AOloopControl_8h.html#a10851f6142513c8b1b074d564acaeeea">loadcreateshm_fplog</a></td></tr>
+<tr class="separator:a10851f6142513c8b1b074d564acaeeea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Function prototypes for Adaptive Optics Control loop engine. </p>
+<p>Function prototypes for Adaptive Optics Control loop engine I/O tools.</p>
 <p>AO engine uses stream data structure</p>
 <dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>17 Jun 2017</dd></dl>
 <dl class="bug"><dt><b><a class="el" href="bug.html#_bug000006">Bug:</a></b></dt><dd>No known bugs. </dd></dl>
+<p>AO engine uses stream data structure</p>
+<dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>25 Aug 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000008">Bug:</a></b></dt><dd>No known bugs. </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a19a66458a8453e9f5e6ec19a93c3e70a"></a>
 <div class="memitem">
@@ -511,92 +514,6 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a class="anchor" id="a119111bd69fc11e62f5911d6daf16427"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long AOloopControl_2Dloadcreate_shmim </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>fname</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>xsize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>ysize</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Load 2D image in shared memory. </p>
-
-</div>
-</div>
-<a class="anchor" id="a6b5771f15f14e76afc4b7899378a4a63"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long AOloopControl_3Dloadcreate_shmim </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>fname</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>xsize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>ysize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>zsize</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Load 3D image in shared memory. </p>
 
 </div>
 </div>
@@ -790,65 +707,6 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a9fba32dfbf6fc91072fefb019709e5de"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int_fast8_t AOloopControl_AveStream </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDname</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>alpha</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDname_out_ave</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDname_out_AC</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDname_out_RMS</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Average data stream. </p>
-<h2>Purpose</h2>
-<p>Averages input image stream</p>
-<h2>Arguments</h2>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">IDname</td><td>CHAR* Input stream name</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alpha</td><td>DOUBLE Averaging coefficient new average = old average * (1-alpha) + alpha * new image</td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">fIDname_out_ave</td><td>CHAR* Stream name for output average image</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">IDname_out_AC</td><td>CHAR* Stream name for output AC component (average-subtracted)</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">IDname_out_RMS</td><td>CHAR* Stream name for output RMS component </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -1349,44 +1207,6 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>r0</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a2504ada89010d0d6ed22a56a5ad0d26b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long AOloopControl_frameDelay </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDin_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDkern_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDout_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>insem</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -3429,46 +3249,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aac1ee60290e62511898ba6a0712d6e89"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long AOloopControl_stream3Dto2D </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>in_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>out_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>NBcols</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>insem</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Re-arrange a 3D cube into an array of images into a single 2D frame. </p>
-
-</div>
-</div>
 <a class="anchor" id="ae27f6760cd27d872f66f1a987495ae3b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -4139,13 +3919,54 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a class="anchor" id="a10851f6142513c8b1b074d564acaeeea"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FILE* loadcreateshm_fplog</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aaf72f213eb3c9694c75a9ea54ddb4b4c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int loadcreateshm_log = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d5a2859eb17c388050a5486842ace10c.html">AOloopControl</a></li><li class="navelem"><a class="el" href="AOloopControl_8h.html">AOloopControl.h</a></li>
-    <li class="footer">Generated on Tue Aug 22 2017 14:01:22 for cfitsTK by
+    <li class="footer">Generated on Fri Aug 25 2017 17:51:38 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

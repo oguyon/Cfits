@@ -1,5 +1,14 @@
 var NAVTREEINDEX17 =
 {
+"structsymrec.html#aabe0b508928c6472fcbdf5071c33b61a":[4,0,36,4],
+"structsymrec.html#accae313254c71fad5d7eb0446473bec5":[4,0,36,0],
+"structsymrec.html#af3db0c7e569f93a9d7385d5b170578f8":[4,0,36,5],
+"structyy__buffer__state.html":[4,0,42],
+"structyy__buffer__state.html#a10c4fcd8be759e6bf11e6d3e8cdb0307":[4,0,42,1],
+"structyy__buffer__state.html#a48302f5f3477a9c78bbddf56d356ef54":[4,0,42,4],
+"structyy__buffer__state.html#a4843d1422e3276b636d475a3095bd948":[4,0,42,8],
+"structyy__buffer__state.html#a58aa927f098b99d99e75da80f9b681ef":[4,0,42,3],
+"structyy__buffer__state.html#a63d2afbb1d79a3fc63df9e12626f827d":[4,0,42,7],
 "structyy__buffer__state.html#a70fd925d37a2f0454fbd0def675d106c":[4,0,42,5],
 "structyy__buffer__state.html#a80ce2431c70dc4f89ced487f18449465":[4,0,42,10],
 "structyy__buffer__state.html#a818e94bc9c766e683c60df1e9fd01199":[4,0,42,2],

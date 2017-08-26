@@ -3,8 +3,6 @@ var AOloopControl_8h =
     [ "AOcompute", "AOloopControl_8h.html#a19a66458a8453e9f5e6ec19a93c3e70a", null ],
     [ "AOcontrolLoop_TestDMSpeed", "AOloopControl_8h.html#ac3f68a9b79e43a57e11d85517a9627d1", null ],
     [ "AOcontrolLoop_TestSystemLatency", "AOloopControl_8h.html#a9ebac7ca5867f9ed5ec5e47a66144c69", null ],
-    [ "AOloopControl_2Dloadcreate_shmim", "AOloopControl_8h.html#a119111bd69fc11e62f5911d6daf16427", null ],
-    [ "AOloopControl_3Dloadcreate_shmim", "AOloopControl_8h.html#a6b5771f15f14e76afc4b7899378a4a63", null ],
     [ "AOloopControl_AnalyzeRM_sensitivity", "AOloopControl_8h.html#a41cb4171b617b7de790b7d28c217d945", null ],
     [ "AOloopControl_ARPFoff", "AOloopControl_8h.html#a26bea9d5d6452a589541c1757ff4ba21", null ],
     [ "AOloopControl_ARPFon", "AOloopControl_8h.html#aff4558a2984773735b46e129777b0ad8", null ],
@@ -14,7 +12,6 @@ var AOloopControl_8h =
     [ "AOloopControl_AUTOTUNE_LIMITS_off", "AOloopControl_8h.html#a8fb5c314e68474a374f91a0a716d689d", null ],
     [ "AOloopControl_AUTOTUNE_LIMITS_on", "AOloopControl_8h.html#a4b592751014219bf5c8afcb12c0d1a01", null ],
     [ "AOloopControl_AutoTuneGains", "AOloopControl_8h.html#aee12877621c3893222540cbc80ea7ac8", null ],
-    [ "AOloopControl_AveStream", "AOloopControl_8h.html#a9fba32dfbf6fc91072fefb019709e5de", null ],
     [ "AOloopControl_blockstats", "AOloopControl_8h.html#a94cb5f3704243147e65bd49282a845e0", null ],
     [ "AOloopControl_builPFloop_WatchInput", "AOloopControl_8h.html#acdad903dbd67f4e4fb2af1adfacd49bd", null ],
     [ "AOloopControl_camimage_extract2D_sharedmem_loop", "AOloopControl_8h.html#a05543d5f38cc51a9724330c750452891", null ],
@@ -29,7 +26,6 @@ var AOloopControl_8h =
     [ "AOloopControl_DMprimaryWrite_off", "AOloopControl_8h.html#a2a1d9a544f9f193c864f236f04742a54", null ],
     [ "AOloopControl_DMprimaryWrite_on", "AOloopControl_8h.html#a857c19e62e6acda10fca64adfa7fc565", null ],
     [ "AOloopControl_DMslaveExt", "AOloopControl_8h.html#a39ddf72f920986c1649b261b37b6f354", null ],
-    [ "AOloopControl_frameDelay", "AOloopControl_8h.html#a2504ada89010d0d6ed22a56a5ad0d26b", null ],
     [ "AOloopControl_GPUmodecoeffs2dm_filt_loop", "AOloopControl_8h.html#a6a15c56ac277ca878548cde4674d9fb0", null ],
     [ "AOloopControl_Hadamard_decodeRM", "AOloopControl_8h.html#a41ebed0e0ddd99dafbc540ccf98981f6", null ],
     [ "AOloopControl_InitializeMemory", "AOloopControl_8h.html#a00f88e3ff7676af9ffc3d9835f336055", null ],
@@ -91,7 +87,6 @@ var AOloopControl_8h =
     [ "AOloopControl_showparams", "AOloopControl_8h.html#a74fdc73422171316d47412158bdd0de6", null ],
     [ "AOloopControl_sig2Modecoeff", "AOloopControl_8h.html#aa93e227dac127632ba119916ad1da85c", null ],
     [ "AOloopControl_statusStats", "AOloopControl_8h.html#a3f42f726a512e1f75866e9d4f738b6ba", null ],
-    [ "AOloopControl_stream3Dto2D", "AOloopControl_8h.html#aac1ee60290e62511898ba6a0712d6e89", null ],
     [ "AOloopControl_TestDMmodeResp", "AOloopControl_8h.html#ae27f6760cd27d872f66f1a987495ae3b", null ],
     [ "AOloopControl_TestDMmodes_Recovery", "AOloopControl_8h.html#aee37a54924eccbcc85565718c6eca560", null ],
     [ "AOloopControl_testPredictiveFilter", "AOloopControl_8h.html#a366588e72f3596ce6c09dcb083d51632", null ],
@@ -106,5 +101,7 @@ var AOloopControl_8h =
     [ "Measure_Resp_Matrix", "AOloopControl_8h.html#ac9edeb536fcd625b1e3489c2be236bb4", null ],
     [ "Read_cam_frame", "AOloopControl_8h.html#a275196fb78a1b7413a18a2df3ebcf995", null ],
     [ "set_DM_modes", "AOloopControl_8h.html#a2c297aecabe48d90878ca37428bd0c71", null ],
-    [ "set_DM_modesRM", "AOloopControl_8h.html#a5e3a34b141f6d28a8bcebad1bc5b3789", null ]
+    [ "set_DM_modesRM", "AOloopControl_8h.html#a5e3a34b141f6d28a8bcebad1bc5b3789", null ],
+    [ "loadcreateshm_fplog", "AOloopControl_8h.html#a10851f6142513c8b1b074d564acaeeea", null ],
+    [ "loadcreateshm_log", "AOloopControl_8h.html#aaf72f213eb3c9694c75a9ea54ddb4b4c", null ]
 ];

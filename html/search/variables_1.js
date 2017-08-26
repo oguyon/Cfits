@@ -19,7 +19,7 @@ var searchData=
   ['alpha_5fld',['alpha_ld',['../structEXAOSIMCONF.html#aa10dd57b32148dbdd117694ac56f5955',1,'EXAOSIMCONF']]],
   ['alt',['alt',['../structnrlmsise__input.html#a102b283f83c88896582614654330d4d7',1,'nrlmsise_input']]],
   ['ampl',['ampl',['../structAOLOOPCONTROL__DMTURBCONF.html#a31e5bd8ebab2b23b811fd4a0b417161b',1,'AOLOOPCONTROL_DMTURBCONF::ampl()'],['../structSCEXAO__DMTURBCONF.html#a876d9ca9cfcf6b6737c802e008fc6215',1,'SCEXAO_DMTURBCONF::ampl()']]],
-  ['aoconf',['AOconf',['../AOloopControl_8c.html#a1f96203c41ad50bad5dd1604a5c069a8',1,'AOloopControl.c']]],
+  ['aoconf',['AOconf',['../AOloopControl_8c.html#a1f96203c41ad50bad5dd1604a5c069a8',1,'AOconf():&#160;AOloopControl.c'],['../AOloopControl__IOtools_8c.html#a1f96203c41ad50bad5dd1604a5c069a8',1,'AOconf():&#160;AOloopControl_IOtools.c']]],
   ['aoconfid_5fave_5fmodes',['aoconfID_AVE_modes',['../AOloopControl_8c.html#a62919eefbf8c1422b4dd287b3126cc5a',1,'AOloopControl.c']]],
   ['aoconfid_5fcmd_5fmodes',['aoconfID_cmd_modes',['../AOloopControl_8c.html#a7dcef9086630d884ba869637607761b6',1,'AOloopControl.c']]],
   ['aoconfid_5fcmd_5fmodesrm',['aoconfID_cmd_modesRM',['../AOloopControl_8c.html#a93376e81bdb12cb4a737b06b482028cf',1,'AOloopControl.c']]],
