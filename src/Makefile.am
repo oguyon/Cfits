@@ -59,6 +59,10 @@ SUBDIRS += FPAOloopControl
 cfitsTK_LDADD += FPAOloopControl/libfpaoloopcontrol.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/FPAOloopControl
 
+SUBDIRS += AOloopControl_computeCalib
+cfitsTK_LDADD += AOloopControl_computeCalib/libaoloopcontrolcomputecalib.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_computeCalib
+
 SUBDIRS += AOloopControl_acquireCalib
 cfitsTK_LDADD += AOloopControl_acquireCalib/libaoloopcontrolacquirecalib.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_acquireCalib

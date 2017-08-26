@@ -357,47 +357,6 @@ long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
 
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl - 5. COMPUTING CALIBRATION
- *  Compute control matrix, modes */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-long AOloopControl_mkHadamardModes(const char *DMmask_name, const char *outname);
-
-long AOloopControl_Hadamard_decodeRM(const char *inname, const char *Hmatname, const char *indexname, const char *outname);
-
-long AOloopControl_mkloDMmodes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yc, double r0, double r1, int MaskMode);
-
-int_fast8_t AOloopControl_mkCalib_map_mask(long loop, const char *zrespm_name, const char *WFSmap_name, const char *DMmap_name, float dmmask_perclow, float dmmask_coefflow, float dmmask_perchigh, float dmmask_coeffhigh, float wfsmask_perclow, float wfsmask_coefflow, float wfsmask_perchigh, float wfsmask_coeffhigh);
-
-int_fast8_t AOloopControl_Process_zrespM(long loop, const char *IDzrespm0_name, const char *IDwfsref_name, const char *IDzrespm_name, const char *WFSmap_name, const char *DMmap_name);
-
-int_fast8_t AOloopControl_ProcessZrespM_medianfilt(long loop, const char *zrespm_name, const char *WFSref0_name, const char *WFSmap_name, const char *DMmap_name, double rmampl, int normalize);
-
-long AOloopControl_mkCM(const char *respm_name, const char *cm_name, float SVDlim);
-
-long AOloopControl_mkSlavedAct(const char *IDmaskRM_name, float pixrad, const char *IDout_name);
-
-static long AOloopControl_DMedgeDetect(const char *IDmaskRM_name, const char *IDout_name);
-
-static long AOloopControl_DMextrapolateModes(const char *IDin_name, const char *IDmask_name, const char *IDcpa_name, const char *IDout_name);
-
-long AOloopControl_DMslaveExt(const char *IDin_name, const char *IDmask_name, const char *IDsl_name, const char *IDout_name, float r0);
-
-long AOloopControl_mkModes(const char *ID_name, long msizex, long msizey, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1, int MaskMode, int BlockNB, float SVDlim);
-
-long AOloopControl_mkModes_Simple(const char *IDin_name, long NBmblock, long Cmblock, float SVDlim);
-
-int_fast8_t compute_ControlMatrix(long loop, long NB_MODE_REMOVED, const char *ID_Rmatrix_name, const char *ID_Cmatrix_name, const char *ID_VTmatrix_name, double Beta, long NB_MODE_REMOVED_STEP, float eigenvlim);
-
-long compute_CombinedControlMatrix(const char *IDcmat_name, const char *IDmodes_name, const char* IDwfsmask_name, const char *IDdmmask_name, const char *IDcmatc_name, const char *IDcmatc_active_name);
-
-long AOloopControl_loadCM(long loop, const char *CMfname);
-
-
-
-/* =============================================================================================== */
-/* =============================================================================================== */
 /** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES
  *  calls CPU and GPU processing */
 /* =============================================================================================== */
