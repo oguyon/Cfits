@@ -19,7 +19,10 @@
 #include "img_reduce/img_reduce.h"
 #include "AOloopControl_DM/AOloopControl_DM.h"
 #include "AOsystSim/AOsystSim.h"
+
 #include "AOloopControl/AOloopControl.h"
+#include "AOloopControl_IOtools/AOloopControl_IOtools.h"
+
 #include "FPAOloopControl/FPAOloopControl.h"
 #include "psf/psf.h"
 #include "AtmosphereModel/AtmosphereModel.h"
@@ -55,7 +58,10 @@ int init_modules()
   init_img_reduce();
   init_AOloopControl_DM();
   init_AOsystSim();
+  
   init_AOloopControl();
+  init_AOloopControl_IOtools();
+
   init_FPAOloopControl();
   init_psf();
   init_AtmosphereModel();

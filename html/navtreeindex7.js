@@ -1,6 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"COREMOD__tools_8h_source.html":[5,0,1,9,1],
 "FPAOloopControl_8c.html":[5,0,1,13,0],
 "FPAOloopControl_8c.html#a02e8c56f4f13ee78340d480b187defab":[5,0,1,13,0,9],
 "FPAOloopControl_8c.html#a055944b50882c0c6dafdfe19881125e5":[5,0,1,13,0,14],
@@ -249,5 +248,6 @@ var NAVTREEINDEX7 =
 "SCExAO__DM_8c.html#a937b767878d8dc978c25b10cd3eaaed1":[5,0,1,29,0,11],
 "SCExAO__DM_8c.html#a940c1c0a734f8fe9068c455aaea12954":[5,0,1,29,0,21],
 "SCExAO__DM_8c.html#a953fcf3078096a1b81a5562be4f2f9ab":[5,0,1,29,0,29],
-"SCExAO__DM_8c.html#a96a5967df9d3fe5558c05c99f1bdf8ca":[5,0,1,29,0,8]
+"SCExAO__DM_8c.html#a96a5967df9d3fe5558c05c99f1bdf8ca":[5,0,1,29,0,8],
+"SCExAO__DM_8c.html#a9842752e03b4de9b4593f1a3b34364ab":[5,0,1,29,0,25]
 };

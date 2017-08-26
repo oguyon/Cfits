@@ -1,5 +1,11 @@
 var NAVTREEINDEX17 =
 {
+"structyy__buffer__state.html#a70fd925d37a2f0454fbd0def675d106c":[4,0,42,5],
+"structyy__buffer__state.html#a80ce2431c70dc4f89ced487f18449465":[4,0,42,10],
+"structyy__buffer__state.html#a818e94bc9c766e683c60df1e9fd01199":[4,0,42,2],
+"structyy__buffer__state.html#a9d60c60af6e1a6f69de16871fd64f85f":[4,0,42,0],
+"structyy__buffer__state.html#abf5c70eea75581b58c0ee7bd31b14490":[4,0,42,9],
+"structyy__buffer__state.html#ad7b8df8d8a4688e57b0b8d3ca75adc85":[4,0,42,6],
 "structyy__buffer__state.html#afcc44872643f513e79b43c2b1f334a67":[4,0,42,11],
 "structyy__trans__info.html":[4,0,43],
 "structyy__trans__info.html#a5c9f61e770deef50bd4e697310342fe9":[4,0,43,1],

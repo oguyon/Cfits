@@ -39,7 +39,6 @@ var searchData=
   ['mat0',['mat0',['../structASPHSURFR.html#a9c6a2f637f66b2911129ec69640f98d2',1,'ASPHSURFR']]],
   ['mat1',['mat1',['../structASPHSURFR.html#a0f31e31171389f94d70cc4ea0610e2a4',1,'ASPHSURFR']]],
   ['matcode',['MatCode',['../OpticsMaterials_8c.html#a8e9a5245b5b87e4c8de05527ec2374eb',1,'OpticsMaterials.c']]],
-  ['matrix_5fcomputation_5fmode',['MATRIX_COMPUTATION_MODE',['../AOloopControl_8c.html#a7187a9b91d5156ad91f2a80046a61175',1,'AOloopControl.c']]],
   ['max',['max',['../structkdhyperrect.html#aaeaab78eb4536bcd8d4ae4d5e08540f5',1,'kdhyperrect']]],
   ['maxlimit',['maxlimit',['../structAOLOOPCONTROL__CONF.html#a471189277591da1769fcb1c11696949b',1,'AOLOOPCONTROL_CONF']]],
   ['maxstroke',['maxstroke',['../structDM__SIM.html#abecbaa72dee8fc92256ae7368e4f48fb',1,'DM_SIM']]],

@@ -23,7 +23,6 @@ var AOloopControl_8h =
     [ "AOloopControl_computeWFSresidualimage", "AOloopControl_8h.html#ac33639c8c0d7f53740746beb62203067", null ],
     [ "AOloopControl_CrossProduct", "AOloopControl_8h.html#ad2184079c9d0653be06f2a757f89f03b", null ],
     [ "AOloopControl_dm2dm_offload", "AOloopControl_8h.html#ac28a204bc08926a450a9d2bad7fa6de2", null ],
-    [ "AOloopControl_dm2opdmaploop", "AOloopControl_8h.html#a06b2bff59d932e427de8e45e7f695b81", null ],
     [ "AOloopControl_DMedgeDetect", "AOloopControl_8h.html#aebcde04c52ff38663997bc4a93b5d1db", null ],
     [ "AOloopControl_DMextrapolateModes", "AOloopControl_8h.html#aa971a1729c621acd6a136f412bdd3b8c", null ],
     [ "AOloopControl_DMmodulateAB", "AOloopControl_8h.html#a5a8acc15a46ed4ac0ed26263a2955dd8", null ],

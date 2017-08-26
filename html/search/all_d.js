@@ -93,7 +93,6 @@ var searchData=
   ['mat1',['mat1',['../structASPHSURFR.html#a0f31e31171389f94d70cc4ea0610e2a4',1,'ASPHSURFR']]],
   ['matcode',['MatCode',['../OpticsMaterials_8c.html#a8e9a5245b5b87e4c8de05527ec2374eb',1,'OpticsMaterials.c']]],
   ['materialindex',['MaterialIndex',['../structMaterialIndex.html',1,'']]],
-  ['matrix_5fcomputation_5fmode',['MATRIX_COMPUTATION_MODE',['../AOloopControl_8c.html#a7187a9b91d5156ad91f2a80046a61175',1,'AOloopControl.c']]],
   ['matrixmulcpu',['matrixMulCPU',['../cudacomp_8c.html#a4cbe9184adde3917cc30ee9272e5665e',1,'matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N):&#160;cudacomp.c'],['../cudacomp_8h.html#a4cbe9184adde3917cc30ee9272e5665e',1,'matrixMulCPU(float *cMat, float *wfsVec, float *dmVec, int M, int N):&#160;cudacomp.c']]],
   ['max',['max',['../structkdhyperrect.html#aaeaab78eb4536bcd8d4ae4d5e08540f5',1,'kdhyperrect']]],
   ['maxlimit',['maxlimit',['../structAOLOOPCONTROL__CONF.html#a471189277591da1769fcb1c11696949b',1,'AOLOOPCONTROL_CONF']]],

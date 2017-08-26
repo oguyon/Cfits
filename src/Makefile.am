@@ -59,6 +59,10 @@ SUBDIRS += FPAOloopControl
 cfitsTK_LDADD += FPAOloopControl/libfpaoloopcontrol.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/FPAOloopControl
 
+SUBDIRS += AOloopControl_IOtools
+cfitsTK_LDADD += AOloopControl_IOtools/libaoloopcontroliotools.la
+cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl_IOtools
+
 SUBDIRS += AOloopControl
 cfitsTK_LDADD += AOloopControl/libaoloopcontrol.la
 cfitsTK_CPPFLAGS += -I@abs_top_srcdir@/src/AOloopControl

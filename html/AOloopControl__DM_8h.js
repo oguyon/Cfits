@@ -18,6 +18,7 @@ var AOloopControl__DM_8h =
     [ "AOloopControl_DM_dmturboff", "AOloopControl__DM_8h.html#a753ddc180adc194137d12c87beccfd7a", null ],
     [ "AOloopControl_DM_loadconf", "AOloopControl__DM_8h.html#abb8c74636b601e1cb8c3747a09d040c9", null ],
     [ "AOloopControl_DM_mkAstroGrid_seq", "AOloopControl__DM_8h.html#a0ee1201e82111917c3efd41e946cdb9e", null ],
+    [ "AOloopControl_DM_setAveMode", "AOloopControl__DM_8h.html#ad09ebc9d732b1dcf74acad34f18c0aef", null ],
     [ "AOloopControl_DM_setDClevel", "AOloopControl__DM_8h.html#a97e2a164428e27ab6d1d0a69942bf705", null ],
     [ "AOloopControl_DM_setMAXVOLT", "AOloopControl__DM_8h.html#adaa990f4673def77cb2019f7e9228c73", null ],
     [ "AOloopControl_DM_setTrigChan", "AOloopControl__DM_8h.html#aa9a237fb5501e5343ca1f842dd621338", null ],
