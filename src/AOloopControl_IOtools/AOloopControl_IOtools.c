@@ -456,8 +456,10 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 #endif
 
 
-    printf("-------- ENTERING AOloopControl_3Dloadcreate_shmim ----------\n");
+    printf("-------- ENTERING AOloopControl_3Dloadcreate_shmim   name = %s ----------\n", name);
     fflush(stdout);
+    
+    list_image_ID();
 
 
     ID = image_ID(name);
