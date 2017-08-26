@@ -21,9 +21,35 @@ int_fast8_t init_AOloopControl_IOtools();
 
 
 
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl_IOtools - 1. LOAD DATA STREAMS     
+/** @name AOloopControl_IOtools - 1. CAMERA INPUT
+ *  Read camera imates */
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
+
+/** @brief compute sum of image pixels */
+static void *compute_function_imtotal( void *ptr );
+
+/** @brief Subtract dark */
+static void *compute_function_dark_subtract( void *ptr );
+
+/** @brief Read image from WFS camera */
+int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
+
+
+
+
+
+
+
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name AOloopControl_IOtools - 2. LOAD DATA STREAMS     
  *  Load 2D and 3D shared memory images */
 /* =============================================================================================== */
 /* =============================================================================================== */
@@ -38,9 +64,12 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
 
+
+
+
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl_IOtools - 2. DATA STREAMS PROCESSING      
+/** @name AOloopControl_IOtools - 3. DATA STREAMS PROCESSING      
  *  Data streams real-time processing */
 /* =============================================================================================== */
 /* =============================================================================================== */

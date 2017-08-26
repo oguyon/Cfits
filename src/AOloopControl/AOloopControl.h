@@ -312,13 +312,12 @@ int_fast8_t init_AOloopControl();
 /* =============================================================================================== */
 
 
-
 /** @brief Load configuation parameters from disk */
 static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level);
 
+
 /** @brief Initialize memory - function called within C code only (no CLI call) */
 static int_fast8_t AOloopControl_InitializeMemory();
-
 
 
 
@@ -341,11 +340,6 @@ static int_fast8_t AOloopControl_InitializeMemory();
 /** @brief compute cross product between two 3D arrays */
 static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_name, const char *IDout_name);
 
-/** @brief compute sum of image pixels */
-static void *compute_function_imtotal( void *ptr );
-
-/** @brief Subtract dark */
-static void *compute_function_dark_subtract( void *ptr );
 
 /** @brief Create simple zonal poke cube */
 long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name);
@@ -353,17 +347,6 @@ long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 3. WFS INPUT
- *  Read camera imates */
-/* =============================================================================================== */
-/* =============================================================================================== */
-// NOTE -> AOloopControl_IOtools
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart);
-
-
-int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode, int InitSem);
 
 
 
