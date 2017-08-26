@@ -1823,25 +1823,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     fprintf(fplog, "\n\n============== 1.4. Define WFS image normalization mode ===================\n\n");
     
     AOconf[loop].WFSnormalize = AOloopControl_readParam_int("WFSnorm", 1, fplog);
-    /*
-    if((fp=fopen("./conf/param_WFSnorm.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_WFSnorm.txt missing\n");
-        fprintf(fplog, "WARNING: file ./conf/param_WFSnorm.txt missing. Assuming WFSnormalize = 1\n");
-        AOconf[loop].WFSnormalize = 1;
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("WFSnormalize : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].WFSnormalize = atoi(content);
-        fprintf(fplog, "AOconf[%ld].WFSnormalize = %d\n", loop, AOconf[loop].WFSnormalize);
-    }
-*/
+   
 
 
     /** ### 1.5. Read Timing info
@@ -1858,172 +1840,32 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     
     
     AOconf[loop].loopfrequ = AOloopControl_readParam_float("loopfrequ", 1000.0, fplog);
-     /*
-    if((fp=fopen("./conf/param_loopfrequ.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
-    }
-    else
-    {
-        if(fscanf(fp, "%50f", &AOconf[loop].loopfrequ) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("loopfrequ : %f\n", AOconf[loop].loopfrequ);
-        fclose(fp);
-        fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].loopfrequ = %f\n", loop, AOconf[loop].loopfrequ);
-    }
-
-
-*/
-    if((fp=fopen("./conf/param_hardwlatency.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_hardwlatency.txt missing\n");
-    }
-    else
-    {
-        if(fscanf(fp, "%50f", &AOconf[loop].hardwlatency) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("hardwlatency : %f\n", AOconf[loop].hardwlatency);
-        fclose(fp);
-        fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].hardwlatency = %f\n", loop, AOconf[loop].hardwlatency);
-    }
-
+	AOconf[loop].hardwlatency = AOloopControl_readParam_float("hardwlatency", 0.0, fplog);  
     AOconf[loop].hardwlatency_frame = AOconf[loop].hardwlatency * AOconf[loop].loopfrequ;
 
-
-    if((fp=fopen("./conf/param_complatency.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_complatency.txt missing\n");
-    }
-    else
-    {
-        if(fscanf(fp, "%50f", &AOconf[loop].complatency) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("complatency : %f\n", AOconf[loop].complatency);
-        fclose(fp);
-        fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].complatency = %f\n", loop, AOconf[loop].complatency);
-    }
+	AOconf[loop].complatency = AOloopControl_readParam_float("complatency", 0.0, fplog);
     AOconf[loop].complatency_frame = AOconf[loop].complatency * AOconf[loop].loopfrequ;
 
-
-    if((fp=fopen("./conf/param_wfsmextrlatency.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_wfsmextrlatency.txt missing\n");
-    }
-    else
-    {
-        if(fscanf(fp, "%50f", &AOconf[loop].wfsmextrlatency) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf(" : %f\n", AOconf[loop].wfsmextrlatency);
-        fclose(fp);
-        fflush(stdout);
-        fprintf(fplog, "AOconf[%ld].wfsmextrlatency = %f\n", loop, AOconf[loop].wfsmextrlatency);
-    }
+	AOconf[loop].wfsmextrlatency = AOloopControl_readParam_float("wfsmextrlatency", 0.0, fplog);
     AOconf[loop].wfsmextrlatency_frame = AOconf[loop].wfsmextrlatency * AOconf[loop].loopfrequ;
-
 
 
 
     /** ### 1.6. Define GPU use
      * 
      * - ./conf/param_GPU0.txt           > AOconf[loop].GPU0 (0 if missing)
+     * - ./conf/param_GPU1.txt           > AOconf[loop].GPU1 (0 if missing)
      * - ./conf/param_GPUall.txt        -> AOconf[loop].GPUall
      * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
      * 
      */ 
 	fprintf(fplog, "\n\n============== 1.6. Define GPU use ===================\n\n");
 	
-    if((fp=fopen("./conf/param_GPU0.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_GPU0.txt missing\n");
-        printf("Using CPU only\n");
-        fprintf(fplog, "WARNING: file ./conf/param_GPU0.txt missing. Using CPU only\n");
-        AOconf[loop].GPU0 = 0;
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+	AOconf[loop].GPU0 = AOloopControl_readParam_int("GPU0", 0, fplog);
+	AOconf[loop].GPU1 = AOloopControl_readParam_int("GPU1", 0, fplog);
+	AOconf[loop].GPUall = AOloopControl_readParam_int("GPUall", 0, fplog); // Skip CPU image scaling and go straight to GPUs ?
+	AOconf[loop].DMprimaryWrite_ON = AOloopControl_readParam_int("DMprimWriteON", 0, fplog);    // Direct DM write ?
 
-        printf("GPU0 : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].GPU0 = atoi(content);
-        fprintf(fplog, "AOconf[%ld].GPU0 = %d\n", loop, AOconf[loop].GPU0);
-    }
-
-    if((fp=fopen("./conf/param_GPU1.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_GPU1.txt missing\n");
-        printf("Using CPU only\n");
-        fprintf(fplog, "WARNING: file ./conf/param_GPU1.txt missing. Using CPU only\n");
-        AOconf[loop].GPU1 = 0;
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("GPU1 : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].GPU1 = atoi(content);
-        fprintf(fplog, "AOconf[%ld].GPU1 = %d\n", loop, AOconf[loop].GPU1);
-    }
-
-
-
-
-
-    // Skip CPU image scaling and go straight to GPUs ?
-
-    if((fp=fopen("./conf/param_GPUall.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_GPUall.txt missing\n");
-        printf("Using CPU for image scaling\n");
-        fprintf(fplog, "WARNING: file ./conf/param_GPUall.txt missing. Using CPU for image scaling\n");
-        AOconf[loop].GPUall = 0;
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("GPUall : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].GPUall = atoi(content);
-        fprintf(fplog, "AOconf[%ld].GPUall = %d\n", loop, AOconf[loop].GPUall);
-    }
-
-
-
-    // Direct DM write ?
-    if((fp=fopen("./conf/param_DMprimWriteON.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_DMprimWriteON.txt missing\n");
-        printf("Setting DMprimaryWrite_ON = 1\n");
-        fprintf(fplog, "WARNING: file ./conf/param_DMprimWriteON.txt missing. Setting to 1\n");
-        AOconf[loop].DMprimaryWrite_ON = 1;
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("GPU : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].DMprimaryWrite_ON = atoi(content);
-        fprintf(fplog, "AOconf[%ld].DMprimaryWrite_ON = %d\n", loop, AOconf[loop].DMprimaryWrite_ON);
-    }
-    
     
 
 	/** ### 1.7. WFS image total flux computation mode
@@ -2033,25 +1875,8 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	 fprintf(fplog, "\n\n============== 1.7. WFS image total flux computation mode ===================\n\n");
 
     // TOTAL image done in separate thread ?
-    AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = 0;
-    if((fp=fopen("./conf/param_COMPUTE_TOTAL_ASYNC.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_COMPUTE_TOTAL_ASYNC.txt missing\n");
-        printf("Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
-        fprintf(fplog, "WARNING: file ./conf/param_COMPUTE_TOTAL_ASYNC.txt missing. Using default: %d\n", AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("AOLCOMPUTE_TOTAL_ASYNC : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = atoi(content);
-        fprintf(fplog, "AOconf[%ld].AOLCOMPUTE_TOTAL_ASYNC = %d\n", loop, AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC);
-    }
-
+    AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC = AOloopControl_readParam_int("COMPUTE_TOTAL_ASYNC", 1, fplog);
+ 
 
     /** ### 1.8. Read CMatrix mult mode
      * 
@@ -2062,59 +1887,15 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
  	fprintf(fplog, "\n\n============== 1.8. Read CMatrix mult mode ===================\n\n");
 
-    if((fp=fopen("./conf/param_CMMODE.txt", "r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_CMMODE.txt missing\n");
-        printf("Using combined matrix\n");
-        AOconf[loop].CMMODE = 1;  // by default, use combined matrix
-        fprintf(fplog, "WARNING: file ./conf/param_CMMODE.txt missing. Using combined matrix\n");
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("Matrix mult mode : %d\n", atoi(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].CMMODE = atoi(content);
-        fprintf(fplog, "CMMODE = %d\n", AOconf[loop].CMMODE);
-    }
+	AOconf[loop].CMMODE = AOloopControl_readParam_int("CMMODE", 1, fplog);
 
 
 
 
-	/** ### 1.9. Read loop frequ
-	 * 
-	 * - ./conf/param_loopfrequ.txt -> AOconf[loop].loopfrequ
-	 * 
-	 * @warning check redundancy with earlier read
-	 */
-	fprintf(fplog, "\n\n============== 1.9. Read loop frequ ===================\n\n");
-
-    if((fp=fopen("./conf/param_loopfrequ.txt","r"))==NULL)
-    {
-        printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
-        printf("Using default loop speed\n");
-        fprintf(fplog, "WARNING: file ./conf/param_loopfrequ.txt missing. Using default loop speed\n");
-        AOconf[loop].loopfrequ = 2000.0;
-    }
-    else
-    {
-        if(fscanf(fp, "%200s", content) != 1)
-            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
-
-        printf("loopfrequ : %f\n", atof(content));
-        fclose(fp);
-        fflush(stdout);
-        AOconf[loop].loopfrequ = atof(content);
-        fprintf(fplog, "AOconf[%ld].loopfrequ = %f\n", loop, AOconf[loop].loopfrequ);
-    }
 
 
 
-
-	/** ### 1.10. Setup loop timing array 
+	/** ### 1.9. Setup loop timing array 
 	 */
 	fprintf(fplog, "\n\n============== 1.10. Setup loop timing array ===================\n\n");
 
