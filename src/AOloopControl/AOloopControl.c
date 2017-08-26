@@ -1449,6 +1449,210 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Read parameter value (float)
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	CHAR*
+ * 				parameter name
+ * 
+ * @param[in]
+ * defaultValue	FLOAT
+ * 				default value if file conf/param_paramname.txt not found
+ *
+ * @param[in]
+ * fplog		FILE*
+ * 				log file. If NULL, do not log
+ *  
+ */
+float AOloopControl_readParam_float(char *paramname, float defaultValue, FILE *fplog)
+{
+	FILE *fp;
+	char fname[200];
+	float value;
+	int wParamFile = 0;
+	
+	sprintf(fname, "./conf/param_%s.txt", paramname);
+	if((fp=fopen(fname, "r"))==NULL)
+    {
+        printf("WARNING: file %s missing\n", fname);
+        value = defaultValue;
+        wParamFile = 1;
+    }
+    else
+    {
+        if(fscanf(fp, "%50f", &value) != 1){
+            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			value = defaultValue;
+			wParamFile = 1;
+		}
+        fclose(fp);
+	}
+
+	if(wParamFile == 1) // write file
+	{
+		fp = fopen(fname, "w");
+		fprintf(fp, "%f", value);
+		fclose(fp);
+	}
+
+
+    if(fplog!=NULL)
+		fprintf(fplog, "parameter %20s = %f\n", paramname, value);
+    
+	
+	return value;
+}
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Read parameter value (int)
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	CHAR*
+ * 				parameter name
+ * 
+ * @param[in]
+ * defaultValue	INT
+ * 				default value if file conf/param_paramname.txt not found
+ *
+ * @param[in]
+ * fplog		FILE*
+ * 				log file. If NULL, do not log
+ *  
+ */
+int AOloopControl_readParam_int(char *paramname, int defaultValue, FILE *fplog)
+{
+	FILE *fp;
+	char fname[200];
+	int value;
+	int wParamFile = 0;
+	
+	sprintf(fname, "./conf/param_%s.txt", paramname);
+	if((fp=fopen(fname, "r"))==NULL)
+    {
+        printf("WARNING: file %s missing\n", fname);
+        value = defaultValue;
+        wParamFile = 1;
+    }
+    else
+    {
+        if(fscanf(fp, "%50d", &value) != 1){
+            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			value = defaultValue;
+			wParamFile = 1;
+		}
+        fclose(fp);
+	}
+
+	if(wParamFile == 1) // write file
+	{
+		fp = fopen(fname, "w");
+		fprintf(fp, "%d", value);
+		fclose(fp);
+	}
+
+
+    if(fplog!=NULL)
+		fprintf(fplog, "parameter %20s = %d\n", paramname, value);
+    
+	
+	return value;
+}
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Read parameter value (char*)
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	CHAR*
+ * 				parameter name
+ * 
+ * @param[in]
+ * defaultValue	CHAR*
+ * 				default value if file conf/param_paramname.txt not found
+ *
+ * @param[in]
+ * fplog		FILE*
+ * 				log file. If NULL, do not log
+ *  
+ */
+char* AOloopControl_readParam_string(char *paramname, char* defaultValue, FILE *fplog)
+{
+	FILE *fp;
+	char fname[200];
+	char* value;
+	int wParamFile = 0;
+	
+	sprintf(fname, "./conf/param_%s.txt", paramname);
+	if((fp=fopen(fname, "r"))==NULL)
+    {
+        printf("WARNING: file %s missing\n", fname);
+        strcpy(value, defaultValue);
+        wParamFile = 1;
+    }
+    else
+    {
+        if(fscanf(fp, "%s", value) != 1){
+            printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
+			strcpy(value, defaultValue);
+			wParamFile = 1;
+		}
+        fclose(fp);
+	}
+
+	if(wParamFile == 1) // write file
+	{
+		fp = fopen(fname, "w");
+		fprintf(fp, "%s", value);
+		fclose(fp);
+	}
+
+
+    if(fplog!=NULL)
+		fprintf(fplog, "parameter %20s = %s\n", paramname, value);
+    
+	
+	return value;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * ## Purpose
  * 
@@ -1618,6 +1822,8 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      */ 
     fprintf(fplog, "\n\n============== 1.4. Define WFS image normalization mode ===================\n\n");
     
+    AOconf[loop].WFSnormalize = AOloopControl_readParam_int("WFSnorm", 1, fplog);
+    /*
     if((fp=fopen("./conf/param_WFSnorm.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_WFSnorm.txt missing\n");
@@ -1635,7 +1841,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].WFSnormalize = atoi(content);
         fprintf(fplog, "AOconf[%ld].WFSnormalize = %d\n", loop, AOconf[loop].WFSnormalize);
     }
-
+*/
 
 
     /** ### 1.5. Read Timing info
@@ -1648,7 +1854,11 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * - ./conf/param_wfsmextrlatency.txt -> AOconf[loop].wfsmextrlatency
      */
      fprintf(fplog, "\n\n============== 1.5. Read Timing info ===================\n\n");
-     
+    
+    
+    
+    AOconf[loop].loopfrequ = AOloopControl_readParam_float("loopfrequ", 1000.0, fplog);
+     /*
     if((fp=fopen("./conf/param_loopfrequ.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_loopfrequ.txt missing\n");
@@ -1665,7 +1875,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-
+*/
     if((fp=fopen("./conf/param_hardwlatency.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_hardwlatency.txt missing\n");
@@ -1818,7 +2028,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 	/** ### 1.7. WFS image total flux computation mode
 	 * 
-	 * - ./conf/param_COMPUTE_TOTAL_ASYNC.txt -> AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC
 	 * 
 	 */
 	 fprintf(fplog, "\n\n============== 1.7. WFS image total flux computation mode ===================\n\n");
@@ -8606,6 +8815,9 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
 
 
 
+
+
+
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl - 11. PROCESS LOG FILES                                                    */
@@ -9361,377 +9573,6 @@ int_fast8_t AOloopControl_AutoTune()
 
     return(0);
 }
-
-
-
-
-
-
-
-
-
-
-/** Record periodic camera signal (to be used if there is a periodic camera error)
- *
- * folds the signal onto one period
- *
- */
-/*
-int_fast8_t AOloopControl_Measure_WFScam_PeriodicError(long loop, long NBframes, long NBpha, char *IDout_name)
-{
-    FILE *fp;
-    char fname[200];
-    long ii, jj, kk, kk1, kkmax;
-    long IDrc, IDrefim;
-    long IDout;
-
-    double period; /// in frames
-    double period_start = 1000.0;
-    double period_end = 1200.0;
-    double period_step;
-    double pha;
-    long *phacnt;
-    long phal;
-    long double rmsval;
-    double rmsvalmin, rmsvalmax;
-    double periodopt;
-    long cnt;
-    long p, p0, p1, pmin, pmax;
-
-    double intpart;
-    double tmpv1;
-
-    double *coarsermsarray;
-    double rmsvalmin1;
-    int lOK;
-    double level1, level2, level3;
-    long pp1, pp2, pp3;
-    int level1OK, level2OK, level3OK;
-
-    long kw;
-    char kname[200];
-    char comment[200];
-
-
-    if(AOloopcontrol_meminit==0)
-        AOloopControl_InitializeMemory(0);
-
-
-    IDrc = create_3Dimage_ID("Rcube", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBframes);
-    IDout = create_3Dimage_ID(IDout_name, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, NBpha);
-
-    printf("SETTING UP... (loop %ld)\n", LOOPNUMBER);
-    fflush(stdout);
-
-  //  sprintf(fname, "./conf/AOloop.conf");
-    AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
-    //exit(0);
-
-    printf("Importing WFS camera image shared memory ... \n");
-    aoconfID_wfsim = read_sharedmem_image(AOconf[loop].WFSname);
-
-
-
-    for(kk=0; kk<NBframes; kk++)
-    {
-        Read_cam_frame(loop, 0, 1, 0, 0);
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] = data.image[aoconfID_imWFS1].array.F[ii];
-    }
-
-    save_fits("Rcube", "!Rcube.fits");
-
-    IDrefim = create_2Dimage_ID("refim", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-    for(kk=0; kk<NBframes; kk++)
-    {
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDrefim].array.F[ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
-    }
-    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[IDrefim].array.F[ii] /= NBframes;
-
-    for(kk=0; kk<NBframes; kk++)
-    {
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] -= data.image[IDrefim].array.F[ii];
-    }
-    save_fits("Rcube", "!R1cube.fits");
-
-
-    // find periodicity ( coarse search )
-    fp = fopen("wfscampe_coarse.txt","w");
-    fclose(fp);
-
-    pmax = (long) NBframes/2;
-    pmin = 0;
-    rmsvalmin = 1.0e20;
-
-
-
-    rmsvalmax = 0.0;
-    p0 = 200;
-    coarsermsarray = (double*) malloc(sizeof(double)*pmax);
-    for(p=p0; p<pmax; p++)
-    {
-        rmsval = 0.0;
-        kkmax = 100;
-        if(kkmax+pmax>NBframes)
-        {
-            printf("ERROR: pmax, kkmax not compatible\n");
-            exit(0);
-        }
-
-        for(kk=0; kk<kkmax; kk++)
-        {
-            kk1 = kk+p;
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            {
-                tmpv1 = data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii] - data.image[IDrc].array.F[kk1*AOconf[loop].sizeWFS+ii];
-                rmsval += tmpv1*tmpv1;
-            }
-        }
-        rmsval = sqrt(rmsval/kkmax/AOconf[loop].sizeWFS);
-
-        if(rmsval<rmsvalmin)
-        {
-            rmsvalmin = rmsval;
-            pmin = p;
-        }
-        if(rmsval>rmsvalmax)
-            rmsvalmax = rmsval;
-
-        coarsermsarray[p] = rmsval;
-
-        printf("%20ld  %20g     [ %20ld  %20g ]\n", p, (double) rmsval, pmin, rmsvalmin);
-        fp = fopen("wfscampe_coarse.txt","a");
-        fprintf(fp, "%20ld %20g\n", p, (double) rmsval);
-        fclose(fp);
-    }
-
-    level1 = rmsvalmin + 0.2*(rmsvalmax-rmsvalmin);
-    level1OK = 0; /// toggles to 1 when curve first goes above level1
-
-    level2 = rmsvalmin + 0.8*(rmsvalmax-rmsvalmin);
-    level2OK = 0; /// toggles to 1 when curve first goes above level2 after level1OK
-
-    level3 = rmsvalmin + 0.2*(rmsvalmax-rmsvalmin);
-    level3OK = 0; /// toggles to 1 when curve first goes above level3 after level2OK
-
-    p = p0;
-    p1 = 0;
-    lOK = 0;
-    rmsvalmin1 = rmsvalmax;
-    while((lOK==0)&&(p<pmax))
-    {
-        if(level1OK==0)
-            if(coarsermsarray[p]>level1)
-            {
-                level1OK = 1;
-                pp1 = p;
-            }
-
-        if((level1OK==1)&&(level2OK==0))
-            if(coarsermsarray[p]>level2)
-            {
-                level2OK = 1;
-                pp2 = p;
-            }
-
-        if((level1OK==1)&&(level2OK==1)&&(level3OK==0))
-            if(coarsermsarray[p]<level3)
-            {
-                pp3 = p;
-                level3OK = 1;
-            }
-
-        if((level1OK==1)&&(level2OK==1)&&(level3OK==1))
-        {
-            if(coarsermsarray[p] < rmsvalmin1)
-            {
-                rmsvalmin1 = coarsermsarray[p];
-                p1 = p;
-            }
-
-            if(coarsermsarray[p]>level2)
-                lOK = 1;
-        }
-        p++;
-    }
-
-    free(coarsermsarray);
-
-
-    printf("APPROXIMATE PERIOD = %ld   [%ld %ld %ld]  [%f %f %f]\n", p1, pp1, pp2, pp3, level1, level2, level3);
-
-    // find periodicity ( fine search )
-
-    periodopt = 0.0;
-    rmsvalmax = 0.0;
-
-    fp = fopen("wfscampe.txt","w");
-    fclose(fp);
-
-    period_start = 1.0*p1 - 15.0;
-    period_end = 1.0*p1 + 15.0;
-
-    phacnt = (long*) malloc(sizeof(long)*NBpha);
-    period_step = (period_end-period_start)/300.0;
-    for(period=period_start; period<period_end; period += period_step)
-    {
-        for(kk=0; kk<NBpha; kk++)
-            phacnt[kk] = 0;
-
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] = 0.0;
-
-        for(kk=0; kk<NBframes; kk++)
-        {
-            pha = 1.0*kk/period;
-            pha = modf(pha, &intpart);
-            phal = (long) (1.0*NBpha*pha);
-
-            if(phal>NBpha-1)
-                phal = NBpha-1;
-            if(phal<0)
-                phal = 0;
-
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
-
-            phacnt[phal]++;
-        }
-
-        rmsval = 0.0;
-        cnt = 0;
-        for(kk=0; kk<NBpha; kk++)
-        {
-            if(phacnt[kk]>0)
-            {
-                cnt++;
-                for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-                {
-                    data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
-                    rmsval = data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii]*data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii];
-                }
-            }
-        }
-
-
-        rmsval = sqrt(rmsval/AOconf[loop].sizeWFS/cnt);
-        if(rmsval>rmsvalmax)
-        {
-            rmsvalmax = rmsval;
-            periodopt = period;
-        }
-        printf("%20f  %20g     [ %20f  %20g ]\n", period, (double) rmsval, periodopt, rmsvalmax);
-        fp = fopen("wfscampe.txt","a");
-        fprintf(fp, "%20f %20g\n", period, (double) rmsval);
-        fclose(fp);
-    }
-
-    printf("EXACT PERIOD = %f\n", periodopt);
-
-    kw = 0;
-    sprintf(kname, "PERIOD");
-    strcpy(data.image[IDout].kw[kw].name, kname);
-    data.image[IDout].kw[kw].type = 'D';
-    data.image[IDout].kw[kw].value.numf = (double) periodopt;
-    sprintf(comment, "WFS cam error period");
-    strcpy(data.image[IDout].kw[kw].comment, comment);
-
-
-    /// building phase cube
-    period = periodopt;
-
-    for(kk=0; kk<NBpha; kk++)
-        phacnt[kk] = 0;
-    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-        data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] = 0.0;
-
-    for(kk=0; kk<NBframes; kk++)
-    {
-        pha = 1.0*kk/period;
-        pha = modf(pha, &intpart);
-        phal = (long) (1.0*NBpha*pha);
-
-        if(phal>NBpha-1)
-            phal = NBpha-1;
-        if(phal<0)
-            phal = 0;
-
-        for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            data.image[IDout].array.F[phal*AOconf[loop].sizeWFS+ii] += data.image[IDrc].array.F[kk*AOconf[loop].sizeWFS+ii];
-        phacnt[phal]++;
-    }
-
-    rmsval = 0.0;
-    cnt = 0;
-    for(kk=0; kk<NBpha; kk++)
-    {
-        if(phacnt[kk]>0)
-        {
-            cnt++;
-            for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
-            {
-                data.image[IDout].array.F[kk*AOconf[loop].sizeWFS+ii] /= phacnt[kk];
-            }
-        }
-    }
-
-
-
-    free(phacnt);
-
-    return(0);
-}
-*/
-
-
-
-
-
-
-/** remove WFS camera periodic error
- *
- * pha: phase from 0.0 to 1.0
- */
-/*
-int_fast8_t AOloopControl_Remove_WFScamPE(char *IDin_name, char *IDcorr_name, double pha)
-{
-    long IDin;
-    long IDcorr;
-    long phal;
-    long xsize, ysize, zsize, xysize;
-    long ii;
-
-
-    IDin = image_ID(IDin_name);
-    IDcorr = image_ID(IDcorr_name);
-
-    xsize = data.image[IDcorr].md[0].size[0];
-    ysize = data.image[IDcorr].md[0].size[1];
-    zsize = data.image[IDcorr].md[0].size[2];
-    xysize = xsize*ysize;
-
-    phal = (long) (1.0*pha*zsize);
-    if(phal>zsize-1)
-        phal -= zsize;
-
-
-
-    for(ii=0; ii<xysize; ii++) {
-        data.image[IDin].array.F[ii] -= data.image[IDcorr].array.F[xysize*phal+ii];
-    }
-
-
-    return(0);
-}
-*/
-
-
-
-
-
 
 
 
