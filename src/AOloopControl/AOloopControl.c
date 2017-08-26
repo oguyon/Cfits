@@ -2350,9 +2350,9 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      
 	fprintf(fplog, "\n\n============== 2.2. Read file to stream or connect to existing stream  ===================\n\n");
 
-    if(sprintf(name, "aol%ld_wfsdark") < 1)
+    if(sprintf(name, "aol%ld_wfsdark", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    sprintf(fname, "./conf/shmim_wfsdark.fits", loop);
+    sprintf(fname, "./conf/shmim_wfsdark.fits");
     aoconfID_wfsdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
 
 
@@ -2797,7 +2797,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_contrMc = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizeDM);
 
-        if(sprintf(name, "aol%ld_contrMcact") < 1)
+        if(sprintf(name, "aol%ld_contrMcact", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_contrMcact_00.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
