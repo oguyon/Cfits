@@ -2620,7 +2620,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-exit(0);//TEST
 
 
     // TO BE CHECKED
@@ -2904,6 +2903,7 @@ exit(0);//TEST
     free(sizearray);
 
 
+exit(0);//TEST
 
 
     if(AOconf[loop].DMmodesNBblock==1)
