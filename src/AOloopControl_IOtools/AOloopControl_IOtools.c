@@ -152,7 +152,11 @@ extern float GPU_alpha;
 extern float GPU_beta;
 
 
-extern int COMPUTE_GPU_SCALING;
+
+
+
+
+
 
 /* =============================================================================================== */
 /*                                     MAIN DATA STRUCTURES                                        */
@@ -1009,7 +1013,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
 
 
-    if( ((COMPUTE_GPU_SCALING==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
+    if( ((AOconf[loop].GPUall==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
     {
 #ifdef _PRINT_TEST
         printf("TEST - Normalize [%d]: totalinv = %f\n", AOconf[loop].WFSnormalize, totalinv);

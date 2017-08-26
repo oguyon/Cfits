@@ -198,7 +198,6 @@ static double tdiffv;
 
 
 
-int COMPUTE_GPU_SCALING = 0; // perform scaling inside GPU instead of CPU
 static int initWFSref_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static int initcontrMcact_GPU[100] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -332,6 +331,9 @@ static int *GPUset1;
 
 
 
+
+
+
 /* =============================================================================================== */
 /*                                     MAIN DATA STRUCTURES                                        */
 /* =============================================================================================== */
@@ -345,61 +347,6 @@ static int AOlooploadconf_init = 0;
 
 #define AOconfname "/tmp/AOconf.shm"
 AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
-
-
-
-
-
-/* =============================================================================================== */
-/*                         BUFFERS (GLOBALS FOR CONVENIENCE & SPEED)                               */
-/* =============================================================================================== */
-
-// camera read
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* =============================================================================================== */
-/*                                        DATA STREAMS SEMAPHORES                                  */
-/* =============================================================================================== */
-/*
-
-NOTATIONS:
- [streamA]wn >--(function)--> [streamB]pm : function waits on semaphore #n of streamA and post #m of streamB
- pa    : post all
-
-
-
-  [aol#_wfsim] : raw WFS input image, all semaphores posted when image is read
-  [aol#_wfsim]w0 >--(Read_cam_frame)--> [aol#_imWFS0]pa [aol#_imWFS1]pa
-
-
-  [aol#_imWFS0] : dark-subtracted WFS input image
-
-
-  [aol#_imWFS1] : normalized dark-subtracted WFS input image
-
-
-  [aol#_imWFS2] :
-
- */
-
-
-
 
 
 
@@ -2103,7 +2050,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
     // Skip CPU image scaling and go straight to GPUs ?
 
-    if((fp=fopen("./conf/param_GPUall.txt","r"))==NULL)
+    if((fp=fopen("./conf/param_GPUall.txt", "r"))==NULL)
     {
         printf("WARNING: file ./conf/param_GPUall.txt missing\n");
         printf("Using CPU for image scaling\n");
@@ -2121,6 +2068,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].GPUall = atoi(content);
         fprintf(fplog, "AOconf[%ld].GPUall = %d\n", loop, AOconf[loop].GPUall);
     }
+
+
 
     // Direct DM write ?
     if((fp=fopen("./conf/param_DMprimWriteON.txt", "r"))==NULL)
@@ -9700,14 +9649,12 @@ int_fast8_t AOloopControl_run()
 
 	
 
-    COMPUTE_GPU_SCALING = AOconf[loop].GPUall;
-
 
 
     // pixel streaming ?
     COMPUTE_PIXELSTREAMING = 1;
 
-    if(COMPUTE_GPU_SCALING == 0)
+    if(AOconf[loop].GPUall == 0)
         COMPUTE_PIXELSTREAMING = 0;
 
 
@@ -10163,7 +10110,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     data.image[aoconfID_looptiming].array.F[4] = tdiffv;
 
 
-    if(COMPUTE_GPU_SCALING==0)
+    if(AOconf[loop].GPUall==0)
     {
         data.image[aoconfID_imWFS2].md[0].write = 1;
         for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
@@ -10333,7 +10280,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
             //initWFSref_GPU[PIXSTREAM_SLICE] = 1; // default: do not re-compute reference output
 
-            if(COMPUTE_GPU_SCALING==1)
+            if(AOconf[loop].GPUall == 1)
             {
                 // TBD : TEST IF contrM or wfsref have changed
 
@@ -10357,7 +10304,7 @@ int_fast8_t AOcompute(long loop, int normalize)
             }
 
 
-            if(COMPUTE_GPU_SCALING==1)
+            if(AOconf[loop].GPUall == 1)
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS0].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, initWFSref_GPU[PIXSTREAM_SLICE], loop);
             else
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
@@ -10371,7 +10318,7 @@ int_fast8_t AOcompute(long loop, int normalize)
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
             data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
-            if(COMPUTE_GPU_SCALING==1)
+            if(AOconf[loop].GPUall == 1)
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
             else
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
@@ -10398,10 +10345,10 @@ int_fast8_t AOcompute(long loop, int normalize)
             {
                 // re-map input vector into imWFS2_active
 
-                if(COMPUTE_GPU_SCALING==1) // (**)
+                if(AOconf[loop].GPUall == 1) // (**)
                 {
 #ifdef _PRINT_TEST
-                    printf("TEST - CM mult: GPU=1, CMMODE=1, COMPUTE_GPU_SCALING=1\n");
+                    printf("TEST - CM mult: GPU=1, CMMODE=1, GPUall = 1\n");
                     fflush(stdout);
 #endif
 
@@ -10423,7 +10370,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 }
 
                 // look for updated control matrix or reference
-                if(COMPUTE_GPU_SCALING==1) // (**)
+                if(AOconf[loop].GPUall == 1) // (**)
                 {
                     if(data.image[aoconfID_contrMcact[PIXSTREAM_SLICE]].md[0].cnt0 != contrMcactcnt0[PIXSTREAM_SLICE])
                     {
@@ -10472,7 +10419,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 data.image[aoconfID_looptiming].array.F[6] = tdiffv;
 
 
-                if(COMPUTE_GPU_SCALING==1)
+                if(AOconf[loop].GPUall == 1)
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
                 else
                     GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
