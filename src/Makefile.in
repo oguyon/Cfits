@@ -117,6 +117,7 @@ cfitsTK_DEPENDENCIES = linARfilterPred/liblinarfilterpred.la \
 	AtmosphericTurbulence/libatmosphericturbulence.la \
 	AtmosphereModel/libatmospheremodel.la psf/libpsf.la \
 	FPAOloopControl/libfpaoloopcontrol.la \
+	AOloopControl_acquireCalib/libaoloopcontrolacquirecalib.la \
 	AOloopControl_PredictiveControl/libaoloopcontrolpredictivecontrol.la \
 	AOloopControl_IOtools/libaoloopcontroliotools.la \
 	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \
@@ -397,6 +398,7 @@ cfitsTK_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-I@abs_top_srcdir@/src/AtmosphereModel \
 	-I@abs_top_srcdir@/src/psf \
 	-I@abs_top_srcdir@/src/FPAOloopControl \
+	-I@abs_top_srcdir@/src/AOloopControl_acquireCalib \
 	-I@abs_top_srcdir@/src/AOloopControl_PredictiveControl \
 	-I@abs_top_srcdir@/src/AOloopControl_IOtools \
 	-I@abs_top_srcdir@/src/AOloopControl \
@@ -429,19 +431,20 @@ noinst_HEADERS = calc.h
 BUILT_SOURCES = calc_bison.h
 SUBDIRS = linARfilterPred TransitLC SCExAO_control cudacomp \
 	AtmosphericTurbulence AtmosphereModel psf FPAOloopControl \
-	AOloopControl_PredictiveControl AOloopControl_IOtools \
-	AOloopControl AOsystSim AOloopControl_DM img_reduce \
-	image_format PIAACMCsimul OptSystProp OpticsMaterials \
-	coronagraphs ZernikePolyn WFpropagate image_basic image_filter \
-	kdtree image_gen linopt_imtools statistic fft info \
-	COREMOD_arith COREMOD_iofits COREMOD_memory COREMOD_tools \
-	00CORE ImageStreamIO
+	AOloopControl_acquireCalib AOloopControl_PredictiveControl \
+	AOloopControl_IOtools AOloopControl AOsystSim AOloopControl_DM \
+	img_reduce image_format PIAACMCsimul OptSystProp \
+	OpticsMaterials coronagraphs ZernikePolyn WFpropagate \
+	image_basic image_filter kdtree image_gen linopt_imtools \
+	statistic fft info COREMOD_arith COREMOD_iofits COREMOD_memory \
+	COREMOD_tools 00CORE ImageStreamIO
 cfitsTK_LDADD = linARfilterPred/liblinarfilterpred.la \
 	TransitLC/libtransitlc.la SCExAO_control/libscexaocontrol.la \
 	cudacomp/libcudacomp.la \
 	AtmosphericTurbulence/libatmosphericturbulence.la \
 	AtmosphereModel/libatmospheremodel.la psf/libpsf.la \
 	FPAOloopControl/libfpaoloopcontrol.la \
+	AOloopControl_acquireCalib/libaoloopcontrolacquirecalib.la \
 	AOloopControl_PredictiveControl/libaoloopcontrolpredictivecontrol.la \
 	AOloopControl_IOtools/libaoloopcontroliotools.la \
 	AOloopControl/libaoloopcontrol.la AOsystSim/libaosystsim.la \

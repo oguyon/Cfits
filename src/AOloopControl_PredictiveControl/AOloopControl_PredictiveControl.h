@@ -17,6 +17,10 @@
 
 
 
+/** @brief Initialize command line interface. */
+int_fast8_t init_AOloopControl_PredictiveControl();
+
+
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl_PredictiveControl - 1. PREDICTIVE CONTROL
