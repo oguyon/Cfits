@@ -2903,7 +2903,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     free(sizearray);
 
 
-exit(0);//TEST
 
 
     if(AOconf[loop].DMmodesNBblock==1)
@@ -2950,6 +2949,10 @@ exit(0);//TEST
 	AOLOOPCONTROL_logfunc_level = 0;
     CORE_logFunctionCall( AOLOOPCONTROL_logfunc_level, AOLOOPCONTROL_logfunc_level_max, 1, __FUNCTION__, __LINE__, "");
 #endif
+
+
+exit(0);//TEST
+
 
     return(0);
 }
