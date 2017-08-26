@@ -2650,7 +2650,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
+exit(0);//TEST
 
     // load ref WFS image
     // sprintf(name, "aol%ld_wfsref", loop);
@@ -2951,7 +2951,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 #endif
 
 
-exit(0);//TEST
+
 
 
     return(0);
