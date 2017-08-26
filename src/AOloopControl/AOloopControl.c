@@ -2242,6 +2242,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
+exit(0);//TEST
 
 
 	/** ### 1.9. Read loop frequ
