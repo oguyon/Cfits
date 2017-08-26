@@ -2437,7 +2437,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     fprintf(fplog, "Connected to DM %s, size = %ld x %ld\n", AOconf[loop].dmCname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
 
 
-exit(0);//TEST
+
 
 
 	/**
@@ -2620,7 +2620,7 @@ exit(0);//TEST
     }
 
 
-
+exit(0);//TEST
 
 
     // TO BE CHECKED
