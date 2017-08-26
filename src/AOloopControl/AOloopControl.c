@@ -2242,7 +2242,6 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     }
 
 
-exit(0);//TEST
 
 
 	/** ### 1.9. Read loop frequ
@@ -2436,6 +2435,9 @@ exit(0);//TEST
     AOconf[loop].sizeDM = AOconf[loop].sizexDM*AOconf[loop].sizeyDM;
 
     fprintf(fplog, "Connected to DM %s, size = %ld x %ld\n", AOconf[loop].dmCname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM);
+
+
+exit(0);//TEST
 
 
 	/**
