@@ -2763,6 +2763,8 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes);
         AOconf[loop].init_RM = 1;
 
+exit(0);//TEST
+
 
         AOconf[loop].init_CM = 0;
         if(sprintf(fname, "conf/aol%ld_contrM.fits", loop) < 1)
@@ -2903,7 +2905,7 @@ static int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-exit(0);//TEST
+
 
 
 
