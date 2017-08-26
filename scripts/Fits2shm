@@ -3,7 +3,7 @@
 NBARGS=2
 pname=`echo "$0" | sed "s/\.\///g"`
 
-VERBOSE="0"
+VERBOSE="1"
 
 
 
