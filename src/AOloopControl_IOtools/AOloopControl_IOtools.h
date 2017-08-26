@@ -1,5 +1,5 @@
 /**
- * @file    AOloopControl.h
+ * @file    AOloopControl_IOtools.h
  * @brief   Function prototypes for Adaptive Optics Control loop engine I/O tools
  * 
  * AO engine uses stream data structure

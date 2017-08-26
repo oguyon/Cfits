@@ -284,7 +284,7 @@ int_fast8_t AOloopControl_stream3Dto2D_cli() {
 /*                                    FUNCTIONS SOURCE CODE                                        */
 /* =============================================================================================== */
 /* =============================================================================================== */
-/** @name AOloopControl functions */
+/** @name AOloopControl_IOtools functions */
 
 
 

@@ -80,6 +80,8 @@ int clock_gettime(int clk_id, struct mach_timespec *t){
 #include "image_gen/image_gen.h"
 #include "statistic/statistic.h"
 
+#include "AOloopControl_IOtools/AOloopControl_IOtools.h"
+
 #include "FPAOloopControl/FPAOloopControl.h"
 
 #ifdef HAVE_CUDA

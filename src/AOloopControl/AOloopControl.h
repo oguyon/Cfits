@@ -483,21 +483,6 @@ long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, fl
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 7. PREDICTIVE CONTROL
- *  Predictive control using WFS telemetry */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-int_fast8_t AOloopControl_mapPredictiveFilter(const char *IDmodecoeff_name, long modeout, double delayfr);
-
-double AOloopControl_testPredictiveFilter(const char *IDtrace_name, long mode, double delayfr, long filtsize, const char *IDfilt_name, double SVDeps);
-
-long AOloopControl_builPFloop_WatchInput(long loop, long PFblock);
-
-
-
 
 
 /* =============================================================================================== */
