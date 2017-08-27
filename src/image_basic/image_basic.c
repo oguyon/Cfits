@@ -4015,6 +4015,9 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
         fflush(stdout);
         if((semindex > data.image[ID].md[0].sem-1)||(semindex<0))
         {
+			printf("Counter watch ...\n");
+			fflush(stdout);
+			
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
             {
                 usleep(5);
@@ -4027,6 +4030,9 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             printf("[sem]...");
             sem_wait(data.image[ID].semptr[semindex]);
         }
+
+		printf("New frame detected\n");
+		fflush(stdout);
 
         if(data.image[ID].md[0].naxis == 3)
             k1 = data.image[ID].md[0].cnt1;
