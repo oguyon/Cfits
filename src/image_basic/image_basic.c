@@ -4040,9 +4040,6 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             sem_wait(data.image[ID].semptr[semindex]);
         }
 		
-		printf("New frame\n");
-		fflush(stdout);
-
         if(data.image[ID].md[0].naxis == 3)
             k1 = data.image[ID].md[0].cnt1;
         else

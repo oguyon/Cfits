@@ -1684,7 +1684,7 @@ tmux send-keys -t $tmuxsname "$execname -n awfsref0${LOOPNUMBER}" C-m
 tmux send-keys -t $tmuxsname "csetpmove aol${LOOPNUMBER}RT" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsdark" C-m
 tmux send-keys -t $tmuxsname "readshmim aol${LOOPNUMBER}_wfsim" C-m
-tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 1" C-m
+tmux send-keys -t $tmuxsname "imgstreamave aol${LOOPNUMBER}_wfsim 100000 imave 1 4" C-m
 aoconflogext "START taking WFS reference"
 menucontrolloop_default="awfsref0off"
 state="menuconfigureloop"
