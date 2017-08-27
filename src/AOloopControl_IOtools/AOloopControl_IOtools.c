@@ -1068,13 +1068,13 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
 
 
-long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize)
+long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue)
 {
     long ID;
     int CreateSMim = 0;
     int sizeOK;
     uint32_t *sizearray;
-
+	long ii;
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -1132,6 +1132,8 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
             sizearray[1] =  ysize;
             if(xsize*ysize>0)
                 ID = create_image_ID(name, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
+            for(ii=0;ii<xsize*ysize;ii++)
+				data.image[ID].array.F[ii] = DefaultValue;
         }
     }
     free(sizearray);
@@ -1220,7 +1222,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
 
-long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize)
+long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue)
 {
     long ID;
     int CreateSMim;
@@ -1228,6 +1230,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
     uint32_t *sizearray;
     long ID1;
     int creashmimfromFITS = 0;
+    long ii;
 
     int loadcreatestatus = -1;
     // value of loadcreatestatus :
@@ -1315,6 +1318,8 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
                 printf("        AOloopControl_3Dloadcreate_shmim: ===== create_image_ID\n");
                 fflush(stdout);
                 ID = create_image_ID(name, 3, sizearray, _DATATYPE_FLOAT, 1, 0);
+                for(ii=0;ii<xsize*ysize*zsize;ii++)
+					data.image[ID].array.F[ii] = DefaultValue;
                 creashmimfromFITS = 0;
             }
             else

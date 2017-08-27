@@ -56,10 +56,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
 
 /** @brief Load 2D image in shared memory */
-long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize);
+long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue);
 
 /** @brief Load 3D image in shared memory */
-long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize);
+long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue);
 
 
 
