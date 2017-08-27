@@ -317,9 +317,9 @@ for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-echo "Fits2shm -c -p aol${LOOPNUMBER} DMmodes" >> script_SharedMemLoadCM	
-echo "Fits2shm -c -p aol${LOOPNUMBER} respM" >> script_SharedMemLoadCM	
-echo "Fits2shm -c -p aol${LOOPNUMBER} contrM" >> script_SharedMemLoadCM	
+echo "Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes" >> script_SharedMemLoadCM	
+echo "Fits2shm -c -p aol${LOOPNUMBER}_ respM" >> script_SharedMemLoadCM	
+echo "Fits2shm -c -p aol${LOOPNUMBER}_ contrM" >> script_SharedMemLoadCM	
 
 
 for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2}_00 ; do

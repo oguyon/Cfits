@@ -862,7 +862,7 @@ exec 3>&1;
 wfsdarkfname=$(dialog --title "Select WFS dark file name" --stdout --fselect "${wfsdarkfname}" $nbwlines $nbwcols)
 cd ..
 echo "wfsdark/$wfsdarkfname" > ./conf/shmim_wfsdark.name.txt
-Fits2shm -c -p aol${LOOPNUMBER}_  wfsdark
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
 ;;
 	1)
 imname=$( cat ./conf/shmim_wfsdark.name.txt )
@@ -1564,7 +1564,7 @@ exec 3>&1;
 wfsmaskfname=$(dialog --title "Select WFS pixel mask file name" --stdout  --fselect "${wfsmaskfname}" $nbwlines $nbwcols)
 cd ..
 echo "./wfsmask/$wfsmaskfname" > ./conf/shmim_wfsmask.name.txt
-Fits2shm -c -p aol${LOOPNUMBER}_wfsmask
+Fits2shm -c -p aol${LOOPNUMBER}_ wfsmask
 ;;
 	1)
 imname=$( cat ./conf/shmim_wfsmask.name.txt )
