@@ -4048,6 +4048,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
         offset = k*xysize;
 
         switch( atype ) {
+			
         case _DATATYPE_UINT8:
             ptrv = (char*) data.image[ID].array.UI8;
             ptrv += sizeof(char)*k1*xysize;
@@ -4063,6 +4064,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.UI8[offset+ii];
             break;
+            
         case _DATATYPE_INT32:
             ptrv = (char*) data.image[ID].array.SI32;
             ptrv += sizeof(int)*k1*xysize;
@@ -4077,6 +4079,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.SI32[offset+ii];
             break;
+            
         case _DATATYPE_FLOAT:
             ptrv = (char*) data.image[ID].array.F;
             ptrv += sizeof(float)*k1*xysize;
@@ -4092,6 +4095,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.F[offset+ii];
             break;
+            
         case _DATATYPE_DOUBLE:
             ptrv = (char*) data.image[ID].array.D;
             ptrv += sizeof(double)*k1*xysize;
@@ -4105,6 +4109,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.D[offset+ii];
             break;
+            
         case _DATATYPE_UINT16:
             ptrv = (char*) data.image[ID].array.UI16;
             ptrv += sizeof(uint16_t)*k1*xysize;
@@ -4118,6 +4123,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             for(ii=0; ii<xysize; ii++)
                 data.image[IDout].array.F[ii] += data.image[IDcube].array.UI16[offset+ii];
             break;
+            
         default :
             printf("ERROR: Data type not supported for function IMAGE_BASIC_streamaverage\n");
             exit(0);
