@@ -4011,10 +4011,13 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
 
 		CounterWatch = 1;
 	}
-
-    if(data.image[ID].md[0].sem>0) // drive semaphore to zero
-        while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
-
+	
+	if(CounterWatch == 0)
+	{
+		if(data.image[ID].md[0].sem>0) // drive semaphore to zero
+			while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
+	}
+		
     printf("\n\n");
     k = 0;
 
@@ -4022,7 +4025,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     {
         printf("\r ID %ld   image number %8ld     ", ID, k);
         fflush(stdout);
-        if(CounterWatch==1)
+        if(CounterWatch == 1)
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
             {
