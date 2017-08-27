@@ -3963,7 +3963,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     int createim;
     long offset;
 
-
+	int CounterWatch; // 1 if using cnt0, 0 if using semaphore
 
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
@@ -4002,6 +4002,15 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
 
     IDout = create_2Dimage_ID(IDoutname, xsize, ysize);
 
+	// if semindex out of range, use counter
+	CounterWatch = 0;
+	 if((semindex > data.image[ID].md[0].sem-1)||(semindex<0))
+	 {
+		printf("Using counter\n");
+		fflush(stdout);
+
+		CounterWatch = 1;
+	}
 
     if(data.image[ID].md[0].sem>0) // drive semaphore to zero
         while(sem_trywait(data.image[ID].semptr[semindex])==0) {}
@@ -4013,11 +4022,8 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     {
         printf("\r image number %8ld     ", k);
         fflush(stdout);
-        if((semindex > data.image[ID].md[0].sem-1)||(semindex<0))
+        if(CounterWatch==1)
         {
-			printf("Counter watch ...\n");
-			fflush(stdout);
-			
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
             {
                 usleep(5);
@@ -4031,8 +4037,6 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             sem_wait(data.image[ID].semptr[semindex]);
         }
 
-		printf("New frame detected\n");
-		fflush(stdout);
 
         if(data.image[ID].md[0].naxis == 3)
             k1 = data.image[ID].md[0].cnt1;
