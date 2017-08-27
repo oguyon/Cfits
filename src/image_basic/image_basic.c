@@ -242,9 +242,9 @@ int_fast8_t image_basic_cubecollapse_cli()
 
 int_fast8_t image_basic_streamaverage_cli()
 {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2) == 0)
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2) == 0)
     {
-        IMAGE_BASIC_streamaverage(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        IMAGE_BASIC_streamaverage(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl);
         return 0;
     }
     else
@@ -424,9 +424,9 @@ int_fast8_t init_image_basic()
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = image_basic_streamaverage_cli;
     strcpy(data.cmd[data.NBcmd].info,"average stream of images");
-    strcpy(data.cmd[data.NBcmd].syntax,"imgstreamave <imin> <NBcoadd [long]> <imout> <mode>");
-    strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode)");
+    strcpy(data.cmd[data.NBcmd].syntax,"imgstreamave <imin> <NBcoadd [long]> <imout> <mode> <semindex>");
+    strcpy(data.cmd[data.NBcmd].example,"imgstreamave im 100 imave 0 -1");
+    strcpy(data.cmd[data.NBcmd].Ccall,"long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode, int semindex)");
     data.NBcmd++;
 
     strcpy(data.cmd[data.NBcmd].key,"imgstreamfeed");
@@ -3936,10 +3936,11 @@ double basic_measure_transl( const char *ID_name1, const char *ID_name2, long tm
  *   2 : average + std dev -> badpix map for detector calibration ("badpixmap")
  *   3 : same as 1
  *
- *   NOTE: averaging will stop when receiving signal SIGUSR1
+ * @note Averaging will stop when receiving signal SIGUSR1
+ * @note If semindex<0, use counter instead of semaphore
  *
  * */
-long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode)
+long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDoutname, int mode, int semindex)
 {
     long ID;
     long cnt = 0;
@@ -3962,7 +3963,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     int createim;
     long offset;
 
-	int semindex = 4;
+
 
     ID = image_ID(IDname);
     xsize = data.image[ID].md[0].size[0];
@@ -4012,7 +4013,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
     {
         printf("\r image number %8ld     ", k);
         fflush(stdout);
-        if(data.image[ID].md[0].sem==0)
+        if((semindex > data.image[ID].md[0].sem-1)||(semindex<0))
         {
             while(data.image[ID].md[0].cnt0==cnt) // test if new frame exists
             {
