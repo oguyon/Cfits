@@ -4020,7 +4020,7 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
 
     while ((k<NBcoadd)&&(data.signal_USR1==0))
     {
-        printf("\r image number %8ld     ", k);
+        printf("\r ID %ld   image number %8ld     ", ID, k);
         fflush(stdout);
         if(CounterWatch==1)
         {
@@ -4036,7 +4036,9 @@ long IMAGE_BASIC_streamaverage(const char *IDname, long NBcoadd, const char *IDo
             printf("[sem]...");
             sem_wait(data.image[ID].semptr[semindex]);
         }
-
+		
+		printf("New frame\n");
+		fflush(stdout);
 
         if(data.image[ID].md[0].naxis == 3)
             k1 = data.image[ID].md[0].cnt1;
