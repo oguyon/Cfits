@@ -118,19 +118,6 @@ int_fast8_t SCExAOcontrol_mkSegmentModes_cli()
 }
 
 
-/*int_fast8_t SCExAOcontrol_Average_image_cli()
-{
-    if(CLI_checkarg(2,2)+CLI_checkarg(3,3)+CLI_checkarg(4,2)==0)
-    {
-
-        SCExAOcontrol_Average_image(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
-        return 0;
-    }
-    else
-        return 1;
-}*/
-
-
 
 int_fast8_t SCExAOcontrol_mv_DMstage_cli()
 {
@@ -269,15 +256,6 @@ int_fast8_t init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].example,"scexaomksegmodes dmmap segmodes");
     strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_mkSegmentModes(const char *IDdmmap_name, const char *IDout_name)");
     data.NBcmd++;
-
-	/*strcpy(data.cmd[data.NBcmd].key,"scexaoaveim");
-    strcpy(data.cmd[data.NBcmd].module,__FILE__);
-    data.cmd[data.NBcmd].fp = SCExAOcontrol_Average_image_cli;
-    strcpy(data.cmd[data.NBcmd].info,"take averaged camera image. Image in shared mem is <imname>.im.shm");
-    strcpy(data.cmd[data.NBcmd].syntax,"<imname> <nbcoadd> <output image> <semaphore index>");
-    strcpy(data.cmd[data.NBcmd].example,"scexaoaveim cam1 100 outave 3");
-    strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDnameout, long semindex)");
-    data.NBcmd++;*/
 
     strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -671,115 +649,6 @@ long SCExAOcontrol_mkSegmentModes(const char *IDdmmap_name, const char *IDout_na
 	return(IDout);
 }
 
-
-
-/*
-
-long SCExAOcontrol_Average_image(const char *imname, long NbAve, const char *IDnameout, long semindex)
-{
-    long ID;
-    long IDdark;
-    long IDcam;
-    int slice;
-    long k;
-    long xsize, ysize, xysize;
-    const char *ptrv;
-    unsigned short *arrayutmp;
-    float *arraytmp;
-    long ii;
-    long kw;
-    double darkv;
-    long IDv;
-    char imnameave[200];
-    long long cntref;
-    int semval;
-    
-
-    cntref = -1;
-
-    IDcam = image_ID(imname);
-    if(IDcam ==-1)
-        IDcam = read_sharedmem_image(imname);
-
-
-	
-
-    xsize = data.image[IDcam].md[0].size[0];
-    ysize = data.image[IDcam].md[0].size[1];
-    xysize = xsize*ysize;
-
-    ID = create_2Dimage_ID(IDnameout, xsize, ysize);
-
-//    list_image_ID();
-
-	if(data.image[IDcam].md[0].atype == _DATATYPE_FLOAT)
-		arraytmp = (float*) malloc(sizeof(float)*xysize);
-	else
-		arrayutmp = (unsigned short*) malloc(sizeof(unsigned short)*xysize);
-
-
-    for(k=0; k<NbAve; k++)
-    {
-        //printf("k = %ld\n", k);
-        //fflush(stdout);
-        
-        if(data.image[IDcam].md[0].sem < semindex)
-        {
-            while(cntref==data.image[IDcam].md[0].cnt0) // test if new frame exists
-                usleep(10);
-        }
-        else
-        {
-//            sem_getvalue(data.image[IDcam].semptr[4], &semval);
-            sem_wait(data.image[IDcam].semptr[(int) semindex]);
-        }
-
-        //slice = data.image[IDcam].md[0].cnt1;
-        //if(slice==-1)
-         //   slice = data.image[IDcam].md[0].size[2]-1;
-
-        
-		if(data.image[IDcam].md[0].atype == _DATATYPE_FLOAT)
-			{
-				ptrv = (char*) data.image[IDcam].array.F;
-				memcpy (arraytmp, ptrv, sizeof(float)*xysize);
-				for(ii=0; ii<xysize; ii++)
-					data.image[ID].array.F[ii] += arraytmp[ii];
-			}
-        else
-			{
-				ptrv = (char*) data.image[IDcam].array.UI16;
-				memcpy (arrayutmp, ptrv, sizeof(unsigned short)*xysize);
-				for(ii=0; ii<xysize; ii++)
-					data.image[ID].array.F[ii] += (float) arrayutmp[ii];
-			}
-        
-        
-        //ptrv += sizeof(unsigned short)*slice*xysize;
-    
-
-        cntref = data.image[IDcam].md[0].cnt0;
-    }
-
-    for(ii=0; ii<xysize; ii++)
-        data.image[ID].array.F[ii] /= NbAve;
-
-
-    if((IDdark=image_ID("wfsdark"))!=-1)
-    {
-
-        for(ii=0; ii<xysize; ii++)
-            data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
-    }
-
-	if(data.image[IDcam].md[0].atype == _DATATYPE_FLOAT)
-		free(arraytmp);
-    else
-		free(arrayutmp);
-
-    return(ID);
-}
-*/
 
 
 

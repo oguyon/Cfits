@@ -131,12 +131,12 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 
 // data passed to each thread
-typedef struct
-{
-    long nelem;
-    float *arrayptr;
-    float *result; // where to white status
-} THDATA_IMTOTAL;
+//typedef struct
+//{
+//   long nelem;
+//    float *arrayptr;
+//    float *result; // where to white status
+//} THDATA_IMTOTAL;
 
 
 
@@ -3874,10 +3874,11 @@ int_fast8_t AOcompute(long loop, int normalize)
             fflush(stdout);
 #endif
 
-            if(1==0)
+			// depreciated: use all pixels
+/*            if(1==0) 
             {
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrMc].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_act].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
-                AOconf[loop].status = 6; // 6 execute
+                AOconf[loop].status = 6; 
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
                 tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -3886,7 +3887,8 @@ int_fast8_t AOcompute(long loop, int normalize)
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
             }
             else // only use active pixels and actuators (**)
-            {
+            {*/
+             
                 // re-map input vector into imWFS2_active
 
                 if(AOconf[loop].GPUall == 1) // (**)
@@ -3981,7 +3983,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 }
                 data.image[aoconfID_meas_act].md[0].cnt0++;
                 data.image[aoconfID_meas_act].md[0].write = 0;
-            }
+            //}
         }
 #endif
     }
@@ -4101,7 +4103,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
 
     totfluxave = 1.0;
     int initWFSref;
-    while(1==1)
+    for(;;)
     {
         if(initWFSref==0)
         {
@@ -4176,7 +4178,6 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
     char imnamecorr[200];
     long IDmodesC;
 
-    char imnamedmC[200];
     long IDc;
     long dmxsize, dmysize;
     long ii;
@@ -4232,6 +4233,10 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
     if(offloadMode==1)
     {
+	    char imnamedmC[200];
+
+		
+		
         if(sprintf(imnamedmC, "aol%ld_dmC", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -4290,7 +4295,7 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
     long IDout;
     long IDwfs, IDmodes, IDwfsref;
     long wfsxsize, wfsysize, wfssize, NBmodes, NBframes;
-    double totim, totref;
+    double totref;
     float coeff;
     long ii, m, kk;
     FILE *fp;
@@ -4328,7 +4333,8 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
 
     for(kk=0; kk<NBframes; kk++)
     {
-        totim = 0.0;
+		double totim = 0.0;
+		
         for(ii=0; ii<wfssize; ii++)
             totim += data.image[IDwfs].array.F[kk*wfssize+ii];
         for(ii=0; ii<wfssize; ii++)
@@ -4547,13 +4553,12 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
     long IDmodevalDM_C; // DM correction, circular buffer to include history
     long modevalDM_bsize = 20; // circular buffer size
-    long modevalDMindex = 0; // index in the circular buffer
     long modevalDMindexl = 0;
 
     long IDmodevalDM; // DM correction at WFS measurement time
     long IDmodevalDMnow; // current DM correction
     long IDmodevalDMnowfilt; // current DM correction filtered
-    long modevalDMindex0, modevalDMindex1;
+    long modevalDMindex = 0; // index in the circular buffer
     float alpha;
 
     long IDmodevalPF; // predictive filter output
@@ -4564,7 +4569,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     float *modemult;
     float *modelimit;
     long *modeblock;
-    long i, n, ID, m, blk, NBmodes;
+    long i, ID, m, blk, NBmodes;
     unsigned int blockNBmodes[100];
     uint32_t *sizeout;
     float framelatency = 2.8;
@@ -4777,6 +4782,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     blk = 0;
     while(m<NBmodes)
     {
+		long n;
+		
         if(sprintf(imname, "aol%ld_DMmodes%02ld", loop, blk) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -4862,6 +4869,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
     while (1)
     {
+		long modevalDMindex0, modevalDMindex1;
+		
+		
         // read WFS measured modes (residual)
 
         if(data.image[IDmodeval].md[0].sem==0)
@@ -5177,8 +5187,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
     float gain;
     long NBgain;
-    long kk, kkmin;
-    float errmin;
+    long kk;
     float *errarray;
     float mingain = 0.01;
     float gainfactstep = 1.05;
@@ -5203,13 +5212,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 
 
     long IDblk;
-    unsigned short block;
     float *modegain;
     float *modemult;
 
 
     float *NOISEfactor;
-    long cnt00, cnt01;
     long IDsync;
 
 
@@ -5318,6 +5325,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
     // write gain, mult into arrays
     for(m=0; m<NBmodes; m++)
     {
+	    unsigned short block;
+		
         block = data.image[IDblk].array.UI16[m];
         modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[block] * data.image[aoconfID_GAIN_modes].array.F[m];
         modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[block] * data.image[aoconfID_MULTF_modes].array.F[m];
@@ -5414,6 +5423,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
     IDsync = image_ID("dm00disp10");
     if(IDsync!=-1)
     {
+	    long cnt00, cnt01;
+		
         list_image_ID();
         printf("SYNCHRO SIGNAL WAIT\n");
         fflush(stdout);
@@ -5478,6 +5489,9 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
     data.image[IDout].md[0].write = 1;
     for(m=0; m<NBmodes; m++)
     {
+		long kkmin;
+		float errmin;
+		
         ave0[m] /= cnt-cntstart;
         sig0[m] /= cnt-cntstart;
         array_sig1[m] = sig1[m]/(cnt-cntstart);
@@ -6048,22 +6062,15 @@ int_fast8_t AOloopControl_setframesAve(long nbframes)
 
 
 
+
+
 int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain, int add)
 {
     long IDcontrM0; // local storage
-    long IDcontrMc0; // local storage
-    long IDcontrMcact0; // local storage
-    long ii, kk;
-    char name[200];
-    char name1[200];
     char name2[200];
     char name3[200];
     long ID;
-    double eps=1e-6;
-
-    long NBmodes;
-    long m, m1;
-    long sizeWFS;
+    long m1;
 
 
     printf("AOconf[loop].DMmodesNBblock = %ld\n", AOconf[loop].DMmodesNBblock);
@@ -6102,7 +6109,10 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
     }
     else
     {
-        NBmodes = 0;
+		long kk;
+	    char name[200];
+	    long NBmodes = 0;
+        
         for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
             NBmodes += AOconf[loop].NBmodes_block[kk];
 
@@ -6115,12 +6125,13 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
         if((blocknb<AOconf[loop].DMmodesNBblock)&&(blocknb>-1))
             data.image[aoconfID_gainb].array.F[blocknb] = gain;
 
-        sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
-
-
 
         if(add==1)
         {
+			long IDcontrMc0; // local storage
+			long IDcontrMcact0; // local storage			
+			
+			
             IDcontrMc0 = image_ID("contrMc0");
             if(IDcontrMc0==-1)
                 IDcontrMc0 = create_3Dimage_ID("contrMc0", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM);
@@ -6135,19 +6146,20 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
             arith_image_zero("contrMcact0");
 
 
-            m = 0;
             for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
             {
-                //sprintf(name1, "aol%ld_contrM%02ld", loop, kk);
+			    double eps=1e-6;
+				
+				
                 if(sprintf(name2, "aol%ld_contrMc%02ld", loop, kk) < 1)
                     printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
                 if(sprintf(name3, "aol%ld_contrMcact%02ld_00", loop, kk) < 1)
                     printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-                printf("Adding %4ld / %4ld  (%5.3f)   %s  %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, name1, aoconfID_gainb);
+                printf("Adding %4ld / %4ld  (%5.3f)   %s   [%ld]\n", kk, AOconf[loop].DMmodesNBblock, data.image[aoconfID_gainb].array.F[kk], name, aoconfID_gainb);
 
-                //ID = image_ID(name1);
+                
 
                 //printf("updating %ld modes  [%ld]\n", data.image[ID].md[0].size[2], aoconfID_gainb);
                 //	fflush(stdout); // TEST
@@ -6156,6 +6168,8 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 
                 if(data.image[aoconfID_gainb].array.F[kk]>eps)
                 {
+					long ii;
+					
                     ID = image_ID(name2);
 # ifdef _OPENMP
                     #pragma omp parallel for
@@ -6198,13 +6212,14 @@ int_fast8_t AOloopControl_set_modeblock_gain(long loop, long blocknb, float gain
 
 
 
+
+
+
 int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)
 {
     long k, kg;
-    float gain;
     float bestgain= 0.0;
     float bestval = 10000000.0;
-    float val;
     char name[200];
 
 
@@ -6225,6 +6240,9 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
 
     for(kg=0; kg<NBgain; kg++)
     {
+	    float gain;
+		float val;
+		
         for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
             data.image[aoconfID_cmd_modes].array.F[k] = 0.0;
 
