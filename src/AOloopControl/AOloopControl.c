@@ -1598,7 +1598,7 @@ char* AOloopControl_readParam_string(char *paramname, char* defaultValue, FILE *
 {
 	FILE *fp;
 	char fname[200];
-	char* value;
+	char* value = " ";
 	int wParamFile = 0;
 	
 	sprintf(fname, "./conf/param_%s.txt", paramname);
@@ -1610,7 +1610,7 @@ char* AOloopControl_readParam_string(char *paramname, char* defaultValue, FILE *
     }
     else
     {
-        if(fscanf(fp, "%s", value) != 1){
+        if(fscanf(fp, "%200s", value) != 1){
             printERROR(__FILE__,__func__,__LINE__, "Cannot read parameter for file");
 			strcpy(value, defaultValue);
 			wParamFile = 1;
@@ -4249,7 +4249,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
         fflush(stdout);
     }
 
-    while(1==1)
+    for(;;)
     {
         COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);
         AOconf[loop].statusM = 10;
@@ -4569,7 +4569,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     float *modemult;
     float *modelimit;
     long *modeblock;
-    long i, ID, m, blk, NBmodes;
+    long i, m, blk, NBmodes;
     unsigned int blockNBmodes[100];
     uint32_t *sizeout;
     float framelatency = 2.8;
@@ -4783,6 +4783,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     while(m<NBmodes)
     {
 		long n;
+		long ID;
 		
         if(sprintf(imname, "aol%ld_DMmodes%02ld", loop, blk) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -6220,7 +6221,6 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
     long k, kg;
     float bestgain= 0.0;
     float bestval = 10000000.0;
-    char name[200];
 
 
 
@@ -6229,6 +6229,8 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
 
     if(aoconfID_cmd_modes==-1)
     {
+		char name[200];
+		    
         if(sprintf(name, "aol%ld_DMmode_cmd", LOOPNUMBER) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -6286,8 +6288,7 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
 {
     long k, kmin, kmax;
     long col;
-    float val;
-    long nbl = 1;
+//    long nbl = 1;
     float AVElim = 0.01; // [um]
     float RMSlim = 0.01; // [um]
     char imname[200];
@@ -6338,21 +6339,21 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU0, kmax);
     printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm mcoeff=%4.2f) GAIN = %d\n", AOconf[loop].DMprimaryWrite_ON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta, AOconf[loop].AUTOTUNE_LIMITS_mcoeff, AOconf[loop].AUTOTUNE_GAINS_ON);
     printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardwlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
-    nbl++;
-    nbl++;
-    nbl++;
+//    nbl++;
+//    nbl++;
+//    nbl++;
     printw("loop iteration CNT : %lld\n", AOconf[loop].cnt);
-    nbl++;
+//    nbl++;
 
     printw("\n");
-    nbl++;
+//    nbl++;
 
     printw("=========== %6ld modes, %3ld blocks ================|------------ Telemetry [nm] ----------------|    |     LIMITS         |\n", AOconf[loop].NBDMmodes, AOconf[loop].DMmodesNBblock);
-    nbl++;
+//    nbl++;
     printw("BLOCK  #modes [ min - max ]    gain   limit   multf  |       dmC     Input  ->       WFS   Ratio  |    | hits/step    perc  |\n");
-    nbl++;
+//    nbl++;
     printw("\n");
-    nbl++;
+//    nbl++;
 
     for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
     {
@@ -6378,12 +6379,12 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
         printw("| %2ld | %9.3f  %6.2f\% |\n", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
         attroff(A_BOLD | COLOR_PAIR(2));
 
-        nbl++;
+//        nbl++;
     }
 
 
     printw("\n");
-    nbl++;
+//    nbl++;
 
     printw(" ALL   %4ld                                        ", AOconf[loop].NBDMmodes);
     printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].ALLave_Crms, 1000.0*AOconf[loop].ALLave_OLrms, 1000.0*AOconf[loop].ALLave_WFSrms);
@@ -6395,13 +6396,13 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     printw("| %2ld | %9.3f  %6.2f\% |\n", k, AOconf[loop].ALLave_limFrac,  100.0*AOconf[loop].ALLave_limFrac/AOconf[loop].NBDMmodes);
 
     printw("\n");
-    nbl++;
+//    nbl++;
 
     //printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
 
 
     print_header(" [ gain 1000xlimit  mult ] MODES [nm]    DM correction -- WFS value -- WFS average -- WFS RMS     ", '-');
-    nbl++;
+ //   nbl++;
 
 
 
@@ -6412,6 +6413,9 @@ int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_
     col = 0;
     for(k=0; k<kmax; k++)
     {
+	    float val;
+		
+		
         attron(A_BOLD);
         printw("%4ld ", k);
         attroff(A_BOLD);
@@ -6659,7 +6663,7 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     long *statuscnt;
     long *statusMcnt;
     float usec0, usec1;
-    int st, stM;
+    int st;
     int RT_priority = 91; //any number from 0-99
     struct sched_param schedpar;
     const char *statusdef[21];
@@ -6811,6 +6815,8 @@ int_fast8_t AOloopControl_statusStats(int updateconf)
     clock_gettime(CLOCK_REALTIME, &t1);
     for(k=0; k<NBkiter; k++)
     {
+		int stM;
+		
         usleep((long) (usec0 + usec1*(1.0*k/NBkiter)));
         st = AOconf[LOOPNUMBER].status;
         stM = AOconf[LOOPNUMBER].statusM;
@@ -7036,13 +7042,16 @@ int_fast8_t AOloopControl_showparams(long loop)
 
 
 
+
+
+
+
 int_fast8_t AOcontrolLoop_TestDMSpeed(const char *dmname, long delayus, long NBpts, float ampl)
 {
     long IDdm;
     long dmxsize, dmysize, dmsize;
     long ii, jj, kk;
     long ID1;
-    float pha;
     float x, y, x1;
     char *ptr;
 
@@ -7060,6 +7069,8 @@ int_fast8_t AOcontrolLoop_TestDMSpeed(const char *dmname, long delayus, long NBp
     ID1 = create_3Dimage_ID("dmpokeseq", dmxsize, dmysize, NBpts);
     for(kk=0; kk<NBpts; kk++)
     {
+		float pha;
+		
         pha = 2.0*M_PI*kk/NBpts;
         for(ii=0; ii<dmxsize; ii++)
             for(jj=0; jj<dmysize; jj++)
@@ -7120,10 +7131,10 @@ int_fast8_t AOcontrolLoop_TestDMSpeed(const char *dmname, long delayus, long NBp
 int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, float OPDamp, long NBiter)
 {
     long IDdm;
-    long dmxsize, dmysize, dmsize;
+    long dmxsize, dmysize;
     long IDwfs;
     long wfsxsize, wfsysize, wfssize;
-    long twait0us = 100000;
+//    long twait0us = 100000;
 
     double tdouble_start;
     double tdouble_end;
@@ -7133,8 +7144,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     struct timespec tstart;
 //    struct timespec tnow;
     struct timespec *tarray;
-    double tdouble, tlastdouble;
-    double tstartdouble;
+    double tdouble;
     double dtmax = 1.0;  // Max running time per iteration
     double dt, dt1;
     double *dtarray;
@@ -7147,14 +7157,12 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     long IDwfsc;
     long wfs_NBframesmax = 20;
     long wfsframe;
-    long NBwfsframe;
     long twaitus = 30000; // initial wait [us]
     double dtoffset0 = 0.002; // 2 ms
     long wfsframeoffset = 10;
 
     long IDwfsref;
 
-    unsigned long wfscnt0;
     char *ptr;
     long kk, kkmax;
     double *valarray;
@@ -7164,7 +7172,6 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 
     long iter;
 
-    double latencymax = 0.0;
     float *latencyarray;
     float *latencysteparray;
     float latencyave, latencystepave;
@@ -7172,7 +7179,6 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     FILE *fp;
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
-    double latency;
     float minlatency, maxlatency;
     double wfsdt;
 
@@ -7193,7 +7199,6 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
     IDdm = image_ID(dmname);
     dmxsize = data.image[IDdm].md[0].size[0];
     dmysize = data.image[IDdm].md[0].size[1];
-    dmsize = dmxsize*dmysize;
 
     IDdm0 = create_2Dimage_ID("_testdm0", dmxsize, dmysize);
     IDdm1 = create_2Dimage_ID("_testdm1", dmxsize, dmysize);
@@ -7263,6 +7268,13 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 
     for(iter=0; iter<NBiter; iter++)
     {
+		//double tlastdouble;
+		double tstartdouble;
+		long NBwfsframe;
+	    unsigned long wfscnt0;
+        double latencymax = 0.0;
+	    double latency;
+		
         printf("ITERATION %5ld / %5ld\n", iter, NBiter);
         fflush(stdout);
 
@@ -7291,7 +7303,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
         dt = 0.0;
         clock_gettime(CLOCK_REALTIME, &tstart);
         tstartdouble = 1.0*tstart.tv_sec + 1.0e-9*tstart.tv_nsec;
-        tlastdouble = tstartdouble;
+    //    tlastdouble = tstartdouble;
 
 
 
@@ -7331,7 +7343,7 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
             dt = tdouble - tstartdouble;
             //  dt1 = tdouble - tlastdouble;
             dtarray[wfsframe] = dt;
-            tlastdouble = tdouble;
+       //     tlastdouble = tdouble;
 
             // apply DM pattern #1
             if((dmstate==0)&&(dt>dtoffset0)&&(wfsframe>wfsframeoffset))
@@ -7473,6 +7485,14 @@ int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, f
 
 
 
+
+
+
+
+
+
+
+
 // waits on semaphore 3
 
 long AOloopControl_blockstats(long loop, const char *IDout_name)
@@ -7481,8 +7501,8 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
     uint32_t *sizeout;
     long NBmodes;
     char fname[200];
-    long IDmodeval, ID;
-    long m, blk, n, i;
+    long IDmodeval;
+    long m, blk, i;
     long cnt;
     long IDblockRMS, IDblockRMS_ave;
     long NBblock;
@@ -7512,6 +7532,9 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
     blk = 0;
     while(m<NBmodes)
     {
+		long ID;
+		long n;
+		
         if(sprintf(fname, "aol%ld_DMmodes%02ld", loop, blk) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -7594,9 +7617,11 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 }
 
 
+
+
+
 int_fast8_t AOloopControl_InjectMode( long index, float ampl )
 {
-    long i;
     char name[200];
 
 
@@ -7622,7 +7647,8 @@ int_fast8_t AOloopControl_InjectMode( long index, float ampl )
     else
     {
         float *arrayf;
-
+		long i;
+		
         arrayf = (float*) malloc(sizeof(float)*AOconf[LOOPNUMBER].sizeDM);
 
         for(i=0; i<AOconf[LOOPNUMBER].sizeDM; i++)
@@ -7643,6 +7669,12 @@ int_fast8_t AOloopControl_InjectMode( long index, float ampl )
 }
 
 
+
+
+
+
+
+
 //
 // Measures mode temporal response (measurement and rejection)
 //
@@ -7654,21 +7686,17 @@ long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float am
     float f;
     struct timespec tstart;
     long nbf;
-    float runtime;
     long IDrec_dmout;
-    long ii, k, kk, kmax;
+    long ii, kk, kmax;
     long IDdmtmp;
     float pha, coeff;
     float *timearray;
     char *ptr;
-    long k1;
     long IDcoeff;
     float SVDeps = 1.0e-3;
     int SVDreuse = 0;
     long IDcoeffarray;
     long m;
-    float coscoeff, sincoeff;
-    float PSDamp, PSDpha;
     FILE *fp;
     char fname[200];
     long kmaxmax = 100000;
@@ -7764,9 +7792,16 @@ long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float am
 
     for(f=fmin; f<fmax; f*=fmultstep)
     {
-        runtime = 0.0;
+        float runtime = 0.0;
+		long k = 0;
+		long k1;
+	    float coscoeff, sincoeff;
+        float PSDamp, PSDpha;
+
+
+		
+
         clock_gettime(CLOCK_REALTIME, &tstart);
-        k = 0;
         while((runtime < avetime)&&(k<kmax))
         {
             clock_gettime(CLOCK_REALTIME, &tnow);
@@ -7860,6 +7895,8 @@ long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float am
 }
 
 
+
+
 //
 //
 //
@@ -7874,9 +7911,8 @@ long AOloopControl_TestDMmodes_Recovery(const char *DMmodes_name, float ampl, co
     float SVDeps = 1.0e-3;
     long IDcoeffarray;
     long IDcoeffarraymeas;
-    long cntdmout;
     long IDcoeff;
-    long ii, i, kk1;
+    long ii, kk1;
 
 
     IDmodes = image_ID(DMmodes_name);
@@ -7964,6 +8000,9 @@ long AOloopControl_TestDMmodes_Recovery(const char *DMmodes_name, float ampl, co
 
     for(kk=0; kk<NBmodes; kk++)
     {
+		long cntdmout;
+		long i;
+		
         printf("\r Mode %5ld / %5ld       ", kk, NBmodes);
         fflush(stdout);
 
@@ -8103,7 +8142,7 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
     long IDwfsref;
     long IDwfsresp;
     long IDwfsmask;
-
+	double dmmodermscnt;
     long dmxsize, dmysize, dmxysize;
     long NBmodes;
     long wfsxsize, wfsysize, wfsxysize;
@@ -8111,20 +8150,13 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 
     long ii;
 
-    double dmmoderms, dmmodermscnt;
+
     double wfsmoderms, wfsmodermscnt;
     double tmp1;
 
-    double wfsreftot, wfsmasktot, aveval;
-    double SNR, SNR1; // single pixel SNR
-
-    float frac = 0.0;
-    float pcnt;
+    double wfsreftot, wfsmasktot;
     long IDoutXP, IDoutXP_WFS;
     double XPval;
-
-    double sigmarad;
-    double eff; // efficiency
 
 
 
@@ -8180,6 +8212,16 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 
     for(mode=0; mode<NBmodes; mode++)
     {
+		double dmmoderms;
+		double aveval;
+		double SNR, SNR1; // single pixel SNR
+		float frac = 0.0;
+		float pcnt;
+		double sigmarad;
+		double eff; // efficiency
+		
+		
+		
         dmmoderms = 0.0;
         dmmodermscnt = 0.0;
         aveval = 0.0;
@@ -8286,7 +8328,7 @@ int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char 
     long IDmodes;
     long IDdmstream;
     long IDdm;
-    long psfxsize, psfysize;
+//    long psfxsize, psfysize;
     long dmxsize, dmysize;
     long NBmodes;
     long mode;
@@ -8304,8 +8346,8 @@ int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char 
     IDmodes = image_ID(IDmodes_name);
     IDdmstream = image_ID(dmstream_name);
 
-    psfxsize = data.image[IDpsf].md[0].size[0];
-    psfysize = data.image[IDpsf].md[0].size[1];
+//    psfxsize = data.image[IDpsf].md[0].size[0];
+//    psfysize = data.image[IDpsf].md[0].size[1];
 
     IDdmbest = create_2Dimage_ID("dmbest", dmxsize, dmysize);
     IDdm = create_2Dimage_ID("dmcurr", dmxsize, dmysize);
@@ -8586,8 +8628,6 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
     FILE *fp;
 
     long ID1dPSD;
-    FILE *fpPSD;
-    long IDft;
     char fname[200];
 
 
@@ -8611,7 +8651,9 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
         double ave = 0.0;
         double rms;
         long kk;
-        double tmpv;
+		FILE *fpPSD;
+		long IDft;
+
 
         for(kk=0; kk<NBframes; kk++)
             ave += data.image[ID].array.F[kk*NBmodes+m];
@@ -8620,6 +8662,8 @@ int_fast8_t AOloopControl_logprocess_modeval(const char *IDname)
         rms = 0.0;
         for(kk=0; kk<NBframes; kk++)
         {
+			double tmpv;
+			
             tmpv = (data.image[ID].array.F[kk*NBmodes+m]-ave);
             rms += tmpv*tmpv;
         }
@@ -8896,7 +8940,7 @@ long AOloopControl_TweakRM(char *ZRMinname, char *DMinCname, char *WFSinCname, c
 
 
 
-    return(IDout);
+    return(0);
 }
 
 
@@ -9252,13 +9296,10 @@ long AOloopControl_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long 
 int_fast8_t AOloopControl_AutoTune()
 {
     long block;
-    long NBgain = 10;
     long NBstep = 10000;
-    float gain;
     char name[200];
-    long k, kg;
+    long k;
     float bestgain= 0.0;
-    float bestval = 10000000.0;
     float val;
 
     if(AOloopcontrol_meminit==0)
@@ -9286,11 +9327,12 @@ int_fast8_t AOloopControl_AutoTune()
         float gainStart = 0.0;
         float gainEnd = 1.0;
         int gOK = 1;
+        float gain;
+        float bestval = 10000000.0;
 
 
         // tune block gain
         gain = gainStart;
-        bestval = 100000000.0;
         while((gOK==1)&&(gain<gainEnd))
         {
             for(k=0; k<AOconf[LOOPNUMBER].NBDMmodes; k++)
@@ -9302,7 +9344,7 @@ int_fast8_t AOloopControl_AutoTune()
             AOloopControl_setgainblock(block, gain);
             AOloopControl_loopstep(LOOPNUMBER, NBstep);
             val = sqrt(AOconf[LOOPNUMBER].RMSmodesCumul/AOconf[LOOPNUMBER].RMSmodesCumulcnt);
-            printf("%2ld  %6.4f  %10.8lf\n", kg, gain, val);
+            printf("%6.4f  %10.8lf\n", gain, val);
 
             if(val<bestval)
             {
