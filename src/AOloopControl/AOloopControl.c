@@ -7622,14 +7622,13 @@ long AOloopControl_blockstats(long loop, const char *IDout_name)
 
 int_fast8_t AOloopControl_InjectMode( long index, float ampl )
 {
-    char name[200];
-
-
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
     if(aoconfID_DMmodes==-1)
     {
+		char name[200];
+		
         if(sprintf(name, "aol%ld_DMmodes", LOOPNUMBER) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
@@ -8151,7 +8150,7 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
     long ii;
 
 
-    double wfsmoderms, wfsmodermscnt;
+    double wfsmodermscnt;
     double tmp1;
 
     double wfsreftot, wfsmasktot;
@@ -8219,7 +8218,7 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 		float pcnt;
 		double sigmarad;
 		double eff; // efficiency
-		
+		double wfsmoderms;
 		
 		
         dmmoderms = 0.0;
@@ -8324,7 +8323,6 @@ int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, cons
 // optimize LO - uses simulated downhill simplex
 int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char *IDmodes_name, const char *dmstream_name, long delayframe, long NBframes)
 {
-    long IDpsf;
     long IDmodes;
     long IDdmstream;
     long IDdm;
@@ -8342,7 +8340,7 @@ int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char 
 
     ampl = 0.01; // modulation amplitude
 
-    IDpsf = image_ID(psfstream_name);
+ //   IDpsf = image_ID(psfstream_name);
     IDmodes = image_ID(IDmodes_name);
     IDdmstream = image_ID(dmstream_name);
 
