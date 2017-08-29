@@ -1099,7 +1099,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 
    if(dm2dm_mode == 1) 
    {
-        printf("INITIALIZATION AND VERIFICATION FOR dm2dm MODE\n");
+        printf("INITIALIZATION AND VERIFICATION FOR dm2dm MODE ...\n");
         fflush(stdout);
 
         dmdispcombconf[DMindex].ID_dm2dm_DMmodes = image_ID(dm2dm_DMmodes);
@@ -1140,7 +1140,7 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
     dmdispcombconf[DMindex].wfsrefmode = wfsrefmode;
     if(wfsrefmode == 1) 
     {
-        printf("INITIALIZATION AND VERIFICATION FOR wfsref MODE\n");
+        printf("INITIALIZATION AND VERIFICATION FOR wfsref MODE ...\n");
         fflush(stdout);
     
         dmdispcombconf[DMindex].ID_wfsref_RespMat = image_ID(wfsref_WFSRespMat);
