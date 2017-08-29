@@ -1143,6 +1143,9 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
         printf("INITIALIZATION AND VERIFICATION FOR wfsref MODE ...\n");
         fflush(stdout);
     
+		printf("wfsref_WFSRespMat = %s\n", wfsref_WFSRespMat);
+		fflush(stdout);
+		
         dmdispcombconf[DMindex].ID_wfsref_RespMat = image_ID(wfsref_WFSRespMat);
         if(data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].md[0].naxis != 3)
             {
