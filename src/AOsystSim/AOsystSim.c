@@ -2847,6 +2847,9 @@ int AOsystSim_PyrWFS_mkCONF(const char *fname)
 
 
 
+
+
+
 int AOsystSim_PyrWFS(const char *CONF_FNAME)
 {
     FILE *fp;
@@ -2895,7 +2898,7 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     long pmodpt;
     long IDpyr_amp, IDpyr_pha;
     float pcoeff = 100.0*M_PI;
-    float x, y, xc, yc;
+    float x, y;
 
     float fpscale = 1.0; // pix per l/D
     long IDpyrpupi;
@@ -2980,6 +2983,7 @@ int AOsystSim_PyrWFS(const char *CONF_FNAME)
     for(pmodpt=0; pmodpt<PYRMODNBPT; pmodpt++)
     {
 		float PA;
+		float xc, yc;
 		
         PA = 2.0*M_PI*pmodpt/PYRMODNBPT;
         xc = PYRMODAMP * cos(PA);

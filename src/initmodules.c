@@ -25,6 +25,7 @@
 #include "AOloopControl_PredictiveControl/AOloopControl_PredictiveControl.h"
 #include "AOloopControl_acquireCalib/AOloopControl_acquireCalib.h"
 #include "AOloopControl_computeCalib/AOloopControl_computeCalib.h"
+#include "AOloopControl_perfTest/AOloopControl_perfTest.h"
 
 #include "FPAOloopControl/FPAOloopControl.h"
 #include "psf/psf.h"
@@ -67,8 +68,7 @@ int init_modules()
   init_AOloopControl_PredictiveControl();
   init_AOloopControl_acquireCalib();
   init_AOloopControl_computeCalib();
-
-
+  init_AOloopControl_perfTest();
 
   init_FPAOloopControl();
   init_psf();

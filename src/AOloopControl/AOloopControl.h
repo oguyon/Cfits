@@ -502,38 +502,6 @@ int_fast8_t AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainSta
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 9. STATUS / TESTING / PERF MEASUREMENT
- *  Measure loop behavior */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-int_fast8_t AOloopControl_printloopstatus(long loop, long nbcol, long IDmodeval_dm, long IDmodeval, long IDmodevalave, long IDmodevalrms, long ksize);
-
-int_fast8_t AOloopControl_loopMonitor(long loop, double frequ, long nbcol);
-
-int_fast8_t AOloopControl_statusStats(int updateconf);
-
-int_fast8_t AOloopControl_resetRMSperf();
-
-int_fast8_t AOloopControl_showparams(long loop);
-
-int_fast8_t AOcontrolLoop_TestDMSpeed(const char *dmname, long delayus, long NBpts, float ampl);
-
-int_fast8_t AOcontrolLoop_TestSystemLatency(const char *dmname, char *wfsname, float OPDamp, long NBiter);
-
-long AOloopControl_blockstats(long loop, const char *IDout_name);
-
-int_fast8_t AOloopControl_InjectMode( long index, float ampl );
-
-long AOloopControl_TestDMmodeResp(const char *DMmodes_name, long index, float ampl, float fmin, float fmax, float fmultstep, float avetime, long dtus, const char *DMmask_name, const char *DMstream_in_name, const char *DMstream_out_name, const char *IDout_name);
-
-long AOloopControl_TestDMmodes_Recovery(const char *DMmodes_name, float ampl, const char *DMmask_name, const char *DMstream_in_name, const char *DMstream_out_name, const char *DMstream_meas_name, long tlagus, long NBave, const char *IDout_name, const char *IDoutrms_name, const char *IDoutmeas_name, const char *IDoutmeasrms_name);
-
-long AOloopControl_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long NBmodes);
-
-int_fast8_t AOloopControl_AnalyzeRM_sensitivity(const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname);
 
 
 
