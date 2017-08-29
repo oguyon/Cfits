@@ -2501,7 +2501,7 @@ aoconflogext "zero the zero-point offset"
 
 
     GPUzplon0)
-echo " ON" > ./status/stat_GPUzploopON0.txt
+echo " ON" > ./status/stat_GPUzp0loopON.txt
 aoconflogext "STARTING GPU-based DM -> WFSref loop 0"
 tmuxname="aol${LOOPNUMBER}GPUzploop0"
 tmux kill-session -t $tmuxname
@@ -2518,7 +2518,7 @@ menucontrolloop_default="GPUzploff0"
 ;;
 
     GPUzploff0)
-echo "OFF" > ./status/stat_GPUzploopON0.txt
+echo "OFF" > ./status/stat_GPUzp0loopON.txt
 aoconflogext "STOPPING GPU-based DM -> WFSref loop 0"
 tmuxname="aol${LOOPNUMBER}GPUzploop0"
 tmux send-keys -t $tmuxname "" C-c
