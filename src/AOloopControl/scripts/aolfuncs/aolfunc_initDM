@@ -379,6 +379,7 @@ savefits DMmodes "!./conf/aol${LOOPNUMBER}_DMmodes_zonal.fits"
 exitCLI
 EOF
 echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf/shmim_DMmodes.name.txt
+Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
 fi
     
 
