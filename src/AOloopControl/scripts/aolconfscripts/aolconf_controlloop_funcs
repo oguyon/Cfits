@@ -788,7 +788,7 @@ fi
 # args : 
 function function_zplon
 {
-echo " ON" > ./status/stat_zploopON$1.txt
+echo " ON" > ./status/stat_zp$1loopON.txt
 tmuxnameZP="aol${LOOPNUMBER}zploop$1"
 unset TMUX
 sleep 0.2
@@ -807,7 +807,7 @@ tmux send-keys -t $tmuxnameZP "aolzpwfsloop aol${LOOPNUMBER}_dmZP$1 aol${LOOPNUM
 
 function function_zploff
 {
-echo "OFF" > ./status/stat_zploopON$1.txt
+echo "OFF" > ./status/stat_zp$1loopON.txt
 tmuxnameZP="aol${LOOPNUMBER}zploop$1"
 tmux kill-session -t $tmuxnameZP
 }
