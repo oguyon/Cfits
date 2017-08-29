@@ -590,13 +590,13 @@ menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
 ConfReadParam zpmultcoeff "0.90"; zpmultcoeff="$paramvalue"
 menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient" )
 
-StatReadStat GPUzploopONstat0 "OFF"; GPUzploopONstat0stat="$statusvalue"
-StatReadStat zploopONstat0 "OFF"; zploopONstat0stat="$statusvalue"
-if [ "${GPUzploopONstat0stat}" = "OFF" ]; then
-if [ "${zploopONstat0stat}" = "OFF" ];
+StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
+StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+if [ "${GPUzp0loopONstat}" = "OFF" ]; then
+if [ "${zp0loopONstat}" = "OFF" ];
 then
 menuitems+=( "zplon0" "   START DM->WFS zero point offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
-elif [ "${zploopONstat0stat}" = "WFS" ]; then
+elif [ "${zp0loopONstat}" = "WFS" ]; then
 menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff0" "\Z1\Zr    STOP DM->WFS zero point offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
@@ -718,11 +718,11 @@ menuitems+=( "8 ->" "\Zb\Zr$string\Zn" )
 
 
 
-if [ "${zploopONstat0}" = "OFF" ]; then
-if [ "${GPUzploopONstat0}" = "OFF" ];
+if [ "${zp0loopONstat}" = "OFF" ]; then
+if [ "${GPUzp0loopONstat}" = "OFF" ];
 then
 menuitems+=( "GPUzplon0" "   START DM->WFS zero point GPU offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
-elif [ "${GPUzploopONstat0}" = "WFS" ]; then
+elif [ "${GPUzp0loopONstat}" = "WFS" ]; then
 menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "GPUzploff0" "\Z1\Zr    STOP DM->WFS zero point GPU offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
