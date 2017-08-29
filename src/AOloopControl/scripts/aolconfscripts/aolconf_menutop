@@ -544,12 +544,12 @@ cpsh im aol${dmolinknb}_modesWFS0_$DMxsize
 quit
 EOF
 dmwrefRM="aol${dmolinknb}_modesWFS0_$DMxsize"
-echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM_name.txt
+echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM.name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefRM
 
 
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
-echo "$dmwrefO" > ./conf/streamlink_dmwrefO_name.txt
+echo "$dmwrefO" > ./conf/streamlink_dmwrefO.name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefO
 
 
