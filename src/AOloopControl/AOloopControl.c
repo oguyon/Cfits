@@ -417,21 +417,6 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS    
- *  Useful tools */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-/* =============================================================================================== */
-/** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS */
-/* =============================================================================================== */
-
-/* =============================================================================================== */
-/** @name AOloopControl - 2.2. LOW LEVEL UTILITIES & TOOLS - DATA STREAMS PROCESSING */
-/* =============================================================================================== */
-
 
 /** @brief CLI function for AOloopControl_stream3Dto2D */
 /*int_fast8_t AOloopControl_stream3Dto2D_cli() {
@@ -441,32 +426,6 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
     }
     else return 1;
 }*/
-
-
-/* =============================================================================================== */
-/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES */
-/* =============================================================================================== */
-
-/** @brief CLI function for AOloopControl_CrossProduct */
-int_fast8_t AOloopControl_CrossProduct_cli() {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,3)==0) {
-        AOloopControl_CrossProduct(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
-        return 0;
-    }
-    else return 1;
-}
-
-
-/** @brief CLI function for AOloopControl_mkSimpleZpokeM */
-int_fast8_t AOloopControl_mkSimpleZpokeM_cli()
-{
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)+CLI_checkarg(3,3)==0)    {
-        AOloopControl_mkSimpleZpokeM(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl, data.cmdargtoken[3].val.string);
-        return 0;
-    }
-    else        return 1;
-}
-
 
 
 
@@ -1025,13 +984,6 @@ int_fast8_t init_AOloopControl()
 */
 
 
-/* =============================================================================================== */
-/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES             */
-/* =============================================================================================== */
-
-    RegisterCLIcommand("aolcrossp", __FILE__, AOloopControl_CrossProduct_cli, "compute cross product between two cubes. Apply mask if image xpmask exists", "<cube1> <cube2> <output image>", "aolcrossp imc0 imc1 crosspout", "AOloopControl_CrossProduct(char *ID1_name, char *ID1_name, char *IDout_name)");
-
-    RegisterCLIcommand("aolmksimplezpM", __FILE__, AOloopControl_mkSimpleZpokeM_cli, "make simple poke sequence", "<dmsizex> <dmsizey> <output image>", "aolmksimplezpM 50 50 pokeM", "long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)");
 
 
 
@@ -2613,107 +2565,6 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
     return 0;
 }
 
-
-
-
-
-/* =============================================================================================== */
-/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES             */
-/* =============================================================================================== */
-
-
-
-
-// measures cross product between 2 cubes
-static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_name, const char *IDout_name)
-{
-    long ID1, ID2, IDout;
-    long xysize1, xysize2;
-    long zsize1, zsize2;
-    long z1, z2;
-    long ii;
-    long IDmask;
-
-
-
-
-    ID1 = image_ID(ID1_name);
-    ID2 = image_ID(ID2_name);
-
-    xysize1 = data.image[ID1].md[0].size[0]*data.image[ID1].md[0].size[1];
-    xysize2 = data.image[ID2].md[0].size[0]*data.image[ID2].md[0].size[1];
-    zsize1 = data.image[ID1].md[0].size[2];
-    zsize2 = data.image[ID2].md[0].size[2];
-
-    if(xysize1!=xysize2)
-    {
-        printf("ERROR: cubes %s and %s have different xysize: %ld %ld\n", ID1_name, ID2_name, xysize1, xysize2);
-        exit(0);
-    }
-
-    IDmask = image_ID("xpmask");
-
-
-    IDout = create_2Dimage_ID(IDout_name, zsize1, zsize2);
-    for(ii=0; ii<zsize1*zsize2; ii++)
-        data.image[IDout].array.F[ii] = 0.0;
-
-    if(IDmask==-1)
-    {
-        printf("No mask\n");
-        fflush(stdout);
-
-
-        for(z1=0; z1<zsize1; z1++)
-            for(z2=0; z2<zsize2; z2++)
-            {
-                for(ii=0; ii<xysize1; ii++)
-                {
-                    data.image[IDout].array.F[z2*zsize1+z1] += data.image[ID1].array.F[z1*xysize1+ii] * data.image[ID2].array.F[z2*xysize2+ii];
-                }
-            }
-    }
-    else
-    {
-        printf("Applying mask\n");
-        fflush(stdout);
-
-        for(z1=0; z1<zsize1; z1++)
-            for(z2=0; z2<zsize2; z2++)
-            {
-                for(ii=0; ii<xysize1; ii++)
-                {
-                    data.image[IDout].array.F[z2*zsize1+z1] += data.image[IDmask].array.F[ii]*data.image[IDmask].array.F[ii]*data.image[ID1].array.F[z1*xysize1+ii] * data.image[ID2].array.F[z2*xysize2+ii];
-                }
-            }
-    }
-
-
-    return(IDout);
-}
-
-
-
-
-
-
-// create simple poke matrix
-long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name)
-{
-    long IDout;
-    uint_fast16_t dmxysize;
-    uint_fast16_t ii, jj, kk;
-
-
-    dmxysize = dmxsize * dmysize;
-
-    IDout = create_3Dimage_ID(IDout_name, dmxsize, dmysize, dmxysize);
-
-    for(kk=0; kk<dmxysize; kk++)
-        data.image[IDout].array.F[kk*dmxysize + kk] = 1.0;
-
-    return(IDout);
-}
 
 
 

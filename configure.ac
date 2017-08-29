@@ -395,6 +395,7 @@ src/AOloopControl_PredictiveControl/Makefile \
 src/AOloopControl_acquireCalib/Makefile \
 src/AOloopControl_computeCalib/Makefile \
 src/AOloopControl_perfTest/Makefile \
+src/AOloopControl_compTools/Makefile \
 src/FPAOloopControl/Makefile \
 src/psf/Makefile \
 src/AtmosphereModel/Makefile \

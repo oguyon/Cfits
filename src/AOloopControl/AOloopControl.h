@@ -324,31 +324,6 @@ int_fast8_t AOloopControl_InitializeMemory();
 
 
 
-/* =============================================================================================== */
-/* =============================================================================================== */
-/** @name AOloopControl - 2. LOW LEVEL UTILITIES & TOOLS    
- *  Useful tools */
-/* =============================================================================================== */
-/* =============================================================================================== */
-
-
-/* =============================================================================================== */
-/** @name AOloopControl - 2.3. LOW LEVEL UTILITIES & TOOLS - MISC COMPUTATION ROUTINES             */
-/* =============================================================================================== */
-// NOTE: -> AOloopControl_COMPtools
-
-/** @brief compute cross product between two 3D arrays */
-static long AOloopControl_CrossProduct(const char *ID1_name, const char *ID2_name, const char *IDout_name);
-
-
-/** @brief Create simple zonal poke cube */
-long AOloopControl_mkSimpleZpokeM( long dmxsize, long dmysize, char *IDout_name);
-
-
-
-
-
-
 
 
 

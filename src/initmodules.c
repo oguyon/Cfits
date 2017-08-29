@@ -69,6 +69,7 @@ int init_modules()
   init_AOloopControl_acquireCalib();
   init_AOloopControl_computeCalib();
   init_AOloopControl_perfTest();
+  init_AOloopControl_compTools();
 
   init_FPAOloopControl();
   init_psf();
