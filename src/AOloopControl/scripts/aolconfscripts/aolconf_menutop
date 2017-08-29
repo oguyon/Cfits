@@ -129,20 +129,20 @@ fi
 
 
 
-ConfReadParam dmwfsref_mode "0"; dmwfsref_mode="$paramvalue"
-if [[ -f "$file" && ( "$dmwfsref_mode" = "1" || "$dmwfsref_mode" = "0" ) ]]; then
+ConfReadParam DMwfsref_mode "0"; DMwfsref_mode="$paramvalue"
+if [[ -f "$file" && ( "$DMwfsref_mode" = "1" || "$DMwfsref_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-dmwfsrefmode=0
+DMwfsref_mode=0
 fi
 
 menuitems+=( " " " ")
-if [ "${dmwfsref_mode}" = "0" ];
+if [ "${DMwfsref_mode}" = "0" ];
 then
 menuitems+=( "dmwref1" " [  OFF  ] CPU-based dmcomb output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
 fi
-if [ "${dmwfsref_mode}" = "1" ];
+if [ "${DMwfsref_mode}" = "1" ];
 then
 menuitems+=( "dmwref0" " [   ON  ] CPU-based dmcomb output WFS ref is ON (select to de-activate)" )
 fi
