@@ -3740,38 +3740,37 @@ int_fast8_t AOcompute(long loop, int normalize)
         AOconf[loop].RMSmodesCumul += AOconf[loop].RMSmodes;
         AOconf[loop].RMSmodesCumulcnt ++;
 
-
-		//TEST
-//		printf("UPDATE aol_DMmode_cmd. Loop gain = %lf\n", AOconf[loop].gain);
-//		fflush(stdout);
-		
-//		for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
-//			printf("BLOCK %2d   %4ld modes\n", block, AOconf[loop].NBmodes_block[block]);
-
 	
 
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
-        {
+        {	
             data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
             data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k];
-
-
-
-			//if(k<20)
-				//printf("[ %04ld : %12f ]    %2ld / %2ld\n", k, data.image[aoconfID_DMmode_GAIN].array.F[k], AOconf[loop].modeBlockIndex[k], AOconf[loop].DMmodesNBblock);
 			
 			
-			
+			// apply gain
+            
             data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_gainb].array.F[AOconf[loop].modeBlockIndex[k]] * data.image[aoconfID_DMmode_GAIN].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
 
-            if(data.image[aoconfID_cmd_modes].array.F[k] < -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
-                data.image[aoconfID_cmd_modes].array.F[k] = -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
 
-            if(data.image[aoconfID_cmd_modes].array.F[k] > AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
-                data.image[aoconfID_cmd_modes].array.F[k] = AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
+			// apply limits
+			
+			float limitval;
+			limitval = AOconf[loop].maxlimit * data.image[aoconfID_limitb].array.F[AOconf[loop].modeBlockIndex[k]] * data.image[aoconfID_LIMIT_modes].array.F[k];
+            
+            if(data.image[aoconfID_cmd_modes].array.F[k] < -limitval)
+                data.image[aoconfID_cmd_modes].array.F[k] = -limitval;
 
-            data.image[aoconfID_cmd_modes].array.F[k] *= AOconf[loop].mult * data.image[aoconfID_MULTF_modes].array.F[k];
+            if(data.image[aoconfID_cmd_modes].array.F[k] > limitval)
+                data.image[aoconfID_cmd_modes].array.F[k] = limitval;
 
+
+			// apply mult factor
+			
+            data.image[aoconfID_cmd_modes].array.F[k] *= AOconf[loop].mult * data.image[aoconfID_multfb].array.F[AOconf[loop].modeBlockIndex[k]] * data.image[aoconfID_MULTF_modes].array.F[k];
+
+            
+            
             // update total gain
             //     data.image[aoconfID_DMmode_GAIN].array.F[k+AOconf[loop].NBDMmodes] = AOconf[loop].gain * data.image[aoconfID_DMmode_GAIN].array.F[k];
         }
@@ -4672,7 +4671,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         {
             modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[modeblock[m]] * data.image[aoconfID_DMmode_GAIN].array.F[m];
             modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[modeblock[m]] * data.image[aoconfID_MULTF_modes].array.F[m];
-            modelimit[m] = data.image[aoconfID_limitb].array.F[modeblock[m]] * data.image[aoconfID_LIMIT_modes].array.F[m];
+            modelimit[m] = AOconf[loop].maxlimit * data.image[aoconfID_limitb].array.F[modeblock[m]] * data.image[aoconfID_LIMIT_modes].array.F[m];
         }
 
 
