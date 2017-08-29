@@ -539,7 +539,7 @@ aoconflogext "set SDVlimall ${SVDlimall}"
 
 
 
-RM2CMm)
+RM2CMm) # Does modal decomposition - DO NOT RUN IF DM IS MODAL
 tmuxname="aol${LOOPNUMBER}mkmodesM"
 sleep 0.2
 tmux new-session -d -s $tmuxname
@@ -610,7 +610,10 @@ menucontrolmatrix_default="zRM"
 
 
 
-	RM2CM)  # USED FOR MODAL CONTROL (assumes 1 act = mode)
+	RM2CM)  
+# COMPUTE SINGLE MATRIX (no block decomposition, don't comput modes) : this is a straight pseudo-inverse of the resp matrix
+# USED FOR MODAL CONTROL (assumes 1 act = mode)
+
 #
 # INPUT
 #   ./conf_staged/wfsmask.fits
@@ -619,6 +622,10 @@ menucontrolmatrix_default="zRM"
 #   ./zcontrM/zcontrM_<date>.fits
 #   ./conf/shmim_contrM.name.txt
 # -> 
+
+# set NBmodeblocks to 1
+echo "1" > conf/param_NBmodeblocks.txt
+
 mkdir -p zcontrM
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 ./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
