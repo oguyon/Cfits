@@ -271,6 +271,7 @@ fi
 
 
 ConfReadParam DM2DM_mode "0"; DM2DM_mode="$paramvalue"
+
 if [ "${DM2DM_mode}" = "0" ]; then
 
 ConfReadParam GPUmodesextrwfs "0"; GPUmodesextrwfs="$paramvalue"

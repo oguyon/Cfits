@@ -130,6 +130,7 @@ typedef struct
     char dmCname[80];
     char dmdispname[80];
     char dmRMname[80];
+    uint_fast8_t DMMODE;                      /**< 0: zonal DM, 1: modal DM */
     uint_fast32_t sizexDM;                    /**< DM x size*/
     uint_fast32_t sizeyDM;                    /**< DM y size*/
     uint_fast32_t sizeDM;                     /**< DM total image (= x size * y size) */
@@ -169,11 +170,11 @@ typedef struct
 	 * 
 	 */
 		
-    int_fast8_t on;  // goes to 1 when loop starts, put to 0 to turn loop off
-    float gain; // overall loop gain
-    uint_fast16_t framesAve; // number of frames to average
-	int_fast8_t DMprimaryWrite_ON; // primary DM write
-	int_fast8_t CMMODE;
+    int_fast8_t on;                           /**< goes to 1 when loop starts, put to 0 to turn loop off */
+    float gain;                               /**< overall loop gain */
+    uint_fast16_t framesAve;                  /**< number of WFS frames to average */
+	int_fast8_t DMprimaryWrite_ON;            /**< primary DM write */
+	int_fast8_t CMMODE;                       /**< Combined matrix. 0: matrix is WFS pixels -> modes, 1: matrix is WFS pixels -> DM actuators */
  
 	// MODAL AUTOTUNING 
 	// limits

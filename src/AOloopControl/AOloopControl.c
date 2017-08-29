@@ -1838,13 +1838,15 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-    /** ### Connect to DM
+    /** ### 2.3. Connect to DM
      * 
      * - AOconf[loop].dmCname : DM control channel
      * 
      *  Here the DM size is read -> Oconf[loop].sizexDM, AOconf[loop].sizeyDM
      */
 
+
+	AOconf[loop].DMMODE = AOloopControl_readParam_int("DMMODE", 0, fplog); // zonal DM by default
 
     aoconfID_dmC = image_ID(AOconf[loop].dmCname);
     if(aoconfID_dmC==-1)
