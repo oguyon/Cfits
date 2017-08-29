@@ -1147,6 +1147,12 @@ int AOloopControl_DM_CombineChannels(long DMindex, long xsize, long ysize, int N
 		fflush(stdout);
 		
         dmdispcombconf[DMindex].ID_wfsref_RespMat = image_ID(wfsref_WFSRespMat);
+        if(dmdispcombconf[DMindex].ID_wfsref_RespMat==-1)
+			{
+				printf("ERROR: cannot find image \"%s\"\n", wfsref_WFSRespMat);
+				exit(0);
+			}
+        
         if(data.image[dmdispcombconf[DMindex].ID_wfsref_RespMat].md[0].naxis != 3)
             {
                 sprintf(errstr, "image \"%s\" should have naxis = 3", wfsref_WFSRespMat);
