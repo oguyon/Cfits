@@ -3742,11 +3742,11 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 		//TEST
-		printf("UPDATE aol_DMmode_cmd. Loop gain = %lf\n", AOconf[loop].gain);
-		fflush(stdout);
+//		printf("UPDATE aol_DMmode_cmd. Loop gain = %lf\n", AOconf[loop].gain);
+//		fflush(stdout);
 		
-		for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
-			printf("BLOCK %2d   %4ld modes\n", block, AOconf[loop].NBmodes_block[block]);
+//		for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
+//			printf("BLOCK %2d   %4ld modes\n", block, AOconf[loop].NBmodes_block[block]);
 
 	
 
@@ -3757,12 +3757,12 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 
-			if(k<20)
-				printf("[ %04ld : %12f ]    %2ld / %2ld\n", k, data.image[aoconfID_DMmode_GAIN].array.F[k], AOconf[loop].modeBlockIndex[k], AOconf[loop].DMmodesNBblock);
+			//if(k<20)
+				//printf("[ %04ld : %12f ]    %2ld / %2ld\n", k, data.image[aoconfID_DMmode_GAIN].array.F[k], AOconf[loop].modeBlockIndex[k], AOconf[loop].DMmodesNBblock);
 			
 			
 			
-            data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_DMmode_GAIN].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
+            data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_gainb].array.F[AOconf[loop].modeBlockIndex[k]] * data.image[aoconfID_DMmode_GAIN].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
 
             if(data.image[aoconfID_cmd_modes].array.F[k] < -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k])
                 data.image[aoconfID_cmd_modes].array.F[k] = -AOconf[loop].maxlimit * data.image[aoconfID_LIMIT_modes].array.F[k];
