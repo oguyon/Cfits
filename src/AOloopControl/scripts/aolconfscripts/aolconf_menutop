@@ -224,7 +224,7 @@ fi
 
 
 menuitems+=( " " " ")
-file="$HOME/status/stat_initdm${DMindex}.txt"
+file="status/stat_initdm${DMindex}.txt"
 initDMstat=$( cat $file )
 if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
 echo "OK"
@@ -538,6 +538,7 @@ EOF
 dmwrefRM="aol${dmolinknb}_modesWFS0_$DMxsize"
 echo "$dmwrefRM" > ./conf/streamlink_dmwrefRM_name.txt
 ./aolfuncs/aolfunc_StreamLink dmwrefRM
+
 
 dmwrefO="aol${dmolinknb}_wfszpo${dmolinkchan}"
 echo "$dmwrefO" > ./conf/streamlink_dmwrefO_name.txt
