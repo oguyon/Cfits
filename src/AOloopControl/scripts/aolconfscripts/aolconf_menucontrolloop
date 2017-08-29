@@ -587,11 +587,11 @@ menuitems+=( "7 ->" "\Zb\Zr$string\Zn" )
 
 
 
-
-# Q: ? ConfReadParam zpmultcoeff "0.90"; zpmultceoff="$paramvalue"
+ConfReadParam zpmultcoeff "0.90"; zpmultcoeff="$paramvalue"
 menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient" )
 
-
+StatReadStat GPUzploopONstat0 "OFF"; GPUzploopONstat0stat="$statusvalue"
+StatReadStat zploopONstat0 "OFF"; zploopONstat0stat="$statusvalue"
 if [ "${GPUzploopONstat0}" = "OFF" ]; then
 if [ "${zploopONstat0}" = "OFF" ];
 then
