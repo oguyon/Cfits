@@ -1115,11 +1115,11 @@ done
 
 
 # blocks: set up symbolic links to FITS files in conf directory
-NBblocks=$( cat ./conf/param_NBmodeblocks.txt )
+NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
 for namet in contrM contrMc contrMcact DMmodes respM
 do
 
-for i in `seq 0 $(( $NBblocks - 1 ))`;
+for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 	if [ "$namet" = "contrMcact" ]; then
@@ -1137,7 +1137,7 @@ i2=$(printf "%02d" "$i")
 	fi
 done
 
-for i in `seq $NBblocks 20`;
+for i in `seq $NBmodeblocks 20`;
 do
 i2=$(printf "%02d" "$i")
 if [ "$namet" = "contrMcact" ]; then

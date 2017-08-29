@@ -545,9 +545,10 @@ if [ "$DMMODE" = "ZONAL" ]; then
 	menuitems+=( "lball" "Set all block to same limit")
 	menuitems+=( "mball" "Set all block to same multf")
 	menuitems+=( " " " " )
-	NBblocks=$( cat ./conf/param_NBmodeblocks.txt )
+	
+	ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
 
-	for i in `seq 0 $(( $NBblocks - 1 ))`;
+	for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 	do
 	i2=$(printf "%02d" "$i")
 
@@ -1684,8 +1685,9 @@ EOF
 	 
 	 gball) 
 	 value=${gainallb}
-	 SelectValue01 100 1200 50 
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+	 SelectValue01 100 1200 50
+	 ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue" 
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
 	     gainb[10#${gi}]=${value}
@@ -1699,8 +1701,9 @@ EOF
 	 
 	 lball) 
 	 value=${limitallb}
-	 SelectValue02 10000 120000 5000 
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+	 SelectValue02 10000 120000 5000
+	 ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue" 
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
 	     limitb[10#${gi}]=${value}
@@ -1712,8 +1715,9 @@ EOF
 	 
 	 mball) 
 	 value=${multfallb}
-	 SelectValue03 100 1001 50 
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+	 SelectValue03 100 1001 50
+	 ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
 	     multfb[10#${gi}]=${value}
@@ -1725,10 +1729,11 @@ EOF
 	
 	 
     gball01)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+    ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.1)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.1)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1737,10 +1742,11 @@ EOF
 	 aoconflogext "set all gains to custom set 01 (alpha = 0.1)"
 	 ;;
    gball02)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+   ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.2)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.2)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1749,10 +1755,11 @@ EOF
 	 aoconflogext "set all gains to custom set 02 (alpha = 0.2)"
 	 ;;
    gball04)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+   ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.4)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.4)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1761,10 +1768,11 @@ EOF
 	 aoconflogext "set all gains to custom set 04 (alpha = 0.4)"
 	 ;;
    gball08)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+   ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.8)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.8)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1773,10 +1781,11 @@ EOF
 	 aoconflogext "set all gains to custom set 08 (alpha = 0.8)"
 	 ;;
    gball12)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+   ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^1.2)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^1.2)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1785,10 +1794,11 @@ EOF
 	 aoconflogext "set all gains to custom set 12 (alpha = 1.2)"
 	 ;;
    gball16)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+   ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^1.6)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^1.6)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1797,10 +1807,11 @@ EOF
 	 aoconflogext "set all gains to custom set 16 (alpha = 1.6)"
 	 ;;
    gball20)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+   ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^2.0)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^2.0)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1815,10 +1826,11 @@ EOF
 
 
     gball2)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+    ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^2.0)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^2.0)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done
@@ -1828,10 +1840,11 @@ EOF
 	 ;;
 
     gball3)
-	 for i in `seq 0 $(( $NBblocks - 1 ))`;
+    ConfReadParam NBmodeblocks "1"; NBmodeblocks="$paramvalue"
+	 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
       	 do
 	     gi=$(printf "%02d" "$i")
-	     gainb[10#${gi}]=$( echo $i $NBblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.5)}' )
+	     gainb[10#${gi}]=$( echo $i $NBmodeblocks| awk '{printf("%5.3f",1.0/(1+10.0*$1/$2)^0.5)}' )
 	     echo "${gainb[10#${gi}]}" > ./conf/param_gainb${gi}.txt
 	     tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[10#${gi}]} 0" C-m
 	 done

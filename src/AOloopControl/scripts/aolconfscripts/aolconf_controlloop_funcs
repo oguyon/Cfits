@@ -120,7 +120,7 @@ echo "sleep 1" >> $scriptfile
 
 
 
-if [ "0" -lt "$NBblocks" ]; then
+if [ "0" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb00 "1.0"; gainb00="$paramvalue"
 gainb[00]=${gainb00}
@@ -137,7 +137,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 00 ${multfb[00]}\" C
 fi
 
 
-if [ "1" -lt "$NBblocks" ]; then
+if [ "1" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb01 "1.0"; gainb01="$paramvalue"
 gainb[01]=${gainb01}
@@ -154,7 +154,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 01 ${multfb[01]}\" C
 fi
 
 
-if [ "2" -lt "$NBblocks" ]; then
+if [ "2" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb02 "1.0"; gainb02="$paramvalue"
 gainb[02]=${gainb02}
@@ -172,7 +172,7 @@ fi
 
 
 
-if [ "3" -lt "$NBblocks" ]; then
+if [ "3" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb03 "1.0"; gainb03="$paramvalue"
 gainb[03]=${gainb03}
@@ -189,7 +189,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 03 ${multfb[03]}\" C
 fi
 
 
-if [ "4" -lt "$NBblocks" ]; then
+if [ "4" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb04 "1.0"; gainb04="$paramvalue"
 gainb[04]=${gainb04}
@@ -206,7 +206,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 04 ${multfb[04]}\" C
 fi
 
 
-if [ "5" -lt "$NBblocks" ]; then
+if [ "5" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb05 "1.0"; gainb05="$paramvalue"
 gainb[05]=${gainb05}
@@ -223,7 +223,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 05 ${multfb[05]}\" C
 fi
 
 
-if [ "6" -lt "$NBblocks" ]; then
+if [ "6" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb06 "1.0"; gainb06="$paramvalue"
 gainb[06]=${gainb06}
@@ -240,7 +240,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 06 ${multfb[06]}\" C
 fi
 
 
-if [ "7" -lt "$NBblocks" ]; then
+if [ "7" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb07 "1.0"; gainb07="$paramvalue"
 gainb[07]=${gainb07}
@@ -257,7 +257,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 07 ${multfb[07]}\" C
 fi
 
 
-if [ "8" -lt "$NBblocks" ]; then
+if [ "8" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb08 "1.0"; gainb08="$paramvalue"
 gainb[10#08]=${gainb08}
@@ -275,7 +275,7 @@ fi
 
 
 
-if [ "9" -lt "$NBblocks" ]; then
+if [ "9" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb09 "1.0"; gainb09="$paramvalue"
 gainb[10#09]=${gainb09}
@@ -292,7 +292,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 09 ${multfb[10#09]}\
 fi
 
 
-if [ "10" -lt "$NBblocks" ]; then
+if [ "10" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb10 "1.0"; gainb10="$paramvalue"
 gainb[10]=${gainb10}
@@ -309,7 +309,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 10 ${multfb[10]}\" C
 fi
 
 
-if [ "11" -lt "$NBblocks" ]; then
+if [ "11" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb11 "1.0"; gainb11="$paramvalue"
 gainb[11]=${gainb11}
@@ -326,7 +326,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmultfb 11 ${multfb[11]}\" C
 fi
 
 
-if [ "12" -lt "$NBblocks" ]; then
+if [ "12" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb12 "1.0"; gainb12="$paramvalue"
 gainb[12]=${gainb12}
@@ -344,7 +344,7 @@ fi
 
 
 
-if [ "13" -lt "$NBblocks" ]; then
+if [ "13" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb13 "1.0"; gainb13="$paramvalue"
 gainb[13]=${gainb13}
@@ -362,7 +362,7 @@ fi
 
 
 
-if [ "14" -lt "$NBblocks" ]; then
+if [ "14" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb14 "1.0"; gainb14="$paramvalue"
 gainb[14]=${gainb14}
@@ -380,7 +380,7 @@ fi
 
 
 
-if [ "15" -lt "$NBblocks" ]; then
+if [ "15" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb15 "1.0"; gainb15="$paramvalue"
 gainb[15]=${gainb15}
@@ -398,7 +398,7 @@ fi
 
 
 
-if [ "16" -lt "$NBblocks" ]; then
+if [ "16" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb16 "1.0"; gainb16="$paramvalue"
 gainb[16]=${gainb16}
@@ -417,7 +417,7 @@ fi
 
 
 
-#for i in `seq 0 $(( $NBblocks - 1 ))`;
+#for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 #do
 #	     gi=$(printf "%02d" "$i")
 
