@@ -177,11 +177,11 @@ fi
 
 
 
+
+if [ "$DMMODE" = "ZONAL" ]; then
 echo "##########################################"
 echo "# ACQUIRE MODAL LO RESPONSE MATRIX        "
 echo "##########################################"
-
-if [ "$DMMODE" = "ZONAL" ]; then
 	if [ "$RMCalibReuseMasks" = "1" ]; then
 	# reuse modes
 	function_acqWFSresp_LOmodes
@@ -241,12 +241,13 @@ echo "##########################################"
 ./auxscripts/aolmkMasks
 
 if [ "$DMMODE" = "MODAL" ]; then  # set dmmaskRM.fits to 1.0 over all pixels
-$execname
+$execname << EOF
 readshmim aol${LOOPNUMBER}_dmC
 im0=0*aol${LOOPNUMBER}_dmC
 dmmaskRM=1.0+im0
 savefits dmmaskRM "!dmmaskRM.fits"
 exitCLI
+EOF
 fi
 
 # MAKE SLAVED ACTUATOR DM MASK: dmmaskRM.fits -> dmslaved.fits, dmmask.fits
