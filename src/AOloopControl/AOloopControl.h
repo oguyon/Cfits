@@ -337,18 +337,24 @@ int_fast8_t AOloopControl_InitializeMemory();
 /* =============================================================================================== */
 /* =============================================================================================== */
 
+
 int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *IDzrespM_name, const char *IDwfszp_name);
+
 
 int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *ID_WFSzp_name, int NBzp, const char *IDwfsref0_name, const char *IDwfsref_name);
 
+/** @brief Main loop function */
 int_fast8_t AOloopControl_run();
+
 
 int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect);
 
+/** @brief Sends modal commands to DM by matrix-vector multiplication */
 int_fast8_t set_DM_modes(long loop);
 
 int_fast8_t set_DM_modesRM(long loop);
 
+/** @brief Main computation function, runs once per loop iteration */
 int_fast8_t AOcompute(long loop, int normalize);
 
 int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_WFSref_name, const char *ID_WFSim_name, const char *ID_WFSimtot_name, const char *ID_coeff_name);

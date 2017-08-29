@@ -2839,9 +2839,18 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 }
 
 
-///
-/// main routine
-///
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Main AO loop function
+ * 
+ * 
+ * ## Details
+ * 
+ */ 
 int_fast8_t AOloopControl_run()
 {
     FILE *fp;
@@ -2870,10 +2879,6 @@ int_fast8_t AOloopControl_run()
     int semval;
 
 
-    /*    float tmpv, tmpv1, tmpv2;
-        float range1 = 0.1; // limit single iteration motion
-        float rangec = 0.3; // limit cumulative motion
-      */
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -2892,7 +2897,10 @@ int_fast8_t AOloopControl_run()
         AOloopControl_InitializeMemory(0);
 
 
-
+	/** ### STEP 1: Setting up 
+	 * 
+	 * Load arrays
+	 * */
     printf("SETTING UP...\n");
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
@@ -3189,7 +3197,16 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
 
 
 
-
+/**
+ * ## Purpose
+ * 
+ * Send modal commands to DM. \n
+ * Converts mode coefficient to DM map by matrix-vector multiplication \n
+ * Runs in CPU or GPU.
+ * 
+ * Takes mode values from aol_DMmode_cmd (ID = aoconfID_cmd_modes)
+ * 
+ */ 
 int_fast8_t set_DM_modes(long loop)
 {
     double a;
@@ -3257,6 +3274,9 @@ int_fast8_t set_DM_modes(long loop)
 
 
 
+
+
+
 int_fast8_t set_DM_modesRM(long loop)
 {
     long k;
@@ -3286,6 +3306,8 @@ int_fast8_t set_DM_modesRM(long loop)
 
     return(0);
 }
+
+
 
 
 
@@ -3520,7 +3542,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     else
     {
 #ifdef HAVE_CUDA
-        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slower but useful for performance tuning
         {
 #ifdef _PRINT_TEST
             printf("TEST - CM mult: GPU=1, CMMODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
@@ -3532,7 +3554,6 @@ int_fast8_t AOcompute(long loop, int normalize)
             if(AOconf[loop].GPUall == 1)
             {
                 // TBD : TEST IF contrM or wfsref have changed
-
 
 
                 if(initWFSref_GPU[PIXSTREAM_SLICE]==0) // initialize WFS reference
@@ -3710,10 +3731,16 @@ int_fast8_t AOcompute(long loop, int normalize)
         AOconf[loop].RMSmodesCumulcnt ++;
 
 
+		//TEST
+		printf("UPDATE aol_DMmode_cmd. Loop gain = %lf\n", AOconf[loop].gain);
+		fflush(stdout);
+
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
         {
             data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
             data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k];
+
+			
 
             data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_GAIN_modes].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
 
