@@ -607,8 +607,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp1loopON "OFF"; GPUzp1loopONstat="$statusvalue"
+StatReadStat zp1loopON "OFF"; zp1loopONstat="$statusvalue"
 
 if [ "${GPUzp1loopONstat}" = "OFF" ]; then
 if [ "${zp1loopONstat}" = "OFF" ];
@@ -624,8 +624,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 1 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp2loopON "OFF"; GPUzp2loopONstat="$statusvalue"
+StatReadStat zp2loopON "OFF"; zp2loopONstat="$statusvalue"
 
 if [ "${GPUzp2loopONstat}" = "OFF" ]; then
 if [ "${zp2loopONstat}" = "OFF" ];
@@ -641,8 +641,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 2 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp3loopON "OFF"; GPUzp3loopONstat="$statusvalue"
+StatReadStat zp3loopON "OFF"; zp3loopONstat="$statusvalue"
 
 if [ "${GPUzp3loopONstat}" = "OFF" ]; then
 if [ "${zp3loopONstat}" = "OFF" ];
@@ -658,8 +658,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 3 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp4loopON "OFF"; GPUzp4loopONstat="$statusvalue"
+StatReadStat zp4loopON "OFF"; zp4loopONstat="$statusvalue"
 
 if [ "${GPUzp4loopONstat}" = "OFF" ]; then
 if [ "${zp4loopONstat}" = "OFF" ];
@@ -675,8 +675,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 4 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp5loopON "OFF"; GPUzp5loopONstat="$statusvalue"
+StatReadStat zp5loopON "OFF"; zp5loopONstat="$statusvalue"
 
 if [ "${GPUzp5loopONstat}" = "OFF" ]; then
 if [ "${zp5loopONstat}" = "OFF" ];
@@ -692,8 +692,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 5 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp6loopON "OFF"; GPUzp6loopONstat="$statusvalue"
+StatReadStat zp6loopON "OFF"; zp6loopONstat="$statusvalue"
 
 if [ "${GPUzp6loopONstat}" = "OFF" ]; then
 if [ "${zp6loopONstat}" = "OFF" ];
@@ -709,8 +709,8 @@ menuitems+=( " " "\Z1\ZrCHANNEL 6 CURRENTLY USED FOR GPU-BASED ZONAL ZERO POINT\
 fi
 
 
-StatReadStat GPUzp0loopON "OFF"; GPUzp0loopONstat="$statusvalue"
-StatReadStat zp0loopON "OFF"; zp0loopONstat="$statusvalue"
+StatReadStat GPUzp7loopON "OFF"; GPUzp7loopONstat="$statusvalue"
+StatReadStat zp7loopON "OFF"; zp7loopONstat="$statusvalue"
 
 if [ "${GPUzp7loopONstat}" = "OFF" ]; then
 if [ "${zp7loopONstat}" = "OFF" ];
