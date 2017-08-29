@@ -112,6 +112,17 @@ if [ "$DMMODE" = "ZONAL" ]; then
 fi
 
 
+# IF MODAL DM, SET MODES TO SIMPLE IDENTITY MATRIX
+if [ "$DMMODE" = "MODAL" ]; then
+DMxsize=$( cat ./conf/param_DMxsize.txt )
+DMysize=$( cat ./conf/param_DMysize.txt )
+./AOloopControl << EOF
+aolmksimplezpM ${DMxsize} ${DMysize} pokeM
+savefits pokeM "!./conf/"
+exitCLI
+EOF
+fi
+
 
 
 ##############################################

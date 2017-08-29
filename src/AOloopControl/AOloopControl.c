@@ -1886,6 +1886,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
+
 	/// Connect to DM modes shared mem
 	aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname);
 	if(aoconfID_DMmodes==-1)
@@ -1895,13 +1896,16 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         if(aoconfID_DMmodes==-1)
         {
             printf("ERROR: cannot connect to shared memory %s\n", AOconf[loop].DMmodesname);
-            exit(0);
+			exit(0);
         }
     }
-    fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmRMname, aoconfID_DMmodes);
+	fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].DMmodesname, aoconfID_DMmodes);
 	AOconf[loop].NBDMmodes = data.image[aoconfID_DMmodes].md[0].size[2];
 	printf("NBmodes = %ld\n", AOconf[loop].NBDMmodes);
-
+	
+	
+	
+	
 
 	/** 
 	 * ## 3. Load DM modes (if level >= 10)
