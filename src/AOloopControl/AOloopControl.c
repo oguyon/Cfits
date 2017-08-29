@@ -2208,6 +2208,8 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
         uint_fast16_t kk;
+        int mstart = 0;
+        
         for(kk=0; kk<AOconf[loop].DMmodesNBblock; kk++)
         {
             long ID;
@@ -2226,6 +2228,11 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             fflush(stdout);
             if((ID=AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, 0, 0.0))!=-1)
                 AOconf[loop].NBmodes_block[kk] = data.image[ID].md[0].size[2];
+
+			int m;
+			for(m=mstart; m<(mstart+AOconf[loop].NBmodes_block[kk]); m++)
+				AOconf[loop].modeBlockIndex[m] = kk;
+			mstart += AOconf[loop].NBmodes_block[kk];
 
 
             if(sprintf(name, "aol%ld_respM%02ld", loop, kk) < 1)
