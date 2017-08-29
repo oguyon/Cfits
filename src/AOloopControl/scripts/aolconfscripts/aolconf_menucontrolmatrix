@@ -624,7 +624,7 @@ menucontrolmatrix_default="zRM"
 # -> 
 
 # set NBmodeblocks to 1
-echo "1" > conf/param_NBmodeblocks.txt
+echo "1" > conf_staged/param_NBmodeblocks.txt
 
 mkdir -p zcontrM
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -632,6 +632,7 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
 echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM.name.txt
 echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf_staged/shmim_DMmodes.name.txt
+echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf_staged/shmim_DMmodes00.name.txt
 cp conf_staged/shmim_zrespM.name.txt conf_staged/shmim_respM.name.txt
 cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
