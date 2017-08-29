@@ -3344,7 +3344,7 @@ int_fast8_t AOcompute(long loop, int normalize)
     int semnb;
     int semval;
 
-
+	
 
     // waiting for dark-subtracted image
     AOconf[loop].status = 19;  //  19: WAITING FOR IMAGE
@@ -3722,8 +3722,11 @@ int_fast8_t AOcompute(long loop, int normalize)
 
     if(AOconf[loop].CMMODE==0)
     {
+		int block;
+		long k;
+		
+		
         AOconf[loop].RMSmodes = 0;
-        long k;
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
             AOconf[loop].RMSmodes += data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
 
@@ -3734,6 +3737,9 @@ int_fast8_t AOcompute(long loop, int normalize)
 		//TEST
 		printf("UPDATE aol_DMmode_cmd. Loop gain = %lf\n", AOconf[loop].gain);
 		fflush(stdout);
+		
+		for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
+			printf("BLOCK %2d   %4ld modes\n", block, AOconf[loop].NBmodes_block[block]);
 
 	
 
