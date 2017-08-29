@@ -3735,13 +3735,19 @@ int_fast8_t AOcompute(long loop, int normalize)
 		printf("UPDATE aol_DMmode_cmd. Loop gain = %lf\n", AOconf[loop].gain);
 		fflush(stdout);
 
+	
+
         for(k=0; k<AOconf[loop].NBDMmodes; k++)
         {
             data.image[aoconfID_RMS_modes].array.F[k] = 0.99*data.image[aoconfID_RMS_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k]*data.image[aoconfID_meas_modes].array.F[k];
             data.image[aoconfID_AVE_modes].array.F[k] = 0.99*data.image[aoconfID_AVE_modes].array.F[k] + 0.01*data.image[aoconfID_meas_modes].array.F[k];
 
+
+
 			if(k<10)
-				printf("[ %04ld : %12f ]    %ld\n", k, data.image[aoconfID_DMmode_GAIN].array.F[k], AOconf[loop].NBDMmodes);
+				printf("[ %04ld : %12f ]    %ld  %ld\n", k, data.image[aoconfID_DMmode_GAIN].array.F[k], AOconf[loop].NBDMmodes, AOconf[loop].DMmodesNBblock);
+			
+			
 			
             data.image[aoconfID_cmd_modes].array.F[k] -= AOconf[loop].gain * data.image[aoconfID_DMmode_GAIN].array.F[k] * data.image[aoconfID_meas_modes].array.F[k];
 

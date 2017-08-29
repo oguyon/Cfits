@@ -146,7 +146,7 @@ typedef struct
 
     char DMmodesname[80];
      // BLOCKS OF MODES
-    uint_fast16_t DMmodesNBblock;       // number of mode blocks
+    uint_fast16_t DMmodesNBblock;       // number of mode blocks (read from parameter)
     uint_fast16_t NBmodes_block[100];   // number of modes within each block
     uint_fast16_t indexmaxMB[maxNBMB]; 
 
