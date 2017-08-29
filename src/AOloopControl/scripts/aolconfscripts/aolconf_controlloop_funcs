@@ -785,7 +785,7 @@ fi
 }
 
 
-# args : 
+
 function function_zplon
 {
 echo " ON" > ./status/stat_zp$1loopON.txt
@@ -804,6 +804,7 @@ tmux send-keys -t $tmuxnameZP "readshmim aol${LOOPNUMBER}_zrespM" C-m
 tmux send-keys -t $tmuxnameZP "listim" C-m
 tmux send-keys -t $tmuxnameZP "aolzpwfsloop aol${LOOPNUMBER}_dmZP$1 aol${LOOPNUMBER}_zrespM aol${LOOPNUMBER}_wfszpo$1" C-m
 }
+
 
 function function_zploff
 {
