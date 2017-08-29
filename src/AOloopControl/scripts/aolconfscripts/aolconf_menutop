@@ -129,10 +129,8 @@ fi
 
 
 
-
-file="./conf/conf_dmwfsref_mode.txt"
-dmwfsrefmode=$( cat $file )
-if [[ -f "$file" && ( "$dmwfsrefmode" = "1" || "$dmwfsrefmode" = "0" ) ]]; then
+ConfReadParam dmwfsref_mode "0"; dmwfsref_mode="$paramvalue"
+if [[ -f "$file" && ( "$dmwfsref_mode" = "1" || "$dmwfsref_mode" = "0" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
@@ -140,37 +138,47 @@ dmwfsrefmode=0
 fi
 
 menuitems+=( " " " ")
-if [ "${dmwfsrefmode}" = "0" ];
+if [ "${dmwfsref_mode}" = "0" ];
 then
 menuitems+=( "dmwref1" " [  OFF  ] CPU-based dmcomb output WFS ref is OFF (select for DM ouput applied as WFS offset)" )
 fi
-if [ "${dmwfsrefmode}" = "1" ];
+if [ "${dmwfsref_mode}" = "1" ];
 then
 menuitems+=( "dmwref0" " [   ON  ] CPU-based dmcomb output WFS ref is ON (select to de-activate)" )
 fi
 
-ReaddmwrefRMname
-dmwrefRMfile="/tmp/${dmwrefRM}.im.shm"
+
+
+./aolfuncs/aolfunc_StreamLink dmwrefRM
+
+dmwrefRMfile="/tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm"
 if [ -f $dmwrefRMfile ]; then
-getshmimsize ${dmwrefRM}
+sizestring=$( cat conf/streamlink_dmwrefRM.imsize.txt )
+streamname=$( cat conf/streamlink_dmwrefRM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${dmwrefRM}\Zn" )
+menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix            \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix               \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${dmwrefRM}\Zn" )
+menuitems+=( "dmwrefRM" "[${OKstr}] WFS Resp Matrix            \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${streamname}\Zn" )
+confOK=0
 fi
 
 
-ReaddmwrefOname
-dmwrefOfile="/tmp/${dmwrefO}.im.shm"
+
+./aolfuncs/aolfunc_StreamLink dmwrefO
+
+dmwrefOfile="/tmp/aol${LOOPNUMBER}_dmwrefO.im.shm"
 if [ -f $dmwrefOfile ]; then
-getshmimsize ${dmwrefO}
+sizestring=$( cat conf/streamlink_dmwrefO.imsize.txt )
+streamname=$( cat conf/streamlink_dmwrefO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
-menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z4${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${streamname}\Zn" )
 else
 OKstr="\Z1\Zb  MISSING \Zn"
-menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream             \Z4\Zbaol${LOOPNUMBER}_dmwrefO\Zn -> \Z1${dmwrefO}\Zn" )
+menuitems+=( "dmwrefO" "[${OKstr}] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z1${streamname}\Zn" )
+confOK=0
 fi
+
 
 
 
