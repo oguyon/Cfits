@@ -26,6 +26,7 @@
 #include "AOloopControl_acquireCalib/AOloopControl_acquireCalib.h"
 #include "AOloopControl_computeCalib/AOloopControl_computeCalib.h"
 #include "AOloopControl_perfTest/AOloopControl_perfTest.h"
+#include "AOloopControl_compTools/AOloopControl_compTools.h"
 
 #include "FPAOloopControl/FPAOloopControl.h"
 #include "psf/psf.h"
