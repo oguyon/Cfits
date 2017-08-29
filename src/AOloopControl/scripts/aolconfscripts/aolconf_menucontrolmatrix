@@ -631,9 +631,11 @@ datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 ./auxscripts/aolRM2CM ${SVDlimall} zcontrM.fits
 mv zcontrM.fits ./zcontrM//zcontrM_${datestr}.fits
 echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM.name.txt
+echo "zcontrM/zcontrM_${datestr}.fits" > ./conf_staged/shmim_contrM00.name.txt
 echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf_staged/shmim_DMmodes.name.txt
 echo "conf/aol${LOOPNUMBER}_DMmodes_zonal.fits" > ./conf_staged/shmim_DMmodes00.name.txt
 cp conf_staged/shmim_zrespM.name.txt conf_staged/shmim_respM.name.txt
+cp conf_staged/shmim_zrespM.name.txt conf_staged/shmim_respM00.name.txt
 cp $PWD/zcontrM/zcontrM_${datestr}.fits $PWD/conf_staged/contrM.fits      # for convenience
 
 CMMODE="1"
