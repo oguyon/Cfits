@@ -270,16 +270,16 @@ ConfReadParam DMdelayON "OFF"; DMdelayON="$paramvalue" # READ DM delay (optional
 
 
 # creates shmim aol#_dm2dmM if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dm2dmM
+./aolfuncs/aolfunc_StreamLink dm2dmM
 
 # creates shmim aol#_dm2dmO if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dm2dmO
+./aolfuncs/aolfunc_StreamLink dm2dmO
 
 # creates shmim aol#_dmwrefRM if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dmwrefRM
+./aolfuncs/aolfunc_StreamLink dmwrefRM
 
 # creates shmim aol#_dmwrefO if applicable
-./scripts/aolfuncs/aolfunc_StreamLink dmwrefO
+./aolfuncs/aolfunc_StreamLink dmwrefO
 
 
 
