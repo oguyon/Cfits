@@ -592,11 +592,11 @@ menuitems+=( "zpmult" "[ ${zpmultcoeff} ] Multiply WFS reference by coefficient"
 
 StatReadStat GPUzploopONstat0 "OFF"; GPUzploopONstat0stat="$statusvalue"
 StatReadStat zploopONstat0 "OFF"; zploopONstat0stat="$statusvalue"
-if [ "${GPUzploopONstat0}" = "OFF" ]; then
-if [ "${zploopONstat0}" = "OFF" ];
+if [ "${GPUzploopONstat0stat}" = "OFF" ]; then
+if [ "${zploopONstat0stat}" = "OFF" ];
 then
 menuitems+=( "zplon0" "   START DM->WFS zero point offset loop #0 (\Z4${dmZP0}\Zn -> wfszpo0)" )
-elif [ "${zploopONstat0}" = "WFS" ]; then
+elif [ "${zploopONstat0stat}" = "WFS" ]; then
 menuitems+=( " " "\Z1\ZrCHANNEL 0 CURRENTLY USED FOR DIRECT WFS OFFSET\Zn" )
 else
 menuitems+=( "zploff0" "\Z1\Zr    STOP DM->WFS zero point offset loop #0\Zn (\Z4${dmZP0}\Zn -> wfszpo0)" )
