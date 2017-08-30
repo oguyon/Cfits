@@ -113,7 +113,7 @@ extern long aoconfID_looptiming;         // declared in AOloopControl.c
 
 
 static sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
-static float IMTOTAL = 0.0;
+
 
 static int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
 static int COMPUTE_DARK_SUBTRACT_NBTHREADS = 1;
@@ -541,7 +541,8 @@ static void *compute_function_imtotal( void *ptr )
     long ii;
     long nelem;
     int semval;
-
+	float IMTOTAL;
+	
 	#ifdef _PRINT_TEST
 	printf("TEST - =========== ENTERING compute_function_imtotal ===================\n");
 	fflush(stdout);
@@ -564,7 +565,7 @@ static void *compute_function_imtotal( void *ptr )
 		#endif
 	
 		
-
+		
         data.image[aoconfID_imWFS0tot].md[0].write = 1;
         IMTOTAL = 0.0;
         if(aoconfID_wfsmask!=-1)
@@ -957,6 +958,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     {
         if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RM == 1)) // do it in main thread
         {
+			float IMTOTAL;
+			
             nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
             IMTOTAL = 0.0;
             if(aoconfID_wfsmask!=-1)
@@ -991,7 +994,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 			fflush(stdout);
 			#endif
 			
-            AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
+            AOconf[loop].WFStotalflux = data.image[aoconfID_imWFS0tot].array.F[0]; // from last loop
             if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
             {
 				#ifdef _PRINT_TEST
@@ -1051,7 +1054,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     if( ((AOconf[loop].GPUall==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
     {
 #ifdef _PRINT_TEST
-        printf("TEST - Normalize [%d]: IMTOTAL = %g    totalinv = %g\n", AOconf[loop].WFSnormalize, IMTOTAL, totalinv);
+        printf("TEST - Normalize [%d]: IMTOTAL = %g    totalinv = %g\n", AOconf[loop].WFSnormalize, data.image[aoconfID_imWFS0tot].array.F[0], totalinv);
         fflush(stdout);
 #endif
 
