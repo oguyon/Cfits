@@ -4799,10 +4799,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             data.image[aoconfID_limitb].md[0].write = 0;
 
         }
-/*
+
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
 		{
-			float alphagain = 0.1;
+/*			float alphagain = 0.1;
 			
 			// if update available
 			
@@ -4843,8 +4843,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             COREMOD_MEMORY_image_set_sempost_byID(aoconfID_limitb, -1);
             data.image[aoconfID_limitb].md[0].cnt0++;
             data.image[aoconfID_limitb].md[0].write = 0;
+            */
 		}
-*/
+
 
 
         if(FILTERMODE == 1)
