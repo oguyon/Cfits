@@ -580,7 +580,7 @@ static void *compute_function_imtotal( void *ptr )
         }
         data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
         
-        AOconf[loop].WFStotalflux = IMTOTAL;
+        AOconf[LOOPNUMBER].WFStotalflux = IMTOTAL;
         
         COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
         data.image[aoconfID_imWFS0tot].md[0].cnt0++;
