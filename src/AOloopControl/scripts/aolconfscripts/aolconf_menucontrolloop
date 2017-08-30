@@ -1650,14 +1650,14 @@ EOF
 
 	ONatgain)
 	AUTOTUNEGAINS_ON=" ON"
-	echo "$AUTOTUNEGAINS_ON" > ./status/stat_AUTOTUNEGAINS_ON.txt
+	echo "$AUTOTUNEGAINS_ON" > ./conf/param_AUTOTUNEGAINS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNEGAINon" C-m
 	menucontrolloop_default="OFFatgain"
 	;;
 
 	OFFatgain)
 	AUTOTUNEGAINS_ON="OFF"
-	echo "$AUTOTUNEGAINS_ON" > ./status/stat_AUTOTUNEGAINS_ON.txt
+	echo "$AUTOTUNEGAINS_ON" > ./conf/param_AUTOTUNEGAINS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNEGAINoff" C-m
 	menucontrolloop_default="ONatgain"
 	;;
