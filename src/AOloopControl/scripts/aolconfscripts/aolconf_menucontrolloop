@@ -397,6 +397,8 @@ else
 
 fi
 
+ConfReadParam WFSresAveCoeff "0.001"; WFSresAveCoeff="$paramvalue"
+ menuitems+=( "sWFSresac" "[$WFSresAveCoeff] Set WFS average coefficient" )
 
 
 
@@ -1418,6 +1420,14 @@ LPwfsresa)
 menucontrolloop_default="LPwfsresa"
 ;;
 
+
+sWFSresac)
+value=${WFSresAveCoeff}
+SelectValue02 0 10000 100
+WFSresAveCoeff=${value}
+echo "$WFSresAveCoeff" > ./conf/param_WFSresAveCoeff.txt
+#tmux send-keys -t aol${LOOPNUMBER}-ctr "" C-m 
+;;
 
 
    	 Nloopon)

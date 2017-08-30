@@ -587,7 +587,10 @@ echo "cpsh aol${LOOPNUMBER}_wfsref0 aol${LOOPNUMBER}_wfsref" >> $scriptfile
 echo "exitCLI" >> $scriptfile
 echo "EOF" >> $scriptfile
 
+
+
 if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
+ConfReadParam WFSresAveCoeff "0.001"; WFSresAveCoeff="$paramvalue"
 tmuxname="aol${LOOPNUMBER}wfsresave"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
@@ -595,7 +598,7 @@ echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
 logRunningProcessQ0 "aolmkWFSres" "$tmuxname" "compute and average WFS residual"
 echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolmkWFSres.runprocQ runproc/aolmkWFSres.runproc\" C-m" >> $scriptfile
-echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmkWFSres\" C-m" >> $scriptfile
+echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmkWFSres ${WFSresAveCoeff}\" C-m" >> $scriptfile
 fi
 
 
