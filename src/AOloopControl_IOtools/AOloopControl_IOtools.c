@@ -970,7 +970,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         }
         else  // do it in other threads
         {
-			
+			#ifdef _PRINT_TEST
+			printf("TEST - compute total in separate thread\n");
+			fflush(stdout);
+			#endif
 			
             AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
             if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
