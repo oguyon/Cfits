@@ -4420,6 +4420,14 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
+    // CONNECT to dm control channel
+    if(aoconfID_dmC == -1)
+    {
+        if(sprintf(imname, "aol%ld_dmC", loop) < 1)
+            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+        aoconfID_dmC = read_sharedmem_image(imname);
+    }
 
 
 
@@ -4547,6 +4555,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     IDmodevalDM_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
+	
 
 
     // auto limit tuning
@@ -4823,7 +4832,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			data.image[aoconfID_dmC].md[0].write = 1;
 			memcpy(data.image[aoconfID_dmC].array.F, data.image[IDmodevalDMnowfilt].array.F, sizeof(float)*NBmodes);
 			COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmC, -1);
-			data.image[aoconfID_dmC].md[0].cnt1 = modevalDMindex;
+			data.image[aoconfID_dmC].md[0].cnt1++;
 			data.image[aoconfID_dmC].md[0].cnt0++;
 			data.image[aoconfID_dmC].md[0].write = 0;			
 		}
