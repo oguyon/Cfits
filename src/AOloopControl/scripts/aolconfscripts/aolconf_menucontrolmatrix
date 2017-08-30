@@ -47,7 +47,7 @@ menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall
 
 if [ "$DMMODE" = "1" ]; then
 
-ConfReadParam NBmodeblocks "0"; NBmodeblocks=${paramvalue}
+ConfReadParam NBmodeblocks "01"; NBmodeblocks="${paramvalue}"
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
 
 
@@ -217,8 +217,8 @@ menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, respo
 mkmodesdatestr=$(stat -c %y ./conf/param_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
 
-ConfReadParam NBmodeblocks "00"; NBmodeblocks=${paramvalue}
-ConfReadParam NBmodes "00"; NBmodes=${paramvalue}
+ConfReadParam NBmodeblocks "01"; NBmodeblocks="${paramvalue}"
+ConfReadParam NBmodes "01"; NBmodes="${paramvalue}"
 stringcenter " ACTIVE CONFIGURATION :  <$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] "
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 
@@ -624,7 +624,7 @@ menucontrolmatrix_default="zRM"
 # -> 
 
 # set NBmodeblocks to 1
-echo "1" > conf_staged/param_NBmodeblocks.txt
+echo "01" > conf_staged/param_NBmodeblocks.txt
 
 mkdir -p zcontrM
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`

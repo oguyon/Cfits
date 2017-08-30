@@ -119,7 +119,7 @@ echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolloadconf ${LOOPNUMBER}\" C-m" 
 echo "sleep 1" >> $scriptfile
 
 
-
+ConfReadParam NBmodeblocks "1"; NBmodeblocks="${paramvalue}"
 if [ "0" -lt "$NBmodeblocks" ]; then
 
 ConfReadParam gainb00 "1.0"; gainb00="$paramvalue"
