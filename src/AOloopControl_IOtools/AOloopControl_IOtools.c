@@ -18,7 +18,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-//#define _PRINT_TEST
+#define _PRINT_TEST
 
 
 
@@ -931,7 +931,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     }
 
 #ifdef _PRINT_TEST
-    printf("TEST - NORMALIZE\n");
+    printf("TEST - NORMALIZE = %d\n", normalize);
     fflush(stdout);
 #endif
 
@@ -970,6 +970,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         }
         else  // do it in other threads
         {
+			
+			
             AOconf[loop].WFStotalflux = IMTOTAL; // from last loop
             if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
             {
