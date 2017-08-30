@@ -5246,7 +5246,7 @@ fflush(stdout);
 
 
     // TEST mode
-    IDsync = image_ID("dm00disp10");
+/*    IDsync = image_ID("dm00disp10");
     if(IDsync!=-1)
     {
 	    long cnt00, cnt01;
@@ -5268,7 +5268,7 @@ fflush(stdout);
         fflush(stdout);
     }
 
-
+*/
 
     if(TESTMODE==1)
         fptest = fopen("test_autotunegain.dat", "w");
