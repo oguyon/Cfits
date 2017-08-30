@@ -546,9 +546,10 @@ static void *compute_function_imtotal( void *ptr )
 
     nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
 
-    while(1)
+    for(;;)
     {
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+        data.image[aoconfID_imWFS0tot].md[0].write = 1;
         IMTOTAL = 0.0;
         if(aoconfID_wfsmask!=-1)
         {
@@ -562,6 +563,8 @@ static void *compute_function_imtotal( void *ptr )
         }
         data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
         COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
+        data.image[aoconfID_imWFS0tot].md[0].cnt0++;
+        data.image[aoconfID_imWFS0tot].md[0].write = 0;
     }
 
 }
