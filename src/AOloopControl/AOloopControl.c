@@ -4799,9 +4799,52 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             data.image[aoconfID_limitb].md[0].write = 0;
 
         }
+/*
+		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
+		{
+			float alphagain = 0.1;
+			
+			// if update available
+			
+			data.image[aoconfID_GAIN_modes].md[0].write = 1;
+            data.image[aoconfID_gaiinb].md[0].write = 1;
+
+			// Adjust gain for EACH mode
+			
+            for(m=0; m<NBmodes; m++)
+            {
+                block = data.image[IDblknb].array.UI16[m];
+
+                data.image[aoconfID_GAIN_modes].array.F[m] = (1.0-alphagain)*data.image[aoconfID_GAIN_modes].array.F[m] + alphagain*data.image[autogain].array.F[m];
+
+                gainblockarray[block] += data.image[aoconfID_GAIN_modes].array.F[m];
+            }
+            COREMOD_MEMORY_image_set_sempost_byID(aoconfID_GAIN_modes, -1);
+            data.image[aoconfID_GAIN_modes].md[0].cnt0++;
+            data.image[aoconfID_GAIN_modes].md[0].write = 0;
+
+			// update block gains to drive average gain coefficients to 1
+            data.image[IDatgainbcoeff].md[0].write = 1;
+            for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
+            {
+                data.image[IDatlimbcoeff].array.F[block] = limitblockarray[block] / blockNBmodes[block];
+                coeff = ( 1.0 + (data.image[IDatlimbcoeff].array.F[block]-1.0)*AOconf[loop].AUTOTUNE_LIMITS_delta*0.1 );
+                if(coeff < 1.0-AOconf[loop].AUTOTUNE_LIMITS_delta )
+                    coeff = 1.0-AOconf[loop].AUTOTUNE_LIMITS_delta;
+                if(coeff> 1.0+AOconf[loop].AUTOTUNE_LIMITS_delta )
+                    coeff = 1.0+AOconf[loop].AUTOTUNE_LIMITS_delta;
+                data.image[aoconfID_limitb].array.F[block] = data.image[aoconfID_limitb].array.F[block] * coeff;
+            }
+            COREMOD_MEMORY_image_set_sempost_byID(IDatlimbcoeff, -1);
+            data.image[IDatlimbcoeff].md[0].cnt0++;
+            data.image[IDatlimbcoeff].md[0].write = 0;
 
 
-
+            COREMOD_MEMORY_image_set_sempost_byID(aoconfID_limitb, -1);
+            data.image[aoconfID_limitb].md[0].cnt0++;
+            data.image[aoconfID_limitb].md[0].write = 0;
+		}
+*/
 
 
         if(FILTERMODE == 1)
@@ -5364,6 +5407,7 @@ fflush(stdout);
 
     if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
     {
+		
     }
 
 
@@ -5663,6 +5707,7 @@ int_fast8_t AOloopControl_DMfilteredWrite_off()
 /* =============================================================================================== */
 
 
+
 int_fast8_t AOloopControl_AUTOTUNE_LIMITS_on()
 {
     if(AOloopcontrol_meminit==0)
@@ -5673,6 +5718,7 @@ int_fast8_t AOloopControl_AUTOTUNE_LIMITS_on()
 
     return 0;
 }
+
 
 
 int_fast8_t AOloopControl_AUTOTUNE_LIMITS_off()
@@ -5722,6 +5768,8 @@ int_fast8_t AOloopControl_AUTOTUNE_LIMITS_off()
 }
 
 
+
+
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta)
 {
     if(AOloopcontrol_meminit==0)
@@ -5732,6 +5780,7 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_delta(float AUTOTUNE_LIMITS_delta)
 
     return 0;
 }
+
 
 
 int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_perc(float AUTOTUNE_LIMITS_perc)
