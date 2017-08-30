@@ -4760,23 +4760,24 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
             data.image[aoconfID_LIMIT_modes].md[0].write = 1;
             data.image[aoconfID_limitb].md[0].write = 1;
+
+			// Adjust limit for EACH mode
             for(m=0; m<NBmodes; m++)
             {
                 block = data.image[IDblknb].array.UI16[m];
 
-                if( fabs(AOconf[loop].AUTOTUNE_LIMITS_mcoeff*data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m])
+                if(  fabs(AOconf[loop].AUTOTUNE_LIMITS_mcoeff*data.image[IDmodevalDMnowfilt].array.F[m]) > modelimit[m])
                     data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 + AOconf[loop].AUTOTUNE_LIMITS_delta);
                 else
                     data.image[aoconfID_LIMIT_modes].array.F[m] *= (1.0 - AOconf[loop].AUTOTUNE_LIMITS_delta*0.01*AOconf[loop].AUTOTUNE_LIMITS_perc);
 
-
                 limitblockarray[block] += data.image[aoconfID_LIMIT_modes].array.F[m];
-
             }
             COREMOD_MEMORY_image_set_sempost_byID(aoconfID_LIMIT_modes, -1);
             data.image[aoconfID_LIMIT_modes].md[0].cnt0++;
             data.image[aoconfID_LIMIT_modes].md[0].write = 0;
 
+			// update block limits to drive average limit coefficients to 1
             data.image[IDatlimbcoeff].md[0].write = 1;
             for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
             {
