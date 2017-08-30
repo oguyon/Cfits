@@ -543,7 +543,7 @@ static void *compute_function_imtotal( void *ptr )
     int semval;
 
 	#ifdef _PRINT_TEST
-	printf("TEST - ENTERING compute_function_imtotal\n");
+	printf("TEST - =========== ENTERING compute_function_imtotal ===================\n");
 	fflush(stdout);
 	#endif
 
