@@ -100,7 +100,7 @@ loopnb=$(cat LOOPNUMBER)
 
 ./AOloopControl -n aol${loopnb}latency << EOF
 creaimshm aol${loopnb}_wfsavecoeff 1 1
-aol${loopnb}_wfsavecoeff=$1
+setpix aol${loopnb}_wfsavecoeff $1 0 0
 aolmkwfsres ${loopnb} aol${loopnb}_wfsavecoeff
 exitCLI
 EOF
