@@ -18,7 +18,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-//#define _PRINT_TEST
+#define _PRINT_TEST
 
 
 
@@ -543,10 +543,10 @@ static void *compute_function_imtotal( void *ptr )
     int semval;
 	float IMTOTAL;
 	
-	#ifdef _PRINT_TEST
+
 	printf("TEST - =========== ENTERING compute_function_imtotal ===================\n");
 	fflush(stdout);
-	#endif
+
 
     nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
 
