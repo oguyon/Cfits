@@ -353,7 +353,7 @@ if [ "${procONstat}" = "OFF" ]; then
  
  menuitems+=( "LPdmCa" " DMCAV [$LOOPPROCESS_DMCAVE] Toggle loop process : Running average of dmC" )
  
- menuitems+=( "LPwfsresa" " WFSAV [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres" )
+ menuitems+=( "LPwfsresa" " WFSAV [$LOOPPROCESS_WFSRESAVE] Toggle loop process : Compute and average wfsres -> _wfsres _wfsres_ave _wfsres_rms _wfsresm _wfsresm_ave" )
 
 else
  menuitems+=( "K" "\Z1\ZrLoop processes ON, press to STOP\Zn" )
@@ -390,9 +390,9 @@ else
  fi
 
  if [ "$LOOPPROCESS_WFSRESAVE" -eq "1" ]; then
-  menuitems+=( " " " WFSAV    \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn" )
+  menuitems+=( " " " WFSAV    \Z1\Zr[$LOOPPROCESS_WFSRESAVE] ---  RUNNING    ---   Compute and average wfsres\Zn -> _wfsres _wfsres_ave _wfsres_rms _wfsresm _wfsresm_ave" )
  else
-  menuitems+=( " " " WFSAV    [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres" )
+  menuitems+=( " " " WFSAV    [$LOOPPROCESS_WFSRESAVE] --- not running ---   Compute and average wfsres -> _wfsres _wfsres_ave _wfsres_rms _wfsresm _wfsresm_ave" )
  fi
 
 fi
