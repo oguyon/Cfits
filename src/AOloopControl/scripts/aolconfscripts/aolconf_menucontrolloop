@@ -509,7 +509,7 @@ ConfReadParam AUTOTUNELIMITdelta "0.0"; AUTOTUNELIMITdelta="$paramvalue"
 menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMITdelta}" )
 
 
-
+menuitems+=( " " " " )
 
 ConfReadParam AUTOTUNEGAINS_ON "OFF"; AUTOTUNEGAINS_ON="$paramvalue"
 if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
@@ -519,7 +519,7 @@ if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
   menuitems+=( "OFFatgain" "\Z1\ZrAUTOTUNE GAINS running, press to STOP\Zn" )
 fi
 
-
+menuitems+=( "agrun" "AutoGain run" )
 
 
 menuitems+=( " " " " )
@@ -1691,6 +1691,13 @@ EOF
 	;;
 
 
+
+
+	agrun) # run autogain command
+	tmuxname="aol${LOOPNUMBER}autogain"
+	tmux new-session -d -s ${tmuxname}
+	tmux send-keys -t ${tmuxname} "./auxscripts/aolautotunegains" C-m
+	;;
 
 
 
