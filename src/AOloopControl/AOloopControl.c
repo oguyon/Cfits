@@ -4269,9 +4269,6 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         else
             sem_wait(data.image[IDimWFS0].semptr[3]);
 
-		
-		printf("alpha = %g\n", data.image[IDalpha].array.F[0]);
-		fflush(stdout);
 
         // imWFS0/tot0 - WFSref -> out
 
