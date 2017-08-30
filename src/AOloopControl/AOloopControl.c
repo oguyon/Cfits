@@ -5015,7 +5015,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
     long kk;
     float *errarray;
     float mingain = 0.01;
-    float gainfactstep = 1.05;
+    float gainfactstep = 1.02;
     float *gainval_array;
     float *gainval1_array;
     float *gainval2_array;
@@ -5330,6 +5330,7 @@ fflush(stdout);
         array_asq[m] = (array_sig4[m]-array_sig1[m])/15.0;
         if(array_asq[m]<0.0)
             array_asq[m] = 0.0;
+        
         array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
 
         stdev[m] = sig0[m] - NOISEfactor[m]*array_sig[m] - ave0[m]*ave0[m];
