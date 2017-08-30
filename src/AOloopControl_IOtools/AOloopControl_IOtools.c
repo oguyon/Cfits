@@ -1021,7 +1021,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     if( ((AOconf[loop].GPUall==0)&&(RM==0)) || (RM==1))  // normalize WFS image by totalinv
     {
 #ifdef _PRINT_TEST
-        printf("TEST - Normalize [%d]: totalinv = %f\n", AOconf[loop].WFSnormalize, totalinv);
+        printf("TEST - Normalize [%d]: IMTOTAL = %g    totalinv = %g\n", AOconf[loop].WFSnormalize, IMTOTAL, totalinv);
         fflush(stdout);
 #endif
 
