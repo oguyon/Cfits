@@ -542,12 +542,20 @@ static void *compute_function_imtotal( void *ptr )
     long nelem;
     int semval;
 
-
+	#ifdef _PRINT_TEST
+	printf("TEST - ENTERING compute_function_imtotal\n");
+	fflush(stdout);
+	#endif
 
     nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
 
     for(;;)
     {
+		#ifdef _PRINT_TEST
+		printf("TEST - Waiting for semaphore\n");
+		fflush(stdout);
+		#endif
+
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         data.image[aoconfID_imWFS0tot].md[0].write = 1;
         IMTOTAL = 0.0;
