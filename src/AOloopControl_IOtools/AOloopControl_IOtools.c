@@ -559,9 +559,8 @@ static void *compute_function_imtotal( void *ptr )
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
 
 		#ifdef _PRINT_TEST
-		printf("TEST - COMPUTING TOTAL FOR IMAGE ID %ld\n", aoconfID_imWFS0);
+		printf("TEST - COMPUTING TOTAL FOR IMAGE ID %ld : %s\n", aoconfID_imWFS0, data.image[aoconfID_imWFS0].md[0].name);
 		fflush(stdout);
-		list_image_ID();
 		#endif
 	
 		
