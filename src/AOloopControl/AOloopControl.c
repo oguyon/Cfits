@@ -1078,6 +1078,10 @@ int_fast8_t init_AOloopControl()
 
     RegisterCLIcommand("aolDMprimWoff", __FILE__, AOloopControl_DMprimaryWrite_off, "turn DM primary write off", "no arg", "aolDMprimWoff", "int AOloopControl_DMprimaryWrite_off()");
 
+    RegisterCLIcommand("aolDMfiltWon", __FILE__, AOloopControl_DMfilteredWrite_on, "turn DM filtered write on", "no arg", "aolDMfiltWon", "int AOloopControl_DMfilteredWrite_on()");
+
+    RegisterCLIcommand("aolDMfiltWoff", __FILE__, AOloopControl_DMfilteredWrite_off, "turn DM filtered write off", "no arg", "aolDMfiltWoff", "int AOloopControl_DMfilteredWrite_off()");
+
     RegisterCLIcommand("aolAUTOTUNELIMon", __FILE__, AOloopControl_AUTOTUNE_LIMITS_on, "turn auto-tuning modal limits on", "no arg", "aolAUTOTUNELIMon", "int AOloopControl_AUTOTUNE_LIMITS_on()");
 
     RegisterCLIcommand("aolAUTOTUNELIMoff", __FILE__, AOloopControl_AUTOTUNE_LIMITS_off, "turn auto-tuning modal limits off", "no arg", "aolAUTOTUNELIMoff", "int AOloopControl_AUTOTUNE_LIMITS_off()");
@@ -1662,7 +1666,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
      * - ./conf/param_GPU0.txt           > AOconf[loop].GPU0 (0 if missing)
      * - ./conf/param_GPU1.txt           > AOconf[loop].GPU1 (0 if missing)
      * - ./conf/param_GPUall.txt        -> AOconf[loop].GPUall
-     * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWrite_ON
+     * - ./conf/param_DMprimWriteON.txt -> AOconf[loop].DMprimaryWriteON
      * 
      */ 
 	fprintf(fplog, "\n\n============== 1.6. Define GPU use ===================\n\n");
@@ -1670,8 +1674,8 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	AOconf[loop].GPU0 = AOloopControl_readParam_int("GPU0", 0, fplog);
 	AOconf[loop].GPU1 = AOloopControl_readParam_int("GPU1", 0, fplog);
 	AOconf[loop].GPUall = AOloopControl_readParam_int("GPUall", 0, fplog); // Skip CPU image scaling and go straight to GPUs ?
-	AOconf[loop].DMprimaryWrite_ON = AOloopControl_readParam_int("DMprimWriteON", 0, fplog);    // Direct DM write ?
-
+	AOconf[loop].DMprimaryWriteON = AOloopControl_readParam_int("DMprimaryWriteON", 0, fplog);    // Direct DM write ?
+	AOconf[loop].DMfilteredWriteON = AOloopControl_readParam_int("DMfilteredWriteON", 0, fplog);    // Filtered DM write ?
     
 
 	/** ### 1.7. WFS image total flux computation mode
@@ -1708,7 +1712,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     if(sprintf(name, "aol%ld_looptiming", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-    aoconfID_looptiming = AOloopControl_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
+    aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
 
 
 
@@ -1780,27 +1784,27 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     if(sprintf(name, "aol%ld_wfsdark", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     sprintf(fname, "./conf/shmim_wfsdark.fits");
-    aoconfID_wfsdark = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
+    aoconfID_wfsdark = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
 
 
 
     if(sprintf(name, "aol%ld_imWFS0", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
+    aoconfID_imWFS0 = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
     if(sprintf(name, "aol%ld_imWFS0tot", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_imWFS0tot = AOloopControl_2Dloadcreate_shmim(name, " ", 1, 1, 0.0);
+    aoconfID_imWFS0tot = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", 1, 1, 0.0);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
     if(sprintf(name, "aol%ld_imWFS1", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_imWFS1 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
+    aoconfID_imWFS1 = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
 
     if(sprintf(name, "aol%ld_imWFS2", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_imWFS2 = AOloopControl_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
+    aoconfID_imWFS2 = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
 
 
 
@@ -1814,7 +1818,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     if(sprintf(fname, "./conf/shmim_wfsref0.fits") < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-    aoconfID_wfsref0 = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
+    aoconfID_wfsref0 = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
     AOconf[loop].init_wfsref0 = 1;
 
     if(sprintf(name, "aol%ld_wfsref", loop) < 1)
@@ -1823,7 +1827,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     if(sprintf(fname, "./conf/shmim_wfsref.fits") < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-    aoconfID_wfsref = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
+    aoconfID_wfsref = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
 
     if(initwfsref==0)
     {
@@ -2086,38 +2090,38 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         // Load/create modal command vector memory
         if(sprintf(name, "aol%ld_DMmode_cmd", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_cmd_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
+        aoconfID_cmd_modes = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
 
 
         if(sprintf(name, "aol%ld_DMmode_meas", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_meas_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
+        aoconfID_meas_modes = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
 
         if(sprintf(name, "aol%ld_DMmode_AVE", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_AVE_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
+        aoconfID_AVE_modes = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
 
         if(sprintf(name, "aol%ld_DMmode_RMS", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_RMS_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
+        aoconfID_RMS_modes = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 0.0);
 
         if(sprintf(name, "aol%ld_DMmode_GAIN", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_DMmode_GAIN = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 1.0);
+        aoconfID_DMmode_GAIN = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 1.0);
 
         if(sprintf(name, "aol%ld_DMmode_LIMIT", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_LIMIT_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 1.0);
+        aoconfID_LIMIT_modes = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 1.0);
 
         if(sprintf(name, "aol%ld_DMmode_MULTF", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_MULTF_modes = AOloopControl_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 1.0);
+        aoconfID_MULTF_modes = AOloopControl_IOtools_2Dloadcreate_shmim(name, "", AOconf[loop].NBDMmodes, 1, 1.0);
 
 
         if(sprintf(name, "aol%ld_wfsmask", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         sprintf(fname, "conf/%s.fits", name);
-        aoconfID_wfsmask = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 1.0);
+        aoconfID_wfsmask = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 1.0);
         AOconf[loop].activeWFScnt = 0;
         for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS; ii++)
             if(data.image[aoconfID_wfsmask].array.F[ii]>0.5)
@@ -2127,7 +2131,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/%s.fits", name) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_dmmask = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, 1.0);
+        aoconfID_dmmask = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, 1.0);
         AOconf[loop].activeDMcnt = 0;
         for(ii=0; ii<AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
             if(data.image[aoconfID_dmmask].array.F[ii]>0.5)
@@ -2141,7 +2145,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         if(sprintf(fname, "conf/shmim_respM.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-        aoconfID_respM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].respMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes, 0.0);
+        aoconfID_respM = AOloopControl_IOtools_3Dloadcreate_shmim(AOconf[loop].respMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes, 0.0);
         AOconf[loop].init_RM = 1;
 
 
@@ -2150,7 +2154,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         if(sprintf(fname, "conf/shmim_contrM.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-        aoconfID_contrM = AOloopControl_3Dloadcreate_shmim(AOconf[loop].contrMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes, 0.0);
+        aoconfID_contrM = AOloopControl_IOtools_3Dloadcreate_shmim(AOconf[loop].contrMname, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBDMmodes, 0.0);
         AOconf[loop].init_CM = 1;
 
         if((fp=fopen("conf/param_NBmodeblocks.txt", "r"))==NULL)
@@ -2176,13 +2180,13 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_contrMc.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_contrMc = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizeDM, 0.0);
+        aoconfID_contrMc = AOloopControl_IOtools_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizeDM, 0.0);
 
         if(sprintf(name, "aol%ld_contrMcact", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_contrMcact_00.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_contrMcact[0] = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt, 0.0);
+        aoconfID_contrMcact[0] = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt, 0.0);
 
 
 
@@ -2192,19 +2196,19 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         if(sprintf(fname, "conf/shmim_gainb.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-        aoconfID_gainb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
+        aoconfID_gainb = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
 
         if(sprintf(name, "aol%ld_multfb", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_multfb.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_multfb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
+        aoconfID_multfb = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
 
         if(sprintf(name, "aol%ld_limitb", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_limitb.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-        aoconfID_limitb = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
+        aoconfID_limitb = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
 
 
 #ifdef _PRINT_TEST
@@ -2232,7 +2236,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             printf("FILE = %s\n", fname);
             printf("====== LOADING %s to %s\n", fname, name);
             fflush(stdout);
-            if((ID=AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, 0, 0.0))!=-1)
+            if((ID=AOloopControl_IOtools_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexDM, AOconf[loop].sizeyDM, 0, 0.0))!=-1)
                 AOconf[loop].NBmodes_block[kk] = data.image[ID].md[0].size[2];
 
 			int m;
@@ -2247,7 +2251,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             printf("====== LOADING %s to %s\n", fname, name);
             fflush(stdout);
-            AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk], 0.0);
+            AOloopControl_IOtools_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk], 0.0);
 
 
             if(sprintf(name, "aol%ld_contrM%02ld", loop, kk) < 1)
@@ -2256,14 +2260,14 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             printf("====== LOADING %s to %s\n", fname, name);
             fflush(stdout);
-            AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk], 0.0);
+            AOloopControl_IOtools_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].NBmodes_block[kk], 0.0);
 
 
             if(sprintf(name, "aol%ld_contrMc%02ld", loop, kk) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             if(sprintf(fname, "conf/%s.fits", name) < 1)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-            ID = AOloopControl_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM, 0.0);
+            ID = AOloopControl_IOtools_3Dloadcreate_shmim(name, fname, AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, AOconf[loop].sizexDM*AOconf[loop].sizeyDM, 0.0);
             if(kk==0)
                 for(ii=0; ii<AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS*AOconf[loop].sizexDM*AOconf[loop].sizeyDM; ii++)
                     data.image[aoconfID_contrMc].array.F[ii] = 0.0;
@@ -2277,7 +2281,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
                 printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
             //   sprintf(fname, "conf/shmim_contrMcact%02ld_00", kk);
             printf("====== LOADING %s to %s  size %ld %ld\n", fname, name,  AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt);
-            ID = AOloopControl_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt, 0.0);
+            ID = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt, 0.0);
 
             if(kk==0)
                 for(ii=0; ii<AOconf[loop].activeWFScnt*AOconf[loop].activeDMcnt; ii++)
@@ -2447,7 +2451,8 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
         char cntname[200];
 
         AOconf[loop].on = 0;
-        AOconf[loop].DMprimaryWrite_ON = 0;
+        AOconf[loop].DMprimaryWriteON = 0;
+        AOconf[loop].DMfilteredWriteON = 0;
         AOconf[loop].AUTOTUNE_LIMITS_ON = 0;
         AOconf[loop].AUTOTUNE_GAINS_ON = 0;
         AOconf[loop].ARPFon = 0;
@@ -2476,7 +2481,8 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
         {
             AOconf[loop].init = 0;
             AOconf[loop].on = 0;
-            AOconf[loop].DMprimaryWrite_ON = 0;
+            AOconf[loop].DMprimaryWriteON = 0;
+            AOconf[loop].DMfilteredWriteON = 0;
             AOconf[loop].ARPFon = 0;
             AOconf[loop].cnt = 0;
             AOconf[loop].cntmax = 0;
@@ -2799,7 +2805,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
         if(sprintf(name, "%s%ld", ID_WFSzp_name, ch) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-        AOloopControl_2Dloadcreate_shmim(name, "", wfsxsize, wfsysize, 0.0);
+        AOloopControl_IOtools_2Dloadcreate_shmim(name, "", wfsxsize, wfsysize, 0.0);
         COREMOD_MEMORY_image_set_createsem(name, 10);
         IDwfszparray[ch] = image_ID(name);
     }
@@ -3007,7 +3013,8 @@ int_fast8_t AOloopControl_run()
     {
         AOconf[loop].kill = 0;
         AOconf[loop].on = 0;
-        AOconf[loop].DMprimaryWrite_ON = 0;
+        AOconf[loop].DMprimaryWriteON = 0;
+        AOconf[loop].DMfilteredWriteON = 0;
         AOconf[loop].ARPFon = 0;
         printf("entering loop ...\n");
         fflush(stdout);
@@ -3079,11 +3086,11 @@ int_fast8_t AOloopControl_run()
                 if(AOconf[loop].CMMODE==0)  // 2-step : WFS -> mode coeffs -> DM act
                 {
 #ifdef _PRINT_TEST
-                    printf("TEST -  DMprimaryWrite_ON = %d\n", AOconf[loop].DMprimaryWrite_ON);
+                    printf("TEST -  DMprimaryWriteON = %d\n", AOconf[loop].DMprimaryWriteON);
                     fflush(stdout);
 #endif
 
-                    if(AOconf[loop].DMprimaryWrite_ON==1) // if Writing to DM
+                    if(AOconf[loop].DMprimaryWriteON==1) // if Writing to DM
                     {
 #ifdef _PRINT_TEST
                         printf("TEST -  gain = %f\n", AOconf[loop].gain);
@@ -3097,7 +3104,7 @@ int_fast8_t AOloopControl_run()
                 }
                 else // 1 step: WFS -> DM act
                 {
-                    if(AOconf[loop].DMprimaryWrite_ON==1) // if Writing to DM
+                    if(AOconf[loop].DMprimaryWriteON==1) // if Writing to DM
                     {
                         data.image[aoconfID_dmC].md[0].write = 1;
 
@@ -4648,7 +4655,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-    while (1)
+    for(;;)
     {
 		long modevalDMindex0, modevalDMindex1;
 		
@@ -4809,6 +4816,18 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         data.image[IDmodevalDMnowfilt].md[0].cnt1 = modevalDMindex;
         data.image[IDmodevalDMnowfilt].md[0].cnt0++;
         data.image[IDmodevalDMnowfilt].md[0].write = 0;
+
+		// IF MODAL DM, AND FILTERED DM WRITE IS ON, SEND TO DM
+		if((AOconf[loop].DMfilteredWriteON==1) && (AOconf[loop].DMMODE==1))
+		{
+			data.image[aoconfID_dmC].md[0].write = 1;
+			memcpy(data.image[aoconfID_dmC].array.F, data.image[IDmodevalDMnowfilt].array.F, sizeof(float)*NBmodes);
+			COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmC, -1);
+			data.image[aoconfID_dmC].md[0].cnt1 = modevalDMindex;
+			data.image[aoconfID_dmC].md[0].cnt0++;
+			data.image[aoconfID_dmC].md[0].write = 0;			
+		}
+
 
         AOconf[loop].statusM = 6;
 
@@ -5556,7 +5575,7 @@ int_fast8_t AOloopControl_loopreset()
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE                           */
+/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY AND FILTERED DM WRITE                           */
 /* =============================================================================================== */
 
 int_fast8_t AOloopControl_DMprimaryWrite_on()
@@ -5564,7 +5583,7 @@ int_fast8_t AOloopControl_DMprimaryWrite_on()
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
-    AOconf[LOOPNUMBER].DMprimaryWrite_ON = 1;
+    AOconf[LOOPNUMBER].DMprimaryWriteON = 1;
     AOloopControl_perfTest_showparams(LOOPNUMBER);
 
     return 0;
@@ -5576,11 +5595,36 @@ int_fast8_t AOloopControl_DMprimaryWrite_off()
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
-    AOconf[LOOPNUMBER].DMprimaryWrite_ON = 0;
+    AOconf[LOOPNUMBER].DMprimaryWriteON = 0;
     AOloopControl_perfTest_showparams(LOOPNUMBER);
 
     return 0;
 }
+
+
+int_fast8_t AOloopControl_DMfilteredWrite_on()
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].DMfilteredWriteON = 1;
+    AOloopControl_perfTest_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+
+int_fast8_t AOloopControl_DMfilteredWrite_off()
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].DMfilteredWriteON = 0;
+    AOloopControl_perfTest_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
 
 
 /* =============================================================================================== */

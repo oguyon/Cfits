@@ -464,11 +464,19 @@ fi
 #  	 echo "${gainb[${gi}]}" > ./conf/conf_gainb${gi}.txt
 #  	 tmux send-keys -t aol${LOOPNUMBER}-ctr "aolsetmbgain ${gi} ${gainb[${gi}]} 1" C-m
 
-if [ "$DMprimWriteON" = "1" ]; then
+if [ "$DMprimaryWriteON" = "1" ]; then
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolDMprimWon\" C-m" >> $scriptfile
 else
 echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolDMprimWoff\" C-m" >> $scriptfile
 fi
+
+if [ "$DMfilteredWriteON" = "1" ]; then
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolDMfiltWon\" C-m" >> $scriptfile
+else
+echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolDMfiltWoff\" C-m" >> $scriptfile
+fi
+
+
 
 echo "sleep 2" >> $scriptfile
 

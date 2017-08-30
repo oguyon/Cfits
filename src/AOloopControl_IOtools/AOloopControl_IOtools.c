@@ -206,9 +206,9 @@ extern AOLOOPCONTROL_CONF *AOconf; // declared in AOloopControl.c
 
 
 /** @brief CLI function for AOloopControl_camimage_extract2D_sharedmem_loop */
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
+int_fast8_t AOloopControl_IOtools_camimage_extract2D_sharedmem_loop_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,3)+CLI_checkarg(4,2)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0) {
-        AOloopControl_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string , data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
+        AOloopControl_IOtools_camimage_extract2D_sharedmem_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string , data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
         return 0;
     }
     else return 1;
@@ -236,9 +236,9 @@ int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop_cli() {
 
 
 /** @brief CLI function for AOloopControl_AveStream */
-int_fast8_t AOloopControl_AveStream_cli() {
+int_fast8_t AOloopControl_IOtools_AveStream_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,1)+CLI_checkarg(3,3)+CLI_checkarg(4,3)+CLI_checkarg(5,3)==0) {
-        AOloopControl_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
+        AOloopControl_IOtools_AveStream(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.numf, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.string);
         return 0;
     }
     else return 1;
@@ -246,10 +246,10 @@ int_fast8_t AOloopControl_AveStream_cli() {
 
 
 /** @brief CLI function for AOloopControl_frameDelay */
-int_fast8_t AOloopControl_frameDelay_cli()
+int_fast8_t AOloopControl_IOtools_frameDelay_cli()
 {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,5)+CLI_checkarg(4,2)==0)    {
-        AOloopControl_frameDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
+        AOloopControl_IOtools_frameDelay(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else        return 1;
@@ -257,9 +257,9 @@ int_fast8_t AOloopControl_frameDelay_cli()
 
 
 /** @brief CLI function for AOloopControl_stream3Dto2D */
-int_fast8_t AOloopControl_stream3Dto2D_cli() {
+int_fast8_t AOloopControl_IOtools_stream3Dto2D_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0) {
-        AOloopControl_stream3Dto2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
+        AOloopControl_IOtools_stream3Dto2D(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else return 1;
@@ -304,7 +304,7 @@ int_fast8_t init_AOloopControl_IOtools()
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-    RegisterCLIcommand("cropshim", __FILE__, AOloopControl_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <optional dark> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin null imout 32 32 153 201", "int AOloopControl_camimage_extract2D_sharedmem_loop(char *in_name, const char *dark_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
+    RegisterCLIcommand("cropshim", __FILE__, AOloopControl_IOtools_camimage_extract2D_sharedmem_loop_cli, "crop shared mem image", "<input image> <optional dark> <output image> <sizex> <sizey> <xstart> <ystart>" , "cropshim imin null imout 32 32 153 201", "int AOloopControl_IOtools_camimage_extract2D_sharedmem_loop(char *in_name, const char *dark_name, char *out_name, long size_x, long size_y, long xstart, long ystart)");
 
 
 
@@ -317,11 +317,11 @@ int_fast8_t init_AOloopControl_IOtools()
 /* =============================================================================================== */
 
 
-    RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
+    RegisterCLIcommand("aveACshmim", __FILE__, AOloopControl_IOtools_AveStream_cli, "average and AC shared mem image", "<input image> <coeff> <output image ave> <output AC> <output RMS>" , "aveACshmim imin 0.01 outave outAC outRMS", "int AOloopControl_IOtools_AveStream(char *IDname, double alpha, char *IDname_out_ave, char *IDname_out_AC, char *IDname_out_RMS)");
 
-    RegisterCLIcommand("aolframedelay", __FILE__, AOloopControl_frameDelay_cli, "introduce temporal delay", "<in> <temporal kernel> <out> <sem index>","aolframedelay in kern out 0","long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem)");
+    RegisterCLIcommand("aolframedelay", __FILE__, AOloopControl_IOtools_frameDelay_cli, "introduce temporal delay", "<in> <temporal kernel> <out> <sem index>","aolframedelay in kern out 0","long AOloopControl_IOtools_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem)");
 
-    RegisterCLIcommand("aolstream3Dto2D", __FILE__, AOloopControl_stream3Dto2D_cli, "remaps 3D cube into 2D image", "<input 3D stream> <output 2D stream> <# cols> <sem trigger>" , "aolstream3Dto2D in3dim out2dim 4 1", "long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)");
+    RegisterCLIcommand("aolstream3Dto2D", __FILE__, AOloopControl_IOtools_stream3Dto2D_cli, "remaps 3D cube into 2D image", "<input 3D stream> <output 2D stream> <# cols> <sem trigger>" , "aolstream3Dto2D in3dim out2dim 4 1", "long AOloopControl_IOtools_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)");
 
 
 
@@ -366,7 +366,7 @@ int_fast8_t init_AOloopControl_IOtools()
 //
 // every time im_name changes (counter increments), crop it to out_name in shared memory
 //
-int_fast8_t AOloopControl_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)
+int_fast8_t AOloopControl_IOtools_camimage_extract2D_sharedmem_loop(const char *in_name, const char *dark_name, const char *out_name, long size_x, long size_y, long xstart, long ystart)
 {
     long iiin,jjin, iiout, jjout;
     long IDin, IDout, IDdark;
@@ -1068,7 +1068,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 
 
 
-long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue)
+long AOloopControl_IOtools_2Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, float DefaultValue)
 {
     long ID;
     int CreateSMim = 0;
@@ -1222,7 +1222,7 @@ long AOloopControl_2Dloadcreate_shmim(const char *name, const char *fname, long 
 
 
 
-long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue)
+long AOloopControl_IOtools_3Dloadcreate_shmim(const char *name, const char *fname, long xsize, long ysize, long zsize, float DefaultValue)
 {
     long ID;
     int CreateSMim;
@@ -1485,7 +1485,7 @@ long AOloopControl_3Dloadcreate_shmim(const char *name, const char *fname, long 
  * 
  */
 
-int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char *IDname_out_ave, const char *IDname_out_AC, const char *IDname_out_RMS)
+int_fast8_t AOloopControl_IOtools_AveStream(const char *IDname, double alpha, const char *IDname_out_ave, const char *IDname_out_AC, const char *IDname_out_RMS)
 {
     long IDin;
     long IDout_ave;
@@ -1551,7 +1551,7 @@ int_fast8_t AOloopControl_AveStream(const char *IDname, double alpha, const char
 
 
 
-long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem)
+long AOloopControl_IOtools_frameDelay(const char *IDin_name, const char *IDkern_name, const char *IDout_name, int insem)
 {
     long IDout;
     long IDin;
@@ -1662,7 +1662,7 @@ long AOloopControl_frameDelay(const char *IDin_name, const char *IDkern_name, co
 
 
 
-long AOloopControl_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)
+long AOloopControl_IOtools_stream3Dto2D(const char *in_name, const char *out_name, int NBcols, int insem)
 {
     long IDin, IDout;
     uint_fast16_t xsize0, ysize0, zsize0;

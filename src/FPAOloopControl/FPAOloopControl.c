@@ -485,7 +485,7 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
 
     sprintf(name, "FPaol%ld_wfsdark", loop);
     sprintf(fname, "./conf/FPaol%ld_wfsdark.fits", loop);
-    FPaoconfID_wfsdark = AOloopControl_2Dloadcreate_shmim(name, fname, FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS, 0.0);
+    FPaoconfID_wfsdark = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS, 0.0);
     
     
 
@@ -534,11 +534,11 @@ int FPAOloopControl_loadconfigure(long loop, int mode, int level)
 
 
     sprintf(name, "FPaol%ld_imWFS0", loop);
-    FPaoconfID_imWFS0 = AOloopControl_2Dloadcreate_shmim(name, " ", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS, 0.0);
+    FPaoconfID_imWFS0 = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS, 0.0);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
     sprintf(name, "FPaol%ld_imWFS1", loop);
-    FPaoconfID_imWFS1 = AOloopControl_2Dloadcreate_shmim(name, " ", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS, 0.0);
+    FPaoconfID_imWFS1 = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", FPAOconf[loop].sizexWFS, FPAOconf[loop].sizeyWFS, 0.0);
     COREMOD_MEMORY_image_set_createsem(name, 10);
 
 

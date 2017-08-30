@@ -173,8 +173,9 @@ typedef struct
     int_fast8_t on;                           /**< goes to 1 when loop starts, put to 0 to turn loop off */
     float gain;                               /**< overall loop gain */
     uint_fast16_t framesAve;                  /**< number of WFS frames to average */
-	int_fast8_t DMprimaryWrite_ON;            /**< primary DM write */
+	int_fast8_t DMprimaryWriteON;            /**< primary DM write */
 	int_fast8_t CMMODE;                       /**< Combined matrix. 0: matrix is WFS pixels -> modes, 1: matrix is WFS pixels -> DM actuators */
+	int_fast8_t DMfilteredWriteON;           /**< Filtered write to DM */
  
 	// MODAL AUTOTUNING 
 	// limits
@@ -417,12 +418,16 @@ int_fast8_t AOloopControl_logoff();
 
 
 /* =============================================================================================== */
-/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY DM WRITE                           */
+/** @name AOloopControl - 8.3. LOOP CONTROL INTERFACE - PRIMARY AND FILTERED DM WRITE              */
 /* =============================================================================================== */
 
 int_fast8_t AOloopControl_DMprimaryWrite_on();
 
 int_fast8_t AOloopControl_DMprimaryWrite_off();
+
+int_fast8_t AOloopControl_DMfilteredWrite_on();
+
+int_fast8_t AOloopControl_DMfilteredWrite_off();
 
 
 /* =============================================================================================== */

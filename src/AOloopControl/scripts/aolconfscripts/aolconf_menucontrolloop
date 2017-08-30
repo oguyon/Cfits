@@ -468,11 +468,18 @@ menuitems+=( "m" "actuator max lim  =   ${loopmaxlim}" )
 
 
 
-ConfReadParam DMprimWriteON "0"; DMprimWriteON="$paramvalue"
-if [ "$DMprimWriteON" = "0" ]; then
+ConfReadParam DMprimaryWriteON "0"; DMprimaryWriteON="$paramvalue"
+if [ "$DMprimaryWriteON" = "0" ]; then
 menuitems+=( "DMpWon" " DM Primary Write is OFF - press to START" )
 else
 menuitems+=( "DMpWoff" "\Z1\Zr DM Primary Write is  ON - press to STOP\Zn  " )
+fi
+
+ConfReadParam DMfilteredWriteON "0"; DMfilteredWriteON="$paramvalue"
+if [ "$DMfilteredWriteON" = "0" ]; then
+menuitems+=( "DMfWon" " DM Filtered Write is OFF - press to START" )
+else
+menuitems+=( "DMfWoff" "\Z1\Zr DM Filtered Write is  ON - press to STOP\Zn  " )
 fi
 
 
@@ -1575,18 +1582,35 @@ menucontrolloop_default="wzpoinit"
 
 
 	DMpWon)
-	DMprimWriteON="1"
-	echo "$DMprimWriteON" > ./conf/param_DMprimWriteON.txt
+	DMprimaryWriteON="1"
+	echo "$DMprimaryWriteON" > ./conf/param_DMprimaryWriteON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWon" C-m
 	menucontrolloop_default="DMpWoff"
 	;;
 
 	DMpWoff)
-	DMprimWriteON="0"
-	echo "$DMprimWriteON" > ./conf/param_DMprimWriteON.txt
+	DMprimaryWriteON="0"
+	echo "$DMprimaryWriteON" > ./conf/param_DMprimaryWriteON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMprimWoff" C-m
 	menucontrolloop_default="DMpWon"
 	;;
+
+	DMfWon)
+	DMfilteredWriteON="1"
+	echo "$DMfilteredWriteON" > ./conf/param_DMfilteredWriteON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMfiltWon" C-m
+	menucontrolloop_default="DMfWoff"
+	;;
+
+	DMfWoff)
+	DMfilteredWriteON="0"
+	echo "$DMfilteredWriteON" > ./conf/param_DMfilteredWriteON.txt
+	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolDMfiltWoff" C-m
+	menucontrolloop_default="DMfWon"
+	;;
+
+
+
 
 
 	limreset)
