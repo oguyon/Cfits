@@ -18,7 +18,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-#define _PRINT_TEST
+//#define _PRINT_TEST
 
 
 
@@ -997,10 +997,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             AOconf[loop].WFStotalflux = data.image[aoconfID_imWFS0tot].array.F[0]; // from last loop
             if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
             {
-				#ifdef _PRINT_TEST
-				printf("TEST - Start Thread =============\n");
+				
+				printf("Starting Image Total Thread \n");
 				fflush(stdout);
-				#endif
+				
 				
                 pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
                 AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
