@@ -18,7 +18,7 @@
 #define _GNU_SOURCE
 
 // uncomment for test print statements to stdout
-#define _PRINT_TEST
+//#define _PRINT_TEST
 
 
 
@@ -579,6 +579,9 @@ static void *compute_function_imtotal( void *ptr )
                 IMTOTAL += data.image[aoconfID_imWFS0].array.F[ii];
         }
         data.image[aoconfID_imWFS0tot].array.F[0] = IMTOTAL;
+        
+        AOconf[loop].WFStotalflux = IMTOTAL;
+        
         COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
         data.image[aoconfID_imWFS0tot].md[0].cnt0++;
         data.image[aoconfID_imWFS0tot].md[0].write = 0;
@@ -994,7 +997,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 			fflush(stdout);
 			#endif
 			
-            AOconf[loop].WFStotalflux = data.image[aoconfID_imWFS0tot].array.F[0]; // from last loop
+           // AOconf[loop].WFStotalflux = data.image[aoconfID_imWFS0tot].array.F[0]; // from last loop
             if(AOLCOMPUTE_TOTAL_ASYNC_THREADinit==0)
             {
 				
