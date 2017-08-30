@@ -5275,7 +5275,7 @@ fflush(stdout);
 
     cnt = 0;
     cntstart = 10;
-    while(cnt<5000)
+    while(cnt<50000)
     {
         sem_wait(data.image[IDmodevalOL].semptr[5]);
 
