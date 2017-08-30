@@ -491,7 +491,8 @@ echo "tmux send-keys -t $tmuxname \"aolzpwfscloop aol${LOOPNUMBER}_wfszpo 8 aol$
 fi
 
 
-ConfReadParam DMMODE "0"; DMMODE="$paramvalue" # DM index 
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue" # DM mode, 0=zonal, 1=modal
+ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
 if [ "$CMMODE" = "0" ]; then  # if CM multiplication outputs modes
 #echo "Linking    /tmp/aol${LOOPNUMBER}_DMmode_meas.im.shm  - /tmp/aol${LOOPNUMBER}_modeval.im.shm"
 echo "rm /tmp/aol${LOOPNUMBER}_modeval.im.shm" >> $scriptfile

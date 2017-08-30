@@ -68,8 +68,8 @@ menuitems+=( " " " " )
 # DM mode
 # ZONAL : physical actuators on spatial coordinates
 # MODAL : each DM actuiator represents a single WF mode
-ConfReadParam DMMODE "ZONAL"; DMMODE="$paramvalue"
-if [ "$DMMODE" = "ZONAL" ]; then
+ConfReadParam DMMODE "0"; DMMODE="$paramvalue"
+if [ "$DMMODE" = "0" ]; then
 menuitems+=( "DMmodeM" "\Zb\Zr DM is ZONAL\Zn  Modes constructed from spatial DM actuators      (select to toggle to MODAL)" )
 else
 menuitems+=( "DMmodeZ" "\Zb\Zr DM is MODAL\Zn  Each DM actuator = 1 mode                        (select to toggle to ZONAL)" )
@@ -437,7 +437,7 @@ echo "$DMysize" > ./conf/param_DMysize.txt
     nolink)
 aoconflog "set DM nolink"
 
-DMMODE="ZONAL"
+DMMODE="0"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 
@@ -486,7 +486,7 @@ echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation chann
     dmolink)
 aoconflog "set DM link"
 
-DMMODE="MODAL"
+DMMODE="1"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 
@@ -595,14 +595,14 @@ echo "dm${DMindex}disp02" > ./conf/streamlink_dmRM.name.txt # DM actuation chann
 
 
 DMmodeM)
-DMMODE="MODAL"
+DMMODE="1"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 menutop_default="DMmodeZ"
 ;;
 
 DMmodeZ)
-DMMODE="ZONAL"
+DMMODE="0"
 DMMODEfile="conf/param_DMMODE.txt"
 echo "$DMMODE" > $DMMODEfile
 menutop_default="DMmodeM"

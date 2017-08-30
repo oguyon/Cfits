@@ -45,7 +45,7 @@ menuitems+=( "SVDla" "            SVD limit for full built           ${SVDlimall
 # ConfReadParam  ""; =${paramvalue}
 
 
-if [ "$DMMODE" = "MODAL" ]; then
+if [ "$DMMODE" = "1" ]; then
 
 ConfReadParam NBmodeblocks "0"; NBmodeblocks=${paramvalue}
 menuitems+=( "sNBb" "[$NBmodeblocks] Breaking $mNBmodes modes into ${NBmodeblocks} blocks" )
@@ -127,7 +127,7 @@ fi
 menuitems+=( "RM2CMm" "Compute Modes and Control matrix" )
 
 
-fi  # end of:  if [ "$DMMODE" = "MODAL" ]; then
+fi  # end of:  if [ "$DMMODE" = "1" ]; then
 
 
 
@@ -146,8 +146,8 @@ menuitems+=( "RM2CM" "Compute Control matrix contrM only (-> eigenv.dat)  [${SVD
 
 
 
-ConfReadParam DMMODE "ZONAL"; DMMODE=${paramvalue}
-if [ "$DMMODE" = "ZONAL" ]; then
+ConfReadParam DMMODE "0"; DMMODE=${paramvalue}
+if [ "$DMMODE" = "0" ]; then
 
 ConfReadParam CMMODE "0"; CMMODE=${paramvalue}
  if [ "$CMMODE" = "1" ]; then
