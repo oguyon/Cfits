@@ -988,6 +988,12 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
                 sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
             }
             sem_getvalue(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, &semval);
+            
+            #ifdef _PRINT_TEST
+			printf("TEST - semaphore = %d / %d\n", semval, SEMAPHORE_MAXVAL);	
+			fflush(stdout);
+			#endif
+				
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         }
