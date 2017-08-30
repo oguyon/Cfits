@@ -557,6 +557,15 @@ static void *compute_function_imtotal( void *ptr )
 		#endif
 
         sem_wait(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
+
+		#ifdef _PRINT_TEST
+		printf("TEST - COMPUTING TOTAL FOR IMAGE ID %ld\n", aoconfID_imWFS0);
+		fflush(stdout);
+		list_image_ID();
+		#endif
+	
+		
+
         data.image[aoconfID_imWFS0tot].md[0].write = 1;
         IMTOTAL = 0.0;
         if(aoconfID_wfsmask!=-1)
