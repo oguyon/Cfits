@@ -4821,7 +4821,14 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         data.image[IDmodevalDMnow].md[0].cnt0++;
         data.image[IDmodevalDMnow].md[0].write = 0;
 
-        COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnowfilt, -1);
+		if(AOconf[loop].DMfilteredWriteON==1)
+			COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnowfilt, -1);
+        else
+			{
+				// DM write triggered by sem 2
+				// posting all sems except 2 to block DM write
+				COREMOD_MEMORY_image_set_sempost_excl_byID(IDmodevalDMnowfilt, 2);
+			}
         data.image[IDmodevalDMnowfilt].md[0].cnt1 = modevalDMindex;
         data.image[IDmodevalDMnowfilt].md[0].cnt0++;
         data.image[IDmodevalDMnowfilt].md[0].write = 0;

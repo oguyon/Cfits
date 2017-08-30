@@ -4227,8 +4227,9 @@ long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)
     return(ID);
 }
 
-
-// if index < 0, post all semaphores
+//
+// if index = -1, post all semaphores
+//
 long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 {
     long s;
@@ -4257,6 +4258,30 @@ long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 
     return(ID);
 }
+
+
+//
+// post all semaphores except one
+//
+long COREMOD_MEMORY_image_set_sempost_excl_byID(long ID, long index)
+{
+    long s;
+    int semval;
+
+
+    for(s=0; s<data.image[ID].md[0].sem; s++)
+        {
+			if(s!=index)
+			{
+				sem_getvalue(data.image[ID].semptr[s], &semval);
+				if(semval<SEMAPHORE_MAXVAL)
+					sem_post(data.image[ID].semptr[s]);
+			}
+        }
+
+    return(ID);
+}
+
 
 
 
