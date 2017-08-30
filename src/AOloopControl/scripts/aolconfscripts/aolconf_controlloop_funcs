@@ -595,7 +595,7 @@ echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
 logRunningProcessQ0 "aolmkWFSres" "$tmuxname" "compute and average WFS residual"
 echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolmkWFSres.runprocQ runproc/aolmkWFSres.runproc\" C-m" >> $scriptfile
-echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmkWFSres 0.0005\" C-m" >> $scriptfile
+echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmkWFSres\" C-m" >> $scriptfile
 fi
 
 

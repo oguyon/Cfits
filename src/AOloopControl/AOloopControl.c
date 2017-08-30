@@ -482,8 +482,8 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop_cli() {
 
 /** @brief CLI function for AOloopControl_computeWFSresidualimage */
 int_fast8_t AOloopControl_computeWFSresidualimage_cli() {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,1)==0) {
-        AOloopControl_computeWFSresidualimage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numf);
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,4)==0) {
+        AOloopControl_computeWFSresidualimage(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
         return 0;
     }
     else return 1;
@@ -1206,7 +1206,7 @@ int_fast8_t init_AOloopControl()
 
     RegisterCLIcommand("aolscangainb", __FILE__, AOloopControl_scanGainBlock_cli, "scan gain for block", "<blockNB> <NBAOsteps> <gainstart> <gainend> <NBgainpts>", "aolscangainb", "int AOloopControl_scanGainBlock(long NBblock, long NBstep, float gainStart, float gainEnd, long NBgain)");
 
-    RegisterCLIcommand("aolmkwfsres", __FILE__, AOloopControl_computeWFSresidualimage_cli, "compute WFS residual real time", "<loopnb> <averaging coeff>", "aolmkwfsres 2 0.001", "long AOloopControl_computeWFSresidualimage(long loop, float alpha)");
+    RegisterCLIcommand("aolmkwfsres", __FILE__, AOloopControl_computeWFSresidualimage_cli, "compute WFS residual real time", "<loopnb> <averaging coeff image>", "aolmkwfsres 2 coeffim", "long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)");
 
 
 
@@ -4175,7 +4175,7 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
  * 
  */
 
-long AOloopControl_computeWFSresidualimage(long loop, float alpha)
+long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 {
     long IDimWFS0, IDwfsref, IDwfsmask, IDtot, IDout, IDoutave, IDoutm, IDoutmave, IDoutrms;
     char imname[200];
@@ -4183,7 +4183,11 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
     long wfsxsize, wfsysize, wfsxysize;
     long cnt;
     long ii;
+	long IDalpha;
+	
 
+	IDalpha = image_ID(IDalpha_name);
+	
 
     if(sprintf(imname, "aol%ld_imWFS0", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -4204,6 +4208,8 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDtot = read_sharedmem_image(imname);
+	
+	
 
     wfsxsize = data.image[IDimWFS0].md[0].size[0];
     wfsysize = data.image[IDimWFS0].md[0].size[1];
@@ -4250,9 +4256,10 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
         data.image[IDoutrms].array.F[ii] = 0.0;
 
     free(sizearray);
-    printf("alpha = %f\n", alpha);
-    while(1)
+    
+    for(;;)
     {
+		
         if(data.image[IDimWFS0].md[0].sem==0)
         {
             while(cnt==data.image[IDimWFS0].md[0].cnt0) // test if new frame exists
@@ -4261,6 +4268,9 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
         }
         else
             sem_wait(data.image[IDimWFS0].semptr[3]);
+
+		
+
 
         // imWFS0/tot0 - WFSref -> out
 
@@ -4286,7 +4296,7 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 
         data.image[IDoutave].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
-            data.image[IDoutave].array.F[ii] = (1.0-alpha)*data.image[IDoutave].array.F[ii] + alpha*data.image[IDout].array.F[ii];
+            data.image[IDoutave].array.F[ii] = (1.0-data.image[IDalpha].array.F[0])*data.image[IDoutave].array.F[ii] + data.image[IDalpha].array.F[0]*data.image[IDout].array.F[ii];
         data.image[IDoutave].md[0].cnt0++;
         data.image[IDoutave].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDoutave, -1);
@@ -4304,7 +4314,7 @@ long AOloopControl_computeWFSresidualimage(long loop, float alpha)
 
         data.image[IDoutrms].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
-            data.image[IDoutrms].array.F[ii] = (1.0-alpha)*data.image[IDoutrms].array.F[ii] + alpha*(data.image[IDout].array.F[ii]-data.image[IDoutave].array.F[ii])*(data.image[IDout].array.F[ii]-data.image[IDoutave].array.F[ii]);
+            data.image[IDoutrms].array.F[ii] = (1.0-data.image[IDalpha].array.F[0])*data.image[IDoutrms].array.F[ii] + data.image[IDalpha].array.F[0]*(data.image[IDout].array.F[ii]-data.image[IDoutave].array.F[ii])*(data.image[IDout].array.F[ii]-data.image[IDoutave].array.F[ii]);
         data.image[IDoutrms].md[0].cnt0++;
         data.image[IDoutrms].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDoutrms, -1);

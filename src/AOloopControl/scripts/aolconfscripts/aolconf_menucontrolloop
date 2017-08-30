@@ -1493,7 +1493,7 @@ echo " ON" > $file
 sleep 0.2
 tmux new-session -d -s $tmuxname
 sleep 0.2
-tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 2.0 0.1 6" C-m
+tmux send-keys -t $tmuxname "./auxscripts/aolWFSresoffloadloop 0.1 0.1 6" C-m
 
 echo "WFS" > ./status/stat_zploopON6.txt
 tmuxname="aol${LOOPNUMBER}zploop6"

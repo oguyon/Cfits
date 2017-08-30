@@ -117,7 +117,6 @@ typedef struct
     int_fast8_t WFSnormalize;                 /**< 1 if each WFS frame should be normalized to 1 */
     float WFSnormfloor;                       /**< normalized by dividing by (total + AOconf[loop].WFSnormfloor)*AOconf[loop].WFSsize */
     float WFStotalflux;                       /**< Total WFS flux after dark subtraction */
- 
     /* =============================================================================================== */
 
 
@@ -367,7 +366,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_name, const char *WFSmodes_name, const char *outname);
 
-long AOloopControl_computeWFSresidualimage(long loop, float alpha);
+long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name);
 
 long AOloopControl_ComputeOpenLoopModes(long loop);
 
