@@ -547,15 +547,15 @@ fi
 echo "sleep 0.2" >> $scriptfile
 
 # process runs in CPU set aol0RT
-if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
-tmuxname="aol${LOOPNUMBER}dmfwb"
+if [ "$LOOPPROCESS_DMFILTW" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmfw"
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
 echo "tmux new-session -d -s $tmuxname" >> $scriptfile
 echo "sleep 0.2" >> $scriptfile
 logRunningProcessQ0 "aolmcoeffs2dmmap" "$tmuxname" "DM modal (post-filtering) write back"
 echo "tmux send-keys -t ${tmuxname} \"mv runproc/aolmcoeffs2dmmap.runprocQ runproc/aolmcoeffs2dmmap.runproc\" C-m" >> $scriptfile
-echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmcoeffs2dmmap -p ${tmuxname} -f ${GPUdmfwb}\" C-m" >> $scriptfile
+echo "tmux send-keys -t $tmuxname \"./auxscripts/aolmcoeffs2dmmap -p ${tmuxname} -f ${GPUdmfw}\" C-m" >> $scriptfile
 fi
 
 
@@ -668,8 +668,8 @@ echo "rm runproc/aolcompolm.runproc" >> $scriptfile
 echo "echo \"0\" > \"./status/stat_log_modeval_ol.txt\"" >> $scriptfile
 fi
 
-if [ "$LOOPPROCESS_DMFILTWB" -eq "1" ]; then
-tmuxname="aol${LOOPNUMBER}dmfwb"
+if [ "$LOOPPROCESS_DMFILTW" -eq "1" ]; then
+tmuxname="aol${LOOPNUMBER}dmfw"
 echo "tmux send-keys -t $tmuxname C-c" >> $scriptfile
 echo "tmux kill-session -t $tmuxname" >> $scriptfile
 echo "rm runproc/aolmcoeffs2dmmap.runproc" >> $scriptfile
