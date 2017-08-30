@@ -491,6 +491,7 @@ menuitems+=( " " " " )
 
 menuitems+=( "limreset" "Reset mode limit coefficients to 1.0" )
 
+
 ConfReadParam AUTOTUNELIMITS_ON "OFF"; AUTOTUNELIMITS_ON="$paramvalue"       
 if [ "$AUTOTUNELIMITS_ON" = "OFF" ]; then
   menuitems+=( "ONatlim" "[$AUTOTUNELIMITS_ON]  \Zb\Zu ==== START AUTOTUNE LIMITS loop ====\ZB\ZU" )
@@ -498,7 +499,7 @@ else
   menuitems+=( "OFFatlim" "[$AUTOTUNELIMITS_ON] \Z1\ZrAUTOTUNE LIMITS running, press to STOP\Zn" )
 fi
 
-ConfReadParam AUTOTUNELIMITperc "OFF"; AUTOTUNELIMITperc="$paramvalue"
+ConfReadParam AUTOTUNELIMITperc "0.0"; AUTOTUNELIMITperc="$paramvalue"
 menuitems+=( "atlp" "AUTOTUNE_LIMIT_perc         =   ${AUTOTUNELIMITperc}" )
 
 ConfReadParam AUTOTUNELIMITmcoeff "0.0"; AUTOTUNELIMITmcoeff="$paramvalue"
@@ -1635,14 +1636,14 @@ EOF
 	
 	ONatlim)
 	AUTOTUNELIMITS_ON=" ON"
-	echo " ON" > ./status/stat_AUTOTUNELIMITS_ON.txt
+	echo " ON" > ./conf/param_AUTOTUNELIMITS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMon" C-m
 	menucontrolloop_default="OFFatlim"
 	;;
 
 	OFFatlim)
 	AUTOTUNELIMITS_ON="OFF"
-	echo "OFF" > ./status/stat_AUTOTUNELIMITS_ON.txt
+	echo "OFF" > ./conf/param_AUTOTUNELIMITS_ON.txt
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
 	menucontrolloop_default="ONatlim"
 	;;
