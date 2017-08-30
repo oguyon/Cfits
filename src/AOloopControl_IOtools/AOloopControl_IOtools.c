@@ -114,7 +114,7 @@ extern long aoconfID_looptiming;         // declared in AOloopControl.c
 
 static sem_t AOLCOMPUTE_TOTAL_ASYNC_sem_name;
 
-
+static long long imtotalcnt;
 static int AOLCOMPUTE_DARK_SUBTRACT_THREADinit = 0;
 static int COMPUTE_DARK_SUBTRACT_NBTHREADS = 1;
 static sem_t AOLCOMPUTE_DARK_SUBTRACT_sem_name[32];
@@ -564,7 +564,7 @@ static void *compute_function_imtotal( void *ptr )
 		fflush(stdout);
 		#endif
 	
-		
+		imtotalcnt++;
 		
         data.image[aoconfID_imWFS0tot].md[0].write = 1;
         IMTOTAL = 0.0;
@@ -1004,6 +1004,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 				
                 pthread_create( &thread_computetotal_id, NULL, compute_function_imtotal, NULL);
                 AOLCOMPUTE_TOTAL_ASYNC_THREADinit = 1;
+                imtotalcnt = 0;
                 sem_init(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, 0, 0);
             }
             sem_getvalue(&AOLCOMPUTE_TOTAL_ASYNC_sem_name, &semval);
@@ -1012,7 +1013,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 			printf("TEST - semaphore = %d / %d\n", semval, SEMAPHORE_MAXVAL);	
 			fflush(stdout);
 			#endif
-				
+			data.image[aoconfID_imWFS0tot].md[0].cnt1 = imtotalcnt;
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(&AOLCOMPUTE_TOTAL_ASYNC_sem_name);
         }
