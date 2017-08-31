@@ -489,7 +489,7 @@ fi
 
 menuitems+=( " " " " )
 
-menuitems+=( "limreset" "Reset mode limit coefficients to 1.0" )
+menuitems+=( "limreset" "Reset individual mode limit coefficients to 1.0" )
 
 
 ConfReadParam AUTOTUNELIMITS_ON "OFF"; AUTOTUNELIMITS_ON="$paramvalue"       
@@ -510,6 +510,8 @@ menuitems+=( "atld" "AUTOTUNE_LIMIT_delta        =   ${AUTOTUNELIMITdelta}" )
 
 
 menuitems+=( " " " " )
+
+menuitems+=( "gainreset" "Reset individual mode gains to 1.0" )
 
 ConfReadParam AUTOTUNEGAINS_ON "OFF"; AUTOTUNEGAINS_ON="$paramvalue"
 if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
@@ -1641,6 +1643,16 @@ exit
 EOF
 	;;
 	
+	gainreset)
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_DMmode_GAIN
+im=1.0+0*aol${LOOPNUMBER}_DMmode_GAIN
+cpsh im aol${LOOPNUMBER}_DMmode_GAIN
+exit
+EOF
+	;;
+
+	
 	ONatlim)
 	AUTOTUNELIMITS_ON=" ON"
 	echo " ON" > ./conf/param_AUTOTUNELIMITS_ON.txt
@@ -1654,6 +1666,9 @@ EOF
 	tmux send-keys -t aol${LOOPNUMBER}-ctr "aolAUTOTUNELIMoff" C-m
 	menucontrolloop_default="ONatlim"
 	;;
+
+
+
 
 	ONatgain)
 	AUTOTUNEGAINS_ON=" ON"
