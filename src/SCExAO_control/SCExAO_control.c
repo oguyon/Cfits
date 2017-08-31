@@ -902,7 +902,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
         gain *= gainfactor;
         if(gain < 0.1)
             gain = 0.1;
-        
+        printf("\n");
         printf("================== AVERAGING %6ld FRAMES    gain = %f ================ \n", NBframesAve, gain);
 //        ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 4);
         ID = IMAGE_BASIC_streamaverage(WFScam_name, NBframesAve, "imwfs", 0, 4);
@@ -918,9 +918,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
         for(ii=0; ii<xsize*ysize; ii++)
 			data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
         
-        save_fits("imwfs", "!imwfs.fits"); // TEST
+        system("mkdir tmp");
+        save_fits("imwfs", "!./tmp/imwfs.fits"); // TEST
 
-        printf("%ld x %ld image\n", xsize, ysize);
+       // printf("%ld x %ld image\n", xsize, ysize);
 
         tot00 = 0.0;
         tot01 = 0.0;
@@ -1001,7 +1002,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 
         printf("  %6.4f   %6.4f\n", tot01, tot11);
         printf("  %6.4f   %6.4f\n", tot00, tot10);
-        printf("tot = %f   ave = %f \n", tot, tot/xsize/ysize);
+        printf("total = %f   average = %f \n", tot, tot/xsize/ysize);
 
         totx = 0.25*(tot00x+tot10x+tot10x+tot11x);
         toty = 0.25*(tot00y+tot10y+tot10y+tot11y);
@@ -1011,7 +1012,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 
         xsig = (tot10+tot11)-(tot00+tot01); // camera coordinates
         ysig = (tot01+tot11)-(tot00+tot10);
-        printf(" sig = %6.4f  x %6.4f\n", xsig, ysig);
+        printf(" SIGNAL = %6.4f  x %6.4f\n", xsig, ysig);
 
         //exit(0);
 
