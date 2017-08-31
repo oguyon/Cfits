@@ -1189,16 +1189,16 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
         
 
         tot = 0.0;
-        for(ii=0; ii<pXsize*pYsize; ii++)
+        for(ii=0; ii<xsize*ysize; ii++)
             tot += data.image[ID].array.F[ii];
-        for(ii=0; ii<pXsize*pYsize; ii++)
+        for(ii=0; ii<xsize*ysize; ii++)
             data.image[ID].array.F[ii] /= tot;
-        ave =  tot/pXsize/pYsize;
+        ave =  tot/xsize/ysize;
         printf("tot = %f   ave = %f \n", tot, ave);
 
       
 
-        if(ave > 10.0)
+        if(ave > FluxAveLimit)
         {
             /** compute offset */
             fft_correlation("imwfs", "imref", "outcorr");
@@ -1222,7 +1222,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
                 else
                     data.image[IDc].array.F[ii] = 0.0;
 
-			printf("---------- %ld %ld   %g %f ------------\n", (long) pXsize, (long) pYsize, peak, alpha);
+//			printf("---------- %ld %ld   %g %f ------------\n", (long) xsize, (long) ysize, peak, alpha);
 			
             
             totx = 0.0;
@@ -1298,7 +1298,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
         }
         else
         {
-            printf("Not enough light on detector... waiting... \n");
+            printf("NOT ENOUGH FLUX ( %10.5f / %10.5f )- NO CORRECTION\n", tot/xsize/ysize, FluxAveLimit);
+			fflush(stdout);			
         }
     }
     r = system("rm stop_PyAlignCam.txt");
