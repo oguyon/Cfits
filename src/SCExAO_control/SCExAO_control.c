@@ -257,6 +257,7 @@ int_fast8_t init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].Ccall,"long SCExAOcontrol_mkSegmentModes(const char *IDdmmap_name, const char *IDout_name)");
     data.NBcmd++;
 
+
     strcpy(data.cmd[data.NBcmd].key,"scexaottdmpos");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_mv_DMstage_cli;
@@ -265,6 +266,7 @@ int_fast8_t init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].example,"scexaottdmpos");
     strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_mv_DMstage(long stepXpos, long stepYpos)");
     data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"scexaopywfsttalign");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -275,6 +277,7 @@ int_fast8_t init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposStart, float YposStart);");
     data.NBcmd++;
 
+
     strcpy(data.cmd[data.NBcmd].key,"scexaopywfscamalign");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
     data.cmd[data.NBcmd].fp = SCExAOcontrol_PyramidWFS_AutoAlign_cam_cli;
@@ -283,6 +286,7 @@ int_fast8_t init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].example,"scexaopywfscamalign");
     strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAOcontrol_PyramidWFS_AutoAlign_cam();");
     data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key,"scexaopypcent");
     strcpy(data.cmd[data.NBcmd].module,__FILE__);
@@ -332,6 +336,7 @@ int_fast8_t init_SCExAO_control()
     strcpy(data.cmd[data.NBcmd].example, "scexaostreamcentr");
     strcpy(data.cmd[data.NBcmd].Ccall, "long SCExAOcontrol_vib_ComputeCentroid(const char *IDin_name, const char *IDdark_name, const char *IDout_name)");
     data.NBcmd++;
+
 
     strcpy(data.cmd[data.NBcmd].key, "scexaovibmerge");
     strcpy(data.cmd[data.NBcmd].module, __FILE__);
@@ -902,7 +907,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
             NBframesAve = NBframesAveMax;
         
         
-        // save_fits("imwfs", "!imwfs.fits"); // TEST
+        save_fits("imwfs", "!imwfs.fits"); // TEST
 
         printf("%ld x %ld image\n", xsize, ysize);
 

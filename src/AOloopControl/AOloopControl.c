@@ -4395,6 +4395,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     float limitblockarray[100];
     long IDatlimbcoeff;
 
+	long IDautogain; // automatic gain input
+	long long autogainCnt = 0;
+
     float coeff;
 
     int RT_priority = 80; //any number from 0-99
@@ -4802,6 +4805,32 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
 		{
+
+			// CONNECT to auto gain input
+			if(IDautogain == -1)
+			{
+				if(sprintf(imname, "aol%ld_autogain", loop) < 1)
+					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+				IDautogain = read_sharedmem_image(imname);
+			}
+			
+			if(IDautogain != -1)
+			{
+				if(data.image[IDautogain].md[0].cnt0 != autogainCnt)
+				{
+					// New gains available - updating
+					
+					
+					
+					
+					autogainCnt = data.image[IDautogain].md[0].cnt0;
+				}
+				
+			}
+	
+			
+			
 /*			float alphagain = 0.1;
 			
 			// if update available
