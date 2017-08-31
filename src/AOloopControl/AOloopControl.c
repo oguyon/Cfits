@@ -3578,7 +3578,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
             if(AOconf[loop].GPUall == 1)
             {
-                // TBD : TEST IF contrM or wfsref have changed
+                // TEST IF contrM or wfsref have changed
                 if((data.image[aoconfID_wfsref].md[0].cnt0 != aoconfcnt0_wfsref_current) || (data.image[aoconfID_contrM].md[0].cnt0 != aoconfcnt0_contrM_current))
 					{
 						aoconfcnt0_wfsref_current = data.image[aoconfID_wfsref].md[0].cnt0;
