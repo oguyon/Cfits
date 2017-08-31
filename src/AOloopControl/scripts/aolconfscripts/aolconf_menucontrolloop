@@ -519,6 +519,13 @@ if [ "${AUTOTUNEGAINS_ON}" = "OFF" ];
   menuitems+=( "OFFatgain" "\Z1\ZrAUTOTUNE GAINS running, press to STOP\Zn" )
 fi
 
+ConfReadParam AUTOTUNEGAINupdateCoeff "0.1"; AUTOTUNEGAINupdateCoeff="$paramvalue"
+menuitems+=( "atgupc" "AUTOTUNE GAIN update coeff       =   ${AUTOTUNEGAINupdateCoeff}" )
+
+ConfReadParam AUTOTUNEGAIN_NBsamples "10000"; AUTOTUNEGAIN_NBsamples="$paramvalue"
+menuitems+=( "atgnbs" "AUTOTUNE GAIN number of samples    =   ${AUTOTUNEGAIN_NBsamples}" )
+
+
 menuitems+=( "agrun" "AutoGain run" )
 
 
@@ -1691,12 +1698,29 @@ EOF
 	;;
 
 
+	atgupc)
+	exec 3>&1;
+	AUTOTUNEGAINupdateCoeff=$(dialog --inputbox "AUTOTUNEGAINupdateCoeff" 0 0 "$AUTOTUNEGAINupdateCoeff" 2>&1 1>&3);
+	exec 3>&-;
+	echo "$AUTOTUNEGAINupdateCoeff" > ./conf/param_AUTOTUNEGAINupdateCoeff.txt
+	aoconflogext "set AUTOTUNEGAINupdateCoeff ${AUTOTUNEGAINupdateCoeff}"
+	;;
+
+	atgnbs)
+	exec 3>&1;
+	AUTOTUNEGAIN_NBsamples=$(dialog --inputbox "AUTOTUNEGAIN_NBsamples" 0 0 "$AUTOTUNEGAIN_NBsamples" 2>&1 1>&3);
+	exec 3>&-;
+	echo "$AUTOTUNEGAIN_NBsamples" > ./conf/param_AUTOTUNEGAIN_NBsamples.txt
+	aoconflogext "set AUTOTUNEGAIN_NBsamples ${AUTOTUNEGAIN_NBsamples}"
+	;;
+
+
 
 
 	agrun) # run autogain command
 	tmuxname="aol${LOOPNUMBER}autogain"
 	tmux new-session -d -s ${tmuxname}
-	tmux send-keys -t ${tmuxname} "./auxscripts/aolautotunegains" C-m
+	tmux send-keys -t ${tmuxname} "./auxscripts/aolautotunegains $AUTOTUNEGAINupdateCoeff $AUTOTUNEGAIN_NBsamples" C-m
 	;;
 
 
