@@ -5027,8 +5027,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 
 
 
-		if(SyncSlice==0)
-		{
+
         clock_gettime(CLOCK_REALTIME, &t0);
 
         ptr0 = ptr0s + kk*framesize;
@@ -5042,7 +5041,11 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         kk++;
         if(kk==data.image[IDin[0]].md[0].size[2])
             kk = 0;
-
+		
+		
+		
+		if(SyncSlice==0)
+		{
         usleep(twait1);
 
         clock_gettime(CLOCK_REALTIME, &t1);
