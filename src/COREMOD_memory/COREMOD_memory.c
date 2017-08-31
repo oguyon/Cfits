@@ -4888,6 +4888,8 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         printf("FRAMES OFFSET = %ld\n", offsetfr);
     }
 
+	printf("SyncSlice = %d\n", SyncSlice);
+
     printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
 
