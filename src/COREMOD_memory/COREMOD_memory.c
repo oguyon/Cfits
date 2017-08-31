@@ -4843,7 +4843,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
     struct timespec t1;
     double tdiffv;
     struct timespec tdiff;
-    
+
     int SyncSlice = 0;
 
 
@@ -4864,7 +4864,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 
 
     IDin = (long*) malloc(sizeof(long)*NBcubes);
-	SyncSlice = 0;
+    SyncSlice = 0;
     if(NBcubes==1)
     {
         IDin[0] = image_ID(IDinname);
@@ -4872,7 +4872,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         // in single cube mode, optional sync stream drives updates to next slice within cube
         IDsync = image_ID(IDsync_name);
         if(IDsync!=-1)
-			SyncSlice = 1;
+            SyncSlice = 1;
     }
     else
     {
@@ -4888,7 +4888,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         printf("FRAMES OFFSET = %ld\n", offsetfr);
     }
 
-	printf("SyncSlice = %d\n", SyncSlice);
+    printf("SyncSlice = %d\n", SyncSlice);
 
     printf("Creating / connecting to image stream ...\n");
     fflush(stdout);
@@ -5041,31 +5041,31 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
         kk++;
         if(kk==data.image[IDin[0]].md[0].size[2])
             kk = 0;
-		
-		
-		
-		if(SyncSlice==0)
-		{
-        usleep(twait1);
 
-        clock_gettime(CLOCK_REALTIME, &t1);
-        tdiff = info_time_diff(t0, t1);
-        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
 
-        if(tdiffv<1.0e-6*usperiod)
-            twait1 ++;
+
+        if(SyncSlice==0)
+        {
+            usleep(twait1);
+
+            clock_gettime(CLOCK_REALTIME, &t1);
+            tdiff = info_time_diff(t0, t1);
+            tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+
+            if(tdiffv<1.0e-6*usperiod)
+                twait1 ++;
+            else
+                twait1 --;
+
+            if(twait1<0)
+                twait1 = 0;
+            if(twait1>usperiod)
+                twait1 = usperiod;
+        }
         else
-            twait1 --;
-
-        if(twait1<0)
-            twait1 = 0;
-        if(twait1>usperiod)
-            twait1 = usperiod;
-		}
-		else
-		{
-			sem_wait(data.image[IDsync].semptr[semtrig]);
-		}
+        {
+            sem_wait(data.image[IDsync].semptr[semtrig]);
+        }
 
 
     }
@@ -5074,6 +5074,7 @@ long COREMOD_MEMORY_image_streamupdateloop(const char *IDinname, const char *IDo
 
     return(IDout);
 }
+
 
 
 

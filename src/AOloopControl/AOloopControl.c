@@ -5413,11 +5413,13 @@ fflush(stdout);
 
 
         //		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
-        array_asq[m] = (array_sig4[m]-array_sig1[m])/15.0;
+		//        array_asq[m] = (array_sig4[m]-array_sig1[m])/15.0;
+        array_asq[m] = (array_sig4[m]-array_sig2[m])/12.0;
         if(array_asq[m]<0.0)
             array_asq[m] = 0.0;
         
-        array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
+        //array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
+        array_sig[m] = (4.0*array_sig2[m] - array_sig4[m])/6.0;
 
         stdev[m] = sig0[m] - NOISEfactor[m]*array_sig[m] - ave0[m]*ave0[m];
         if(stdev[m]<0.0)
