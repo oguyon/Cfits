@@ -818,6 +818,8 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT_DM(const char *WFScam_name)
 
 
 
+
+
 int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposStart, float YposStart)
 {
     FILE *fp;
@@ -850,6 +852,10 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 	int ret;
 
 
+	long IDdark;
+
+
+
 	fp = fopen("LOOPNAME", "r");
 	ret = fscanf(fp, "%s", LoopName);
 	fclose(fp);
@@ -874,10 +880,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
     gainfactor = 1.0;
     
     
+    IDdark = image_ID("wfsdark");
+    
     
     while(file_exists("stop_PyAlignTT.txt")==0)
     {
-
         while (file_exists("pause_PyAlignTT.txt"))
             usleep(100000);
 
@@ -899,6 +906,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
         printf("================== AVERAGING %6ld FRAMES    gain = %f ================ \n", NBframesAve, gain);
 //        ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 4);
         ID = IMAGE_BASIC_streamaverage(WFScam_name, NBframesAve, "imwfs", 0, 4);
+		
         xsize = data.image[ID].md[0].size[0];
         ysize = data.image[ID].md[0].size[1];
         
@@ -906,6 +914,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
         if (NBframesAve>NBframesAveMax)
             NBframesAve = NBframesAveMax;
         
+        
+        for(ii=0; ii<xsize*ysize; ii++)
+			data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
         
         save_fits("imwfs", "!imwfs.fits"); // TEST
 
