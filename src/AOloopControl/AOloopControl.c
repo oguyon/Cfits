@@ -5399,14 +5399,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
             fclose(fptest);
 
 		
-		if(iter==0)
-			GainCoeff1 = 1.0;
-		else
-		{
-			GainCoeff1 = 1.0/iter;
-			if(GainCoeff1 < AOconf[loop].AUTOTUNEGAINS_updateGainCoeff)
-				GainCoeff1 = AOconf[loop].AUTOTUNEGAINS_updateGainCoeff;
-		}
+
+		GainCoeff1 = 1.0/(iter+1);
+		if(GainCoeff1 < AOconf[loop].AUTOTUNEGAINS_updateGainCoeff)
+			GainCoeff1 = AOconf[loop].AUTOTUNEGAINS_updateGainCoeff;
+		
 
         data.image[IDout].md[0].write = 1;
         for(m=0; m<NBmodes; m++)
