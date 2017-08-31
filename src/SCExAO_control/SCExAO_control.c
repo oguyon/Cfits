@@ -853,6 +853,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 
 
 	long IDdark;
+	float FluxAveLimit = 1.0;
 
 
 
@@ -1022,7 +1023,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 	
 
 
-        if(tot > 1.0*xsize*ysize)
+        if(tot > FluxAveLimit*xsize*ysize)
         {
             SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/1.0);  // D actuator
             SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/1.0);  // C actuator
@@ -1065,7 +1066,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
         }
         else
         {
-			printf("NOT ENOUGH FLUX - NO CORRECTION\n");
+			printf("NOT ENOUGH FLUX ( %10.5f / %10.5f )- NO CORRECTION\n", tot/xsize/ysize, FluxAveLimit);
 			fflush(stdout);			
 		}
 
