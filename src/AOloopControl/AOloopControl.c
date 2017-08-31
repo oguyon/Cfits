@@ -4833,6 +4833,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				{
 					float maxGainVal = 0.0;
 					float globalgain = 0.0;
+					char command[500];
 					
 					// New gains available - updating
 					printf("[%ld %s] Updated autogain [%12ld  %12ld] -> applying gains\n", IDautogain, data.image[IDautogain].md[0].name, (long) autogainCnt, (long) data.image[IDautogain].md[0].cnt0);
@@ -4847,7 +4848,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					globalgain = maxGainVal;
 					printf("     Setting  global gain = %f\n", maxGainVal);
 					AOconf[loop].gain = maxGainVal;
-					
+					sprintf(command, "echo \"%6.4f\" > conf/param_loopgain.txt", AOconf[loop].gain);
+					system(command);
 					
 					// Set block gain to max gain within block, scaled to global gain
 					for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
