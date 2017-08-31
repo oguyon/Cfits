@@ -172,9 +172,9 @@ typedef struct
     int_fast8_t on;                           /**< goes to 1 when loop starts, put to 0 to turn loop off */
     float gain;                               /**< overall loop gain */
     uint_fast16_t framesAve;                  /**< number of WFS frames to average */
-	int_fast8_t DMprimaryWriteON;            /**< primary DM write */
+	int_fast8_t DMprimaryWriteON;             /**< primary DM write */
 	int_fast8_t CMMODE;                       /**< Combined matrix. 0: matrix is WFS pixels -> modes, 1: matrix is WFS pixels -> DM actuators */
-	int_fast8_t DMfilteredWriteON;           /**< Filtered write to DM */
+	int_fast8_t DMfilteredWriteON;            /**< Filtered write to DM */
  
 	// MODAL AUTOTUNING 
 	// limits
@@ -184,8 +184,9 @@ typedef struct
 	float AUTOTUNE_LIMITS_delta; // autotune loop increment 
 
 	int_fast8_t AUTOTUNE_GAINS_ON;
-	float AUTOTUNE_GAINS_gain; // averaging coefficient (usually about 0.1)
-	float AUTOTUNEGAIN_evolTimescale; // evolution timescale, beyond which errors stop growing
+	float AUTOTUNEGAINS_updateGainCoeff;      /**< Averaging coefficient (usually about 0.1) */
+	float AUTOTUNEGAINS_evolTimescale;        /**< Evolution timescale, beyond which errors stop growing */
+	long AUTOTUNEGAINS_NBsamples;            /**< Number of samples */
    
 	/* =============================================================================================== */
 

@@ -5156,9 +5156,12 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         AOloopControl_InitializeMemory(1);
 
 
-    AOconf[loop].AUTOTUNEGAIN_evolTimescale = 0.05;
+	AOconf[loop].AUTOTUNEGAINS_updateGainCoeff = GainCoeff;
+	AOconf[loop].AUTOTUNEGAINS_NBsamples = NBsamples;
 
-    gain0 = 1.0/(AOconf[loop].loopfrequ*AOconf[loop].AUTOTUNEGAIN_evolTimescale);
+
+
+    gain0 = 1.0/(AOconf[loop].loopfrequ*AOconf[loop].AUTOTUNEGAINS_evolTimescale);
 
 
 
@@ -5305,7 +5308,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 
         // prepare gain array
         latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
-        printf("latency = %f frame\n", latency);
+        //printf("latency = %f frame\n", latency);
         NBgain = 0;
         gain = mingain;
         while(gain<1.0)
@@ -5358,7 +5361,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 
         cnt = 0;
         cntstart = 10;
-        while(cnt<NBsamples)
+        while(cnt<AOconf[loop].AUTOTUNEGAINS_NBsamples)
         {
             sem_wait(data.image[IDmodevalOL].semptr[5]);
 
@@ -5401,8 +5404,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 		else
 		{
 			GainCoeff1 = 1.0/iter;
-			if(GainCoeff1 < GainCoeff)
-				GainCoeff1 = GainCoeff;
+			if(GainCoeff1 < AOconf[loop].AUTOTUNEGAINS_updateGainCoeff)
+				GainCoeff1 = AOconf[loop].AUTOTUNEGAINS_updateGainCoeff;
 		}
 
         data.image[IDout].md[0].write = 1;
@@ -5472,6 +5475,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         for(m=0; m<NBmodes; m++)
             fprintf(fp, "%5ld   %+12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f  %6.2f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m], NOISEfactor[m]);
         fclose(fp);
+        
+        printf("[%8ld]  %8ld   %8.6f -> %8.6f\n", iter, AOconf[loop].AUTOTUNEGAINS_NBsamples, AOconf[loop].AUTOTUNEGAINS_updateGainCoeff, GainCoeff1);
         
         iter++;
 
