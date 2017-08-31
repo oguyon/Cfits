@@ -368,7 +368,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name);
 
 long AOloopControl_ComputeOpenLoopModes(long loop);
 
-int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name);
+int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float GainCoeff, long NBsamples);
 
 long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, float twait, float offcoeff, float multcoeff);
 

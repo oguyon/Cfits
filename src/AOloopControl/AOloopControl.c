@@ -501,8 +501,8 @@ int_fast8_t AOloopControl_ComputeOpenLoopModes_cli() {
 
 /** @brief CLI function for AOloopControl_AutoTuneGains */
 int_fast8_t AOloopControl_AutoTuneGains_cli() {
-    if(CLI_checkarg(1,2)+CLI_checkarg(2,3)==0) {
-        AOloopControl_AutoTuneGains(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string);
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,3)+CLI_checkarg(3,1)+CLI_checkarg(4,2)==0) {
+        AOloopControl_AutoTuneGains(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numf, data.cmdargtoken[4].val.numl);
         return 0;
     }
     else return 1;
@@ -1214,7 +1214,7 @@ int_fast8_t init_AOloopControl()
 
     RegisterCLIcommand("aolcompolm", __FILE__, AOloopControl_ComputeOpenLoopModes_cli, "compute open loop mode values", "<loop #>", "aolcompolm 2", "long AOloopControl_ComputeOpenLoopModes(long loop)");
 
-    RegisterCLIcommand("aolautotunegains", __FILE__, AOloopControl_AutoTuneGains_cli, "compute optimal gains", "<loop #> <gain stream>", "aolautotunegains 0 autogain", "long AOloopControl_AutoTuneGains(long loop, const char *IDout_name)");
+    RegisterCLIcommand("aolautotunegains", __FILE__, AOloopControl_AutoTuneGains_cli, "compute optimal gains", "<loop #> <gain stream> <gaincoeff> <NBsamples>", "aolautotunegains 0 autogain 0.1 20000", "long AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float GainCoeff, long NBsamples)");
 
     RegisterCLIcommand("aoldm2dmoffload", __FILE__, AOloopControl_dm2dm_offload_cli, "slow offload from dm to dm", "<streamin> <streamout> <timestep[sec]> <offloadcoeff> <multcoeff>", "aoldm2dmoffload dmin dmout 0.5 -0.01 0.999", "long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, float twait, float offcoeff, float multcoeff)");
 
@@ -5066,7 +5066,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 // input: modeval_ol
 // APPLIES new gain values if AUTOTUNE_GAINS_ON
 //
-int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
+int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float GainCoeff, long NBsamples)
 {
     long IDmodevalOL;
     long IDmodeval;
@@ -5142,8 +5142,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name)
 #endif
 
 
-printf("AUTO GAIN\n");
-fflush(stdout);
+    printf("AUTO GAIN\n");
+    fflush(stdout);
 
 
     // read AO loop gain, mult
@@ -5234,18 +5234,6 @@ fflush(stdout);
     modemult = (float*) malloc(sizeof(float)*NBmodes);
     NOISEfactor = (float*) malloc(sizeof(float)*NBmodes);
 
-    // write gain, mult into arrays
-    for(m=0; m<NBmodes; m++)
-    {
-	    unsigned short block;
-		
-        block = data.image[IDblk].array.UI16[m];
-        modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[block] * data.image[aoconfID_DMmode_GAIN].array.F[m];
-        modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[block] * data.image[aoconfID_MULTF_modes].array.F[m];
-        NOISEfactor[m] = 1.0 + modemult[m]*modemult[m]*modegain[m]*modegain[m]/(1.0-modemult[m]*modemult[m]);
-    }
-
-
 
 
 
@@ -5280,186 +5268,196 @@ fflush(stdout);
     sig4 = (long double*) malloc(sizeof(long double)*NBmodes);
     stdev = (float*) malloc(sizeof(float)*NBmodes);
 
-    // prepare gain array
-    latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
-    printf("latency = %f frame\n", latency);
-    NBgain = 0;
-    gain = mingain;
-    while(gain<1.0)
-    {
-        gain *= gainfactstep;
-        NBgain++;
-    }
+
     gainval_array = (float*) malloc(sizeof(float)*NBgain);
     gainval1_array = (float*) malloc(sizeof(float)*NBgain);
     gainval2_array = (float*) malloc(sizeof(float)*NBgain);
 
-    kk = 0;
-    gain = mingain;
-    while(kk<NBgain)
-    {
-        gainval_array[kk] = gain;
-        gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/(gain+gain0));
-        gainval2_array[kk] = (gain/(1.0-gain));
-
-        //printf("gain   %4ld  %12f   %12f  %12f\n", kk, gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
-        gain *= gainfactstep;
-        kk++;
-    }
     errarray = (float*) malloc(sizeof(float)*NBgain);
 
 
-    // drive sem5 to zero
-    while(sem_trywait(data.image[IDmodevalOL].semptr[5])==0) {}
 
 
-
-    for(m=0; m<NBmodes; m++)
+    for(;;)
     {
-        array_mvalOL1[m] = 0.0;
-        array_mvalOL2[m] = 0.0;
-        array_sig1[m] = 0.0;
-        array_sig2[m] = 0.0;
-        ave0[m] = 0.0;
-        sig0[m] = 0.0;
-        sig1[m] = 0.0;
-        sig2[m] = 0.0;
-        sig3[m] = 0.0;
-        sig4[m] = 0.0;
-        stdev[m] = 0.0;
-    }
 
-
-
-    // TEST mode
-/*    IDsync = image_ID("dm00disp10");
-    if(IDsync!=-1)
-    {
-	    long cnt00, cnt01;
-		
-        list_image_ID();
-        printf("SYNCHRO SIGNAL WAIT\n");
-        fflush(stdout);
-
-        cnt00 = data.image[IDsync].md[0].cnt1 - 1;
-        cnt01 = cnt00+1;
-
-        while(cnt01>=cnt00)
+        // write gain, mult into arrays
+        for(m=0; m<NBmodes; m++)
         {
-            cnt00 = cnt01;
-            sem_wait(data.image[IDsync].semptr[4]);
-            cnt01 = data.image[IDsync].md[0].cnt1;
+            unsigned short block;
+
+            block = data.image[IDblk].array.UI16[m];
+            modegain[m] = AOconf[loop].gain * data.image[aoconfID_gainb].array.F[block] * data.image[aoconfID_DMmode_GAIN].array.F[m];
+            modemult[m] = AOconf[loop].mult * data.image[aoconfID_multfb].array.F[block] * data.image[aoconfID_MULTF_modes].array.F[m];
+            NOISEfactor[m] = 1.0 + modemult[m]*modemult[m]*modegain[m]*modegain[m]/(1.0-modemult[m]*modemult[m]);
         }
-        printf("START MEASUREMENT  [%6ld %6ld] \n", cnt00, cnt01);
-        fflush(stdout);
-    }
-
-*/
-
-    if(TESTMODE==1)
-        fptest = fopen("test_autotunegain.dat", "w");
-
-    cnt = 0;
-    cntstart = 10;
-    while(cnt<50000)
-    {
-        sem_wait(data.image[IDmodevalOL].semptr[5]);
 
 
-        data.image[IDout].md[0].write = 1;
+
+
+
+
+
+        // prepare gain array
+        latency = AOconf[loop].hardwlatency_frame + AOconf[loop].wfsmextrlatency_frame;
+        printf("latency = %f frame\n", latency);
+        NBgain = 0;
+        gain = mingain;
+        while(gain<1.0)
+        {
+            gain *= gainfactstep;
+            NBgain++;
+        }
+
+
+        kk = 0;
+        gain = mingain;
+        while(kk<NBgain)
+        {
+            gainval_array[kk] = gain;
+            gainval1_array[kk] = (latency + 1.0/gain)*(latency + 1.0/(gain+gain0));
+            gainval2_array[kk] = (gain/(1.0-gain));
+
+            //printf("gain   %4ld  %12f   %12f  %12f\n", kk, gainval_array[kk], gainval1_array[kk], gainval2_array[kk]);
+            gain *= gainfactstep;
+            kk++;
+        }
+
+
+
+        // drive sem5 to zero
+        while(sem_trywait(data.image[IDmodevalOL].semptr[5])==0) {}
+
+
 
         for(m=0; m<NBmodes; m++)
         {
-            diff1 = data.image[IDmodevalOL].array.F[m] - array_mvalOL1[m];
-            diff2 = data.image[IDmodevalOL].array.F[m] - array_mvalOL2[m];
-            diff3 = data.image[IDmodevalOL].array.F[m] - array_mvalOL3[m];
-            diff4 = data.image[IDmodevalOL].array.F[m] - array_mvalOL4[m];
-            array_mvalOL4[m] = array_mvalOL3[m];
-            array_mvalOL3[m] = array_mvalOL2[m];
-            array_mvalOL2[m] = array_mvalOL1[m];
-            array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
-
-            if(cnt>cntstart)
-            {
-                ave0[m] += data.image[IDmodevalOL].array.F[m];
-                sig0[m] += data.image[IDmodevalOL].array.F[m]*data.image[IDmodevalOL].array.F[m];
-                sig1[m] += diff1*diff1;
-                sig2[m] += diff2*diff2;
-                sig3[m] += diff3*diff3;
-                sig4[m] += diff4*diff4;
-            }
+            array_mvalOL1[m] = 0.0;
+            array_mvalOL2[m] = 0.0;
+            array_sig1[m] = 0.0;
+            array_sig2[m] = 0.0;
+            ave0[m] = 0.0;
+            sig0[m] = 0.0;
+            sig1[m] = 0.0;
+            sig2[m] = 0.0;
+            sig3[m] = 0.0;
+            sig4[m] = 0.0;
+            stdev[m] = 0.0;
         }
 
+
+
+
         if(TESTMODE==1)
-            fprintf(fptest, "%5lld %+12.10f %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
+            fptest = fopen("test_autotunegain.dat", "w");
 
-        cnt++;
-    }
-    if(TESTMODE==1)
-        fclose(fptest);
-
-    data.image[IDout].md[0].write = 1;
-    for(m=0; m<NBmodes; m++)
-    {
-		long kkmin;
-		float errmin;
-		
-        ave0[m] /= cnt-cntstart;
-        sig0[m] /= cnt-cntstart;
-        array_sig1[m] = sig1[m]/(cnt-cntstart);
-        array_sig2[m] = sig2[m]/(cnt-cntstart);
-        array_sig3[m] = sig3[m]/(cnt-cntstart);
-        array_sig4[m] = sig4[m]/(cnt-cntstart);
+        cnt = 0;
+        cntstart = 10;
+        while(cnt<NBsamples)
+        {
+            sem_wait(data.image[IDmodevalOL].semptr[5]);
 
 
-        //		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
-		//        array_asq[m] = (array_sig4[m]-array_sig1[m])/15.0;
-        array_asq[m] = (array_sig4[m]-array_sig2[m])/12.0;
-        if(array_asq[m]<0.0)
-            array_asq[m] = 0.0;
-        
-        //array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
-        array_sig[m] = (4.0*array_sig2[m] - array_sig4[m])/6.0;
+            data.image[IDout].md[0].write = 1;
 
-        stdev[m] = sig0[m] - NOISEfactor[m]*array_sig[m] - ave0[m]*ave0[m];
-        if(stdev[m]<0.0)
-            stdev[m] = 0.0;
-        stdev[m] = sqrt(stdev[m]);
-
-        for(kk=0; kk<NBgain; kk++)
-            errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval2_array[kk];
-
-        errmin = errarray[0];
-        kkmin = 0;
-
-        for(kk=0; kk<NBgain; kk++)
-            if(errarray[kk]<errmin)
+            for(m=0; m<NBmodes; m++)
             {
-                errmin = errarray[kk];
-                kkmin = kk;
+                diff1 = data.image[IDmodevalOL].array.F[m] - array_mvalOL1[m];
+                diff2 = data.image[IDmodevalOL].array.F[m] - array_mvalOL2[m];
+                diff3 = data.image[IDmodevalOL].array.F[m] - array_mvalOL3[m];
+                diff4 = data.image[IDmodevalOL].array.F[m] - array_mvalOL4[m];
+                array_mvalOL4[m] = array_mvalOL3[m];
+                array_mvalOL3[m] = array_mvalOL2[m];
+                array_mvalOL2[m] = array_mvalOL1[m];
+                array_mvalOL1[m] = data.image[IDmodevalOL].array.F[m];
+
+                if(cnt>cntstart)
+                {
+                    ave0[m] += data.image[IDmodevalOL].array.F[m];
+                    sig0[m] += data.image[IDmodevalOL].array.F[m]*data.image[IDmodevalOL].array.F[m];
+                    sig1[m] += diff1*diff1;
+                    sig2[m] += diff2*diff2;
+                    sig3[m] += diff3*diff3;
+                    sig4[m] += diff4*diff4;
+                }
             }
 
-        data.image[IDout].array.F[m] = gainval_array[kkmin];
+            if(TESTMODE==1)
+                fprintf(fptest, "%5lld %+12.10f %+12.10f %+12.10f %+12.10f %+12.10f\n", cnt, data.image[IDmodeval].array.F[TEST_m], data.image[IDmodevalOL].array.F[TEST_m], data.image[IDmodeval_dm].array.F[TEST_m], data.image[IDmodeval_dm_now].array.F[TEST_m], data.image[IDmodeval_dm_now_filt].array.F[TEST_m]);
+
+            cnt++;
+        }
+        if(TESTMODE==1)
+            fclose(fptest);
+
+        data.image[IDout].md[0].write = 1;
+        for(m=0; m<NBmodes; m++)
+        {
+            long kkmin;
+            float errmin;
+
+            ave0[m] /= cnt-cntstart;
+            sig0[m] /= cnt-cntstart;
+            array_sig1[m] = sig1[m]/(cnt-cntstart);
+            array_sig2[m] = sig2[m]/(cnt-cntstart);
+            array_sig3[m] = sig3[m]/(cnt-cntstart);
+            array_sig4[m] = sig4[m]/(cnt-cntstart);
+
+
+            //		array_asq[m] = (array_sig2[m]-array_sig1[m])/3.0;
+            //        array_asq[m] = (array_sig4[m]-array_sig1[m])/15.0;
+
+            // This formula is compatible with astromgrid, which alternates between patterns
+            array_asq[m] = (array_sig4[m]-array_sig2[m])/12.0;
+            if(array_asq[m]<0.0)
+                array_asq[m] = 0.0;
+
+            //array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
+
+            // This formula is compatible with astromgrid, which alternates between patterns
+            array_sig[m] = (4.0*array_sig2[m] - array_sig4[m])/6.0;
+
+            stdev[m] = sig0[m] - NOISEfactor[m]*array_sig[m] - ave0[m]*ave0[m];
+            if(stdev[m]<0.0)
+                stdev[m] = 0.0;
+            stdev[m] = sqrt(stdev[m]);
+
+            for(kk=0; kk<NBgain; kk++)
+                errarray[kk] = array_asq[m] * gainval1_array[kk] + array_sig[m] * gainval2_array[kk];
+
+            errmin = errarray[0];
+            kkmin = 0;
+
+            for(kk=0; kk<NBgain; kk++)
+                if(errarray[kk]<errmin)
+                {
+                    errmin = errarray[kk];
+                    kkmin = kk;
+                }
+
+            data.image[IDout].array.F[m] = (1.0-GainCoeff) * data.image[IDout].array.F[m]   +  GainCoeff * gainval_array[kkmin];
+        }
+
+        COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+        data.image[IDout].md[0].cnt0++;
+        data.image[IDout].md[0].write = 0;
+
+
+
+
+
+        if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
+        {
+
+        }
+
+
+        fp = fopen("optgain.dat", "w");
+        for(m=0; m<NBmodes; m++)
+            fprintf(fp, "%5ld   %+12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f  %6.2f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m], NOISEfactor[m]);
+        fclose(fp);
+
     }
-
-    COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
-    data.image[IDout].md[0].cnt0++;
-    data.image[IDout].md[0].write = 0;
-
-
-
-
-
-    if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
-    {
-		
-    }
-
-
-    fp = fopen("optgain.dat", "w");
-    for(m=0; m<NBmodes; m++)
-        fprintf(fp, "%5ld   %+12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f  %6.2f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m], NOISEfactor[m]);
-    fclose(fp);
 
     free(gainval_array);
     free(gainval1_array);
@@ -5491,6 +5489,7 @@ fflush(stdout);
 
     return(0);
 }
+
 
 
 
