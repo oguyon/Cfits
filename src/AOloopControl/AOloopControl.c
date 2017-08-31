@@ -5134,6 +5134,11 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
     int TESTMODE = 1;
     int TEST_m = 30;
     FILE *fptest;
+    
+    long iter;
+    float GainCoeff1 = 1.0;
+    
+    
 
 
     schedpar.sched_priority = RT_priority;
@@ -5277,7 +5282,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 
 
 
-
+	iter = 0;
     for(;;)
     {
 
@@ -5390,6 +5395,16 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         if(TESTMODE==1)
             fclose(fptest);
 
+		
+		if(iter==0)
+			GainCoeff1 = 1.0;
+		else
+		{
+			GainCoeff1 = 1.0/iter;
+			if(GainCoeff1 < GainCoeff)
+				GainCoeff1 = GainCoeff;
+		}
+
         data.image[IDout].md[0].write = 1;
         for(m=0; m<NBmodes; m++)
         {
@@ -5434,7 +5449,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
                     errmin = errarray[kk];
                     kkmin = kk;
                 }
-
+			
+			
             data.image[IDout].array.F[m] = (1.0-GainCoeff) * data.image[IDout].array.F[m]   +  GainCoeff * gainval_array[kkmin];
         }
 
@@ -5456,6 +5472,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         for(m=0; m<NBmodes; m++)
             fprintf(fp, "%5ld   %+12.10f %12.10f %12.10f %12.10f %12.10f   %6.4f  %16.14f %16.14f  %6.2f\n", m, (float) ave0[m], (float) sig0[m], stdev[m], sqrt(array_asq[m]), sqrt(array_sig[m]), data.image[IDout].array.F[m], array_sig1[m], array_sig4[m], NOISEfactor[m]);
         fclose(fp);
+        
+        iter++;
 
     }
 
