@@ -4408,7 +4408,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     float limitblockarray[100];
     long IDatlimbcoeff;
 
-	long IDautogain; // automatic gain input
+	long IDautogain = -1; // automatic gain input
 	long long autogainCnt = 0;
 
     float coeff;
