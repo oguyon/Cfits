@@ -1045,16 +1045,16 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 
             // sig X
             sprintf(command, "./aocscripts/SCExAO_analogoutput D %5.3f", SCExAO_PZT_STAGE_Xpos);
-            printf("COMMAND: \"%s\"\n", command);
+           // printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
             // sig Y
             sprintf(command, "./aocscripts/SCExAO_analogoutput C %5.3f", SCExAO_PZT_STAGE_Ypos);
-            printf("COMMAND: \"%s\"\n", command);
+            //printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
 			sprintf(command, "./aolconfscripts/aollog \"%s\" \"auto pyTT ave %6ld g %6.4f pupf %6.4f %6.4f %6.4f %6.4f  sig %+6.4f %+6.4f  XY %+5.3f %+5.3f \"", LoopName, NBframesAve, gain, tot01, tot11, tot00, tot10, xsig, ysig, SCExAO_PZT_STAGE_Xpos, SCExAO_PZT_STAGE_Ypos);
-            printf("COMMAND: \"%s\"\n", command);
+           // printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
 
@@ -1121,6 +1121,12 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
 
 	char LoopName[200];
 	int ret;
+	
+	
+	long IDdark;
+	float FluxAveLimit = 1.0;
+	long xsize, ysize;
+
 
 
 	fp = fopen("LOOPNAME", "r");
@@ -1138,6 +1144,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
 
     SCExAO_Pcam_Xpos0 = SCExAO_Pcam_Xpos;
     SCExAO_Pcam_Ypos0 = SCExAO_Pcam_Ypos;
+
+	IDdark = image_ID("wfsdark");
+
 
     NBframesAve = NBframesAveMin;
     gainfactor = 1.0;
@@ -1164,6 +1173,14 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
         printf("================== AVERAGING %6ld FRAMES    gain = %f ================ \n", NBframesAve, gain);
 //        ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 5);
         ID = IMAGE_BASIC_streamaverage(WFScam_name, NBframesAve, "imwfs", 0, 5);
+        xsize = data.image[ID].md[0].size[0];
+        ysize = data.image[ID].md[0].size[1];
+                
+        for(ii=0; ii<xsize*ysize; ii++)
+			data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
+
+
+
         save_fits("imwfs", "!./tmp/imwfs_aligncam.fits");
   
         NBframesAve = (long) (1.1*NBframesAve);
