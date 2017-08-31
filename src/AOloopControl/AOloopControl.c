@@ -4818,14 +4818,13 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
 		{
-
 			// CONNECT to auto gain input
 			if(IDautogain == -1)
 			{
 				if(sprintf(imname, "aol%ld_autogain", loop) < 1)
 					printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-				IDautogain = read_sharedmem_image(imname);
+				IDautogain = read_sharedmem_image(imname);				
 			}
 			
 			if(IDautogain != -1)
@@ -4833,7 +4832,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				if(data.image[IDautogain].md[0].cnt0 != autogainCnt)
 				{
 					// New gains available - updating
-					printf("Updated autogain -> applying gains\n");
+					printf("Updated autogain [%12ld  %12ld] -> applying gains\n", (long) autogainCnt, (long) data.image[IDautogain].md[0].cnt0);
 					fflush(stdout);
 					
 					
