@@ -4864,8 +4864,15 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					}
 					
 					// Set individual gain
-					//for(m=0;m<NBmodes;m++)
-					//	data.image[aoconfID_DMmode_GAIN].array.F[m] = data.image[IDautogain].array.F[m]/data.image[aoconfID_gainb].array.F[modeblock[m]]/AOconf[loop].gain;
+					for(m=0;m<NBmodes;m++)
+					{
+						data.image[aoconfID_DMmode_GAIN].array.F[m] = data.image[IDautogain].array.F[m]/data.image[aoconfID_gainb].array.F[modeblock[m]]/AOconf[loop].gain;
+						
+						if(m<20)
+							printf("Mode %3ld   %12f  %12f  %12f ->   %12f  %12f\n", m, AOconf[loop].gain, data.image[aoconfID_gainb].array.F[modeblock[m]], data.image[aoconfID_DMmode_GAIN].array.F[m], AOconf[loop].gain*data.image[aoconfID_gainb].array.F[modeblock[m]]*data.image[aoconfID_DMmode_GAIN].array.F[m], data.image[IDautogain].array.F[m]);
+					}
+					
+					
 					
 					autogainCnt = data.image[IDautogain].md[0].cnt0;
 				}
