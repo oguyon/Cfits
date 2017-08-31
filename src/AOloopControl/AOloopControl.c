@@ -4831,11 +4831,34 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 			{
 				if(data.image[IDautogain].md[0].cnt0 != autogainCnt)
 				{
+					float maxGainVal = 0.0;
+					
 					// New gains available - updating
 					printf("[%ld %s] Updated autogain [%12ld  %12ld] -> applying gains\n", IDautogain, data.image[IDautogain].md[0].name, (long) autogainCnt, (long) data.image[IDautogain].md[0].cnt0);
 					fflush(stdout);
 					
+					// Set global gain to highest gain
+					for(m=0;m<NBmodes;m++)
+					{
+						if(data.image[IDautogain].array.F[m] > maxGainVal)
+							maxGainVal = data.image[IDautogain].array.F[m];
+					}					
+					AOconf[loop].gain = maxGainVal;
 					
+					// Set block gain to max gain within block, scaled to global gain
+					for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
+					{
+						maxGainVal = 0.0;
+						for(m=0; m<NBmodes; m++)
+							if(data.image[IDblknb].array.UI16[m] == block)
+								if(data.image[IDautogain].array.F[m] > maxGainVal)
+									maxGainVal = data.image[IDautogain].array.F[m];
+						data.image[aoconfID_gainb].array.F[block] = maxGainVal/AOconf[loop].gain;
+					}
+					
+					// Set individual gain
+					for(m=0;m<NBmodes;m++)
+						data.image[aoconfID_DMmode_GAIN].array.F[m] = data.image[IDautogain].array.F[m]/data.image[aoconfID_gainb].array.F[modeblock[m]]/AOconf[loop].gain;
 					
 					autogainCnt = data.image[IDautogain].md[0].cnt0;
 				}
