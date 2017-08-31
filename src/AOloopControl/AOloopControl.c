@@ -5101,6 +5101,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
     long kk;
     float *errarray;
     float mingain = 0.01;
+    float maxgain = 0.4;
     float gainfactstep = 1.02;
     float *gainval_array;
     float *gainval1_array;
@@ -5311,7 +5312,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         //printf("latency = %f frame\n", latency);
         NBgain = 0;
         gain = mingain;
-        while(gain<1.0)
+        while(gain<maxgain)
         {
             gain *= gainfactstep;
             NBgain++;
