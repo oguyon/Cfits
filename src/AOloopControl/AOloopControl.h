@@ -262,9 +262,7 @@ typedef struct
 
 	/* =============================================================================================== */
     
-
-
-
+   
 
     // semaphores for communication with GPU computing threads
     //sem_t *semptr; // semaphore for this image

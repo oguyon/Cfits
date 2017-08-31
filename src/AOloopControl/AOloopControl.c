@@ -240,6 +240,7 @@ long aoconfID_imWFS1 = -1;
 long aoconfID_imWFS2 = -1;
 static long aoconfID_wfsref0 = -1;
 long aoconfID_wfsref = -1;
+static long long aoconfcnt0_wfsref_current = -1;
 
 long aoconfID_DMmodes = -1;
 static long aoconfID_dmdisp = -1;  // to notify DMcomb that DM maps should be summed
@@ -275,6 +276,7 @@ static long aoconfID_dmmask = -1;
 
 static long aoconfID_respM = -1;
 static long aoconfID_contrM = -1; // pixels -> modes
+static long long aoconfcnt0_contrM_current = -1;
 static long aoconfID_contrMc = -1; // combined control matrix: pixels -> DM actuators
 static long aoconfID_meas_act = -1;
 static long aoconfID_contrMcact[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
@@ -3004,6 +3006,9 @@ int_fast8_t AOloopControl_run()
         vOK = 0;
     }
 
+	aoconfcnt0_wfsref_current = data.image[aoconfID_wfsref].md[0].cnt0;
+	aoconfcnt0_contrM_current = data.image[aoconfID_contrM].md[0].cnt0;
+
     AOconf[loop].initmapping = 0;
     AOconf[loop].init_CMc = 0;
     clock_gettime(CLOCK_REALTIME, &t1);
@@ -3531,7 +3536,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
     if(AOconf[loop].GPU0 == 0)   // run in CPU
     {
-        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slow but useful for tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slower but required for access to mode values
         {
 #ifdef _PRINT_TEST
             printf("TEST - CM mult: GPU=0, CMMODE=0 - %s x %s -> %s\n", data.image[aoconfID_contrM].md[0].name, data.image[aoconfID_imWFS2].md[0].name, data.image[aoconfID_meas_modes].md[0].name);
@@ -3562,18 +3567,24 @@ int_fast8_t AOcompute(long loop, int normalize)
     else
     {
 #ifdef HAVE_CUDA
-        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slower but useful for performance tuning
+        if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slower but required for access to mode values
         {
 #ifdef _PRINT_TEST
             printf("TEST - CM mult: GPU=1, CMMODE=0 - using matrix %s    GPU alpha beta = %f %f\n", data.image[aoconfID_contrM].md[0].name, GPU_alpha, GPU_beta);
             fflush(stdout);
 #endif
 
-            //initWFSref_GPU[PIXSTREAM_SLICE] = 1; // default: do not re-compute reference output
+            initWFSref_GPU[PIXSTREAM_SLICE] = 1; // default: do not re-compute reference output
 
             if(AOconf[loop].GPUall == 1)
             {
                 // TBD : TEST IF contrM or wfsref have changed
+                if((data.image[aoconfID_wfsref].md[0].cnt0 != aoconfcnt0_wfsref_current) || (data.image[aoconfID_contrM].md[0].cnt0 != aoconfcnt0_contrM_current))
+					{
+						aoconfcnt0_wfsref_current = data.image[aoconfID_wfsref].md[0].cnt0;
+						aoconfcnt0_contrM_current = data.image[aoconfID_contrM].md[0].cnt0;
+						initWFSref_GPU[PIXSTREAM_SLICE] = 0;
+					}
 
 
                 if(initWFSref_GPU[PIXSTREAM_SLICE]==0) // initialize WFS reference
@@ -3584,6 +3595,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 #endif
 
                     data.image[aoconfID_imWFS0].md[0].write = 1;
+                    // TBD: replace by memcpy
                     for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
                         data.image[aoconfID_imWFS0].array.F[wfselem] = data.image[aoconfID_wfsref].array.F[wfselem];
                     COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0, -1);
