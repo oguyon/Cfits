@@ -4846,7 +4846,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					}					
 					globalgain = maxGainVal;
 					printf("     Setting  global gain = %f\n", maxGainVal);
-					//AOconf[loop].gain = maxGainVal;
+					AOconf[loop].gain = maxGainVal;
 					
 					
 					// Set block gain to max gain within block, scaled to global gain
@@ -4860,7 +4860,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 					
 					printf("Set block %2ld gain to  %f\n", block, maxGainVal/globalgain);
 					
-					//	data.image[aoconfID_gainb].array.F[block] = maxGainVal/AOconf[loop].gain;
+						data.image[aoconfID_gainb].array.F[block] = maxGainVal/AOconf[loop].gain;
 					}
 					
 					// Set individual gain
