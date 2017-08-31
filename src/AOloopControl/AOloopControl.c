@@ -3581,6 +3581,7 @@ int_fast8_t AOcompute(long loop, int normalize)
                 // TEST IF contrM or wfsref have changed
                 if((data.image[aoconfID_wfsref].md[0].cnt0 != aoconfcnt0_wfsref_current) || (data.image[aoconfID_contrM].md[0].cnt0 != aoconfcnt0_contrM_current))
 					{
+						printf("NEW wfsref [%6ld] or contrM [%6ld]\n", data.image[aoconfID_wfsref].md[0].cnt0, data.image[aoconfID_contrM].md[0].cnt0);
 						aoconfcnt0_wfsref_current = data.image[aoconfID_wfsref].md[0].cnt0;
 						aoconfcnt0_contrM_current = data.image[aoconfID_contrM].md[0].cnt0;
 						initWFSref_GPU[PIXSTREAM_SLICE] = 0;
