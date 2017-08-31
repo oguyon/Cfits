@@ -4833,7 +4833,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				if(data.image[IDautogain].md[0].cnt0 != autogainCnt)
 				{
 					// New gains available - updating
-					
+					printf("Updated autogain -> applying gains\n");
+					fflush(stdout);
 					
 					
 					

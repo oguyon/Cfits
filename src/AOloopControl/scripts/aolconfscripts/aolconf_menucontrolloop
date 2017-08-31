@@ -526,7 +526,7 @@ ConfReadParam AUTOTUNEGAIN_NBsamples "10000"; AUTOTUNEGAIN_NBsamples="$paramvalu
 menuitems+=( "atgnbs" "AUTOTUNE GAIN number of samples    =   ${AUTOTUNEGAIN_NBsamples}" )
 
 
-menuitems+=( "agrun" "AutoGain run" )
+menuitems+=( "agrun" "AutoGain run -> aol${LOOPNUMBER}_autogain" )
 
 
 menuitems+=( " " " " )
