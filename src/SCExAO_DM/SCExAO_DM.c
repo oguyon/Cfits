@@ -484,6 +484,8 @@ int SCExAO_DM_CombineChannels(int mode)
 		
         dispcombconf[0].status = 2;
 
+
+
         if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
             perror("clock_gettime");
             exit(EXIT_FAILURE);
@@ -503,7 +505,7 @@ int SCExAO_DM_CombineChannels(int mode)
             cntsum += data.image[IDch[ch]].md[0].cnt0;
 
 
-        if(cntsum != cntsumold)
+        if(cntsum != cntsumold) // if total cnt sum has changed, sum up all channels
         {
             dispcombconf[0].status = 3;
 
@@ -513,6 +515,8 @@ int SCExAO_DM_CombineChannels(int mode)
                 for(ii=0; ii<sizexy; ii++)
                     dmdispptr[ii] += dmdispptr_array[ch][ii];
             }
+            
+            
 
             dispcombconf[0].status = 4;
 
