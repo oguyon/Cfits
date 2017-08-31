@@ -773,7 +773,7 @@ if [ "$CPUconfRT" -eq "1" ];then
 tmux send-keys -t $tmuxname "csetpmove system" C-m
 fi
 tmux send-keys -t $tmuxname "readshmim aol${LOOPNUMBER}_dmRM" C-m
-tmux send-keys -t $tmuxname "setpix aol${LOOPNUMBER}_dmRM ${testModeAmp} $modenb 1" C-m
+tmux send-keys -t $tmuxname "setpix aol${LOOPNUMBER}_dmRM ${testModeAmp} $modenb 0" C-m
 tmux send-keys -t $tmuxname "exit" C-m
 fi
 	;;
