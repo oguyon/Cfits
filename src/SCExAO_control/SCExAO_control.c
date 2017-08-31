@@ -1207,7 +1207,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
             save_fits("imwfs", "!./tmp/imwfs0.fits");
             save_fits("imref", "!./tmp/imref0.fits");
             save_fits("outcorr", "!./tmp/outcorr0.fits");
-            list_image_ID();
+          //  list_image_ID();
             
             
             
@@ -1244,7 +1244,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
             save_fits("imref", "!./tmp/imref.fits");
             delete_image_ID("outcorr");
 
-            printf("  %6.4f  x  %6.4f\n", totx, toty);
+            printf("Pixel Alignment Error:   %6.4f  x  %6.4f\n", totx, toty);
 
             stepx = (long) (-gain*totx*PcamPixScaleAct); // 0.7*10000.0);
             stepy = (long) (gain*toty*PcamPixScaleAct); //  0.7*10000.0);
@@ -1280,18 +1280,18 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
             fclose(fp);
 
             sprintf(command, "pywfs_pup x goto %ld\n", SCExAO_Pcam_Xpos);
-            printf("%s", command);
+            printf("COMMAND : %s", command);
             r = system(command);
             usleep(delayus);
 
             sprintf(command, "pywfs_pup y goto %ld\n", SCExAO_Pcam_Ypos);
-            printf("%s", command);
+            printf("COMMAND : %s", command);
             r = system(command);
             usleep(delayus);
 
 
 			sprintf(command, "./aolconfscripts/aollog \"%s\" \"auto pcam ave %6ld g %6.4f totxy %+6.4f %+6.4f step %6ld %6ld  XY %7ld %7ld \"", LoopName, NBframesAve, gain, totx, toty, stepx, stepy, SCExAO_Pcam_Xpos, SCExAO_Pcam_Ypos);
-            printf("COMMAND: \"%s\"\n", command);
+            //printf("COMMAND: \"%s\"\n", command);
             r = system(command);
 
 
