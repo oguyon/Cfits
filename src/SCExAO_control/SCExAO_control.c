@@ -1169,7 +1169,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
         if(gainfactor < 0.1)
             gainfactor = 0.1;
 
-
+		printf("\n");
         printf("================== AVERAGING %6ld FRAMES    gain = %f ================ \n", NBframesAve, gain);
 //        ID = SCExAOcontrol_Average_image(WFScam_name, NBframesAve, "imwfs", 5);
         ID = IMAGE_BASIC_streamaverage(WFScam_name, NBframesAve, "imwfs", 0, 5);
@@ -1244,7 +1244,9 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_cam(const char *WFScam_name)
             save_fits("imref", "!./tmp/imref.fits");
             delete_image_ID("outcorr");
 
-            printf("Pixel Alignment Error:   %6.4f  x  %6.4f\n", totx, toty);
+			printf("===========================================================\n");
+            printf("=  Pixel Alignment Error:   %6.4f  x  %6.4f ===============\n", totx, toty);
+            printf("===========================================================\n");
 
             stepx = (long) (-gain*totx*PcamPixScaleAct); // 0.7*10000.0);
             stepy = (long) (gain*toty*PcamPixScaleAct); //  0.7*10000.0);
