@@ -4858,7 +4858,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 								if(data.image[IDautogain].array.F[m] > maxGainVal)
 									maxGainVal = data.image[IDautogain].array.F[m];
 					
-					printf("Set block %2ld gain to  %f\n", maxGainVal/globalgain);
+					printf("Set block %2ld gain to  %f\n", block, maxGainVal/globalgain);
 					
 					//	data.image[aoconfID_gainb].array.F[block] = maxGainVal/AOconf[loop].gain;
 					}
