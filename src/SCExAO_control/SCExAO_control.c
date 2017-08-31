@@ -918,8 +918,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
         for(ii=0; ii<xsize*ysize; ii++)
 			data.image[ID].array.F[ii] -= data.image[IDdark].array.F[ii];
         
-        system("mkdir tmp");
-        save_fits("imwfs", "!./tmp/imwfs.fits"); // TEST
+        
 
        // printf("%ld x %ld image\n", xsize, ysize);
 
@@ -1023,7 +1022,7 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
 	
 
 
-        if(tot > 10.0*xsize*ysize)
+        if(tot > 1.0*xsize*ysize)
         {
             SCExAO_PZT_STAGE_Xpos -= gain*((xsig-ysig)/1.0);  // D actuator
             SCExAO_PZT_STAGE_Ypos -= gain*((xsig+ysig)/1.0);  // C actuator
@@ -1064,6 +1063,11 @@ int SCExAOcontrol_PyramidWFS_AutoAlign_TT(const char *WFScam_name, float XposSta
             data.image[IDshm].md[0].cnt0 ++;
             data.image[IDshm].md[0].write = 0;
         }
+        else
+        {
+			printf("NOT ENOUGH FLUX - NO CORRECTION\n");
+			fflush(stdout);			
+		}
 
         save_fits("imwfs", "!./tmp/imwfs_alignTT.fits");
         usleep(twaitus);
