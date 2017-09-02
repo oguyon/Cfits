@@ -667,7 +667,7 @@ long AOloopControl_PredictiveControl_setPFsimpleAve(char *IDPF_name, float Decay
 					data.image[IDPF].array.F[jj*xsize + ii+kk*ysize] = 0.0;
 				}
 		for(ii=0;ii<ysize;ii++)
-			data.image[IDPF].array.F[ii*xsize + ii+kk*ysize] = 1.0;
+			data.image[IDPF].array.F[ii*xsize + ii+kk*ysize] = coeff[kk];
 	}
 	
 	
