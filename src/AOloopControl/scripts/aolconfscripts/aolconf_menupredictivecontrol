@@ -1959,6 +1959,14 @@ file="./conf/param_PFb0decayCoeff.txt"
 echo "$PFb0decayCoeff" > $file
 ;;
 
+	PFb0sAve)
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_outPFb0
+aolpfsetave aol${LOOPNUMBER}_outPFb0 ${PFb0decayCoeff}
+exitCLI
+EOF
+;;
+
 
 
 
