@@ -905,7 +905,7 @@ fi
 
 ConfReadParam PFb0decayCoeff "0.8"; PFb0decayCoeff="$paramvalue"
 menuitems+=( "PFb0sDecay" "[$PFb0decayCoeff] set Predictive filter block 0 integrator decay coefficient" )
-menuitems+= ( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayCoeff}")
+menuitems+=( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayCoeff}" )
 
 
 
@@ -1959,7 +1959,6 @@ file="./conf/param_PFb0decayCoeff.txt"
 echo "$PFb0decayCoeff" > $file
 ;;
 
-;;
 
 
 
