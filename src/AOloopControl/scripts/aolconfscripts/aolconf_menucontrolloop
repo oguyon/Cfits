@@ -1758,7 +1758,7 @@ EOF
 	;;
 	 
 	 ARPFg)
-  	 value=${loopgain}
+  	 value=${ARPFgain}
 	 SelectValue01 100 1200 50
   	 ARPFgain=${value}
   	 echo "$ARPFgain" > ./conf/param_ARPFgain.txt
