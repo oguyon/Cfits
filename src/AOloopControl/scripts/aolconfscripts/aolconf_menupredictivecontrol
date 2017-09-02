@@ -2056,6 +2056,15 @@ menupred_default="PFb0aOFF"
 ;;
 
 	PFb0aOFF)
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_mode_ARPFgain
+loadfits outmask0.fits outmask
+im1=1-outmask
+im2=im1*aol${LOOPNUMBER}_mode_ARPFgain
+cpsh im2 aol${LOOPNUMBER}_mode_ARPFgain
+exitCLI
+EOF
+	
 tmuxname="aol${LOOPNUMBER}PFb0apply"
 tmux send-keys -t ${tmuxname} C-c
 tmux send-keys -t ${tmuxname} "exit" C-m
