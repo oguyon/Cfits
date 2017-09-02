@@ -215,8 +215,9 @@ Functions</h2></td></tr>
 <tr class="separator:a76909b2088a7057ffc9d1527d0e96e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1b841500046edbc64f5c861fbc5f5f4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__basic_8h.html#aa1b841500046edbc64f5c861fbc5f5f4">basic_measure_transl</a> (const char *ID_name1, const char *ID_name2, long tmax)</td></tr>
 <tr class="separator:aa1b841500046edbc64f5c861fbc5f5f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad21ea98b5546c3ea86f818a1959debcc"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__basic_8h.html#ad21ea98b5546c3ea86f818a1959debcc">IMAGE_BASIC_streamaverage</a> (const char *IDname, long NBcoadd, const char *IDoutname, int mode)</td></tr>
-<tr class="separator:ad21ea98b5546c3ea86f818a1959debcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dd3c88a093b4c568dc50b7374f9a36e"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__basic_8h.html#a5dd3c88a093b4c568dc50b7374f9a36e">IMAGE_BASIC_streamaverage</a> (const char *IDname, long NBcoadd, const char *IDoutname, int mode, int semindex)</td></tr>
+<tr class="memdesc:a5dd3c88a093b4c568dc50b7374f9a36e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Average an image stream.  <a href="#a5dd3c88a093b4c568dc50b7374f9a36e">More...</a><br /></td></tr>
+<tr class="separator:a5dd3c88a093b4c568dc50b7374f9a36e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cc69bf5e17e8f8d2bf4243f815bdd75"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__basic_8h.html#a2cc69bf5e17e8f8d2bf4243f815bdd75">IMAGE_BASIC_streamfeed</a> (const char *IDname, const char *streamname, float frequ)</td></tr>
 <tr class="separator:a2cc69bf5e17e8f8d2bf4243f815bdd75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa53e0acbc9678faade3d6fa20f66e41"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="image__basic_8h.html#afa53e0acbc9678faade3d6fa20f66e41">IMAGE_BASIC_streamrecord</a> (const char *streamname, long NBframes, const char *IDname)</td></tr>
@@ -1731,7 +1732,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad21ea98b5546c3ea86f818a1959debcc"></a>
+<a class="anchor" id="a5dd3c88a093b4c568dc50b7374f9a36e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1757,7 +1758,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>mode</em>&#160;</td>
+          <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>semindex</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1766,8 +1773,12 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Average an image stream. </p>
 <p>coadd frames from image stream output is by default float type mode : 0 : simple average 1 : average + std dev (std dev in "imgstreamrms") 2 : average + std dev -&gt; badpix map for detector calibration ("badpixmap") 3 : same as 1</p>
-<p>NOTE: averaging will stop when receiving signal SIGUSR1 </p>
+<dl class="section note"><dt>Note</dt><dd>Averaging will stop when receiving signal SIGUSR1 </dd>
+<dd>
+If semindex&lt;0, use counter instead of semaphore </dd></dl>
 
 </div>
 </div>
@@ -1924,7 +1935,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_b6897bfb48a1d12c881045d4349aa702.html">image_basic</a></li><li class="navelem"><a class="el" href="image__basic_8h.html">image_basic.h</a></li>
-    <li class="footer">Generated on Fri Aug 25 2017 17:51:38 for cfitsTK by
+    <li class="footer">Generated on Sat Sep 2 2017 00:05:27 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

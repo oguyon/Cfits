@@ -1,8 +1,6 @@
 var SCExAO__control_8c =
 [
     [ "init_SCExAO_control", "SCExAO__control_8c.html#a3af9419031a4448173147094397ed2a7", null ],
-    [ "SCExAOcontrol_Average_image", "SCExAO__control_8c.html#ae467222d66b37a8d13909cc398ffd528", null ],
-    [ "SCExAOcontrol_Average_image_cli", "SCExAO__control_8c.html#a33bc1a61e14467a2b05585aeba4a84b7", null ],
     [ "SCExAOcontrol_mkSegmentModes", "SCExAO__control_8c.html#a28b94867e8774f1fe77ab1309fc50bc6", null ],
     [ "SCExAOcontrol_mkSegmentModes_cli", "SCExAO__control_8c.html#aa644b36bb39b8455e5956d71d11e90ca", null ],
     [ "SCExAOcontrol_mv_DMstage", "SCExAO__control_8c.html#abc910925b932861e67f8297b46c0515c", null ],

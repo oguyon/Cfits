@@ -1399,7 +1399,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_
 // IDPFM_name       : predictive filter matrix
 // IDPFout_name     : prediction
 //
-//  NBiter: run for fixed number of itearationg
+//  NBiter: run for fixed number of iteration
 //  SAVEMODE:   0 no file output
 //  			1	write txt and FITS output
 //				2	write FITS telemetry with prediction: replace output measurements with predictions
@@ -1619,7 +1619,12 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 			data.image[IDINbuff].array.F[mode] = data.image[IDmodevalIN].array.F[IndexOffset + inmaskindex[mode]];
 
 
-		if(nbGPU>0)
+		//
+		// Main matrix multiplication is done here
+		// input vector contains recent history of mode coefficients
+		// output vector contains the predicted mode coefficients
+		//
+		if(nbGPU>0) // if using GPU
 		{
 	
 			#ifdef HAVE_CUDA
@@ -1627,11 +1632,10 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 				GPU_loop_MultMat_setup(0, IDPFM_name, "INbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
 			GPU_loop_MultMat_execute(0, &status, &GPUstatus[100], 1.0, 0.0, 0);
 			#endif
-		//	list_image_ID();
 		}
-		else
+		else // if using CPU
 		{
-			// compute output : matrix vector mult
+			// compute output : matrix vector mult with a CPU-based loop
 			data.image[IDPFout].md[0].write = 1;
 			for(mode=0;mode<NBmodeOUT;mode++)
 			{

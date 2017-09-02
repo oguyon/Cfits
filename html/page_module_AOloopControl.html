@@ -259,7 +259,7 @@ EOF
 <h3>(4) ACQUIRE RESPONSE MATRIX</h3>
 <pre class="fragment">./acquRespM 000
 </pre><p>Edit script to change modulation amplitude, number of images per DM state, etc...</p>
-<p>This script calls function <a class="el" href="AOloopControl_8h.html#ac9edeb536fcd625b1e3489c2be236bb4">Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter)</a> in module <a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a>.</p>
+<p>This script calls function Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter) in module <a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a>.</p>
 <p>The response matrix acquision will go for a large number of iterations, and data is progressively averaged to improve SNR. The last parameter of the acquRespM command in the script is the number of matrixes averaged. You can either wait for all iterations to complete or CTRL-C the process. If you CTRL-C the process, load the result in the configuration directory: </p><pre class="fragment">cp respm.fits ./conf&lt;xxx&gt;/
 cp refwfs.fits ./conf&lt;xxx&gt;/
 </pre><p>output: respm.fits, refwfs.fits</p>
@@ -337,7 +337,7 @@ mv eigenmodesrespM*.fits ./conf$1/
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="index.html">cfitsTK user&#39;s Guide</a></li><li class="navelem"><a class="el" href="page_modules.html">Modules</a></li>
-    <li class="footer">Generated on Fri Aug 25 2017 17:51:38 for cfitsTK by
+    <li class="footer">Generated on Sat Sep 2 2017 00:05:27 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

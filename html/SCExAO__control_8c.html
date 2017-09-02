@@ -119,8 +119,6 @@ $(document).ready(function(){initNavTree('SCExAO__control_8c.html','');});
 Functions</h2></td></tr>
 <tr class="memitem:aa644b36bb39b8455e5956d71d11e90ca"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#aa644b36bb39b8455e5956d71d11e90ca">SCExAOcontrol_mkSegmentModes_cli</a> ()</td></tr>
 <tr class="separator:aa644b36bb39b8455e5956d71d11e90ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33bc1a61e14467a2b05585aeba4a84b7"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#a33bc1a61e14467a2b05585aeba4a84b7">SCExAOcontrol_Average_image_cli</a> ()</td></tr>
-<tr class="separator:a33bc1a61e14467a2b05585aeba4a84b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adec2003d759e17a9edb9f0edcc9b411c"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#adec2003d759e17a9edb9f0edcc9b411c">SCExAOcontrol_mv_DMstage_cli</a> ()</td></tr>
 <tr class="separator:adec2003d759e17a9edb9f0edcc9b411c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b1df7155afb2d81b0d34013501a6c2d"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#a1b1df7155afb2d81b0d34013501a6c2d">SCExAOcontrol_PyramidWFS_AutoAlign_TT_cli</a> ()</td></tr>
@@ -143,8 +141,6 @@ Functions</h2></td></tr>
 <tr class="separator:a3af9419031a4448173147094397ed2a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28b94867e8774f1fe77ab1309fc50bc6"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#a28b94867e8774f1fe77ab1309fc50bc6">SCExAOcontrol_mkSegmentModes</a> (const char *IDdmmap_name, const char *IDout_name)</td></tr>
 <tr class="separator:a28b94867e8774f1fe77ab1309fc50bc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae467222d66b37a8d13909cc398ffd528"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#ae467222d66b37a8d13909cc398ffd528">SCExAOcontrol_Average_image</a> (const char *imname, long NbAve, const char *IDnameout, long semindex)</td></tr>
-<tr class="separator:ae467222d66b37a8d13909cc398ffd528"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc910925b932861e67f8297b46c0515c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SCExAO__control_8c.html#abc910925b932861e67f8297b46c0515c">SCExAOcontrol_mv_DMstage</a> (long stepXpos, long stepYpos)</td></tr>
 <tr class="memdesc:abc910925b932861e67f8297b46c0515c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move DM stage.  <a href="#abc910925b932861e67f8297b46c0515c">More...</a><br /></td></tr>
 <tr class="separator:abc910925b932861e67f8297b46c0515c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -217,8 +213,8 @@ Variables</h2></td></tr>
 <div class="textblock"><p>misc SCExAO-specific control routines </p>
 <p>Alignment, some processing etc...</p>
 <dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>10 Jul 2017</dd></dl>
-<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000036">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+<dl class="section date"><dt>Date</dt><dd>25 Aug 2017</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000046">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a3af9419031a4448173147094397ed2a7"></a>
 <div class="memitem">
@@ -226,59 +222,6 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">int_fast8_t init_SCExAO_control </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="ae467222d66b37a8d13909cc398ffd528"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long SCExAOcontrol_Average_image </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>imname</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>NbAve</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>IDnameout</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">long&#160;</td>
-          <td class="paramname"><em>semindex</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a33bc1a61e14467a2b05585aeba4a84b7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int_fast8_t SCExAOcontrol_Average_image_cli </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1188,7 +1131,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_dee2de43a1f78500cc9d4fa997bfdbe0.html">SCExAO_control</a></li><li class="navelem"><a class="el" href="SCExAO__control_8c.html">SCExAO_control.c</a></li>
-    <li class="footer">Generated on Fri Aug 25 2017 17:51:38 for cfitsTK by
+    <li class="footer">Generated on Sat Sep 2 2017 00:05:27 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

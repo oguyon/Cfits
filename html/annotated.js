@@ -39,7 +39,6 @@ var annotated =
     [ "symrec", "structsymrec.html", "structsymrec" ],
     [ "TCP_BUFFER_METADATA", "structTCP__BUFFER__METADATA.html", "structTCP__BUFFER__METADATA" ],
     [ "THDATA", "structTHDATA.html", "structTHDATA" ],
-    [ "THDATA_IMTOTAL", "structTHDATA__IMTOTAL.html", "structTHDATA__IMTOTAL" ],
     [ "TIMESPECFIXED", "structTIMESPECFIXED.html", "structTIMESPECFIXED" ],
     [ "VARIABLE", "structVARIABLE.html", "structVARIABLE" ],
     [ "yy_buffer_state", "structyy__buffer__state.html", "structyy__buffer__state" ],

@@ -4369,6 +4369,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     long modevalDMindex = 0; // index in the circular buffer
     float alpha;
 
+	long IDmodeARPFgain; // predictive filter mixing ratio per gain (0=non-predictive, 1=predictive)
     long IDmodevalPF; // predictive filter output
 
     long IDblknb;
@@ -4541,36 +4542,64 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     sizeout[0] = NBmodes;
     sizeout[1] = 1;
 
+	// all images below are vectors of dimension NBmodes x 1
+
+	// load/create aol_modeval_ol (pseudo-open loop mode values)
     if(sprintf(imname, "aol%ld_modeval_ol", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDout = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-    if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) // block indices
+
+	// load/create aol_mode_blknb (block index for each mode)
+    if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDblknb = create_image_ID(imname, 2, sizeout, _DATATYPE_UINT16, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-    if(sprintf(imname, "aol%ld_modeval_dm_now", loop) < 1) // current modal DM correction
+	// load/create aol_modeval_dm_now (current modal DM correction)
+    if(sprintf(imname, "aol%ld_modeval_dm_now", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDmodevalDMnow = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-    if(sprintf(imname, "aol%ld_modeval_dm_now_filt", loop) < 1) // current modal DM correction, filtered
+	// load/create aol_modeval_dm_now_filt (current modal DM correction, filtered)
+    if(sprintf(imname, "aol%ld_modeval_dm_now_filt", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDmodevalDMnowfilt = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-
-    if(sprintf(imname, "aol%ld_modeval_dm", loop) < 1) // modal DM correction at time of currently available WFS measurement
+	// load/create aol_modeval_dm (modal DM correction at time of currently available WFS measurement)
+    if(sprintf(imname, "aol%ld_modeval_dm", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDmodevalDM = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+
+	//
+	// load/create aol_mode_ARPFgain (mixing ratio between non-predictive and predictive mode values)
+	// 0: adopt non-predictive value
+	// 1: adopt predictive value
+	//
+	// Set values to 0 when predictive filter is off
+	// set to 1 (or intermediate value) when predictive filter for corresponding mode is on
+	//
+    if(sprintf(imname, "aol%ld_mode_ARPFgain", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+    IDmodeARPFgain = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+	// initialize the gain to zero for all modes
+	for(m=0;m<NBmodes;m++)
+		data.image[IDmodeARPFgain].array.F[m] = 0.0;
+
+
 
     sizeout[1] = modevalDM_bsize;
     if(sprintf(imname, "aol%ld_modeval_dm_C", loop) < 1) // modal DM correction, circular buffer
@@ -4580,6 +4609,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
 	
+
+
 
 
     // auto limit tuning
@@ -4735,6 +4766,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         AOconf[loop].statusM = 4;
 
 
+	
+
+
+
 
         //
         //  MIX PREDICTION WITH CURRENT DM STATE
@@ -4751,12 +4786,22 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             else
             {
                 sem_wait(data.image[IDmodevalPF].semptr[3]);
+
+				//
+				// prediction is mixed here with non-predictive output of WFS
+				// minus sign required to apply correction on DM (correction should be opposite of WFS measurement)
+				// note that second term (non-predictive) does not have minus sign, as it was already applied above
+				//
+				
                 for(m=0; m<NBmodes; m++)
-                    data.image[IDmodevalDMnow].array.F[m] = -AOconf[loop].ARPFgain*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain)*data.image[IDmodevalDMnow].array.F[m];
+                    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMnow].array.F[m];
                 // drive semaphore to zero
                 while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
             }
         }
+
+
+
 
 
         AOconf[loop].statusM = 5;
@@ -4868,7 +4913,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 						data.image[aoconfID_gainb].array.F[block] = maxGainVal/AOconf[loop].gain;
 
 						
-						sprintf(command, "echo \"%6.4f\" > conf/param_gainb%02d.txt", data.image[aoconfID_gainb].array.F[block], block);
+						sprintf(command, "echo \"%6.4f\" > conf/param_gainb%02ld.txt", data.image[aoconfID_gainb].array.F[block], block);
 						system(command);
 					}
 					

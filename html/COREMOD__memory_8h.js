@@ -24,6 +24,7 @@ var COREMOD__memory_8h =
     [ "COREMOD_MEMORY_image_set_semflush_IDarray", "COREMOD__memory_8h.html#a6fdbf9d15c38ab7e17cba7491027299e", null ],
     [ "COREMOD_MEMORY_image_set_sempost", "COREMOD__memory_8h.html#a0a0ff9c8d1f2360b6ac76ce4cd83e955", null ],
     [ "COREMOD_MEMORY_image_set_sempost_byID", "COREMOD__memory_8h.html#ad01110c5a650c6e016a7e12b95fa3b31", null ],
+    [ "COREMOD_MEMORY_image_set_sempost_excl_byID", "COREMOD__memory_8h.html#a24043397b08f232ba04983bd3205d337", null ],
     [ "COREMOD_MEMORY_image_set_sempost_loop", "COREMOD__memory_8h.html#ad1264fcbdc110d5cffb90b7e66d09031", null ],
     [ "COREMOD_MEMORY_image_set_semwait", "COREMOD__memory_8h.html#af9cad2e178561feef5362287b2196049", null ],
     [ "COREMOD_MEMORY_image_set_semwait_OR_IDarray", "COREMOD__memory_8h.html#a1b4b8135f1a24212048a83d6153b2d39", null ],

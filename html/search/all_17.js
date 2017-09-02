@@ -1,14 +1,14 @@
 var searchData=
 [
   ['waitforsemid',['waitforsemID',['../COREMOD__memory_8c.html#a201263a8498c7557ab392a4cdcc13488',1,'waitforsemID(void *ID):&#160;COREMOD_memory.c'],['../COREMOD__memory_8h.html#a201263a8498c7557ab392a4cdcc13488',1,'waitforsemID(void *ID):&#160;COREMOD_memory.c']]],
-  ['wcol',['wcol',['../AOloopControl_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;AOloopControl.c'],['../AOloopControl__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;AOloopControl_DM.c'],['../info_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;info.c'],['../SCExAO__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;SCExAO_DM.c']]],
+  ['wcol',['wcol',['../AOloopControl__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;AOloopControl_DM.c'],['../AOloopControl__perfTest_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;AOloopControl_perfTest.c'],['../info_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;info.c'],['../SCExAO__DM_8c.html#ae6916da9363f105e747ab3cb5af8a4e7',1,'wcol():&#160;SCExAO_DM.c']]],
   ['wdir_5finit',['WDIR_INIT',['../AOsystSim_8c.html#ae40c8188d01ca1b2accece98300e61c8',1,'AOsystSim.c']]],
   ['wfpropagate_2ec',['WFpropagate.c',['../WFpropagate_8c.html',1,'']]],
   ['wfpropagate_2eh',['WFpropagate.h',['../WFpropagate_8h.html',1,'']]],
   ['wfpropagate_5frun',['WFpropagate_run',['../WFpropagate_8c.html#a0154c900f6865033703f7f5a3ceb73fb',1,'WFpropagate_run():&#160;WFpropagate.c'],['../WFpropagate_8h.html#a0154c900f6865033703f7f5a3ceb73fb',1,'WFpropagate_run():&#160;WFpropagate.c']]],
   ['wfpropagate_5ftestlyot',['WFpropagate_TestLyot',['../WFpropagate_8c.html#a99694a7d15d71ada276fac0c6910065f',1,'WFpropagate.c']]],
-  ['wfs_5factive_5fmap',['WFS_active_map',['../AOloopControl_8c.html#abb7ca190f28831881358f1d0a7ee0529',1,'AOloopControl.c']]],
-  ['wfsatype',['WFSatype',['../AOloopControl_8c.html#ae7fa9238d412594f41ef9f6d5c4206c4',1,'AOloopControl.c']]],
+  ['wfs_5factive_5fmap',['WFS_active_map',['../AOloopControl_8c.html#abb7ca190f28831881358f1d0a7ee0529',1,'WFS_active_map():&#160;AOloopControl.c'],['../AOloopControl__computeCalib_8c.html#abb7ca190f28831881358f1d0a7ee0529',1,'WFS_active_map():&#160;AOloopControl.c']]],
+  ['wfsatype',['WFSatype',['../AOloopControl_8c.html#ae7fa9238d412594f41ef9f6d5c4206c4',1,'WFSatype():&#160;AOloopControl.c'],['../AOloopControl__IOtools_8c.html#ae7fa9238d412594f41ef9f6d5c4206c4',1,'WFSatype():&#160;AOloopControl.c']]],
   ['wfscam_5fname',['WFScam_name',['../SCExAO__control_8c.html#a25d678ac6cd19a7d6bf6584e8ca112bb',1,'SCExAO_control.c']]],
   ['wfscnt',['WFScnt',['../structAOLOOPCONTROL__CONF.html#a2402535e7cff34f3214c2786c38c3e4b',1,'AOLOOPCONTROL_CONF::WFScnt()'],['../structFPAOLOOPCONTROL__CONF.html#a50a4ab67e8e02b7787214c2bb7ac6304',1,'FPAOLOOPCONTROL_CONF::WFScnt()'],['../SCExAO__control_8c.html#a2e957adc997fbcc39b5bd142c2c47bac',1,'WFScnt():&#160;SCExAO_control.c']]],
   ['wfscntrm',['WFScntRM',['../structAOLOOPCONTROL__CONF.html#a670343e3030850651f0da32276ce2372',1,'AOLOOPCONTROL_CONF']]],
@@ -35,6 +35,6 @@ var searchData=
   ['write_5fflot_5ffile_5fcli',['write_flot_file_cli',['../COREMOD__tools_8c.html#a1b63992861852582ae8fac50f2c6e02b',1,'COREMOD_tools.c']]],
   ['write_5fint_5ffile',['write_int_file',['../COREMOD__tools_8c.html#a575291550841af37f63fcefbaf121adf',1,'write_int_file(const char *fname, int value):&#160;COREMOD_tools.c'],['../COREMOD__tools_8h.html#a575291550841af37f63fcefbaf121adf',1,'write_int_file(const char *fname, int value):&#160;COREMOD_tools.c']]],
   ['write_5fok',['WRITE_OK',['../PIAACMCsimul_8c.html#acaeed1d7434e0febb834ca8df68eaf78',1,'PIAACMCsimul.c']]],
-  ['wrow',['wrow',['../AOloopControl_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;AOloopControl.c'],['../AOloopControl__DM_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;AOloopControl_DM.c'],['../info_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;info.c'],['../SCExAO__DM_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;SCExAO_DM.c']]],
+  ['wrow',['wrow',['../AOloopControl__DM_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;AOloopControl_DM.c'],['../AOloopControl__perfTest_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;AOloopControl_perfTest.c'],['../info_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;info.c'],['../SCExAO__DM_8c.html#a8f438ed4f013a0ff7b10eec4cd8713a5',1,'wrow():&#160;SCExAO_DM.c']]],
   ['wspeed',['wspeed',['../structAOLOOPCONTROL__DMTURBCONF.html#aaac3d0a47b600f128ab17e8d066aa3a2',1,'AOLOOPCONTROL_DMTURBCONF::wspeed()'],['../structSCEXAO__DMTURBCONF.html#aeb9e49325ea345eba8aa3f6ee983928b',1,'SCEXAO_DMTURBCONF::wspeed()']]]
 ];
