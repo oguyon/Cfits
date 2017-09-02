@@ -211,7 +211,7 @@ EOF
 
 TESTMODE="1"
 
-if [ "$TESTMODE" = "0" ]; then
+#if [ "$TESTMODE" = "0" ]; then
 
 if [ "$MASTEROUTPUT" = "0" ]; then
 
@@ -253,7 +253,7 @@ EOF
 fi
 
 
-fi
+#fi
 
 
 
