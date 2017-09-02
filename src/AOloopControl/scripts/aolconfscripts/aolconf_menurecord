@@ -193,9 +193,9 @@ loggainbstat="0"
 fi
 if [ "${loggainbstat}" = "0" ];
 then
-menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                 Block gain" )
+menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                Block gain" )
 else
-menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                 Block gain\Zn" )
+menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                Block gain\Zn" )
 fi
 
 
@@ -210,9 +210,9 @@ logDMmodeGAINstat="0"
 fi
 if [ "${logDMmodeGAINstat}" = "0" ];
 then
-menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN            DM mode gain" )
+menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN          DM mode gain" )
 else
-menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn           DM mode gain\Zn" )
+menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn         DM mode gain\Zn" )
 fi
 
 
@@ -244,9 +244,9 @@ logmultfbstat="0"
 fi
 if [ "${logmultfbstat}" = "0" ];
 then
-menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb                 Block mult factor" )
+menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb               Block mult factor" )
 else
-menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn                 Block mult factor\Zn" )
+menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn               Block mult factor\Zn" )
 fi
 
 
@@ -261,9 +261,9 @@ logDMmodeMULTFstat="0"
 fi
 if [ "${logDMmodeMULTFstat}" = "0" ];
 then
-menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF            DM mode mult factor" )
+menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF         DM mode mult factor" )
 else
-menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn           DM mode mult factor\Zn" )
+menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn        DM mode mult factor\Zn" )
 fi
 
 
@@ -487,7 +487,7 @@ menuitems+=( " " " " )
 
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
-if [ "$CMMODE" = "1" ]; then
+if [ "$CMMODE" = "0" ]; then
 
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
