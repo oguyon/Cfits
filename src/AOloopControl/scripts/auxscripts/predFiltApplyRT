@@ -199,6 +199,17 @@ loopnb=$(cat LOOPNUMBER 2> /dev/null)
 
 
 
+
+./AOloopControl << EOF
+readshmim aol${loopnb}_mode_ARPFgain
+loadfits "${outmaskname}" outmask
+aol${loopnb}_mode_ARPFgain=aol${loopnb}_mode_ARPFgain+outmask
+exitCLI
+EOF
+
+
+
+
 if [ "$MASTEROUTPUT" = "0" ]; then
 
 ./AOloopControl << EOF
@@ -238,14 +249,6 @@ EOF
 
 fi
 
-
-
-./AOloopControl << EOF
-readshmim aol${loopnb}_mode_ARPFgain
-loadfits "${outmaskname}" outmask
-aol${loopnb}_mode_ARPFgain=aol${loopnb}_mode_ARPFgain+outmask
-exitCLI
-EOF
 
 
 
