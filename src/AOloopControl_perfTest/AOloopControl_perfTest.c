@@ -939,6 +939,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     if(updateconf==1)
         AOconf[LOOPNUMBER].loopfrequ = loopfrequ_measured;
 
+	// Primary control matrix computation latency
     complatency_frame_measured = 1.0-1.0*statuscnt[20]/NBkiter;
     if(updateconf==1)
         AOconf[LOOPNUMBER].complatency_frame = complatency_frame_measured;

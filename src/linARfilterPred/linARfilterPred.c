@@ -1562,7 +1562,7 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 			
 			for(gpuindex=0;gpuindex<nbGPU;gpuindex++)
 			{
-				sprintf(GPUsetfname, "./conf/conf_PFb%ldGPU%ddevice.txt", PFindex, gpuindex); 
+				sprintf(GPUsetfname, "./conf/param_PFb%ldGPU%ddevice.txt", PFindex, gpuindex); 
 				fp = fopen(GPUsetfname, "r");
 				if(fp==NULL)
 					{
