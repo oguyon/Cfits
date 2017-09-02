@@ -203,7 +203,8 @@ loopnb=$(cat LOOPNUMBER 2> /dev/null)
 ./AOloopControl << EOF
 readshmim aol${loopnb}_mode_ARPFgain
 loadfits "${outmaskname}" outmask
-aol${loopnb}_mode_ARPFgain=aol${loopnb}_mode_ARPFgain+outmask
+im1=aol${loopnb}_mode_ARPFgain+outmask
+cpsh im1 aol${loopnb}_mode_ARPFgain
 exitCLI
 EOF
 
