@@ -33,18 +33,20 @@ menuitems+=( " " " ")
 
 
 # hardware latency (frames)
-hardwlatency_frame="2.1"
-file="./conf/conf_hardwlatency_frame.txt"
-if [ -f "$file" ]; then
-hardwlatency_frame=$( cat $file )
-fi
+ConfReadParam hardwlatency_frame "2.1"; hardwlatency_frame="$paramvalue"
+#hardwlatency_frame="2.1"
+#file="./conf/param_hardwlatency_frame.txt"
+#if [ -f "$file" ]; then
+#hardwlatency_frame=$( cat $file )
+#fi
 
 # software latency (frame)
-wfsmextrlatency_frame="0.6"
-file="./conf/conf_wfsmextrlatency_frame.txt"
-if [ -f "$file" ]; then
-wfsmextrlatency_frame=$( cat $file )
-fi
+ConfReadParam wfsmextrlatency_frame "0.5"; wfsmextrlatency_frame="$paramvalue"
+#wfsmextrlatency_frame="0.6"
+#file="./conf/param_wfsmextrlatency_frame.txt"
+#if [ -f "$file" ]; then
+#wfsmextrlatency_frame=$( cat $file )
+#fi
 latency_frame=$(awk "BEGIN {printf \"%.3f\",${hardwlatency_frame}+${wfsmextrlatency_frame}}")
 
 
