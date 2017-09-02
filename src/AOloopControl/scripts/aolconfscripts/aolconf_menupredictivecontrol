@@ -886,6 +886,7 @@ fi
 
 # COMPUTE
 
+# block 0
 menuitems+=( " " " ")
 file="./status/stat_PFb0cON.txt"
 PFb0cON=$( cat $file )
@@ -902,6 +903,13 @@ else
 menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb0\Zn Select to switch off compute filter input for PF block 0" )
 fi
 
+ConfReadParam PFb0decayCoeff "0.8"; PFb0decayCoeff="$paramvalue"
+menuitems+=( "PFb0sDecay" "[$PFb0decayCoeff] set Predictive filter block 0 integrator decay coefficient" )
+menuitems+= ( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayCoeff}")
+
+
+
+# block 1
 if [ "$NBPFblock" -gt "1" ]; then
 file="./status/stat_PFb1cON.txt"
 PFb1cON=$( cat $file )
@@ -919,6 +927,9 @@ menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOO
 fi
 fi
 
+
+
+# block 2
 if [ "$NBPFblock" -gt "2" ]; then
 file="./status/stat_PFb2cON.txt"
 PFb2cON=$( cat $file )
@@ -937,6 +948,8 @@ fi
 fi
 
 
+
+# block 3
 if [ "$NBPFblock" -gt "3" ]; then
 file="./status/stat_PFb3cON.txt"
 PFb3cON=$( cat $file )
@@ -1935,6 +1948,17 @@ PFb0cON="OFF"
 file="./status/stat_PFb0cON.txt"
 echo "$PFb0cON" > $file
 menupred_default="PFb0cON"
+;;
+
+
+	PFb0sDecay)
+exec 3>&1;
+PFb0decayCoeff=$(dialog --inputbox "Select Predictive filter block 0 integrator decay" 0 0 "$PFb0decayCoeff" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/param_PFb0decayCoeff.txt"
+echo "$PFb0decayCoeff" > $file
+;;
+
 ;;
 
 
