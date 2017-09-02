@@ -485,7 +485,9 @@ fi
 
 menuitems+=( " " " " )
 
-if [ "${dm2dm_mode}" = "0" ]; then
+
+ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
+if [ "$CMMODE" = "1" ]; then
 
 file="./status/stat_log_modeval.txt"
 logmodevalstat=$( cat $file )
