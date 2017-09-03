@@ -1107,7 +1107,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         tdiffv12 = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
     
     
-		printf("Computing time = %5.3f s / %5.3f -> fraction = %8.6f\n", tdiffv12, tdiffv01+tdiffv12, tdiffv12/(tdiffv01+tdiffv12));
+		printf("Computing time = %5.3f s / %5.3f s -> fraction = %8.6f\n", tdiffv12, tdiffv01+tdiffv12, tdiffv12/(tdiffv01+tdiffv12));
     }
 
 
