@@ -239,6 +239,7 @@ typedef struct
     uint_fast64_t RMSmodesCumulcnt;
 
 	// block statistics (instantaneous)
+	double block_PFresrms[100]; // Prediction residual, meas RMS
 	double block_OLrms[100]; // open loop RMS
 	double block_Crms[100]; // correction RMS
 	double block_WFSrms[100]; // WFS residual RMS
@@ -251,6 +252,7 @@ typedef struct
 	
 	// averaged
 	uint_fast32_t AveStats_NBpt; // averaging interval
+	double blockave_PFresrms[100]; // open loop RMS
 	double blockave_OLrms[100]; // open loop RMS
 	double blockave_Crms[100]; // correction RMS
 	double blockave_WFSrms[100]; // WFS residual RMS

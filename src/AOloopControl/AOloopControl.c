@@ -4359,19 +4359,26 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     long IDout;
     long IDmodeval; // WFS measurement
 
-    long IDmodevalDM_C; // DM correction, circular buffer to include history
-    long modevalDM_bsize = 20; // circular buffer size
-    long modevalDMindexl = 0;
+    long modeval_bsize = 20; // circular buffer size (valid for both DM and PF)
 
+    long IDmodevalDM_C; // DM correction, circular buffer to include history
+    long modevalDMindexl = 0;
+    long modevalDMindex = 0; // index in the circular buffer     
+    
     long IDmodevalDM; // DM correction at WFS measurement time
     long IDmodevalDMcorr; // current DM correction
     long IDmodevalDMnow; // DM correction after predictiv control 
     long IDmodevalDMnowfilt; // current DM correction filtered
-    long modevalDMindex = 0; // index in the circular buffer
     float alpha;
+    long IDmodevalPFsync;
 
 	long IDmodeARPFgain; // predictive filter mixing ratio per gain (0=non-predictive, 1=predictive)
     long IDmodevalPF; // predictive filter output
+	long IDmodevalPFres; // predictive filter measured residual (real-time)
+
+    long IDmodevalPF_C; // modal prediction, circular buffer to include history
+    long modevalPFindexl = 0;
+    long modevalPFindex = 0; // index in the circular buffer
 
     long IDblknb;
     char imname[200];
@@ -4397,11 +4404,13 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     long block;
     long blockstatcnt = 0;
 
+	double blockavePFresrms[100];
     double blockaveOLrms[100];
     double blockaveCrms[100]; // correction RMS
     double blockaveWFSrms[100]; // WFS residual RMS
     double blockavelimFrac[100];
 
+	double allavePFresrms;
     double allaveOLrms;
     double allaveCrms;
     double allaveWFSrms;
@@ -4589,6 +4598,21 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
 
+	// load/create aol_modeval_dm (modal DM correction at time of currently available WFS measurement)
+    if(sprintf(imname, "aol%ld_modevalPFsync", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	IDmodevalPFsync = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+	
+
+	// load/create aol_modeval_dm (modal DM correction at time of currently available WFS measurement)
+    if(sprintf(imname, "aol%ld_modevalPFres", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	IDmodevalPFres = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+	
+	
 	//
 	// load/create aol_mode_ARPFgain (mixing ratio between non-predictive and predictive mode values)
 	// 0: adopt non-predictive value
@@ -4609,13 +4633,22 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-    sizeout[1] = modevalDM_bsize;
+    sizeout[1] = modeval_bsize;
     if(sprintf(imname, "aol%ld_modeval_dm_C", loop) < 1) // modal DM correction, circular buffer
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDmodevalDM_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
+
+
+	// modal prediction, circular buffer
+    sizeout[1] = modeval_bsize;
+    if(sprintf(imname, "aol%ld_modeval_PF_C", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+
+    IDmodevalPF_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
 	
 
 
@@ -4687,38 +4720,49 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     data.image[IDmodevalDMcorr].md[0].write = 1;
     data.image[IDmodevalDMnow].md[0].write = 1;
     data.image[IDmodevalDM_C].md[0].write = 1;
+    data.image[IDmodevalPF_C].md[0].write = 1;
     for(m=0; m<NBmodes; m++)
     {
         data.image[IDmodevalDM].array.F[m] = 0.0;
         data.image[IDmodevalDMcorr].array.F[m] = 0.0;
         data.image[IDmodevalDMnow].array.F[m] = 0.0;
-        for(modevalDMindex=0; modevalDMindex<modevalDM_bsize; modevalDMindex++)
+        for(modevalDMindex=0; modevalDMindex<modeval_bsize; modevalDMindex++)
             data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = 0;
+        for(modevalPFindex=0; modevalPFindex<modeval_bsize; modevalPFindex++)
+            data.image[IDmodevalPF_C].array.F[modevalPFindex*NBmodes+m] = 0;
         data.image[IDout].array.F[m] = 0.0;
     }
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM, -1);
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMcorr, -1);
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
+    COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPF_C, -1);
     data.image[IDmodevalDM].md[0].cnt0++;
     data.image[IDmodevalDMcorr].md[0].cnt0++;
     data.image[IDmodevalDMnow].md[0].cnt0++;
     data.image[IDmodevalDM_C].md[0].cnt0++;
+    data.image[IDmodevalPF_C].md[0].cnt0++;
     data.image[IDmodevalDM].md[0].write = 0;
     data.image[IDmodevalDMcorr].md[0].write = 0;
     data.image[IDmodevalDMnow].md[0].write = 0;
     data.image[IDmodevalDM_C].md[0].write = 0;
+    data.image[IDmodevalPF_C].md[0].write = 0;
 
     printf("FILTERMODE = %d\n", FILTERMODE);
     list_image_ID();
 
     modevalDMindex = 0;
     modevalDMindexl = 0;
+
+    modevalPFindex = 0;
+    modevalPFindexl = 0;
+
     cnt = 0;
 
     blockstatcnt = 0;
     for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
     {
+		blockavePFresrms[block] = 0.0;
         blockaveOLrms[block] = 0.0;
         blockaveCrms[block] = 0.0;
         blockaveWFSrms[block] = 0.0;
@@ -4735,7 +4779,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     for(;;)
     {		
 		long modevalDMindex0, modevalDMindex1;
-		
+		long modevalPFindex0, modevalPFindex1;
 		
         // read WFS measured modes (residual)
 
@@ -4808,23 +4852,26 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				// note that second term (non-predictive) does not have minus sign, as it was already applied above
 				//
 				
-				if(loopPFcnt==2000)
-					{
-						fptest = fopen("testARPFgains.txt", "w");
-					}
+				
                 for(m=0; m<NBmodes; m++)
                 {
-					if((loopPFcnt==2000)&&(m<200))
-						fprintf(fptest, "mode %5ld   %20f  %20f\n", m, AOconf[loop].ARPFgain, data.image[IDmodeARPFgain].array.F[m]);
 				    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMcorr].array.F[m];
                 }
-                if(loopPFcnt==2000)
-				{
-					fclose(fptest);
-					loopPFcnt = 0;
-                }
+             
                 // drive semaphore to zero
                 while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
+
+
+				//
+				// update current location of prediction circular buffer
+				//
+				data.image[IDmodevalPF_C].md[0].write = 1;
+				for(m=0; m<NBmodes; m++)
+					data.image[IDmodevalPF_C].array.F[modevalPFindex*NBmodes+m] = data.image[IDmodevalPF].array.F[m];
+				COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPF_C, -1);
+				data.image[IDmodevalPF_C].md[0].cnt1 = modevalPFindex;
+				data.image[IDmodevalPF_C].md[0].cnt0++;
+				data.image[IDmodevalPF_C].md[0].write = 0;
             
 				loopPFcnt++;
             }
@@ -4834,6 +4881,11 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 		{ 
 			memcpy(data.image[IDmodevalDMnow].array.F, data.image[IDmodevalDMcorr].array.F, sizeof(float)*NBmodes);
 		}
+
+
+
+
+
 
 
 
@@ -5090,10 +5142,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         modevalDMindex0 = modevalDMindex - framelatency0;
         if(modevalDMindex0<0)
-            modevalDMindex0 += modevalDM_bsize;
+            modevalDMindex0 += modeval_bsize;
         modevalDMindex1 = modevalDMindex - framelatency1;
         if(modevalDMindex1<0)
-            modevalDMindex1 += modevalDM_bsize;
+            modevalDMindex1 += modeval_bsize;
 
         data.image[IDmodevalDM].md[0].write = 1;
         for(m=0; m<NBmodes; m++)
@@ -5101,6 +5153,29 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM, -1);
         data.image[IDmodevalDM].md[0].cnt0++;
         data.image[IDmodevalDM].md[0].write = 0;
+
+
+		if(AOconf[loop].ARPFon==1)
+		{
+		//
+        // COMPUTE OPEN LOOP PREDICTION AT TIME OF WFS MEASUREMENT
+        // LINEAR INTERPOLATION BETWEEN NEAREST TWO VALUES
+        //
+        modevalPFindex0 = modevalPFindex - framelatency0;
+        if(modevalPFindex0<0)
+            modevalPFindex0 += modeval_bsize;
+        modevalPFindex1 = modevalPFindex - framelatency1;
+        if(modevalPFindex1<0)
+            modevalPFindex1 += modeval_bsize;
+
+        data.image[IDmodevalPFsync].md[0].write = 1;
+        for(m=0; m<NBmodes; m++)
+            data.image[IDmodevalPFsync].array.F[m] = (1.0-alpha)*data.image[IDmodevalPF_C].array.F[modevalPFindex0*NBmodes+m] + alpha*data.image[IDmodevalPF_C].array.F[modevalPFindex1*NBmodes+m];
+        COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPFsync, -1);
+        data.image[IDmodevalPFsync].md[0].cnt0++;
+        data.image[IDmodevalPFsync].md[0].write = 0;
+		}
+
 
 
         AOconf[loop].statusM1 = 7;
@@ -5116,21 +5191,46 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         data.image[IDout].md[0].write = 0;
 
 
+		if(AOconf[loop].ARPFon==1)
+		{
+		//
+        // OPEN LOOP PREDICTION RESIDUAL = most recent OL - time-lagged PF
+        //
+        data.image[IDmodevalPFres].md[0].write = 1;
+        for(m=0; m<NBmodes; m++)
+            data.image[IDmodevalPFres].array.F[m] = data.image[IDout].array.F[m] - data.image[IDmodevalPFsync].array.F[m];
+        COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPFres, -1);
+        data.image[IDmodevalPFres].md[0].cnt0++;
+        data.image[IDmodevalPFres].md[0].write = 0;
+		}
+
+
 
         AOconf[loop].statusM1 = 8;
 
-
+		// increment modevalDMindex
         modevalDMindexl = modevalDMindex;
         modevalDMindex++;
-        if(modevalDMindex==modevalDM_bsize)
+        if(modevalDMindex==modeval_bsize)
             modevalDMindex = 0;
+
+		// increment modevalPFindex
+        modevalPFindexl = modevalPFindex;
+        modevalPFindex++;
+        if(modevalPFindex==modeval_bsize)
+            modevalPFindex = 0;
+
+
+
 
 
         // TELEMETRY
         for(m=0; m<NBmodes; m++)
         {
             block = data.image[IDblknb].array.UI16[m];
-
+			
+			
+			blockavePFresrms[block] += data.image[IDmodevalPFres].array.F[m]*data.image[IDmodevalPFres].array.F[m];
             blockaveOLrms[block] += data.image[IDout].array.F[m]*data.image[IDout].array.F[m];
             blockaveCrms[block] += data.image[IDmodevalDMnow].array.F[m]*data.image[IDmodevalDMnow].array.F[m];
             blockaveWFSrms[block] += data.image[IDmodeval].array.F[m]*data.image[IDmodeval].array.F[m];
@@ -5141,16 +5241,19 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         {
             for(block=0; block<AOconf[loop].DMmodesNBblock; block++)
             {
+				AOconf[loop].blockave_PFresrms[block] = sqrt(blockavePFresrms[block]/blockstatcnt);
                 AOconf[loop].blockave_OLrms[block] = sqrt(blockaveOLrms[block]/blockstatcnt);
                 AOconf[loop].blockave_Crms[block] = sqrt(blockaveCrms[block]/blockstatcnt);
                 AOconf[loop].blockave_WFSrms[block] = sqrt(blockaveWFSrms[block]/blockstatcnt);
                 AOconf[loop].blockave_limFrac[block] = (blockavelimFrac[block])/blockstatcnt;
 
+				allavePFresrms += blockavePFresrms[block];
                 allaveOLrms += blockaveOLrms[block];
                 allaveCrms += blockaveCrms[block];
                 allaveWFSrms += blockaveWFSrms[block];
                 allavelimFrac += blockavelimFrac[block];
 
+				blockavePFresrms[block] = 0.0;
                 blockaveOLrms[block] = 0.0;
                 blockaveCrms[block] = 0.0;
                 blockaveWFSrms[block] = 0.0;
@@ -5162,6 +5265,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             AOconf[loop].ALLave_WFSrms = sqrt(allaveWFSrms/blockstatcnt);
             AOconf[loop].ALLave_limFrac = allavelimFrac/blockstatcnt;
 
+			allavePFresrms = 0.0;
             allaveOLrms = 0.0;
             allaveCrms = 0.0;
             allaveWFSrms = 0.0;

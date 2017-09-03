@@ -542,6 +542,7 @@ fi
 
 ConfReadParam ARPFgain "0.0"; ARPFgain="$paramvalue"
 menuitems+=( "ARPFg" "ARPF mixing ratio = ${ARPFgain}  (fraction of signal from ARPF, remainer is from non-predictive output dm_corr)" )
+menuitems+=( "" "   NOTE: For pure open-loop control from ARPF, set loop mult coeff to zero" ) 
 
 
 

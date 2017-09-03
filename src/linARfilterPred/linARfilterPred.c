@@ -678,6 +678,13 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     struct tm *uttime;
     struct timespec timenow;
 
+    struct timespec t0;
+    struct timespec t1;
+    struct timespec t2;
+	struct timespec tdiff;
+	double tdiffv01; // waiting time
+	double tdiffv12; // computing time
+
 
 
     if(LOOPmode==0)
@@ -870,10 +877,11 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
     for(iter=0; iter<NBiter; iter++)
     {
+		clock_gettime(CLOCK_REALTIME, &t0);
         if(LOOPmode == 1)
             sem_wait(data.image[IDin].semptr[semtrig]);
 
-
+		clock_gettime(CLOCK_REALTIME, &t1);
 
         if(LOOPmode == 0)
         {
@@ -1090,7 +1098,16 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         
         printf("DONE\n");
         fflush(stdout);
+        clock_gettime(CLOCK_REALTIME, &t2);
 
+        tdiff = info_time_diff(t0, t1);
+        tdiffv01 = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        
+        tdiff = info_time_diff(t1, t2);
+        tdiffv12 = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+    
+    
+		printf("Computing time = %5.3f s / %5.3f -> fraction = %8.6f\n", tdiffv12, tdiffv01+tdiffv12, tdiffv12/(tdiffv01+tdiffv12));
     }
 
 
