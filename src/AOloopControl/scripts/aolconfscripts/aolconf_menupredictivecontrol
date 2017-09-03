@@ -802,16 +802,12 @@ fi
 
 
 
-
-menuitems+=( " " " ")
-menuitems+=( " " " ")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 
 stringcenter "TELEMETRY WATCH"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( " " " ")
 menuitems+=( " " " ")
 
 file="./status/stat_PFb0wON.txt"
@@ -884,24 +880,18 @@ fi
 fi
 
 
-
-
-
-
-menuitems+=( " " " ")
-menuitems+=( " " " ")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 
 stringcenter "COMPUTE FILTERS"
 menuitems+=( "5 ->" "\Zb\Zr$string\Zn" )
 
-menuitems+=( " " " ")
-menuitems+=( " " " ")
-
 
 # block 0
 menuitems+=( " " " ")
+ConfReadParam PFb0decayCoeff "0.8"; PFb0decayCoeff="$paramvalue"
+menuitems+=( "PFb0sDecay" "[$PFb0decayCoeff] set Predictive filter block 0 integrator decay coefficient" )
+menuitems+=( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayCoeff}" )
 file="./status/stat_PFb0cON.txt"
 PFb0cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb0cON" = " ON" || "$PFb0cON" = "OFF" ) ]]; then
@@ -917,9 +907,7 @@ else
 menuitems+=( "PFb0cOFF" "[\Z1\Zr${PFb0cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb0\Zn Select to switch off compute filter input for PF block 0" )
 fi
 
-ConfReadParam PFb0decayCoeff "0.8"; PFb0decayCoeff="$paramvalue"
-menuitems+=( "PFb0sDecay" "[$PFb0decayCoeff] set Predictive filter block 0 integrator decay coefficient" )
-menuitems+=( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayCoeff}" )
+
 
 
 
@@ -927,6 +915,10 @@ menuitems+=( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayC
 # block 1
 menuitems+=( " " " ")
 if [ "$NBPFblock" -gt "1" ]; then
+ConfReadParam PFb1decayCoeff "0.8"; PFb1decayCoeff="$paramvalue"
+menuitems+=( "PFb1sDecay" "[$PFb1decayCoeff] set Predictive filter block 1 integrator decay coefficient" )
+menuitems+=( "PFb1sAve" "Set PF block 1 to integrator, DecayCoeff = ${PFb1decayCoeff}" )
+
 file="./status/stat_PFb1cON.txt"
 PFb1cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb1cON" = " ON" || "$PFb1cON" = "OFF" ) ]]; then
@@ -942,9 +934,6 @@ else
 menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb1\Zn Select to switch off compute filter for PF block 1" )
 fi
 
-ConfReadParam PFb1decayCoeff "0.8"; PFb1decayCoeff="$paramvalue"
-menuitems+=( "PFb1sDecay" "[$PFb1decayCoeff] set Predictive filter block 1 integrator decay coefficient" )
-menuitems+=( "PFb1sAve" "Set PF block 1 to integrator, DecayCoeff = ${PFb1decayCoeff}" )
 fi
 
 
@@ -953,6 +942,10 @@ fi
 # block 2
 menuitems+=( " " " ")
 if [ "$NBPFblock" -gt "2" ]; then
+ConfReadParam PFb2decayCoeff "0.8"; PFb2decayCoeff="$paramvalue"
+menuitems+=( "PFb2sDecay" "[$PFb2decayCoeff] set Predictive filter block 2 integrator decay coefficient" )
+menuitems+=( "PFb2sAve" "Set PF block 2 to integrator, DecayCoeff = ${PFb2decayCoeff}" )
+
 file="./status/stat_PFb2cON.txt"
 PFb2cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb2cON" = " ON" || "$PFb2cON" = "OFF" ) ]]; then
@@ -968,9 +961,6 @@ else
 menuitems+=( "PFb2cOFF" "[\Z1\Zr${PFb2cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb2\Zn Select to switch off compute filter input for PF block 0" )
 fi
 
-ConfReadParam PFb2decayCoeff "0.8"; PFb2decayCoeff="$paramvalue"
-menuitems+=( "PFb2sDecay" "[$PFb2decayCoeff] set Predictive filter block 2 integrator decay coefficient" )
-menuitems+=( "PFb2sAve" "Set PF block 2 to integrator, DecayCoeff = ${PFb2decayCoeff}" )
 fi
 
 
@@ -979,6 +969,10 @@ fi
 # block 3
 menuitems+=( " " " ")
 if [ "$NBPFblock" -gt "3" ]; then
+ConfReadParam PFb3decayCoeff "0.8"; PFb3decayCoeff="$paramvalue"
+menuitems+=( "PFb3sDecay" "[$PFb3decayCoeff] set Predictive filter block 3 integrator decay coefficient" )
+menuitems+=( "PFb3sAve" "Set PF block 3 to integrator, DecayCoeff = ${PFb3decayCoeff}" )
+
 file="./status/stat_PFb3cON.txt"
 PFb3cON=$( cat $file )
 if [[ -f "$file" && ( "$PFb3cON" = " ON" || "$PFb3cON" = "OFF" ) ]]; then
@@ -994,9 +988,6 @@ else
 menuitems+=( "PFb3cOFF" "[\Z1\Zr${PFb3cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb3\Zn Select to switch off compute filter for PF block 1" )
 fi
 
-ConfReadParam PFb3decayCoeff "0.8"; PFb3decayCoeff="$paramvalue"
-menuitems+=( "PFb3sDecay" "[$PFb3decayCoeff] set Predictive filter block 3 integrator decay coefficient" )
-menuitems+=( "PFb3sAve" "Set PF block 3 to integrator, DecayCoeff = ${PFb3decayCoeff}" )
 fi
 
 
@@ -1007,9 +998,6 @@ fi
 
 
 
-
-menuitems+=( " " " ")
-menuitems+=( " " " ")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 
@@ -1017,9 +1005,6 @@ stringcenter "APPLY FILTERS"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " " " ")
-menuitems+=( " " " ")
-
-
 
 
 # FILTER 0
