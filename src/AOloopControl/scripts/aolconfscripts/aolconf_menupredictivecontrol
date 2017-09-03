@@ -1866,7 +1866,7 @@ tmux new-session -d -s ${tmuxname}
 sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "AOloopControl" C-m
+tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb1wON=" ON"
@@ -1897,7 +1897,7 @@ tmux new-session -d -s ${tmuxname}
 sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "AOloopControl" C-m
+tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb2wON=" ON"
@@ -1926,7 +1926,7 @@ tmux new-session -d -s ${tmuxname}
 sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-tmux send-keys -t ${tmuxname} "AOloopControl" C-m
+tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
 tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb3wON=" ON"
