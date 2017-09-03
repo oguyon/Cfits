@@ -941,12 +941,11 @@ menuitems+=( "PFb1cON" "[$PFb1cON] switch on compute filter for PF block 1  -> a
 else
 menuitems+=( "PFb1cOFF" "[\Z1\Zr${PFb1cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb1\Zn Select to switch off compute filter for PF block 1" )
 fi
-fi
 
 ConfReadParam PFb1decayCoeff "0.8"; PFb1decayCoeff="$paramvalue"
 menuitems+=( "PFb1sDecay" "[$PFb1decayCoeff] set Predictive filter block 1 integrator decay coefficient" )
 menuitems+=( "PFb1sAve" "Set PF block 1 to integrator, DecayCoeff = ${PFb1decayCoeff}" )
-
+fi
 
 
 
@@ -968,12 +967,11 @@ menuitems+=( "PFb2cON" "[$PFb2cON] switch on compute filter for PF block 0  -> a
 else
 menuitems+=( "PFb2cOFF" "[\Z1\Zr${PFb2cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb2\Zn Select to switch off compute filter input for PF block 0" )
 fi
-fi
 
 ConfReadParam PFb2decayCoeff "0.8"; PFb2decayCoeff="$paramvalue"
 menuitems+=( "PFb2sDecay" "[$PFb2decayCoeff] set Predictive filter block 2 integrator decay coefficient" )
 menuitems+=( "PFb2sAve" "Set PF block 2 to integrator, DecayCoeff = ${PFb2decayCoeff}" )
-
+fi
 
 
 
@@ -995,12 +993,11 @@ menuitems+=( "PFb3cON" "[$PFb3cON] switch on compute filter for PF block 1  -> a
 else
 menuitems+=( "PFb3cOFF" "[\Z1\Zr${PFb3cON}\Zn] \Z1\Zr Currently writing aol${LOOPNUMBER}_outPFb3\Zn Select to switch off compute filter for PF block 1" )
 fi
-fi
 
 ConfReadParam PFb3decayCoeff "0.8"; PFb3decayCoeff="$paramvalue"
 menuitems+=( "PFb3sDecay" "[$PFb3decayCoeff] set Predictive filter block 3 integrator decay coefficient" )
 menuitems+=( "PFb3sAve" "Set PF block 3 to integrator, DecayCoeff = ${PFb3decayCoeff}" )
-
+fi
 
 
 
