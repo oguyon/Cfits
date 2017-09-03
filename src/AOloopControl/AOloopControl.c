@@ -4417,7 +4417,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
-	long long loopcnt;
+	long long loopPFcnt;
 	FILE *fptest;
 
     schedpar.sched_priority = RT_priority;
@@ -4720,7 +4720,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-	loopcnt = 0;
+	loopPFcnt = 0;
     for(;;)
     {		
 		long modevalDMindex0, modevalDMindex1;
@@ -4795,20 +4795,25 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				// note that second term (non-predictive) does not have minus sign, as it was already applied above
 				//
 				
-				if(loopcnt==1000)
+				if(loopPFcnt==2000)
 					{
 						fptest = fopen("testARPFgains.txt", "w");
 					}
                 for(m=0; m<NBmodes; m++)
                 {
-					if((loopcnt==1000)&&(m<100))
+					if((loopPFcnt==2000)&&(m<200))
 						fprintf(fptest, "mode %5ld   %20f  %20f\n", m, AOconf[loop].ARPFgain, data.image[IDmodeARPFgain].array.F[m]);
 				    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMnow].array.F[m];
                 }
-                if(loopcnt==1000)
+                if(loopPFcnt==2000)
+				{
 					fclose(fptest);
+					loopPFcnt = 0;
+                }
                 // drive semaphore to zero
                 while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
+            
+				loopPFcnt++;
             }
         }
 
@@ -5149,8 +5154,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         }
 
         AOconf[loop].statusM1 = 9;
-        
-        loopcnt++;
     }
 
     free(modegain);
