@@ -4417,6 +4417,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
+	long long loopcnt;
+	FILE *fptest;
 
     schedpar.sched_priority = RT_priority;
 #ifndef __MACH__
@@ -4718,9 +4720,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-
+	loopcnt = 0;
     for(;;)
-    {
+    {		
 		long modevalDMindex0, modevalDMindex1;
 		
 		
@@ -4793,8 +4795,18 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				// note that second term (non-predictive) does not have minus sign, as it was already applied above
 				//
 				
+				if(loopcnt==1000)
+					{
+						fptest = fopen("testARPFgains.txt", "w");
+					}
                 for(m=0; m<NBmodes; m++)
-                    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMnow].array.F[m];
+                {
+					if((loopcnt==1000)&&(m<100))
+						fprintf(fptest, "mode %5ld   %20f  %20f\n", m, AOconf[loop].ARPFgain, data.image[IDmodeARPFgain].array.F[m]);
+				    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMnow].array.F[m];
+                }
+                if(loopcnt==1000)
+					fclose(fptest);
                 // drive semaphore to zero
                 while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
             }
@@ -4808,7 +4820,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
         data.image[IDmodevalDMnowfilt].md[0].write = 1;
         // FILTERING MODE VALUES
-        // THIS FILTERING GOES TOGETHER WITH THE WRITEBACK ON DM TO KEEP FILTERED AND ACTUAL VALUES IDENTICAL
+        // THIS FILTERING GOES TOGETHER WITH THE SECONDARY WRITE ON DM TO KEEP FILTERED AND ACTUAL VALUES IDENTICAL
         for(m=0; m<NBmodes; m++)
             data.image[IDmodevalDMnowfilt].array.F[m] = data.image[IDmodevalDMnow].array.F[m];
 
@@ -5137,6 +5149,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         }
 
         AOconf[loop].statusM1 = 9;
+        
+        loopcnt++;
     }
 
     free(modegain);
