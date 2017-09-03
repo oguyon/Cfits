@@ -4364,7 +4364,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     long modevalDMindexl = 0;
 
     long IDmodevalDM; // DM correction at WFS measurement time
-    long IDmodevalDMnow; // current DM correction
+    long IDmodevalDMcorr; // current DM correction
+    long IDmodevalDMnow; // DM correction after predictiv control 
     long IDmodevalDMnowfilt; // current DM correction filtered
     long modevalDMindex = 0; // index in the circular buffer
     float alpha;
@@ -4549,7 +4550,6 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	// load/create aol_modeval_ol (pseudo-open loop mode values)
     if(sprintf(imname, "aol%ld_modeval_ol", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     IDout = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
@@ -4557,28 +4557,34 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 	// load/create aol_mode_blknb (block index for each mode)
     if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     IDblknb = create_image_ID(imname, 2, sizeout, _DATATYPE_UINT16, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-	// load/create aol_modeval_dm_now (current modal DM correction)
+
+	// load/create aol_modeval_dm_corr (current modal DM correction)
+    if(sprintf(imname, "aol%ld_modeval_dm_corr", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    IDmodevalDMcorr = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+
+	// load/create aol_modeval_dm_now (current modal DM correction after mixing with predicitiv control)
     if(sprintf(imname, "aol%ld_modeval_dm_now", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     IDmodevalDMnow = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
+
 
 	// load/create aol_modeval_dm_now_filt (current modal DM correction, filtered)
     if(sprintf(imname, "aol%ld_modeval_dm_now_filt", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     IDmodevalDMnowfilt = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
+
 
 	// load/create aol_modeval_dm (modal DM correction at time of currently available WFS measurement)
     if(sprintf(imname, "aol%ld_modeval_dm", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     IDmodevalDM = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
@@ -4678,23 +4684,28 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
     // initialize arrays
     data.image[IDmodevalDM].md[0].write = 1;
+    data.image[IDmodevalDMcorr].md[0].write = 1;
     data.image[IDmodevalDMnow].md[0].write = 1;
     data.image[IDmodevalDM_C].md[0].write = 1;
     for(m=0; m<NBmodes; m++)
     {
         data.image[IDmodevalDM].array.F[m] = 0.0;
+        data.image[IDmodevalDMcorr].array.F[m] = 0.0;
         data.image[IDmodevalDMnow].array.F[m] = 0.0;
         for(modevalDMindex=0; modevalDMindex<modevalDM_bsize; modevalDMindex++)
             data.image[IDmodevalDM_C].array.F[modevalDMindex*NBmodes+m] = 0;
         data.image[IDout].array.F[m] = 0.0;
     }
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM, -1);
+    COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMcorr, -1);
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMnow, -1);
     COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDM_C, -1);
     data.image[IDmodevalDM].md[0].cnt0++;
+    data.image[IDmodevalDMcorr].md[0].cnt0++;
     data.image[IDmodevalDMnow].md[0].cnt0++;
     data.image[IDmodevalDM_C].md[0].cnt0++;
     data.image[IDmodevalDM].md[0].write = 0;
+    data.image[IDmodevalDMcorr].md[0].write = 0;
     data.image[IDmodevalDMnow].md[0].write = 0;
     data.image[IDmodevalDM_C].md[0].write = 0;
 
@@ -4761,16 +4772,17 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         // modevalDMindexl = last index in the IDmodevalDM_C buffer
         //
-        data.image[IDmodevalDMnow].md[0].write = 1;
+        data.image[IDmodevalDMcorr].md[0].write = 1;
         for(m=0; m<NBmodes; m++)
-            data.image[IDmodevalDMnow].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
+            data.image[IDmodevalDMcorr].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
 
         AOconf[loop].statusM = 4;
 
 
 	
 
-
+		int ARPF_ok;
+		ARPF_ok = 0;
 
 
         //
@@ -4787,6 +4799,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             }
             else
             {
+				ARPF_ok=1;
                 sem_wait(data.image[IDmodevalPF].semptr[3]);
 
 				//
@@ -4803,7 +4816,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
                 {
 					if((loopPFcnt==2000)&&(m<200))
 						fprintf(fptest, "mode %5ld   %20f  %20f\n", m, AOconf[loop].ARPFgain, data.image[IDmodeARPFgain].array.F[m]);
-				    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMnow].array.F[m];
+				    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMcorr].array.F[m];
                 }
                 if(loopPFcnt==2000)
 				{
@@ -4817,6 +4830,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             }
         }
 
+		if (ARPF_ok==0)
+		{ 
+			memcpy(data.image[IDmodevalDMnow].array.F, data.image[IDmodevalDMcorr].array.F, sizeof(float)*NBmodes);
+		}
 
 
 
