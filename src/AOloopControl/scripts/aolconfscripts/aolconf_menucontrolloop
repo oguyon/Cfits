@@ -535,13 +535,13 @@ menuitems+=( " " " " )
 
 ConfReadParam ARPFon "OFF"; ARPFon="$paramvalue"
 if [ "$ARPFon" = "OFF" ]; then
-menuitems+=( "ARPFon" " Predictive control (ARPF) is OFF - press to START" )
+menuitems+=( "ARPFon" "Predictive control (ARPF) is OFF - press to START" )
 else
 menuitems+=( "ARPFoff" "\Z1\Zr Predictive control (ARPF) is  ON - press to STOP\Zn  " )
 fi
 
 ConfReadParam ARPFgain "0.0"; ARPFgain="$paramvalue"
-menuitems+=( "ARPFg" "ARPF gain    =   ${ARPFgain}" )
+menuitems+=( "ARPFg" "ARPF mixing ratio = ${ARPFgain}  (fraction of signal from ARPF, remainer is from non-predictive output dm_corr)" )
 
 
 

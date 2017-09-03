@@ -273,7 +273,6 @@ menuitems+=( " " " " )
 
 
 
-
 file="./status/stat_log_dm${DMindex}disp.txt"
 logdmdispstat=$( cat $file )
 if [[ -f "$file" && ( "$logdmdispstat" = "0" || "$logdmdispstat" = "1" ) ]]; then
@@ -504,6 +503,22 @@ else
 menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn               WFS mode values" )
 fi
 
+file="./status/stat_log_modeval_dm_corr.txt"
+logmodevaldmcorrstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevaldmcorrstat" = "0" || "$logmodevaldmcorrstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logmodevaldmcorrstat=0
+fi
+if [ "${logmodevaldmcorrstat}" = "0" ];
+then
+menuitems+=( "lmodevaldmcorr1" "START logging aol${LOOPNUMBER}_modeval_dm_corr       DM mode values" )
+else
+menuitems+=( "lmodevaldmcorr0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_corr\Zn        DM mode values" )
+fi
+
+
 file="./status/stat_log_modeval_dm_now.txt"
 logmodevaldmnowstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevaldmnowstat" = "0" || "$logmodevaldmnowstat" = "1" ) ]]; then
@@ -519,6 +534,8 @@ else
 menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        DM mode values" )
 fi
 
+
+
 file="./status/stat_log_modeval_dm_now_filt.txt"
 logmodevaldmnowfiltstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevaldmnowfiltstat" = "0" || "$logmodevaldmnowfiltstat" = "1" ) ]]; then
@@ -533,6 +550,8 @@ menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now
 else
 menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   WFS mode values" )
 fi
+
+
 
 file="./status/stat_log_modeval_ol.txt"
 logmodevalolstat=$( cat $file )
