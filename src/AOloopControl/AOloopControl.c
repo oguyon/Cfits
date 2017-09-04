@@ -5331,6 +5331,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
     float *errarray;
     float mingain = 0.01;
     float maxgain = 0.3;
+    float gainFactor = 0.6; // advise user to be at 60% of optimal gain
     float gainfactstep = 1.02;
     float *gainval_array;
     float *gainval1_array;
@@ -5681,7 +5682,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
                 }
 			
 			
-            data.image[IDout].array.F[m] = (1.0-GainCoeff1) * data.image[IDout].array.F[m]   +  GainCoeff1 * gainval_array[kkmin];
+            data.image[IDout].array.F[m] = (1.0-GainCoeff1) * data.image[IDout].array.F[m]   +  GainCoeff1 * (gainFactor*gainval_array[kkmin]);
         }
 
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
