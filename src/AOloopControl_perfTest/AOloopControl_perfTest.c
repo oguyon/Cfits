@@ -475,9 +475,10 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			
 			
 			ratio = AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k];
-			if(ratio>ratio0)
+			color = 0;
+			if(ratio>1.0)
 				color=2;
-			else
+			if(ratio<ratio0)
 				color=3;
 				
 			attron(A_BOLD | COLOR_PAIR(color));
