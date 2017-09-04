@@ -369,7 +369,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     float AVElim = 0.01; // [um]
     float RMSlim = 0.01; // [um]
     char imname[200];
-	float ratio;
+	float ratio0, ratio;
 	int color;
     long IDblknb;
 
@@ -452,7 +452,8 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
 
         attron(A_BOLD);
-        printw("   %5.3f  ", AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k]);
+        ratio0 = AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k];
+        printw("   %5.3f  ", ratio0);
         attroff(A_BOLD);
 
         if( AOconf[loop].blockave_limFrac[k] > 0.01 )
@@ -466,13 +467,13 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			
 			
 			ratio = AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k];
-			if(ratio<1.0)
+			if(ratio<ratio0)
 				color=2;
 			else
-				color-3;
+				color=3;
 				
 			attron(A_BOLD | COLOR_PAIR(color));
-			printw("  %5.3f |", AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k]);
+			printw("  %5.3f |", ratio);
 			attroff(A_BOLD | COLOR_PAIR(color));
 		}
 		printw("\n");
