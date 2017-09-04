@@ -451,10 +451,18 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         
         printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
 
-        attron(A_BOLD);
+
+		
+       
         ratio0 = AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k];
+		if(ratio0>0.999)
+			color=2;
+		else
+			color=3;
+			
+		attron(A_BOLD | COLOR_PAIR(color));
         printw("   %5.3f  ", ratio0);
-        attroff(A_BOLD);
+        attroff(A_BOLD | COLOR_PAIR(color));
 
         if( AOconf[loop].blockave_limFrac[k] > 0.01 )
             attron(A_BOLD | COLOR_PAIR(2));
@@ -467,7 +475,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			
 			
 			ratio = AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k];
-			if(ratio<ratio0)
+			if(ratio>ratio0)
 				color=2;
 			else
 				color=3;
