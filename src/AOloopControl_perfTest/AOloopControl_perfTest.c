@@ -416,21 +416,24 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     printw("    Gain = %5.3f   maxlim = %5.3f     GPU = %d    kmax=%ld\n", AOconf[loop].gain, AOconf[loop].maxlimit, AOconf[loop].GPU0, kmax);
     printw("    DMprimWrite = %d   Predictive control state: %d        ARPF gain = %5.3f   AUTOTUNE LIM = %d (perc = %.2f %%  delta = %.3f nm mcoeff=%4.2f) GAIN = %d\n", AOconf[loop].DMprimaryWriteON, AOconf[loop].ARPFon, AOconf[loop].ARPFgain, AOconf[loop].AUTOTUNE_LIMITS_ON, AOconf[loop].AUTOTUNE_LIMITS_perc, 1000.0*AOconf[loop].AUTOTUNE_LIMITS_delta, AOconf[loop].AUTOTUNE_LIMITS_mcoeff, AOconf[loop].AUTOTUNE_GAINS_ON);
     printw(" TIMIMNG :  lfr = %9.3f Hz    hw lat = %5.3f fr   comp lat = %5.3f fr  wfs extr lat = %5.3f fr\n", AOconf[loop].loopfrequ, AOconf[loop].hardwlatency_frame, AOconf[loop].complatency_frame, AOconf[loop].wfsmextrlatency_frame);
-//    nbl++;
-//    nbl++;
-//    nbl++;
     printw("loop iteration CNT : %lld\n", AOconf[loop].cnt);
-//    nbl++;
 
     printw("\n");
-//    nbl++;
 
-    printw("=========== %6ld modes, %3ld blocks ================|------------ Telemetry [nm] ----------------|    |     LIMITS         |\n", AOconf[loop].NBDMmodes, AOconf[loop].DMmodesNBblock);
-//    nbl++;
-    printw("BLOCK  #modes [ min - max ]    gain   limit   multf  |       dmC     Input  ->       WFS   Ratio  |    | hits/step    perc  |\n");
-//    nbl++;
-    printw("\n");
-//    nbl++;
+
+
+
+
+    printw("=========== %6ld modes, %3ld blocks ================|------------ Telemetry [nm] ----------------|    |     LIMITS         |", AOconf[loop].NBDMmodes, AOconf[loop].DMmodesNBblock);
+	if(AOconf[loop].ARPFon==1)
+		printf("  PFres  |");
+	printw("\n");
+
+    printw("BLOCK  #modes [ min - max ]    gain   limit   multf  |       dmC     Input  ->       WFS   Ratio  |    | hits/step    perc  |");
+	if(AOconf[loop].ARPFon==1)
+		printf("         |");
+	printw("\n");
+	printw("\n");
 
     for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
     {
@@ -444,6 +447,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         attroff(A_BOLD);
 
         printw("    %4ld [ %4ld - %4ld ]   %5.3f  %7.5f  %5.3f", AOconf[loop].NBmodes_block[k], kmin, AOconf[loop].indexmaxMB[k]-1, data.image[aoconfID_gainb].array.F[k], data.image[aoconfID_limitb].array.F[k], data.image[aoconfID_multfb].array.F[k]);
+        
         printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
 
         attron(A_BOLD);
@@ -453,15 +457,18 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         if( AOconf[loop].blockave_limFrac[k] > 0.01 )
             attron(A_BOLD | COLOR_PAIR(2));
 
-        printw("| %2ld | %9.3f  %6.2f\% |\n", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
+        printw("| %2ld | %9.3f  %6.2f\% |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
         attroff(A_BOLD | COLOR_PAIR(2));
+        
+        if(AOconf[loop].ARPFon==1)
+			printw("%8.2f |", 1000.0*AOconf[loop].blockave_PFresrms[k]);
+			
+		printw("\n");
 
-//        nbl++;
     }
 
 
     printw("\n");
-//    nbl++;
 
     printw(" ALL   %4ld                                        ", AOconf[loop].NBDMmodes);
     printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].ALLave_Crms, 1000.0*AOconf[loop].ALLave_OLrms, 1000.0*AOconf[loop].ALLave_WFSrms);
@@ -473,13 +480,11 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     printw("| %2ld | %9.3f  %6.2f\% |\n", k, AOconf[loop].ALLave_limFrac,  100.0*AOconf[loop].ALLave_limFrac/AOconf[loop].NBDMmodes);
 
     printw("\n");
-//    nbl++;
 
     //printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
 
 
     print_header(" [ gain 1000xlimit  mult ] MODES [nm]    DM correction -- WFS value -- WFS average -- WFS RMS     ", '-');
- //   nbl++;
 
 
 
