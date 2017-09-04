@@ -369,7 +369,8 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     float AVElim = 0.01; // [um]
     float RMSlim = 0.01; // [um]
     char imname[200];
-
+	float ratio;
+	int color;
     long IDblknb;
 
 
@@ -426,12 +427,12 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 
     printw("=========== %6ld modes, %3ld blocks ================|------------ Telemetry [nm] ----------------|    |     LIMITS         |", AOconf[loop].NBDMmodes, AOconf[loop].DMmodesNBblock);
 	if(AOconf[loop].ARPFon == 1)
-		printw("  PFres  |");
+		printw("  PFres  |  Ratio  |");
 	printw("\n");
 
     printw("BLOCK  #modes [ min - max ]    gain   limit   multf  |       dmC     Input  ->       WFS   Ratio  |    | hits/step    perc  |");
 	if(AOconf[loop].ARPFon==1)
-		printw("         |");
+		printw("         |         |");
 	printw("\n");
 	printw("\n");
 
@@ -460,9 +461,20 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         printw("| %2ld | %9.3f  %6.2f\% |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
         attroff(A_BOLD | COLOR_PAIR(2));
         
-        if(AOconf[loop].ARPFon==1)
+        if(AOconf[loop].ARPFon==1){
 			printw("%8.2f |", 1000.0*AOconf[loop].blockave_PFresrms[k]);
 			
+			
+			ratio = AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k];
+			if(ratio<1.0)
+				color=2;
+			else
+				color-3;
+				
+			attron(A_BOLD | COLOR_PAIR(color));
+			printw("  %5.3f |", AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k]);
+			attroff(A_BOLD | COLOR_PAIR(color));
+		}
 		printw("\n");
 
     }
