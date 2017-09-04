@@ -1409,6 +1409,9 @@ long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_
 
 
 
+
+
+
 //
 // IDmodevalIN_name : open loop modal coefficients
 // IndexOffset      : predicted mode start at this input index 
@@ -1735,7 +1738,7 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	
 		iter++;
 	
-		if(iter<NBiter)
+		if(iter!=NBiter)
 			{				
 				// do this now to save time when semaphore is posted
 				for(tstep=NBPFstep-1; tstep>0; tstep--)
