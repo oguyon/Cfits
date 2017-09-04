@@ -1743,6 +1743,7 @@ EOF
 	tmux new-session -d -s ${tmuxname}
 	tmux send-keys -t ${tmuxname} "./auxscripts/aolautotunegains $AUTOTUNEGAINupdateCoeff $AUTOTUNEGAIN_NBsamples" C-m
 	echo " ON" > conf/param_AUTOTUNEGAINSCOMP_ON.txt
+	menucontrolloop_default="agrunK"
 	;;
 
 
@@ -1751,6 +1752,7 @@ EOF
 	tmux send-keys -t ${tmuxname} "" C-c
 	tmux kill-session -t ${tmuxname}
 	echo "OFF" > conf/param_AUTOTUNEGAINSCOMP_ON.txt
+	menucontrolloop_default="agrunS"
 	;;
 
 
