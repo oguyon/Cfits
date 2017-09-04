@@ -5542,7 +5542,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         //printf("latency = %f frame\n", latency);
         NBgain = 0;
         gain = mingain;
-        while(gain<maxgain)
+        while(gain<maxgain/gainFactor)
         {
             gain *= gainfactstep;
             NBgain++;
@@ -5683,6 +5683,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 			
 			
             data.image[IDout].array.F[m] = (1.0-GainCoeff1) * data.image[IDout].array.F[m]   +  GainCoeff1 * (gainFactor*gainval_array[kkmin]);
+            
         }
 
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
