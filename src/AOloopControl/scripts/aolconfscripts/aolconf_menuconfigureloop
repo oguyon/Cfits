@@ -1118,6 +1118,7 @@ echo "confname = $confname"
 
 
 # overwrite conflastloaded 
+# set up param_conflastloaded_name.txt1 as temporary storage
 confnameloaded_name=${confname}
 echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt
 echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt1
@@ -1130,7 +1131,7 @@ case $retval in
 if [ -d ${confname} ]; then
 cp "${confname}"/*.txt ./conf/
 
-mv conf/param_conflastloaded_name.txt1 conf/param_conflastloaded_name.txt
+cp conf/param_conflastloaded_name.txt1 conf/param_conflastloaded_name.txt
 
 
 # set up symbolic links to streams
