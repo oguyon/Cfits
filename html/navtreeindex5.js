@@ -1,5 +1,8 @@
 var NAVTREEINDEX5 =
 {
+"COREMOD__arith_8c.html#ac65904cbf19aa6c4f4ddbc7ec7a1e292":[5,0,1,12,0,24],
+"COREMOD__arith_8c.html#ac81f47894b7dddca8f1252aa29b5d869":[5,0,1,12,0,220],
+"COREMOD__arith_8c.html#ac899b48ce4359657ecfa96026cc4f8b9":[5,0,1,12,0,45],
 "COREMOD__arith_8c.html#ac9528aa4ed5e04c453c41a167fd957e0":[5,0,1,12,0,134],
 "COREMOD__arith_8c.html#ac97524650f70bf93a7df455a53028474":[5,0,1,12,0,179],
 "COREMOD__arith_8c.html#acbb40c2cb0fab8e23650310f102fa8aa":[5,0,1,12,0,213],
@@ -246,8 +249,5 @@ var NAVTREEINDEX5 =
 "COREMOD__iofits_8c.html#a725830b1309b84587375eda82b684689":[5,0,1,13,0,5],
 "COREMOD__iofits_8c.html#a7515d053d3ac4b6cc447d3b8958faf34":[5,0,1,13,0,9],
 "COREMOD__iofits_8c.html#a76edb8071574cfd3b322e0df10a18718":[5,0,1,13,0,4],
-"COREMOD__iofits_8c.html#a87cd03ee3b34c712212bdc2a06d32cd0":[5,0,1,13,0,10],
-"COREMOD__iofits_8c.html#a9842752e03b4de9b4593f1a3b34364ab":[5,0,1,13,0,24],
-"COREMOD__iofits_8c.html#aab44ca2997c80fca08a37141d18f47de":[5,0,1,13,0,16],
-"COREMOD__iofits_8c.html#aba019d42869429427bb732d03d75bb5b":[5,0,1,13,0,18]
+"COREMOD__iofits_8c.html#a87cd03ee3b34c712212bdc2a06d32cd0":[5,0,1,13,0,10]
 };

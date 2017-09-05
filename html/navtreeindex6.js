@@ -1,5 +1,8 @@
 var NAVTREEINDEX6 =
 {
+"COREMOD__iofits_8c.html#a9842752e03b4de9b4593f1a3b34364ab":[5,0,1,13,0,24],
+"COREMOD__iofits_8c.html#aab44ca2997c80fca08a37141d18f47de":[5,0,1,13,0,16],
+"COREMOD__iofits_8c.html#aba019d42869429427bb732d03d75bb5b":[5,0,1,13,0,18],
 "COREMOD__iofits_8c.html#ac09454ac259a5df3ead600803bab904c":[5,0,1,13,0,12],
 "COREMOD__iofits_8c.html#acbbbd31c69fdb2671db5e77fc4867caa":[5,0,1,13,0,14],
 "COREMOD__iofits_8c.html#adcce790fec4b63a6bf470b5e9e0dd6c9":[5,0,1,13,0,3],
@@ -246,8 +249,5 @@ var NAVTREEINDEX6 =
 "COREMOD__memory_8h.html#ad2845db5159be13eac47d7fa0d539ca5":[5,0,1,14,1,56],
 "COREMOD__memory_8h.html#ad596a5fc09c31473e9e94a3fa821bc3a":[5,0,1,14,1,39],
 "COREMOD__memory_8h.html#ad6fac8d092c578c299f9717e474ae68c":[5,0,1,14,1,15],
-"COREMOD__memory_8h.html#ad811bfe7214051710d028f9989a2c511":[5,0,1,14,1,83],
-"COREMOD__memory_8h.html#adf21e8412f5edde73fe16cf8ebf30a9d":[5,0,1,14,1,44],
-"COREMOD__memory_8h.html#adfa9e91be46df5329679b8330b8db494":[5,0,1,14,1,5],
-"COREMOD__memory_8h.html#ae11d3a0de47d45a60107c9e360eed117":[5,0,1,14,1,41]
+"COREMOD__memory_8h.html#ad811bfe7214051710d028f9989a2c511":[5,0,1,14,1,83]
 };
