@@ -4869,6 +4869,8 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         if(AOconf[loop].ARPFon==1)
         {
+			printf("__FUNC__ __LINE__\n");fflush(stdout); //TEST
+			
             if(IDmodevalPF==-1)
             {
                 if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
