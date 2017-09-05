@@ -321,7 +321,7 @@ menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CONFIGURATION\Zn" )
 ConfReadParam conflastloaded_name "0"; conflastloaded_name="$paramvalue"
 ConfReadParam conflastloaded_time "0"; conflastloaded_time="$paramvalue"
 
-menuitems+=( " " " Last loaded/saved: \Zb${conflastloaded_name}\Zn on \Zb${conflastloaded_time}\Zn" )
+menuitems+=( " " " LAST LOADED:  \Zb${conflastloaded_name}\Zn   on   \Zb${conflastloaded_time}\Zn" )
 menuitems+=( " " " " )
 
 
