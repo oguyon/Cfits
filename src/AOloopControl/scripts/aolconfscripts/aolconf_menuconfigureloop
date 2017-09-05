@@ -321,7 +321,7 @@ menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CONFIGURATION\Zn" )
 ConfReadParam conflastloaded_name "0"; conflastloaded_name="$paramvalue"
 ConfReadParam conflastloaded_time "0"; conflastloaded_time="$paramvalue"
 
-menuitems+=( " " " Last loaded/saved: ${confnameloaded} on ${confloadedtime}" )
+menuitems+=( " " " Last loaded/saved: \Zb${conflastloaded_name}\Zn on \Zb${conflastloaded_time}\Zn" )
 menuitems+=( " " " " )
 
 
@@ -1116,11 +1116,13 @@ aoconflog "CONFIGURATION ${confname}"
 echo "${confname}" > ./status/confname.txt
 echo "confname = $confname"
 
-confnameloaded=${confname}
-echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
-echo "$confnameloaded" > conf/conf_conflastloaded_name.txt1
-confloadedtime=$( date -u )
-echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
+
+# overwrite conflastloaded 
+confnameloaded_name=${confname}
+echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt
+echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt1
+conflastloaded_time=$( date -u )
+echo "$conflastloaded_time" > conf/param_conflastloaded_time.txt
 
 case $retval in
    0) # button
@@ -1128,7 +1130,7 @@ case $retval in
 if [ -d ${confname} ]; then
 cp "${confname}"/*.txt ./conf/
 
-mv conf/conf_conflastloaded_name.txt1 conf/conf_conflastloaded_name.txt
+mv conf/param_conflastloaded_name.txt1 conf/param_conflastloaded_name.txt
 
 
 # set up symbolic links to streams
