@@ -3991,13 +3991,13 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
 #endif
 
 
-/*	if(GPUMATMULTCONFindex==0)
+	if(GPUMATMULTCONFindex==0)
     {
 		// read AO loop gain, mult
 		if(AOloopcontrol_meminit==0)
 			AOloopControl_InitializeMemory(1);
 	}
-*/
+
 
     GPUcnt = 1;
     GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
@@ -4063,7 +4063,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
     {
         COREMOD_MEMORY_image_set_semwait(modecoeffs_name, semTrigg);
 	
-		if(GPUMATMULTCONFindex==0)
+//		if(GPUMATMULTCONFindex==0)
 			AOconf[loop].statusM = 10;
 
       //  for(m=0; m<NBmodes; m++)
@@ -4084,7 +4084,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
         }
       
   
-  		if(GPUMATMULTCONFindex==0)  
+  //		if(GPUMATMULTCONFindex==0)  
 			AOconf[loop].statusM = 20;
     }
 
