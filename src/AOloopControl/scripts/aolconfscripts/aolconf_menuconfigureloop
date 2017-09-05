@@ -1009,10 +1009,17 @@ else
 loopconfname=""
 fi
 CALIBname="${CALIBdatestr}_${loopconfname}"
+
+#
+# store calib name into conf_staged
+#
 echo "$CALIBname" > conf/calib_lastTaken_name.txt
+echo "$CALIBname" > conf_staged/calib_name.txt
 
 function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
+
+
 
 
 nAUTOCk)
@@ -1052,7 +1059,7 @@ done
 
 
 #
-# Save configuration
+# Save configuration (from ./conf/)
 # a configuration contains calibration + configuration parameters
 #
 	Sconf)
@@ -1060,7 +1067,7 @@ done
 # CALIBname is the name of the calibration corresponding to the configuration
 # CALIBname can only be written by nAUTOC (auto calibration)
 #
-CALIBname="$(cat conf/calib_lastTaken_name.txt)"
+CALIBname="$(cat conf/calib_name.txt)"
 
 #
 # CONFname is constructed by appending current date + user-provided string to CALIBname
