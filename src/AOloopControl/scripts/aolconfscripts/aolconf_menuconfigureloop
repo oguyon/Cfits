@@ -314,9 +314,9 @@ fi
 
 menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
 menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
-menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CALIBRATION as...\Zn" )
+menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CONFIGURATION as...\Zn" )
 
-menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CALIBRATION\Zn" )
+menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CONFIGURATION\Zn" )
 
 ConfReadParam conflastloaded_name "0"; conflastloaded_name="$paramvalue"
 ConfReadParam conflastloaded_time "0"; conflastloaded_time="$paramvalue"
@@ -998,8 +998,22 @@ menucontrolloop_default="sACmrmN"
 nAUTOC)
 RMCalibReuseMasks=0
 echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
+#
+# Define Calibration name (updated on each call to function nAUTOC)
+# Calib name saved to conf/calib_lastTaken_name.txt
+#
+CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+if [ -f "./conf/conf_loopconfname.txt" ]; then
+loopconfname=$(cat ./conf/conf_loopconfname.txt)
+else
+loopconfname=""
+fi
+CALIBname="${CALIBdatestr}_${loopconfname}"
+echo "$CALIBname" > conf/calib_lastTaken_name.txt
+
 function_nAUTOC  # in aolconf_configureloop_funcs
 ;;
+
 
 nAUTOCk)
 tmuxnameaWFSr="aol${LOOPNUMBER}arespM"
@@ -1018,8 +1032,9 @@ aoconflogext "Update all configuration files"
 cp ./conf_staged/*.txt ./conf/
 ;;
 
+
 	calibL)
-aoconflogext "Update calibration configuration files"
+aoconflogext "Update configuration files"
 
 # zonal calib
 for imname in $RMZONALCALIBlist
@@ -1036,38 +1051,44 @@ done
 
 
 
-
-
-
+#
+# Save configuration
+# a configuration contains calibration + configuration parameters
+#
 	Sconf)
+#
+# CALIBname is the name of the calibration corresponding to the configuration
+# CALIBname can only be written by nAUTOC (auto calibration)
+#
+CALIBname="$(cat conf/calib_lastTaken_name.txt)"
+
+#
+# CONFname is constructed by appending current date + user-provided string to CALIBname
+#
+CONFdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
+CONFname="${CALIBname}[${CONFdatestr}]"
+
 mkdir -p ./CONF
-CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
-
-if [ -f "./conf/conf_loopconfname.txt" ]; then
-loopconfname=$(cat ./conf/conf_loopconfname.txt)
-else
-loopconfname=""
-fi
-
-dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
---cancel-label "Exit" --fselect "./CONF/${CALIBdatestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
+dialog --title "Select configuration" --title "Select configuration" --ok-label "Select" \
+--cancel-label "Exit" --fselect "./CONF/${CONFname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
-confname=$(cat $tempfile)
+CONFname=$(cat $tempfile)
 
-aoconflogext "SAVE configuration to ${confname}"
-aoconflog "CONFIGURATION ${confname}"
-echo "${confname}" > ./status/confname.txt
-echo "saving to ${confname}   tempfile = $tempfile"
+aoconflogext "SAVE configuration to ${CONFname}"
+aoconflog "CONFIGURATION save ${CONFname}"
 
-confnameloaded=${confname}
-echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
-confloadedtime=$( date -u )
-echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
+
+# update current conf and calib
+#CONFnameloaded=${CONFname}
+#echo "$CALIBname" > conf/calib_lastLoaded_name.txt
+#CALIBloadedtime=$( date -u )
+#echo "$CALIBloadedtime" > conf/calib_lastLoaded_time.txt
+
 
 case $retval in
    0) # button
-mkdir -p "${confname}"
-rsync -a --no-links conf/* ${confname}
+mkdir -p "CONF/${CONFname}"
+rsync -a --no-links conf/* CONF/${CONFname}
 ;;
 esac
 ;;
@@ -1078,7 +1099,7 @@ esac
 	Lconf)
 mkdir -p ./CONF
 
-dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
+dialog --title "Select cconfiguration" --title "Select configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
 confname=$(cat $tempfile)
@@ -1087,7 +1108,6 @@ aoconflogext "LOAD configuration from ${confname}"
 aoconflog "CONFIGURATION ${confname}"
 echo "${confname}" > ./status/confname.txt
 echo "confname = $confname"
-
 
 confnameloaded=${confname}
 echo "$confnameloaded" > conf/conf_conflastloaded_name.txt
