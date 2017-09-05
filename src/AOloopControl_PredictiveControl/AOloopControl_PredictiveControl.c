@@ -561,7 +561,7 @@ long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblo
     fflush(stdout);
 
 
-    while(1)
+    for(;;)
     {
         cnt0 = data.image[IDinb0].md[0].cnt0;
         cnt1 = data.image[IDinb1].md[0].cnt0;
@@ -621,6 +621,8 @@ long AOloopControl_PredictiveControl_builPFloop_WatchInput(long loop, long PFblo
 
     return (IDout);
 }
+
+
 
 /**
  * 

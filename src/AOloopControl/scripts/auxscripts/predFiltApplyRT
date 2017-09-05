@@ -221,7 +221,7 @@ loadfits "${inmaskname}" inmask
 loadfits "${outmaskname}" outmask
 readshmim $2
 listim
-semt=2+${PFINDEX}
+semt=10+${PFINDEX}
 linARapplyRT $1 0 semt $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
 exitCLI
@@ -245,7 +245,7 @@ cpsh im1 aol${loopnb}_modevalPF
 
 readshmim aol${loopnb}_modevalPF
 listim
-semt=2+${PFINDEX}
+semt=10+${PFINDEX}
 linARapplyRT $1 0 semt $2 5 $3 ${nbGPU} ${loopnb} ${NBiter} ${SAVEMODE} $tlag ${PFINDEX}
 listim
 exitCLI

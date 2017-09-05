@@ -4589,7 +4589,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     if(sprintf(imname, "aol%ld_modeval_ol", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     IDout = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(imname, 10);
+    COREMOD_MEMORY_image_set_createsem(imname, 20);
 
 
 	// load/create aol_mode_blknb (block index for each mode)
@@ -4869,7 +4869,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         if(AOconf[loop].ARPFon==1)
         {
-			printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
+			//printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
 			
             if(IDmodevalPF==-1)
             {
@@ -4881,9 +4881,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             else
             {
 				ARPF_ok=1;
-                printf("%s  %s  %d\n", __FILE__, __func__, __LINE__);fflush(stdout); //TEST
+                //printf("%s  %s  %d\n", __FILE__, __func__, __LINE__);fflush(stdout); //TEST
                 sem_wait(data.image[IDmodevalPF].semptr[3]);
-                printf("%s  %s  %d\n", __FILE__, __func__, __LINE__);fflush(stdout); //TEST
+                //printf("%s  %s  %d\n", __FILE__, __func__, __LINE__);fflush(stdout); //TEST
 
 				//
 				// prediction is mixed here with non-predictive output of WFS
@@ -4912,7 +4912,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[IDmodevalPF_C].md[0].cnt0++;
 				data.image[IDmodevalPF_C].md[0].write = 0;
 				
-				printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
+				//printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
 				
 				loopPFcnt++;
             }
