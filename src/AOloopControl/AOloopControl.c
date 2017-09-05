@@ -4065,7 +4065,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
 
 
         GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[0], alpha, beta, write_timing);
-
+/*
         if(offloadMode==1) // offload back to dmC
         {
             data.image[IDc].md[0].write = 1;
@@ -4076,7 +4076,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
             data.image[IDc].md[0].write = 0;
             data.image[IDc].md[0].cnt0++;
         }
-        
+  */      
         AOconf[loop].statusM = 20;
     }
 

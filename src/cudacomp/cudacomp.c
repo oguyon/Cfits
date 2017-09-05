@@ -143,7 +143,6 @@ static int deviceCount;
 
 GPUMATMULTCONF gpumatmultconf[20]; // supports up to 20 configurations per process
 
-
 static cudaError_t error;
 static cublasStatus_t stat;
 static float cublasSgemv_alpha = 1.0;
