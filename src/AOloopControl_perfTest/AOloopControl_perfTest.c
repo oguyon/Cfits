@@ -409,7 +409,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     }
 
 
-    printw("   STATUS = %3d  ", AOconf[loop].status);
+    printw("   STATUS = %3d %3d ", AOconf[loop].status, AOconf[loop].statusM);
 
     kmax = (wrow-28)*(nbcol);
 
