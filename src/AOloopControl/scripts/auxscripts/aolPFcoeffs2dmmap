@@ -114,7 +114,8 @@ fi
 
 ./AOloopControl -n $pname << EOF
 readshmim aol${loopnb}_modevalPF
-loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
+readshmim aol${loopnb}_DMmodes
+#loadfits "conf/aol${loopnb}_DMmodes.fits" DMmodes
 
 readshmim aol${loopnb}_dmC
 im=aol${loopnb}_dmC+0
