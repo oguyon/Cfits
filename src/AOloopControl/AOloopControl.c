@@ -178,7 +178,7 @@ static char flogcomment[200];
 // 2: compute modes loop
 //         int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot_name, char *ID_coeff_name)
 //
-// 3: coefficients to DM shape [ NOTE: CRASHES IF NOT USING index 0 ]
+// 3: coefficients to DM shape
 //         int AOloopControl_GPUmodecoeffs2dm_filt_loop(char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, int offloadMode)
 //
 // 4: Predictive control (in modules linARfilterPred)
@@ -475,8 +475,8 @@ int_fast8_t AOloopControl_CompModes_loop_cli() {
 
 /** @brief CLI function for AOloopControl_GPUmodecoeffs2dm_filt */
 int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop_cli() {
-    if(CLI_checkarg(1,4)+CLI_checkarg(2,4)+CLI_checkarg(3,2)+CLI_checkarg(4,4)+CLI_checkarg(5,2)+CLI_checkarg(6,2)+CLI_checkarg(7,2)==0) {
-        AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.numl, data.cmdargtoken[4].val.string, data.cmdargtoken[5].val.numl, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl);
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,4)+CLI_checkarg(3,4)+CLI_checkarg(4,2)+CLI_checkarg(5,4)+CLI_checkarg(6,2)+CLI_checkarg(7,2)+CLI_checkarg(8,2)==0) {
+        AOloopControl_GPUmodecoeffs2dm_filt_loop(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string, data.cmdargtoken[4].val.numl, data.cmdargtoken[5].val.string, data.cmdargtoken[6].val.numl, data.cmdargtoken[7].val.numl, data.cmdargtoken[8].val.numl);
         return 0;
     }
     else return 1;
@@ -3934,13 +3934,16 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
 }
 
 
+
+
+
 //
 // compute DM map from mode values
-// this is a separate process -> using index = 0
+// this is a separate process 
 //
 // if offloadMode = 1, apply correction to aol#_dmC
 //
-int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name, const char *DMmodes_name, int semTrigg, const char *out_name, int GPUindex, long loop, int offloadMode)
+int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFindex, const char *modecoeffs_name, const char *DMmodes_name, int semTrigg, const char *out_name, int GPUindex, long loop, int offloadMode)
 {
 #ifdef HAVE_CUDA
     long IDmodecoeffs;
@@ -4010,7 +4013,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
 
 
 
-    GPU_loop_MultMat_setup(0, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);
+    GPU_loop_MultMat_setup(GPUMATMULTCONFindex, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);
 
 
     for(k=0; k<GPUcnt; k++)
@@ -4053,7 +4056,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
             data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];
 
 
-        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], alpha, beta, write_timing);
+        GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[0], alpha, beta, write_timing);
 
         if(offloadMode==1) // offload back to dmC
         {
@@ -4065,6 +4068,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
             data.image[IDc].md[0].write = 0;
             data.image[IDc].md[0].cnt0++;
         }
+        
         AOconf[loop].statusM = 20;
     }
 
