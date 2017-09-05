@@ -4034,6 +4034,13 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
         printf("offloadMode = %d  %ld %ld\n", offloadMode, dmxsize, dmysize);
         fflush(stdout);
     }
+    else
+		printf("offloadMode = %d\n", offloadMode);
+
+
+
+
+
 
     for(;;)
     {
