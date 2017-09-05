@@ -4869,7 +4869,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         if(AOconf[loop].ARPFon==1)
         {
-			printf("__FUNC__ __LINE__\n");fflush(stdout); //TEST
+			printf("%s  %s\n",__FUNC__, __LINE__);fflush(stdout); //TEST
 			
             if(IDmodevalPF==-1)
             {
@@ -4881,7 +4881,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             else
             {
 				ARPF_ok=1;
+                printf("%s  %s\n",__FUNC__, __LINE__);fflush(stdout); //TEST
                 sem_wait(data.image[IDmodevalPF].semptr[3]);
+                printf("%s  %s\n",__FUNC__, __LINE__);fflush(stdout); //TEST
 
 				//
 				// prediction is mixed here with non-predictive output of WFS
@@ -4909,7 +4911,9 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[IDmodevalPF_C].md[0].cnt1 = modevalPFindex;
 				data.image[IDmodevalPF_C].md[0].cnt0++;
 				data.image[IDmodevalPF_C].md[0].write = 0;
-            
+				
+				printf("%s  %s\n",__FUNC__, __LINE__);fflush(stdout); //TEST
+				
 				loopPFcnt++;
             }
         }
