@@ -3972,7 +3972,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
     float gamma;
 
     uint32_t *sizearray;
-    char imnamecorr[200];
+    char imnameInput[200];
     long IDmodesC;
 
     long IDc;
@@ -3991,13 +3991,13 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
 #endif
 
 
-	if(GPUMATMULTCONFindex==0)
+/*	if(GPUMATMULTCONFindex==0)
     {
 		// read AO loop gain, mult
 		if(AOloopcontrol_meminit==0)
 			AOloopControl_InitializeMemory(1);
 	}
-
+*/
 
     GPUcnt = 1;
     GPUsetM = (int*) malloc(sizeof(int)*GPUcnt);
@@ -4010,21 +4010,22 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
     NBmodes = data.image[IDmodecoeffs].md[0].size[0];
 
 
-    sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
+   // sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
 
-    if(sprintf(imnamecorr, "aol%ld_mode_limcorr", loop) < 1)
-        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+    //if(sprintf(imnameInput, "aol%ld_mode_limcorr", loop) < 1)
+    //    printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	
 
-    sizearray[0] = NBmodes;
-    sizearray[1] = 1;
-    IDmodesC = create_image_ID(imnamecorr, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(imnamecorr, 10);
-    free(sizearray);
+   // sizearray[0] = NBmodes;
+   // sizearray[1] = 1;
+  //  IDmodesC = create_image_ID(imnameInput, 2, sizearray, _DATATYPE_FLOAT, 0, 0);
+  //  COREMOD_MEMORY_image_set_createsem(imnamecorr, 10);
+  //  free(sizearray);
 
 
 
 
-    GPU_loop_MultMat_setup(GPUMATMULTCONFindex, DMmodes_name, imnamecorr, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);
+    GPU_loop_MultMat_setup(GPUMATMULTCONFindex, DMmodes_name, modecoeffs_name, out_name, GPUcnt, GPUsetM, orientation, use_sem, initWFSref, 0);
 
 
     for(k=0; k<GPUcnt; k++)
@@ -4065,12 +4066,12 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
 		if(GPUMATMULTCONFindex==0)
 			AOconf[loop].statusM = 10;
 
-        for(m=0; m<NBmodes; m++)
-            data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];
+      //  for(m=0; m<NBmodes; m++)
+      //      data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];
 
 
         GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[0], alpha, beta, write_timing);
-/*
+
         if(offloadMode==1) // offload back to dmC
         {
             data.image[IDc].md[0].write = 1;
@@ -4081,7 +4082,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
             data.image[IDc].md[0].write = 0;
             data.image[IDc].md[0].cnt0++;
         }
-  */    
+      
   
   		if(GPUMATMULTCONFindex==0)  
 			AOconf[loop].statusM = 20;
