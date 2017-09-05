@@ -4016,6 +4016,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
     for(k=0; k<GPUcnt; k++)
         printf(" ====================     USING GPU %d\n", GPUsetM[k]);
 
+	list_image_ID();
 
     if(offloadMode==1)
     {
@@ -4037,8 +4038,9 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const char *modecoeffs_name
     else
 		printf("offloadMode = %d\n", offloadMode);
 
-
-
+	printf("out_name = %s \n", out_name);
+	printf("IDout    = %ld\n", IDout);
+	
 
 
 
