@@ -1079,10 +1079,10 @@ mkdir -p ./CONF/
 dialog --title "Select configuration" --title "Select configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/${CONFname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
-CONFname=$(cat $tempfile)
+CONFdir=$(cat $tempfile)
 
-aoconflogext "SAVE configuration to ${CONFname}"
-aoconflog "CONFIGURATION save ${CONFname}"
+aoconflogext "SAVE configuration to ${CONFdir}"
+aoconflog "CONFIGURATION save ${CONFdir}"
 echo "$CONFname" > confname.test.txt
 
 # update current conf and calib
@@ -1094,8 +1094,8 @@ echo "$CONFname" > confname.test.txt
 
 case $retval in
    0) # button
-mkdir -p "CONF/${CONFname}"
-rsync -a --no-links conf/* CONF/${CONFname}/
+mkdir -p "${CONFdir}"
+rsync -a --no-links conf/* ${CONFdir}/
 ;;
 esac
 ;;
