@@ -4845,9 +4845,15 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         // modevalDMindexl = last index in the IDmodevalDM_C buffer
         //
+        
         data.image[IDmodevalDMcorr].md[0].write = 1;
         for(m=0; m<NBmodes; m++)
             data.image[IDmodevalDMcorr].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
+		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPF_C, -1);
+		data.image[IDmodevalDMcorr].md[0].cnt1 = modevalPFindex;
+		data.image[IDmodevalDMcorr].md[0].cnt0++;
+		data.image[IDmodevalDMcorr].md[0].write = 0;
+
 
         AOconf[loop].statusM = 4;
 
