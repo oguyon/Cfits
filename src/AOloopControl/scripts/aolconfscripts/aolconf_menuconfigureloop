@@ -1121,8 +1121,7 @@ echo "confname = $confname"
 
 # overwrite conflastloaded 
 # set up .txt1 as temporary storage
-confnameloaded_name=${confname}
-echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt1
+echo "$confname" > conf/param_conflastloaded_name.txt1
 conflastloaded_time=$( date -u )
 echo "$conflastloaded_time" > conf/param_conflastloaded_time.txt1
 
