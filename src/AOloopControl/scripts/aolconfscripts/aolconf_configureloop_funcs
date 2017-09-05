@@ -102,9 +102,9 @@ RMpokeMode="$paramvalue"
 
 
 if [ "${RMpokeMode}" -eq "0" ]; then
-	rm ./conf/RMpokeCube.fits
+	rm ./conf/RMpokeCube.fits.gz
 	else
-	cp ./conf/Hpoke.fits ./conf/RMpokeCube.fits
+	cp ./conf/Hpoke.fits.gz ./conf/RMpokeCube.fits.gz
 fi
 
 

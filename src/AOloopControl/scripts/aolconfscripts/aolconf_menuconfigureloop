@@ -1130,70 +1130,72 @@ case $retval in
    
 if [ -d ${confname} ]; then
 cp "${confname}"/*.txt ./conf/
+cp "${confname}"/*.fits.gz ./conf/
 
 cp conf/param_conflastloaded_name.txt1 conf/param_conflastloaded_name.txt
 cp conf/param_conflastloaded_time.txt1 conf/param_conflastloaded_time.txt
 
-# set up symbolic links to streams
-for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 dmZP5 dmZP6 dmZP7 wfsim
-do
-	./aolfuncs/aolfunc_StreamLink ${name}
-done
+
+
 
 # set up symbolic links to FITS files in conf directory
-for name in wfsdark zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
-do
-	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
-done
+#for name in wfsdark zrespM wfsmask LOrespM LODMmodes dmmap dmmaskRM dmslaved dmmask wfsmap wfsref0 contrM DMmodes respM
+#do
+#	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
+#done
+
 
 
 # blocks: set up symbolic links to FITS files in conf directory
-NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
-for namet in contrM contrMc contrMcact DMmodes respM
-do
+#NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+#for namet in contrM contrMc contrMcact DMmodes respM
+#do
 
-for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
-do
-i2=$(printf "%02d" "$i")
-	if [ "$namet" = "contrMcact" ]; then
-	name="${namet}${i2}_00"
-	else
-	name="${namet}${i2}"
-	fi
-	fname1="${confname}/shmim_${name}.name.txt"
-	if [ -f "$fname1" ]; then
-	cp ${confname}/shmim_${name}.name.txt ./conf/shmim_${name}.name.txt
-	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
-	else
-	echo "MISSING FILE: $fname1" 
-	#rm "./conf/conf_${name}_name.txt"
-	fi
-done
+#for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
+#do
+#i2=$(printf "%02d" "$i")
+#	if [ "$namet" = "contrMcact" ]; then
+#	name="${namet}${i2}_00"
+#	else
+#	name="${namet}${i2}"
+#	fi
+#	fname1="${confname}/shmim_${name}.name.txt"
+#	if [ -f "$fname1" ]; then
+#	cp ${confname}/shmim_${name}.name.txt ./conf/shmim_${name}.name.txt
+#	Fits2shm -cr -p aol${LOOPNUMBER}_ ${name}
+#	else
+#	echo "MISSING FILE: $fname1" 
+#	fi
+#done
 
-for i in `seq $NBmodeblocks 20`;
-do
-i2=$(printf "%02d" "$i")
-if [ "$namet" = "contrMcact" ]; then
-	name="${namet}${i2}_00"
-	else
-	name="${namet}${i2}"
-	fi
-rm "./conf/aol${LOOPNUMBER}_${name}.fits"
-rm "./conf/shmim_${name}.name.txt"
-done
+#for i in `seq $NBmodeblocks 20`;
+#do
+#i2=$(printf "%02d" "$i")
+#if [ "$namet" = "contrMcact" ]; then
+#	name="${namet}${i2}_00"
+#	else
+#	name="${namet}${i2}"
+#	fi
+#rm "./conf/aol${LOOPNUMBER}_${name}.fits"
+#rm "./conf/shmim_${name}.name.txt"
+#done
+
+#done
+
+#if [ "$DMMODE" = "0" ]; then
+#cp "${confname}/RMpoke.fits" ./conf/
+#cp "${confname}/Hpoke.fits.gz" ./conf/
+#cp "${confname}/RMmat.fits" ./conf/
+#cp "${confname}/RMpixindex.fits" ./conf/
+#cp "${confname}/RMpokeCube.fits" ./conf/
+#fi
+
+AOloadMem 1  # in aolconf
 
 
-done
 
-if [ "$DMMODE" = "0" ]; then
-cp "${confname}/RMpoke.fits" ./conf/
-cp "${confname}/Hpoke.fits" ./conf/
-cp "${confname}/RMmat.fits" ./conf/
-cp "${confname}/RMpixindex.fits" ./conf/
-cp "${confname}/RMpokeCube.fits" ./conf/
-fi
 
-AOloadMem 1
+
 else
 dialog --title "ERROR" --msgbox "Directory ${confname} does not exit" 6 30
 fi;;
@@ -1323,7 +1325,7 @@ esac
 	Hon)
 echo "1" > ./conf/param_RMpokeMode.txt
 
-#if [ -f "./conf/Hpoke.fits" ]; then
+#if [ -f "./conf/Hpoke.fits.gz" ]; then
 #echo "OK"
 #else
 ./auxscripts/mkHpoke 
