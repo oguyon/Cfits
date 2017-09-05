@@ -119,7 +119,7 @@ readshmim aol${loopnb}_DMmodes
 
 readshmim aol${loopnb}_dmC
 im=aol${loopnb}_dmC+0
-cpsh im aol${loopnb}_dmPFout
+cpsh im ${OUTCNAME}
 
 aolmc2dmfilt aol${loopnb}_modevalPF aol${loopnb}_DMmodes 2 ${OUTCNAME} $1 ${loopnb} 0
 exitCLI
