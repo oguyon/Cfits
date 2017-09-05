@@ -3542,7 +3542,7 @@ int_fast8_t AOcompute(long loop, int normalize)
 
 
 
-    if(AOconf[loop].GPU0 == 0)   // run in CPU
+    if(AOconf[loop].GPU0 == 0)   // no GPU -> run in CPU
     {
         if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slower but required for access to mode values
         {
@@ -3572,7 +3572,7 @@ int_fast8_t AOcompute(long loop, int normalize)
             data.image[aoconfID_meas_modes].md[0].write = 0;
         }
     }
-    else
+    else  // run in GPU if possible 
     {
 #ifdef HAVE_CUDA
         if(AOconf[loop].CMMODE==0)  // goes explicitely through modes, slower but required for access to mode values
