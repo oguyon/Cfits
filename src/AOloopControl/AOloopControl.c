@@ -4869,7 +4869,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         //
         if(AOconf[loop].ARPFon==1)
         {
-			printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
+		//	printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
 			
             if(IDmodevalPF==-1)
             {
