@@ -1095,7 +1095,9 @@ echo "$CONFname" > confname.test.txt
 case $retval in
    0) # button
 mkdir -p "${CONFdir}"
-rsync -a --no-links conf/* ${CONFdir}/
+rsync -a --no-links conf/*.txt ${CONFdir}/
+rsync -a --no-links conf/*.fits ${CONFdir}/
+rsync -a --no-links conf/*.fits.gz ${CONFdir}/
 ;;
 esac
 ;;
@@ -1118,12 +1120,11 @@ echo "confname = $confname"
 
 
 # overwrite conflastloaded 
-# set up param_conflastloaded_name.txt1 as temporary storage
+# set up .txt1 as temporary storage
 confnameloaded_name=${confname}
-echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt
 echo "$conflastloaded_name" > conf/param_conflastloaded_name.txt1
 conflastloaded_time=$( date -u )
-echo "$conflastloaded_time" > conf/param_conflastloaded_time.txt
+echo "$conflastloaded_time" > conf/param_conflastloaded_time.txt1
 
 case $retval in
    0) # button
@@ -1132,7 +1133,7 @@ if [ -d ${confname} ]; then
 cp "${confname}"/*.txt ./conf/
 
 cp conf/param_conflastloaded_name.txt1 conf/param_conflastloaded_name.txt
-
+cp conf/param_conflastloaded_time.txt1 conf/param_conflastloaded_time.txt
 
 # set up symbolic links to streams
 for name in dmC dmO dmdisp dmRM dmZP0 dmZP1 dmZP2 dmZP3 dmZP4 dmZP5 dmZP6 dmZP7 wfsim
