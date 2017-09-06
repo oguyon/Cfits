@@ -2958,6 +2958,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     
     if(MAGMAfloat==1)
     {
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" -> magma_ssyevd_gpu -> ");
@@ -2970,6 +2974,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		else
 			magma_ssyevd_gpu( MagmaVec,               MagmaLower, N, magmaf_d_AtA, N,                        magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
 				
+			printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 		
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
@@ -2979,6 +2985,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	}
     else
     {
+		
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+			
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" -> magma_dsyevd_gpu -> ");  
@@ -2988,6 +2998,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         
         // SSYEVD computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A
         magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
+	
+		printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 		
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
