@@ -1190,7 +1190,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
     int device;
 
 
-	CUDACOMP_printGPUMATMULTCONF(int index);
+	CUDACOMP_printGPUMATMULTCONF(index);
 
 
     if(gpumatmultconf[index].init == 0)
@@ -1785,7 +1785,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
     // fflush(stdout);
 
 
-	CUDACOMP_printGPUMATMULTCONF(int index);
+	CUDACOMP_printGPUMATMULTCONF(index);
 
     return(0);
 }
