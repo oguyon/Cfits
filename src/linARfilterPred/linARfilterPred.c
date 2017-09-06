@@ -1477,7 +1477,7 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	long IDmasterout;
 	char imname[200];
 	
-	int GPUMATMULTCONFindex = 0;
+	int GPUMATMULTCONFindex = 1;
 	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
