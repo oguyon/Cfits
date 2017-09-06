@@ -546,7 +546,7 @@ int CUDACOMP_printGPUMATMULTCONF(int index)
 	printf("\n");
 	printf("============= GPUMATMULTCONF %d ======================\n", index);
 	printf(" init              = %20d\n", (int) gpumatmultconf[index].init);
-	printf(" refWFSinit        = %p\n", (void*) gpumatmultconf[index].refWFSinit)
+	printf(" refWFSinit        = %p\n", (void*) gpumatmultconf[index].refWFSinit);
 	
 	if(gpumatmultconf[index].refWFSinit != NULL)
 		printf("     refWFSinit[0]     = %20d\n", (int) gpumatmultconf[index].refWFSinit[0]); 
