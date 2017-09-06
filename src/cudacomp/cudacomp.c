@@ -1189,24 +1189,25 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 {
     int device;
 
-
 	CUDACOMP_printGPUMATMULTCONF(index);
 
 
     if(gpumatmultconf[index].init == 0)
     {
+		int pid;		
         struct cudaDeviceProp deviceProp;
         int n, m;
         char sname[200];
         int ptn;
  
         long IDcontrM, IDwfsim, IDwfsref;
-        
+		
 
 
         printf("STARTING SETUP %d .....\n", index);
         fflush(stdout);
 
+		pid = getpid();
 
         if(IDtimerinit == 0)
         {
@@ -1593,36 +1594,37 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
 				exit(0);
 			}
+
 			
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem1", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem1_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr1[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr1[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem2", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem2_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr2[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr2[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem3", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem3_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr3[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr3[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem4", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem4_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr4[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
             }
             sem_init(gpumatmultconf[index].semptr4[device], 1, 0);
 
-            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem5", loopnb, index, GPUdevice[device]);
+            sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem5_%06d", loopnb, index, GPUdevice[device], pid);
             if ((gpumatmultconf[index].semptr5[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
                 exit(0);
