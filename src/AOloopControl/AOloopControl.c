@@ -4669,7 +4669,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
     IDmodevalDM_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
 
-
+ 
 
 	// modal prediction, circular buffer
     sizeout[1] = modeval_bsize;
