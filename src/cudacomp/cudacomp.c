@@ -2674,7 +2674,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
     if(MAGMAloop_iter == 0) /// memory is only allocated on first pass
     {
@@ -2704,6 +2705,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
 
@@ -2712,6 +2715,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		printf("MAGMA READY\n");
 		fflush(stdout);
 	}
+
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
    // if(timing==1)
@@ -2749,6 +2756,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
     if(testmode==1)
     {
 		long ID_A;
@@ -2779,7 +2789,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	
 
 
-
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 	// ****************************************************
 	// STEP 2 :   Copy input data from CPU to GPU   
