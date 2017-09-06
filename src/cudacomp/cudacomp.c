@@ -1344,6 +1344,12 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         // device (GPU)
         gpumatmultconf[index].d_cMat = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].d_cMat == NULL)
+			{
+				printf("malloc allocation error - %s %s\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
         gpumatmultconf[index].d_wfsVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].d_dmVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         gpumatmultconf[index].d_wfsRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
