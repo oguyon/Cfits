@@ -571,43 +571,42 @@ int CUDACOMP_printGPUMATMULTCONF(int index)
     sem_t **semptr5;              
 */
 
-    /*
-    float *cMat;
-    float **cMat_part;
-    float *wfsVec;
-    float **wfsVec_part;
-    float *wfsRef;
-    float **wfsRef_part;
-    float *dmVec;
-    float *dmVecTMP;
-    float **dmVec_part;
-    float **dmRef_part;
-
-    // GPU memory (device)
-    float **d_cMat;
-    float **d_wfsVec;
-    float **d_dmVec;
-    float **d_wfsRef;
-    float **d_dmRef;
+    printf(" cMat              = %20p\n", (void*) gpumatmultconf[index].cMat);
+    printf(" cMat_part         = %20p\n", (void*) gpumatmultconf[index].cMat_part);
+    printf(" wfsVec            = %20p\n", (void*) gpumatmultconf[index].wfsVec);    
+    printf(" wfsVec_part       = %20p\n", (void*) gpumatmultconf[index].wfsVec_part);
+    printf(" wfsRef            = %20p\n", (void*) gpumatmultconf[index].wfsRef);
+    printf(" wfsRef_part       = %20p\n", (void*) gpumatmultconf[index].wfsRef_part);    
+    printf(" dmVec             = %20p\n", (void*) gpumatmultconf[index].dmVec);
+    printf(" dmVecTMP          = %20p\n", (void*) gpumatmultconf[index].dmVecTMP);
+    printf(" dmVec_part        = %20p\n", (void*) gpumatmultconf[index].dmVec_part);    
+    printf(" dmRef_part        = %20p\n", (void*) gpumatmultconf[index].dmRef_part);
+    
+    
+    
+    printf(" d_cMat            = %20p\n", (void*) gpumatmultconf[index].d_cMat);
+    printf(" d_wfsVec          = %20p\n", (void*) gpumatmultconf[index].d_wfsVec);    
+    printf(" d_dmVec           = %20p\n", (void*) gpumatmultconf[index].d_dmVec);
+    printf(" d_wfsRef          = %20p\n", (void*) gpumatmultconf[index].d_wfsRef);
+    printf(" d_dmRef           = %20p\n", (void*) gpumatmultconf[index].d_dmRef);    
+    
 
     // threads
-    THDATA *thdata;
-    int *iret;
-    pthread_t *threadarray;
-    int_fast8_t NBstreams;
-    cudaStream_t *stream;
-    cublasHandle_t *handle;
+    printf(" thdata            = %20p\n", (void*) gpumatmultconf[index].thdata);    
+    printf(" threadarray       = %20p\n", (void*) gpumatmultconf[index].threadarray);    
+    printf(" NBstreams         = %20d\n", (int) gpumatmultconf[index].NBstreams);    
+    printf(" stream            = %20p\n", (void*) gpumatmultconf[index].stream);    
+    printf(" handle            = %20p\n", (void*) gpumatmultconf[index].handle);  
+    
+      
+    printf(" Nsize             = %20p\n", (void*) gpumatmultconf[index].Nsize);    
+    printf(" Noffset           = %20p\n", (void*) gpumatmultconf[index].Noffset);    
+    printf(" GPUdevice         = %20p\n", (void*) gpumatmultconf[index].GPUdevice);    
 
-    // splitting limits
-    uint_fast32_t *Nsize;
-    uint_fast32_t *Noffset;
-
-    int *GPUdevice;
-
+    printf(" orientation       = %20d\n", (int) gpumatmultconf[index].orientation);    
     int_fast8_t orientation;
 
-    long IDout;
-    */
+
 
 	printf("======================================================\n");
 	printf("\n");
