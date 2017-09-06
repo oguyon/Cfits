@@ -143,6 +143,7 @@ int_fast8_t init_cudacomp();
  */
 int_fast8_t CUDACOMP_init();
 
+int CUDACOMP_printGPUMATMULTCONF(int index);
 
 int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt);
 

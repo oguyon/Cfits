@@ -539,6 +539,89 @@ int_fast8_t CUDACOMP_init()
 
 
 
+
+
+int CUDACOMP_printGPUMATMULTCONF(int index)
+{
+	printf("\n");
+	printf("============= GPUMATMULTCONF %d ======================\n", index);
+	printf(" init              = %20d\n", (int) gpumatmultconf[index].init);
+	printf(" refWFSinit        = %p\n", (void*) gpumatmultconf[index].refWFSinit)
+	
+	if(gpumatmultconf[index].refWFSinit != NULL)
+		printf("     refWFSinit[0]     = %20d\n", (int) gpumatmultconf[index].refWFSinit[0]); 
+
+	printf(" alloc             = %20d\n", (int) gpumatmultconf[index].alloc);
+	printf(" CM_ID             = %20ld\n", gpumatmultconf[index].CM_ID);
+	printf(" CM_cnt            = %20ld\n", gpumatmultconf[index].CM_cnt);
+	printf(" timerID           = %20ld\n", gpumatmultconf[index].timerID);
+	printf(" M                 = %20d\n", (int) gpumatmultconf[index].M);
+	printf(" N                 = %20\n", (int) gpumatmultconf[index].N);
+
+    /// synchronization
+	printf(" sem               = %20d\n", (int) gpumatmultconf[index].sem);
+	printf(" gpuinit           = %20d\n", (int) gpumatmultconf[index].gpuinit);
+    
+    /// one semaphore per thread
+/* 
+    sem_t **semptr1;   
+    sem_t **semptr2;             
+    sem_t **semptr3;            
+    sem_t **semptr4;            
+    sem_t **semptr5;              
+*/
+
+    /*
+    float *cMat;
+    float **cMat_part;
+    float *wfsVec;
+    float **wfsVec_part;
+    float *wfsRef;
+    float **wfsRef_part;
+    float *dmVec;
+    float *dmVecTMP;
+    float **dmVec_part;
+    float **dmRef_part;
+
+    // GPU memory (device)
+    float **d_cMat;
+    float **d_wfsVec;
+    float **d_dmVec;
+    float **d_wfsRef;
+    float **d_dmRef;
+
+    // threads
+    THDATA *thdata;
+    int *iret;
+    pthread_t *threadarray;
+    int_fast8_t NBstreams;
+    cudaStream_t *stream;
+    cublasHandle_t *handle;
+
+    // splitting limits
+    uint_fast32_t *Nsize;
+    uint_fast32_t *Noffset;
+
+    int *GPUdevice;
+
+    int_fast8_t orientation;
+
+    long IDout;
+    */
+
+	printf("======================================================\n");
+	printf("\n");
+}
+
+
+
+
+
+
+
+
+
+
 int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
 {
     long ID_contrM;
@@ -1107,7 +1190,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
     int device;
 
 
-
+	CUDACOMP_printGPUMATMULTCONF(int index);
 
 
     if(gpumatmultconf[index].init == 0)
@@ -1700,6 +1783,9 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
     // printf("CONFIGURATION DONE \n");
     // fflush(stdout);
+
+
+	CUDACOMP_printGPUMATMULTCONF(int index);
 
     return(0);
 }
