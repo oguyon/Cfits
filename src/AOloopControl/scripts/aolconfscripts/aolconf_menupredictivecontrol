@@ -2267,22 +2267,20 @@ menupred_default="PFb2aON"
 # FILTER 3
 
 	PFb3aON)
+cp PredictiveControl/inmaskPF3.fits inmask3.fits
+cp PredictiveControl/outmaskPF3.fits outmask3.fits
 tmuxname="aol${LOOPNUMBER}PFb3apply"
 sleep 0.2
 tmux new-session -d -s ${tmuxname}
 sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
-./predFiltApplyRT -s -n 1000  accposPF accposP
 
-tmux send-keys -t ${tmuxname} "AOloopControl" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/predFiltApplyRT -i 3 -o -g ${PFb3nbGPU} aol${LOOPNUMBER}_modeval_ol aol${LOOPNUMBER}_outPFb3  aol${LOOPNUMBER}_modevalPFb3" C-m
 
-#tmux send-keys -t ${tmuxname} "applyPfiltRT indata Pfilt outPF" C-m
-#tmux send-keys -t ${tmuxname} "exit" C-m
 PFb3aON=" ON"
 file="./status/stat_PFb3aON.txt"
 echo "writing $PFb3aON to file $file"
-sleep 2
 echo "$PFb3aON" > $file
 menupred_default="PFb3aOFF"
 ;;
@@ -2290,6 +2288,7 @@ menupred_default="PFb3aOFF"
 	PFb3aOFF)
 tmuxname="aol${LOOPNUMBER}PFb3apply"
 tmux send-keys -t ${tmuxname} C-c
+tmux send-keys -t ${tmuxname} "exit" C-m
 PFb3aON="OFF"
 file="./status/stat_PFb3aON.txt"
 echo "$PFb3aON" > $file
