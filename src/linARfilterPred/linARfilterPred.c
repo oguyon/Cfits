@@ -1626,6 +1626,8 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	
 
 	printf("Running on semaphore trigger %d of image %s\n", semtrig, data.image[IDmodevalIN].md[0].name);
+	exit(0);
+	
 	while(iter!=NBiter)
 	{
 	//	printf("iter %5ld / %5ld", iter, NBiter);
