@@ -1346,7 +1346,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         gpumatmultconf[index].d_cMat = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
         if( gpumatmultconf[index].d_cMat == NULL)
 			{
-				printf("malloc allocation error - %s %s\n", __FILE__, __LINE__);
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
 				exit(0);
 			}
 			
