@@ -2805,6 +2805,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         magma_dsetmatrix( M, N, magma_h_A, M, magma_d_A, M, magmaqueue);
 
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
+
     if(LOOPmode==0) /// if pseudo-inverse is only computed once, these arrays can be freed
     {
         if(MAGMAfloat==1)
@@ -2824,6 +2828,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		fflush(stdout);
     }
     
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
     
 	// ****************************************************    
     // STEP 3 :   Compute trans(A) x A    : magmaf_d_A x magmaf_d_A      -> magmaf_d_AtA      (NxN matrix on device)
@@ -2859,6 +2867,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         save_fits("mAtA", "!test_mAtA.fits");
     }
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
     //if(timing==1)
@@ -2907,6 +2917,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         magma_liwork = magma_aux_iwork[0];
     }
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
     //if(timing==1)
@@ -2939,6 +2951,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
    
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
     
     
     
@@ -2981,6 +2995,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 			fflush(stdout);
 		}
 	}
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
 
     if(LOOPmode == 0)
     {
@@ -3033,6 +3051,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	/// Note: w1 values are the SQUARE of the singular values of A 
 
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
+
 	// ****************************************************    
 	// STEP 5 :   Set eigenvalue limit
 	// ****************************************************    
@@ -3072,6 +3094,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     MaxNBmodes1 = mode;
     //printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
 
 	// ****************************************************    
 	// STEP 6 :   Write eigenvectors to VT matrix
@@ -3100,6 +3125,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             for(jj=0; jj<N; jj++)
                 data.image[ID_VT].array.F[jj*N+ii] = magma_h_AtA[(N-ii-1)*N+jj];
     }
+
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
 	// ****************************************************    
@@ -3149,6 +3178,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
     //if(timing==1)
@@ -3248,6 +3279,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
  
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
 	// ****************************************************    
@@ -3335,6 +3368,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
     //if(timing==1)
@@ -3426,6 +3461,9 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
+
 
     //if(timing==1)
     clock_gettime(CLOCK_REALTIME, &t9);
@@ -3507,6 +3545,10 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		fflush(stdout);
     }
     //}
+
+
+	printf("============== %s %d\n", __FILE__, __LINE__);
+	fflush(stdout);
 
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
