@@ -1663,8 +1663,26 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
         fflush(stdout);
 
         gpumatmultconf[index].iret = (int*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].iret == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+        
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].thdata == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}        
+        
         gpumatmultconf[index].threadarray = (pthread_t*) malloc(sizeof(pthread_t)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].threadarray == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
 
         for(m=0; m<gpumatmultconf[index].M; m++)
             gpumatmultconf[index].dmVecTMP[m] = 0.0;
