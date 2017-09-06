@@ -1351,39 +1351,166 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 			}
 			
         gpumatmultconf[index].d_wfsVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].d_wfsVec == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
+
         gpumatmultconf[index].d_dmVec = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].d_dmVec == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].d_wfsRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+        if( gpumatmultconf[index].d_wfsRef == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].d_dmRef = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference
+        if( gpumatmultconf[index].d_dmRef == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
         gpumatmultconf[index].stream = (cudaStream_t*) malloc(sizeof(cudaStream_t)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].stream == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].handle = (cublasHandle_t*) malloc(sizeof(cublasHandle_t)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].handle == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
 
         // host (computer)
         gpumatmultconf[index].cMat_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].cMat_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].wfsVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].wfsVec_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].dmVec_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].dmVec_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].wfsRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams); // WFS reference
+        if( gpumatmultconf[index].wfsRef_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
         gpumatmultconf[index].dmRef_part = (float **) malloc(sizeof(float*)*gpumatmultconf[index].NBstreams);  // DM reference (for checking only)
+        if( gpumatmultconf[index].dmRef_part == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
         gpumatmultconf[index].refWFSinit = (int_fast8_t*) malloc(sizeof(int)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].refWFSinit == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
 
         gpumatmultconf[index].semptr1 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr2 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr3 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr4 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
-        gpumatmultconf[index].semptr5 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr1 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
 
+        gpumatmultconf[index].semptr2 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr2 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+
+        gpumatmultconf[index].semptr3 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr3 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
+        gpumatmultconf[index].semptr4 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr4 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}        
+        
+        gpumatmultconf[index].semptr5 = (sem_t **) malloc(sizeof(sem_t*)*gpumatmultconf[index].NBstreams);
+        if( gpumatmultconf[index].semptr5 == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
 
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
         {
             gpumatmultconf[index].cMat_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M*gpumatmultconf[index].Nsize[device]);
+            if( gpumatmultconf[index].cMat_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             gpumatmultconf[index].wfsVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
+            if( gpumatmultconf[index].wfsVec_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             gpumatmultconf[index].wfsRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].Nsize[device]);
+            if( gpumatmultconf[index].wfsRef_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             gpumatmultconf[index].dmVec_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
+            if( gpumatmultconf[index].dmVec_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+            
             gpumatmultconf[index].dmRef_part[device] = (float*) malloc(sizeof(float)*gpumatmultconf[index].M);
-
+			if( gpumatmultconf[index].dmRef_part[device] == NULL)
+			{
+				printf("malloc allocation error - %s %d\n", __FILE__, __LINE__);
+				exit(0);
+			}
+			
             sprintf(sname, "loop%02ld_i%02d_gpu%02d_sem1", loopnb, index, GPUdevice[device]);
             if ((gpumatmultconf[index].semptr1[device] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
                 perror("semaphore initilization");
