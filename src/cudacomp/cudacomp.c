@@ -378,7 +378,7 @@ int_fast8_t init_cudacomp()
 {
     long i;
 #ifdef HAVE_CUDA
-    for(i=0; i<10; i++) {
+    for(i=0; i<20; i++) {
         gpumatmultconf[i].init = 0;
         gpumatmultconf[i].alloc = 0;
     }
@@ -967,7 +967,7 @@ void *compute_function( void *ptr )
 
             if (stat != CUBLAS_STATUS_SUCCESS)
             {
-                printf("cublasSgemv returned error code %d, line(%d)\n", stat, __LINE__);
+                printf("cublasSgemv returned error code %d, line(%d), index=%d\n", stat, __LINE__, index);
                 fflush(stdout);
                 if(stat == CUBLAS_STATUS_NOT_INITIALIZED)
                     printf("   CUBLAS_STATUS_NOT_INITIALIZED\n");
@@ -980,7 +980,6 @@ void *compute_function( void *ptr )
 
                 printf("device %d of index %d\n", device, index);
                 printf("GPU device                          = %d\n", gpumatmultconf[index].GPUdevice[device]);
-
                 printf("CUBLAS_OP_N                         = %d\n", CUBLAS_OP_N);
                 printf("alpha                               = %f\n", cublasSgemv_alpha);
                 printf("alpha                               = %f\n", cublasSgemv_beta);
