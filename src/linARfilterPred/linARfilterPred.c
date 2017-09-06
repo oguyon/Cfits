@@ -1477,6 +1477,8 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	long IDmasterout;
 	char imname[200];
 	
+	int GPUMATMULTCONFindex = 0;
+	
 	
 	IDmodevalIN = image_ID(IDmodevalIN_name);
 	NBmodeIN0 = data.image[IDmodevalIN].md[0].size[0];
@@ -1652,8 +1654,8 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 	
 			#ifdef HAVE_CUDA
 			if(iter==0)
-				GPU_loop_MultMat_setup(0, IDPFM_name, "INbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
-			GPU_loop_MultMat_execute(0, &status, &GPUstatus[100], 1.0, 0.0, 0);
+				GPU_loop_MultMat_setup(GPUMATMULTCONFindex, IDPFM_name, "INbuffer", IDPFout_name, nbGPU, GPUsetPF, 0, 1, 1, loop);
+			GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[100], 1.0, 0.0, 0);
 			#endif
 		}
 		else // if using CPU
