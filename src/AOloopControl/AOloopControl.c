@@ -4900,7 +4900,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
                 }
              
                 // drive semaphore to zero
-                while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
+              //  while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
 
 
 				//
