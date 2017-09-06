@@ -556,7 +556,7 @@ int CUDACOMP_printGPUMATMULTCONF(int index)
 	printf(" CM_cnt            = %20ld\n", gpumatmultconf[index].CM_cnt);
 	printf(" timerID           = %20ld\n", gpumatmultconf[index].timerID);
 	printf(" M                 = %20d\n", (int) gpumatmultconf[index].M);
-	printf(" N                 = %20\n", (int) gpumatmultconf[index].N);
+	printf(" N                 = %20d\n", (int) gpumatmultconf[index].N);
 
     /// synchronization
 	printf(" sem               = %20d\n", (int) gpumatmultconf[index].sem);
