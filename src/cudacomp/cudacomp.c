@@ -58,9 +58,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/mman.h>
-
-#include <assert.h>
-
+#include <sys/types.h>
 
 
 #ifdef HAVE_CUDA
