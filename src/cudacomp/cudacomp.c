@@ -870,7 +870,7 @@ void *compute_function( void *ptr )
     device = thdata->thread_no;
     index = thdata->cindex;
 
-    ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device + sizeof(int)*10*index);
+    ptrstat = (int*) ((char*) thdata->status); // + sizeof(int)*device + sizeof(int)*10*index);
 
     *ptrstat = 1;
 
@@ -1751,6 +1751,7 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 				exit(0);
 			}
         
+        // thread data
         gpumatmultconf[index].thdata = (THDATA*) malloc(sizeof(THDATA)*gpumatmultconf[index].NBstreams);
         if( gpumatmultconf[index].thdata == NULL)
 			{
