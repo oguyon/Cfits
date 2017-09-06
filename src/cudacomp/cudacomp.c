@@ -870,7 +870,7 @@ void *compute_function( void *ptr )
     device = thdata->thread_no;
     index = thdata->cindex;
 
-    ptrstat = (int*) ((char*) thdata->status); // + sizeof(int)*device + sizeof(int)*10*index);
+    ptrstat = (int*) ((char*) thdata->status + sizeof(int)*device); // + sizeof(int)*10*index);  //TBR
 
     *ptrstat = 1;
 
