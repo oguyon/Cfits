@@ -2674,8 +2674,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
     if(MAGMAloop_iter == 0) /// memory is only allocated on first pass
     {
@@ -2705,8 +2703,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
+
 
 
 
@@ -2717,8 +2714,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	}
 
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
    // if(timing==1)
@@ -2756,8 +2751,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
     if(testmode==1)
     {
@@ -2789,9 +2782,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	
 
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-
 	// ****************************************************
 	// STEP 2 :   Copy input data from CPU to GPU   
 	// ****************************************************
@@ -2805,8 +2795,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         magma_dsetmatrix( M, N, magma_h_A, M, magma_d_A, M, magmaqueue);
 
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
     if(LOOPmode==0) /// if pseudo-inverse is only computed once, these arrays can be freed
@@ -2829,8 +2817,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
     
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
     
 	// ****************************************************    
@@ -2866,9 +2852,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
         save_fits("mAtA", "!test_mAtA.fits");
     }
-
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
     //if(timing==1)
@@ -2917,8 +2900,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         magma_liwork = magma_aux_iwork[0];
     }
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
     //if(timing==1)
@@ -2951,10 +2932,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 
 
    
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-    
-    
+
     
     if(MAGMAfloat==1)
     {
@@ -2984,11 +2962,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		}
 	}
     else
-    {
-		
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-			
+    {			
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" -> magma_dsyevd_gpu -> ");  
@@ -2999,19 +2973,12 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         // SSYEVD computes all eigenvalues and, optionally, eigenvectors of a real symmetric matrix A
         magma_dsyevd_gpu( MagmaVec, MagmaLower, N, magma_d_AtA, N, magma_w1, magma_h_R, N, magma_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
 	
-		printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-		
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
 			printf(" DONE\n");
 			fflush(stdout);
 		}
 	}
-
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-
 
     if(LOOPmode == 0)
     {
@@ -3064,9 +3031,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	/// Note: w1 values are the SQUARE of the singular values of A 
 
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-
 
 	// ****************************************************    
 	// STEP 5 :   Set eigenvalue limit
@@ -3107,8 +3071,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     MaxNBmodes1 = mode;
     //printf("Keeping %ld modes  (SVDeps = %g)\n", MaxNBmodes1, SVDeps);
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
 	// ****************************************************    
@@ -3139,9 +3101,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
                 data.image[ID_VT].array.F[jj*N+ii] = magma_h_AtA[(N-ii-1)*N+jj];
     }
 
-
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
 	// ****************************************************    
@@ -3190,9 +3149,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
             TESTING_FREE_CPU( magma_h_AtA );
         }
     }
-
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
     //if(timing==1)
@@ -3292,9 +3248,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
 
  
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-
 
 	// ****************************************************    
 	// STEP 9 :   Compute Ainv = M2 A = (AT A)^-1 A 
@@ -3379,10 +3332,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 			TESTING_FREE_DEV( magma_d_M2 );
 		}
     }
-
-
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
     //if(timing==1)
@@ -3474,9 +3423,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
         }
     }
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
-
 
     //if(timing==1)
     clock_gettime(CLOCK_REALTIME, &t9);
@@ -3559,9 +3505,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     }
     //}
 
-
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
 
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
