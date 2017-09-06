@@ -2252,8 +2252,7 @@ echo "$PFb2aON" > $file
 menupred_default="PFb2aOFF"
 ;;
 
-	PFb2aOFF)
-	
+	PFb2aOFF)	
 Cfits << EOF
 readshmim aol${LOOPNUMBER}_mode_ARPFgain
 loadfits outmask2.fits outmask
@@ -2296,6 +2295,15 @@ menupred_default="PFb3aOFF"
 ;;
 
 	PFb3aOFF)
+Cfits << EOF
+readshmim aol${LOOPNUMBER}_mode_ARPFgain
+loadfits outmask3.fits outmask
+im1=1-outmask
+im2=im1*aol${LOOPNUMBER}_mode_ARPFgain
+cpsh im2 aol${LOOPNUMBER}_mode_ARPFgain
+exitCLI
+EOF
+
 tmuxname="aol${LOOPNUMBER}PFb3apply"
 tmux send-keys -t ${tmuxname} C-c
 tmux send-keys -t ${tmuxname} "exit" C-m
