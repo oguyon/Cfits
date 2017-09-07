@@ -138,35 +138,22 @@ menuitems+=( " " " ")
 
 # FILTER 0
 
-file="./conf/param_PFblock_000.txt"
-if [ -f $file ]; then
-PFb0start=$( cat $file | awk '{ print $1}' )
-PFb0end=$( cat $file | awk '{ print $2}' )
-PFb0order=$( cat $file | awk '{ print $3}' )
-PFb0lag=$( cat $file | awk '{ print $4}' )
-PFb0dgain=$( cat $file | awk '{ print $5}' )
-else
-PFb0start="0"
-PFb0end="2"
-PFb0order="10"
-PFb0lag="$latency_frame"
-PFb0dgain="0.1"
-echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
-fi
+ConfReadParam PFb0start "0.001"; PFb0start="$paramvalue"
+ConfReadParam PFb0end "2"; PFb0end="$paramvalue"
+ConfReadParam PFb0order "10"; PFb0order="$paramvalue"
+ConfReadParam PFb0lag "$latency_frame"; PFb0lag="$paramvalue"
+ConfReadParam PFb0SVDe "0.001"; PFb0SVDe="$paramvalue"
+ConfReadParam PFb0dgain "0.2"; PFb0dgain="$paramvalue"
 
 menuitems+=( "PFb0start" "[$PFb0start] set Predictive filter block 0 start" )
 menuitems+=( "PFb0end" "[$PFb0end] set Predictive filter block 0 end" )
 menuitems+=( "PFb0order" "[$PFb0order] set Predictive filter block 0 order" )
 menuitems+=( "PFb0lag" "[$PFb0lag] set Predictive filter block 0 lag" )
+menuitems+=( "PFb0SVDe" "[$PFb0SVDe] set Predictive filter block 0 SVD limit" )
 menuitems+=( "PFb0dgain" "[$PFb0dgain] set Predictive filter block 0 derivationgain" )
 
-file="./conf/param_PFblock_000_nbGPU.txt"
-if [ -f $file ]; then
-PFb0nbGPU=$( cat $file )
-else
-PFb0nbGPU="0"
-echo "$PFb0nbGPU" > $file
-fi
+
+ConfReadParam PFb0nbGPU "0"; PFb0nbGPU="$paramvalue"
 menuitems+=( "PFb0nbGPU" "[$PFb0nbGPU] set Predictive filter block 0 number of GPUs" )
 
 
@@ -297,39 +284,24 @@ fi
 
 if [ "$NBPFblock" -gt "1" ]; then
 # FILTER 1
-
-
 menuitems+=( " " " ")
-file="./conf/param_PFblock_001.txt"
-if [ -f $file ]; then
-PFb1start=$( cat $file | awk '{ print $1}' )
-PFb1end=$( cat $file | awk '{ print $2}' )
-PFb1order=$( cat $file | awk '{ print $3}' )
-PFb1lag=$( cat $file | awk '{ print $4}' )
-PFb1dgain=$( cat $file | awk '{ print $5}' )
-else
-PFb1start="2"
-PFb1end="12"
-PFb1order="10"
-PFb1lag="$latency_frame"
-PFb1dgain="0.1"
-echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
-fi
+
+ConfReadParam PFb1start "0"; PFb1start="$paramvalue"
+ConfReadParam PFb1end "2"; PFb1end="$paramvalue"
+ConfReadParam PFb1order "10"; PFb1order="$paramvalue"
+ConfReadParam PFb1lag "$latency_frame"; PFb1lag="$paramvalue"
+ConfReadParam PFb1SVDe "0.001"; PFb1SVDe="$paramvalue"
+ConfReadParam PFb1dgain "0.2"; PFb1dgain="$paramvalue"
 
 menuitems+=( "PFb1start" "[$PFb1start] set Predictive filter block 1 start" )
 menuitems+=( "PFb1end" "[$PFb1end] set Predictive filter block 1 end" )
 menuitems+=( "PFb1order" "[$PFb1order] set Predictive filter block 1 order" )
 menuitems+=( "PFb1lag" "[$PFb1lag] set Predictive filter block 1 lag" )
+menuitems+=( "PFb1SVDe" "[$PFb1SVDe] set Predictive filter block 1 SVD limit" )
 menuitems+=( "PFb1dgain" "[$PFb1dgain] set Predictive filter block 1 derivationgain" )
 
 
-file="./conf/param_PFblock_001_nbGPU.txt"
-if [ -f $file ]; then
-PFb1nbGPU=$( cat $file )
-else
-PFb1nbGPU="0"
-echo "$PFb1nbGPU" > $file
-fi
+ConfReadParam PFb1nbGPU "0"; PFb1nbGPU="$paramvalue"
 menuitems+=( "PFb1nbGPU" "[$PFb1nbGPU] set Predictive filter block 1 number of GPUs" )
 
 
@@ -466,39 +438,27 @@ fi
 if [ "$NBPFblock" -gt "2" ]; then
 # FILTER 2
 
-
 menuitems+=( " " " ")
-file="./conf/param_PFblock_002.txt"
-if [ -f $file ]; then
-PFb2start=$( cat $file | awk '{ print $1}' )
-PFb2end=$( cat $file | awk '{ print $2}' )
-PFb2order=$( cat $file | awk '{ print $3}' )
-PFb2lag=$( cat $file | awk '{ print $4}' )
-PFb2dgain=$( cat $file | awk '{ print $5}' )
-else
-PFb2start="2"
-PFb2end="12"
-PFb2order="10"
-PFb2lag="$latency_frame"
-PFb2dgain="0.1"
-echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
-fi
+
+
+ConfReadParam PFb2start "0"; PFb2start="$paramvalue"
+ConfReadParam PFb2end "2"; PFb2end="$paramvalue"
+ConfReadParam PFb2order "10"; PFb2order="$paramvalue"
+ConfReadParam PFb2lag "$latency_frame"; PFb2lag="$paramvalue"
+ConfReadParam PFb2SVDe "0.001"; PFb2SVDe="$paramvalue"
+ConfReadParam PFb2dgain "0.2"; PFb2gain="$paramvalue"
 
 menuitems+=( "PFb2start" "[$PFb2start] set Predictive filter block 2 start" )
 menuitems+=( "PFb2end" "[$PFb2end] set Predictive filter block 2 end" )
 menuitems+=( "PFb2order" "[$PFb2order] set Predictive filter block 2 order" )
 menuitems+=( "PFb2lag" "[$PFb2lag] set Predictive filter block 2 lag" )
+menuitems+=( "PFb2SVDe" "[$PFb2SVDe] set Predictive filter block 2 SVD limit" )
 menuitems+=( "PFb2dgain" "[$PFb2dgain] set Predictive filter block 2 derivationgain" )
 
 
-file="./conf/param_PFblock_002_nbGPU.txt"
-if [ -f $file ]; then
-PFb2nbGPU=$( cat $file )
-else
-PFb2nbGPU="0"
-echo "$PFb2nbGPU" > $file
-fi
+ConfReadParam PFb2nbGPU "0"; PFb2nbGPU="$paramvalue"
 menuitems+=( "PFb2nbGPU" "[$PFb2nbGPU] set Predictive filter block 2 number of GPUs" )
+
 
 
 
@@ -630,40 +590,27 @@ fi
 
 if [ "$NBPFblock" -gt "3" ]; then
 # FILTER 3
-
-
 menuitems+=( " " " ")
-file="./conf/param_PFblock_003.txt"
-if [ -f $file ]; then
-PFb3start=$( cat $file | awk '{ print $1}' )
-PFb3end=$( cat $file | awk '{ print $2}' )
-PFb3order=$( cat $file | awk '{ print $3}' )
-PFb3lag=$( cat $file | awk '{ print $4}' )
-PFb3dgain=$( cat $file | awk '{ print $5}' )
-else
-PFb3start="2"
-PFb3end="12"
-PFb3order="10"
-PFb3lag="$latency_frame"
-PFb3dgain="0.1"
-echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
-fi
-
-menuitems+=( "PFb3start" "[$PFb3start] set Predictive filter block 3 start" )
-menuitems+=( "PFb3end" "[$PFb3end] set Predictive filter block 3 end" )
-menuitems+=( "PFb3order" "[$PFb3order] set Predictive filter block 3 order" )
-menuitems+=( "PFb3lag" "[$PFb3lag] set Predictive filter block 3 lag" )
-menuitems+=( "PFb3dgain" "[$PFb3dgain] set Predictive filter block 3 derivationgain" )
 
 
-file="./conf/param_PFblock_003_nbGPU.txt"
-if [ -f $file ]; then
-PFb3nbGPU=$( cat $file )
-else
-PFb3nbGPU="0"
-echo "$PFb3nbGPU" > $file
-fi
+ConfReadParam PFb3start "0"; PFb3start="$paramvalue"
+ConfReadParam PFb3end "2"; PFb3end="$paramvalue"
+ConfReadParam PFb3order "10"; PFb3order="$paramvalue"
+ConfReadParam PFb3lag "$latency_frame"; PFb3lag="$paramvalue"
+ConfReadParam PFb3SVDe "0.001"; PFb3SVDe="$paramvalue"
+ConfReadParam PFb3dgain "0.2"; PFb3gain="$paramvalue"
+
+menuitems+=( "PFb2start" "[$PFb2start] set Predictive filter block 2 start" )
+menuitems+=( "PFb2end" "[$PFb2end] set Predictive filter block 2 end" )
+menuitems+=( "PFb2order" "[$PFb2order] set Predictive filter block 2 order" )
+menuitems+=( "PFb2lag" "[$PFb2lag] set Predictive filter block 2 lag" )
+menuitems+=( "PFb2SVDe" "[$PFb2SVDe] set Predictive filter block 2 SVD limit" )
+menuitems+=( "PFb2dgain" "[$PFb2dgain] set Predictive filter block 2 derivationgain" )
+
+
+ConfReadParam PFb3nbGPU "0"; PFb3nbGPU="$paramvalue"
 menuitems+=( "PFb3nbGPU" "[$PFb3nbGPU] set Predictive filter block 3 number of GPUs" )
+
 
 
 
@@ -809,6 +756,7 @@ stringcenter "TELEMETRY WATCH"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
 menuitems+=( " " " ")
+
 
 file="./status/stat_PFb0wON.txt"
 PFb0wON=$( cat $file )
@@ -1243,6 +1191,21 @@ exitCLI
 EOF
 echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
 ;;
+
+
+PFb0SVDe)
+exec 3>&1;
+PFb0SVDe=$(dialog --inputbox "Select Predictive filter block 0 SVD epsilon" 0 0 "$PFb0SVDe" 2>&1 1>&3);
+exec 3>&-;
+file="./conf/param_PFblock_000.txt"
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb0_PFparam
+setpix aol${LOOPNUMBER}_outPFb0_PFparam $PFb0lag 0 0
+exitCLI
+EOF
+echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
+;;
+
 
 PFb0dgain)
 exec 3>&1;
