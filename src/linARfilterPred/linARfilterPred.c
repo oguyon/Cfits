@@ -620,6 +620,7 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
  * 
  * 
  * if <IFoutPF_name>_PFparam image exist, read parameters from it: PFlag, SVDeps, RegLambda, LOOPgain
+ * create it in shared memory by default
  * 
  */
 
@@ -698,17 +699,29 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 	float LOOPgain_run;
 	float gain;
 
+    uint32_t *imsize;
 
-
-
-
-
-
+	
 	sprintf(imname, "%s_PFparam", IDoutPF_name);
+	imsize = (uint32_t*) malloc(sizeof(uint32_t)*2);
+	imsize[0] = 4;
+	imsize[1] = 1;
+	IDPFparam = create_image_ID(imname, 2, imsize, _DATATYPE_FLOAT, 1, 0);
+	free(imsize);
+	
+
 	if((IDPFparam=image_ID(imname))!=-1)
+	{
 		ExternalPFparam = 1;
+		data.image[IDPFparam].array.F[0] = PFlag;
+		data.image[IDPFparam].array.F[1] = SVDeps;
+		data.image[IDPFparam].array.F[2] = RegLambda;
+		data.image[IDPFparam].array.F[3] = LOOPgain_run;
+	}
 	else
 		ExternalPFparam = 0;
+		
+	
 
 	
 
