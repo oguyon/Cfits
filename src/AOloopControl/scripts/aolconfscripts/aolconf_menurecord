@@ -633,11 +633,59 @@ else
 fi
 if [ "${logoutPFb0stat}" = "0" ];
 	then
-	menuitems+=( "loutPFb01" "START logging aol${LOOPNUMBER}_outPFb0             Measured predictive filter error mode values" )
+	menuitems+=( "loutPFb01" "START logging aol${LOOPNUMBER}_outPFb0              Predictive filter block 0" )
 else
-	menuitems+=( "loutPFb00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_outPFb0\Zn              Measured predictive filter mode values" )
+	menuitems+=( "loutPFb00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_outPFb0\Zn               Predictive filter block 0" )
 fi
 
+
+
+file="./status/stat_log_outPFb1.txt"
+logoutPFb1stat=$( cat $file )
+if [[ -f "$file" && ( "$logoutPFb1stat" = "0" || "$logoutPFb1stat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logoutPFb1stat=0
+fi
+if [ "${logoutPFb1stat}" = "0" ];
+	then
+	menuitems+=( "loutPFb11" "START logging aol${LOOPNUMBER}_outPFb1              Predictive filter block 1" )
+else
+	menuitems+=( "loutPFb10" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_outPFb1\Zn               Predictive filter block 1" )
+fi
+
+
+file="./status/stat_log_outPFb2.txt"
+logoutPFb2stat=$( cat $file )
+if [[ -f "$file" && ( "$logoutPFb2stat" = "0" || "$logoutPFb2stat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logoutPFb2stat=0
+fi
+if [ "${logoutPFb2stat}" = "0" ];
+	then
+	menuitems+=( "loutPFb21" "START logging aol${LOOPNUMBER}_outPFb2              Predictive filter block 2" )
+else
+	menuitems+=( "loutPFb20" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_outPFb2\Zn               Predictive filter block 2" )
+fi
+
+
+file="./status/stat_log_outPFb3.txt"
+logoutPFb3stat=$( cat $file )
+if [[ -f "$file" && ( "$logoutPFb3stat" = "0" || "$logoutPFb3stat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logoutPFb3stat=0
+fi
+if [ "${logoutPFb3stat}" = "0" ];
+	then
+	menuitems+=( "loutPFb31" "START logging aol${LOOPNUMBER}_outPFb3              Predictive filter block 3" )
+else
+	menuitems+=( "loutPFb30" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_outPFb3\Zn               Predictive filter block 3" )
+fi
 
 
 
