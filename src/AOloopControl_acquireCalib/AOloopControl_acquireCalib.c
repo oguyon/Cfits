@@ -630,10 +630,10 @@ long AOloopControl_acquireCalib_Measure_WFSrespC(long loop, long delayfr, long d
  * 
  *  Measure the WFS linear response to a set of DM patterns
  * 
- * This function calls AOloopControl_acquireCalib_Measure_WFSrespC() \n
+ * This function creates positive and negative maps which are sent by AOloopControl_acquireCalib_Measure_WFSrespC() \n
  * Bleeding from one pattern to the next due to limited DM time response is canceled by using two patterns \n
  * 
- * pattern a sequence : +- +- +- += ... \n
+ * pattern a sequence : +- +- +- +- ... \n
  * pattern b sequence : +- -+ +- -+ ... \n
  * 
  */
