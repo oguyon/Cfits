@@ -1238,7 +1238,7 @@ exec 3>&-;
 file="./conf/param_PFblock_000.txt"
 Cfits << EOF
 readshmim aol0_outPFb0_PFparam
-setpix aol0_outPF0_PFparam $PFb0lag 0 0
+setpix aol0_outPFb0_PFparam $PFb0lag 0 0
 exitCLI
 EOF
 echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
@@ -1250,7 +1250,7 @@ PFb0dgain=$(dialog --inputbox "Select Predictive filter block 0 derivation gain"
 exec 3>&-;
 Cfits << EOF
 readshmim aol0_outPFb0_PFparam
-setpix aol0_outPF0_PFparam $PFb0gain 1 0
+setpix aol0_outPFb0_PFparam $PFb0gain 1 0
 exitCLI
 EOF
 file="./conf/param_PFblock_000.txt"
