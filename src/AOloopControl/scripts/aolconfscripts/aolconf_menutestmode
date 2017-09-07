@@ -953,17 +953,6 @@ menutestmode_default="spmsamp"
 
 
 
-ConfReadParam testDMperMn "100"; testDMperMn="$paramvalue"
-menuitems+=( "spmsn" "[${testDMperMn}] Set Periodic DM Modal Sequence number of modes" )
-
-ConfReadParam testDMperMdt "10000"; testDMperMdt="$paramvalue"
-menuitems+=( "spmsdt" "[${testDMperMdt}] Set Periodic DM Modal Sequence update interval [us]" )
-
-ConfReadParam testDMperMfr "10000"; testDMperMfr="$paramvalue"
-menuitems+=( "spmsfr" "[${testDMperMfr}] Set Periodic DM Modal Sequence frequency [Hz]" )
-
-ConfReadParam testDMperMamp "0.001"; testDMperMamp="$paramvalue"
-menuitems+=( "spmsamp" "[${testDMperMamp}] Set Periodic DM Modal Sequence amplitude per mode [um]" )
 
 	spmsON)
 echo " ON" > ./status/stat_testDMperM.txt
