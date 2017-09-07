@@ -1236,9 +1236,9 @@ exec 3>&1;
 PFb0lag=$(dialog --inputbox "Select Predictive filter block 0 lag" 0 0 "$PFb0lag" 2>&1 1>&3);
 exec 3>&-;
 file="./conf/param_PFblock_000.txt"
-Cfits << EOF
-readshmim aol0_outPFb0_PFparam
-setpix aol0_outPFb0_PFparam $PFb0lag 0 0
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb0_PFparam
+setpix aol${LOOPNUMBER}_outPFb0_PFparam $PFb0lag 0 0
 exitCLI
 EOF
 echo "$PFb0start $PFb0end $PFb0order $PFb0lag $PFb0dgain" > $file
@@ -1248,9 +1248,9 @@ PFb0dgain)
 exec 3>&1;
 PFb0dgain=$(dialog --inputbox "Select Predictive filter block 0 derivation gain" 0 0 "$PFb0dgain" 2>&1 1>&3);
 exec 3>&-;
-Cfits << EOF
-readshmim aol0_outPFb0_PFparam
-setpix aol0_outPFb0_PFparam $PFb0gain 1 0
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb0_PFparam
+setpix aol${LOOPNUMBER}_outPFb0_PFparam $PFb0dgain 1 0
 exitCLI
 EOF
 file="./conf/param_PFblock_000.txt"
@@ -1399,6 +1399,11 @@ PFb1lag)
 exec 3>&1;
 PFb1lag=$(dialog --inputbox "Select Predictive filter block 1 lag" 0 0 "$PFb1lag" 2>&1 1>&3);
 exec 3>&-;
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb1_PFparam
+setpix aol${LOOPNUMBER}_outPFb1_PFparam $PFb1lag 0 0
+exitCLI
+EOF
 file="./conf/param_PFblock_001.txt"
 echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
@@ -1407,6 +1412,11 @@ PFb1dgain)
 exec 3>&1;
 PFb1dgain=$(dialog --inputbox "Select Predictive filter block 1 derivation gain" 0 0 "$PFb1dgain" 2>&1 1>&3);
 exec 3>&-;
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb1_PFparam
+setpix aol${LOOPNUMBER}_outPFb1_PFparam $PFb1dgain 1 0
+exitCLI
+EOF
 file="./conf/param_PFblock_001.txt"
 echo "$PFb1start $PFb1end $PFb1order $PFb1lag $PFb1dgain" > $file
 ;;
@@ -1546,6 +1556,11 @@ PFb2lag)
 exec 3>&1;
 PFb2lag=$(dialog --inputbox "Select Predictive filter block 2 lag" 0 0 "$PFb2lag" 2>&1 1>&3);
 exec 3>&-;
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb2_PFparam
+setpix aol${LOOPNUMBER}_outPFb2_PFparam $PFb2lag 0 0
+exitCLI
+EOF
 file="./conf/param_PFblock_002.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
@@ -1554,6 +1569,11 @@ PFb2dgain)
 exec 3>&1;
 PFb2dgain=$(dialog --inputbox "Select Predictive filter block 2 derivation gain" 0 0 "$PFb2dgain" 2>&1 1>&3);
 exec 3>&-;
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb2_PFparam
+setpix aol${LOOPNUMBER}_outPFb2_PFparam $PFb2dgain 1 0
+exitCLI
+EOF
 file="./conf/param_PFblock_002.txt"
 echo "$PFb2start $PFb2end $PFb2order $PFb2lag $PFb2dgain" > $file
 ;;
@@ -1693,6 +1713,11 @@ PFb3lag)
 exec 3>&1;
 PFb3lag=$(dialog --inputbox "Select Predictive filter block 3 lag" 0 0 "$PFb3lag" 2>&1 1>&3);
 exec 3>&-;
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb3_PFparam
+setpix aol${LOOPNUMBER}_outPFb3_PFparam $PFb3lag 0 0
+exitCLI
+EOF
 file="./conf/param_PFblock_003.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 ;;
@@ -1701,6 +1726,11 @@ PFb3dgain)
 exec 3>&1;
 PFb3dgain=$(dialog --inputbox "Select Predictive filter block 3 derivation gain" 0 0 "$PFb3dgain" 2>&1 1>&3);
 exec 3>&-;
+./AOloopControl << EOF
+readshmim aol${LOOPNUMBER}_outPFb3_PFparam
+setpix aol${LOOPNUMBER}_outPFb3_PFparam $PFb3dgain 1 0
+exitCLI
+EOF
 file="./conf/param_PFblock_003.txt"
 echo "$PFb3start $PFb3end $PFb3order $PFb3lag $PFb3dgain" > $file
 ;;
