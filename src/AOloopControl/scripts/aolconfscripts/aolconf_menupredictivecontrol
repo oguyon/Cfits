@@ -446,7 +446,7 @@ ConfReadParam PFb2end "2"; PFb2end="$paramvalue"
 ConfReadParam PFb2order "10"; PFb2order="$paramvalue"
 ConfReadParam PFb2lag "$latency_frame"; PFb2lag="$paramvalue"
 ConfReadParam PFb2SVDe "0.001"; PFb2SVDe="$paramvalue"
-ConfReadParam PFb2dgain "0.2"; PFb2gain="$paramvalue"
+ConfReadParam PFb2dgain "0.2"; PFb2dgain="$paramvalue"
 
 menuitems+=( "PFb2start" "[$PFb2start] set Predictive filter block 2 start" )
 menuitems+=( "PFb2end" "[$PFb2end] set Predictive filter block 2 end" )
@@ -598,7 +598,7 @@ ConfReadParam PFb3end "2"; PFb3end="$paramvalue"
 ConfReadParam PFb3order "10"; PFb3order="$paramvalue"
 ConfReadParam PFb3lag "$latency_frame"; PFb3lag="$paramvalue"
 ConfReadParam PFb3SVDe "0.001"; PFb3SVDe="$paramvalue"
-ConfReadParam PFb3dgain "0.2"; PFb3gain="$paramvalue"
+ConfReadParam PFb3dgain "0.2"; PFb3dgain="$paramvalue"
 
 menuitems+=( "PFb3start" "[$PFb3start] set Predictive filter block 3 start" )
 menuitems+=( "PFb3end" "[$PFb3end] set Predictive filter block 3 end" )
