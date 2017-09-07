@@ -1067,7 +1067,7 @@ echo "$latency_frame" > conf/param_PFb0lag.txt
 echo "$latency_frame" > conf/param_PFb1lag.txt
 echo "$latency_frame" > conf/param_PFb2lag.txt
 echo "$latency_frame" > conf/param_PFb3lag.txt
-
+;;
 
   
 	sellat)
