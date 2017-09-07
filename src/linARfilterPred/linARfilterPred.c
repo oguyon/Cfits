@@ -916,6 +916,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     for(iter=0; iter<NBiter; iter++)
     {
 		
+
 		if(ExternalPFparam == 1)
 		{
 			PFlag_run = data.image[IDPFparam].array.F[0];
@@ -931,7 +932,13 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 				LOOPgain_run = LOOPgain;
 			}
 
-		
+		printf("\n\n\n=========== LOOP ITERATION %6ld ======= [ExternalPFparam = %d ]\n", iter, ExternalPFparam);
+		printf("  PFlag      = %20f\n", PFlag_run);
+		printf("  SVDeps     = %20f\n", SVDeps_run);
+		printf("  RegLambda  = %20f\n", RegLambda_run);		
+		printf("  LOOPgain   = %20f\n", LOOPgain_run);
+		printf("\n");
+						
 		
 		
 		gain = 1.0 / (iter+1);
