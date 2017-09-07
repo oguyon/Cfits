@@ -572,7 +572,7 @@ fi
 
 
 file="./status/stat_log_modevalPF.txt"
-logmodevalolstat=$( cat $file )
+logmodevalPFstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalPFstat" = "0" || "$logmodevalPFstat" = "1" ) ]]; then
 	echo "OK"
 else
@@ -589,7 +589,7 @@ fi
 
 
 file="./status/stat_log_modevalPFsync.txt"
-logmodevalsyncstat=$( cat $file )
+logmodevalPFsyncstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalPFsyncstat" = "0" || "$logmodevalPFsyncstat" = "1" ) ]]; then
 	echo "OK"
 else
@@ -606,7 +606,7 @@ fi
 
 
 file="./status/stat_log_modevalPFres.txt"
-logmodevalolstat=$( cat $file )
+logmodevalPFresstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalPFresstat" = "0" || "$logmodevalPFresstat" = "1" ) ]]; then
 	echo "OK"
 else
@@ -619,6 +619,26 @@ if [ "${logmodevalPFresstat}" = "0" ];
 else
 	menuitems+=( "lmodevalPFres0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFres\Zn          Measured predictive filter mode values" )
 fi
+
+
+
+
+file="./status/stat_log_outPFb0.txt"
+logoutPFb0stat=$( cat $file )
+if [[ -f "$file" && ( "$logoutPFb0stat" = "0" || "$logoutPFb0stat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logoutPFb0stat=0
+fi
+if [ "${logoutPFb0stat}" = "0" ];
+	then
+	menuitems+=( "loutPFb01" "START logging aol${LOOPNUMBER}_outPFb0             Measured predictive filter error mode values" )
+else
+	menuitems+=( "loutPFb00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_outPFb0\Zn              Measured predictive filter mode values" )
+fi
+
+
 
 
 
