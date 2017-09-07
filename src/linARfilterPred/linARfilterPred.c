@@ -934,6 +934,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 			}
 
 		printf("\n\n\n=========== LOOP ITERATION %6ld ======= [ExternalPFparam = %d ]\n", iter, ExternalPFparam);
+		printf(" parameters read from %s\n", data.image[IDPFparam].md[0].name);
 		printf("  PFlag      = %20f\n", PFlag_run);
 		printf("  SVDeps     = %20f\n", SVDeps_run);
 		printf("  RegLambda  = %20f\n", RegLambda_run);		
