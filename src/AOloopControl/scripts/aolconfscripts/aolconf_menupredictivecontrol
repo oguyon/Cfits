@@ -600,12 +600,12 @@ ConfReadParam PFb3lag "$latency_frame"; PFb3lag="$paramvalue"
 ConfReadParam PFb3SVDe "0.001"; PFb3SVDe="$paramvalue"
 ConfReadParam PFb3dgain "0.2"; PFb3gain="$paramvalue"
 
-menuitems+=( "PFb2start" "[$PFb2start] set Predictive filter block 2 start" )
-menuitems+=( "PFb2end" "[$PFb2end] set Predictive filter block 2 end" )
-menuitems+=( "PFb2order" "[$PFb2order] set Predictive filter block 2 order" )
-menuitems+=( "PFb2lag" "[$PFb2lag] set Predictive filter block 2 lag" )
-menuitems+=( "PFb2SVDe" "[$PFb2SVDe] set Predictive filter block 2 SVD limit" )
-menuitems+=( "PFb2dgain" "[$PFb2dgain] set Predictive filter block 2 derivationgain" )
+menuitems+=( "PFb3start" "[$PFb3start] set Predictive filter block 3 start" )
+menuitems+=( "PFb3end" "[$PFb3end] set Predictive filter block 3 end" )
+menuitems+=( "PFb3order" "[$PFb3order] set Predictive filter block 3 order" )
+menuitems+=( "PFb3lag" "[$PFb3lag] set Predictive filter block 3 lag" )
+menuitems+=( "PFb3SVDe" "[$PFb3SVDe] set Predictive filter block 3 SVD limit" )
+menuitems+=( "PFb3dgain" "[$PFb3dgain] set Predictive filter block 3 derivationgain" )
 
 
 ConfReadParam PFb3nbGPU "0"; PFb3nbGPU="$paramvalue"
