@@ -710,13 +710,14 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 	free(imsize);
 	
 
+	
 	if((IDPFparam=image_ID(imname))!=-1)
 	{
 		ExternalPFparam = 1;
 		data.image[IDPFparam].array.F[0] = PFlag;
 		data.image[IDPFparam].array.F[1] = SVDeps;
 		data.image[IDPFparam].array.F[2] = RegLambda;
-		data.image[IDPFparam].array.F[3] = LOOPgain_run;
+		data.image[IDPFparam].array.F[3] = LOOPgain;
 	}
 	else
 		ExternalPFparam = 0;
