@@ -1003,9 +1003,9 @@ PFb2aON="OFF"
 fi
 
 if [ "$PFb2aON" = "OFF" ]; then
-menuitems+=( "PFb2aON" "[$PFb2aON] switch on prediction engine for PF block 0" )
+menuitems+=( "PFb2aON" "[$PFb2aON] switch on prediction engine for PF block 2" )
 else
-menuitems+=( "PFb2aOFF" "[\Z1\Zr${PFb2aON}\Zn] switch on prediction engine for PF block 0" )
+menuitems+=( "PFb2aOFF" "[\Z1\Zr${PFb2aON}\Zn] switch on prediction engine for PF block 2" )
 fi
 fi
 
@@ -1021,9 +1021,9 @@ PFb3aON="OFF"
 fi
 
 if [ "$PFb3aON" = "OFF" ]; then
-menuitems+=( "PFb3aON" "[$PFb3aON] switch on prediction engine for PF block 1" )
+menuitems+=( "PFb3aON" "[$PFb3aON] switch on prediction engine for PF block 3" )
 else
-menuitems+=( "PFb3aOFF" "[\Z1\Zr${PFb3aON}\Zn] switch on prediction engine for PF block 1" )
+menuitems+=( "PFb3aOFF" "[\Z1\Zr${PFb3aON}\Zn] switch on prediction engine for PF block 3" )
 fi
 fi
 
