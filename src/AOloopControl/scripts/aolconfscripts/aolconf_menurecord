@@ -498,9 +498,9 @@ logmodevalstat=0
 fi
 if [ "${logmodevalstat}" = "0" ];
 then
-menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval              WFS mode values" )
+menuitems+=( "lmodeval1" "START logging aol${LOOPNUMBER}_modeval              WFS-measured mode values" )
 else
-menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn               WFS mode values" )
+menuitems+=( "lmodeval0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval\Zn               WFS-measured mode values" )
 fi
 
 file="./status/stat_log_modeval_dm_corr.txt"
@@ -513,9 +513,9 @@ logmodevaldmcorrstat=0
 fi
 if [ "${logmodevaldmcorrstat}" = "0" ];
 then
-menuitems+=( "lmodevaldmcorr1" "START logging aol${LOOPNUMBER}_modeval_dm_corr       DM mode values" )
+menuitems+=( "lmodevaldmcorr1" "START logging aol${LOOPNUMBER}_modeval_dm_corr      Correction mode values (after modal gains)" )
 else
-menuitems+=( "lmodevaldmcorr0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_corr\Zn        DM mode values" )
+menuitems+=( "lmodevaldmcorr0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_corr\Zn       Correction mode values (after modal gains)" )
 fi
 
 
@@ -529,9 +529,9 @@ logmodevaldmnowstat=0
 fi
 if [ "${logmodevaldmnowstat}" = "0" ];
 then
-menuitems+=( "lmodevaldmnow1" "START logging aol${LOOPNUMBER}_modeval_dm_now       DM mode values" )
+menuitems+=( "lmodevaldmnow1" "START logging aol${LOOPNUMBER}_modeval_dm_now       Correction mode values (after predictive mixing)" )
 else
-menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        DM mode values" )
+menuitems+=( "lmodevaldmnow0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now\Zn        Correction mode values (after predictive mixing)" )
 fi
 
 
@@ -546,9 +546,9 @@ logmodevaldmnowfiltstat=0
 fi
 if [ "${logmodevaldmnowfiltstat}" = "0" ];
 then
-menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now_filt  WFS mode values" )
+menuitems+=( "lmodevaldmnowfilt1" "START logging aol${LOOPNUMBER}_modeval_dm_now_filt  Correction mode values (after clipping)" )
 else
-menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   WFS mode values" )
+menuitems+=( "lmodevaldmnowfilt0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_dm_now_filt\Zn   Correction mode values (after clipping)" )
 fi
 
 
@@ -563,9 +563,9 @@ else
 fi
 if [ "${logmodevalolstat}" = "0" ];
 	then
-	menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
+	menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           Open loop mode values" )
 else
-	menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn            open loop mode values" )
+	menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn            Open loop mode values" )
 fi
 
 
@@ -581,9 +581,9 @@ else
 fi
 if [ "${logmodevalPFstat}" = "0" ];
 	then
-	menuitems+=( "lmodevalPF1" "START logging aol${LOOPNUMBER}_modevalPF              Predictive filter error mode values" )
+	menuitems+=( "lmodevalPF1" "START logging aol${LOOPNUMBER}_modevalPF            Predictive filter error mode values" )
 else
-	menuitems+=( "lmodevalPF0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPF\Zn               Predictive filter mode values" )
+	menuitems+=( "lmodevalPF0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPF\Zn             Predictive filter mode values" )
 fi
 
 
@@ -598,9 +598,9 @@ else
 fi
 if [ "${logmodevalPFsyncstat}" = "0" ];
 	then
-	menuitems+=( "lmodevalPFsync1" "START logging aol${LOOPNUMBER}_modevalPFsync          Predictive filter error mode values, synced with open loop rec" )
+	menuitems+=( "lmodevalPFsync1" "START logging aol${LOOPNUMBER}_modevalPFsync        Predictive filter error mode values, synced with open loop rec" )
 else
-	menuitems+=( "lmodevalPFsync0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFsync\Zn           Predictive filter mode values, synced with open loop rec" )
+	menuitems+=( "lmodevalPFsync0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFsync\Zn         Predictive filter mode values, synced with open loop rec" )
 fi
 
 
@@ -615,9 +615,9 @@ else
 fi
 if [ "${logmodevalPFresstat}" = "0" ];
 	then
-	menuitems+=( "lmodevalPFres1" "START logging aol${LOOPNUMBER}_modevalPFres           Measured predictive filter error mode values" )
+	menuitems+=( "lmodevalPFres1" "START logging aol${LOOPNUMBER}_modevalPFres         Measured predictive filter error mode values" )
 else
-	menuitems+=( "lmodevalPFres0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFres\Zn            Measured predictive filter mode values" )
+	menuitems+=( "lmodevalPFres0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFres\Zn          Measured predictive filter mode values" )
 fi
 
 
