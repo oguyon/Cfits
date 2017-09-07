@@ -731,8 +731,8 @@ long AOloopControl_acquireCalib_Measure_WFS_linResponse(long loop, float ampl, l
     
     
     
-   	save_fits("dmpokeC2a", "!tmp/test_dmpokeC2a.fits");
-	save_fits("dmpokeC2b", "!tmp/test_dmpokeC2b.fits");
+//  	save_fits("dmpokeC2a", "!tmp/test_dmpokeC2a.fits");
+//	save_fits("dmpokeC2b", "!tmp/test_dmpokeC2b.fits");
 
 
     printf("NBpoke = %ld\n", NBpoke);
@@ -762,7 +762,7 @@ long AOloopControl_acquireCalib_Measure_WFS_linResponse(long loop, float ampl, l
         for(pix=0; pix<wfsxysize; pix++)
 			{
 				data.image[IDrespC].array.F[wfsxysize*poke + pix] = 0.5*(data.image[IDwfsresp2a].array.F[wfsxysize*(2*poke+2) + pix] - data.image[IDwfsresp2a].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/2.0/ampl;
-				data.image[IDrespC].array.F[wfsxysize*poke + pix] += 0.5*pokesign[poke]*(data.image[IDwfsresp2a].array.F[wfsxysize*(2*poke+2) + pix] - data.image[IDwfsresp2a].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/2.0/ampl;
+				data.image[IDrespC].array.F[wfsxysize*poke + pix] += 0.5*pokesign[poke]*(data.image[IDwfsresp2b].array.F[wfsxysize*(2*poke+2) + pix] - data.image[IDwfsresp2b].array.F[wfsxysize*(2*poke+2) + wfsxysize + pix])/2.0/ampl;
 			}
 
         for(pix=0; pix<wfsxysize; pix++)
