@@ -618,6 +618,9 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
  * 
  * Optional input and output pixel masks select active input & output
  * 
+ * 
+ * if <IFoutPF_name>_PFparam image exist, read parameters from it: PFlag, SVDeps, RegLambda, LOOPgain
+ * 
  */
 
 long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, const char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain)
@@ -670,7 +673,6 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     long NBiter, iter;
     long semtrig = 2;
     uint32_t *imsizearray;
-    float gain;
 
     char fname[200];
 
@@ -686,17 +688,40 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 	double tdiffv12; // computing time
 
 
+	long IDPFparam; // parameters in shared memory (optional)
+	char imname[200];
+	int ExternalPFparam;
+	
+	float PFlag_run;
+	float SVDeps_run;
+	float RegLambda_run;
+	float LOOPgain_run;
+	float gain;
 
+
+
+
+
+
+
+	sprintf(imname, "%s_PFparam", IDoutPF_name);
+	if((IDPFparam=image_ID(imname))!=-1)
+		ExternalPFparam = 1;
+	else
+		ExternalPFparam = 0;
+
+	
+
+	LOOPgain_run = LOOPgain;
     if(LOOPmode==0)
     {
-        gain = 1.0;
+        LOOPgain_run = 1.0;
         NBiter = 1;
     }
 
     else
     {
         NBiter = 100000000;
-        gain = LOOPgain;
     }
 
     sprintf(IDoutPF_name3D, "%s_3D", IDoutPF_name);
@@ -809,7 +834,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     //
     // Data matrix is stored as image of size NBmvec x mvecsize, to be fed to routine compute_SVDpseudoInverse in linopt_imtools (CPU mode) or in cudacomp (GPU mode)
     //
-    NBmvec = nbspl - PForder - (int) (PFlag) - 1;
+    NBmvec = nbspl - PForder - (int) (PFlag_run) - 1;
     mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
 
     if(REG==0) // no regularization
@@ -877,6 +902,29 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
     for(iter=0; iter<NBiter; iter++)
     {
+		
+		if(ExternalPFparam == 1)
+		{
+			PFlag_run = data.image[IDPFparam].array.F[0];
+			SVDeps_run = data.image[IDPFparam].array.F[1];
+			RegLambda_run = data.image[IDPFparam].array.F[2];
+			LOOPgain_run = data.image[IDPFparam].array.F[3];
+		}
+		else
+			{
+				PFlag_run = PFlag;
+				SVDeps_run = SVDeps;
+				RegLambda_run = RegLambda;
+				LOOPgain_run = LOOPgain;
+			}
+
+		
+		
+		
+		gain = 1.0 / (iter+1);
+		if(gain<LOOPgain_run)
+			gain = LOOPgain_run;
+		
 		clock_gettime(CLOCK_REALTIME, &t0);
         if(LOOPmode == 1)
             sem_wait(data.image[IDin].semptr[semtrig]);
@@ -912,7 +960,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
             for(m=0; m<mvecsize; m++)
             {
                 m1 = NBmvec + m;
-                data.image[IDmatA].array.F[(m)*NBmvec1+(NBmvec+m)] = RegLambda;
+                data.image[IDmatA].array.F[(m)*NBmvec1+(NBmvec+m)] = RegLambda_run;
             }
         }
 
@@ -931,9 +979,9 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 		
         NB_SVD_Modes = 10000;
 #ifdef HAVE_MAGMA
-        CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat", LOOPmode);
+        CUDACOMP_magma_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps_run, NB_SVD_Modes, "PF_VTmat", LOOPmode);
 #else
-        linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps, NB_SVD_Modes, "PF_VTmat");
+        linopt_compute_SVDpseudoInverse("PFmatD", "PFmatC", SVDeps_run, NB_SVD_Modes, "PF_VTmat");
 #endif
 		
 		printf("Done Computing reconstruction matrix\n");
@@ -1011,7 +1059,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         data.image[IDoutPF2D].md[0].write = 1;
         data.image[IDoutPF3D].md[0].write = 1;
 
-        alpha = PFlag - ((long) PFlag);
+        alpha = PFlag_run - ((long) PFlag_run);
         for(PFpix=0; PFpix<NBpixout; PFpix++) // PFpix is the pixel for which the filter is created (axis 1 in cube, jj)
         {
             if(LOOPmode==0)
@@ -1026,7 +1074,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
             for(m=0; m<NBmvec; m++)
             {
                 k0 = m + PForder -1;
-                k0 += (long) PFlag;
+                k0 += (long) PFlag_run;
 
                 valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
             }
