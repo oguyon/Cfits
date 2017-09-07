@@ -1149,6 +1149,73 @@ menurecord_default="lmodevalPFres1"
 ;;
 
 
+    loutPFb01)
+startstreamlog aol${LOOPNUMBER}_outPFb0
+echo "1" > "./status/stat_log_outPFb0.txt"
+menurecord_default="loutPFb00"
+;;
+    loutPFb00)
+stopstreamlog aol${LOOPNUMBER}_outPFb0
+echo "0" > "./status/stat_log_outPFb0.txt"
+menurecord_default="loutPFb01"
+;;
+
+
+
+
+    loutPFb11)
+startstreamlog aol${LOOPNUMBER}_outPFb1
+echo "1" > "./status/stat_log_outPFb1.txt"
+menurecord_default="loutPFb10"
+;;
+    loutPFb10)
+stopstreamlog aol${LOOPNUMBER}_outPFb1
+echo "0" > "./status/stat_log_outPFb1.txt"
+menurecord_default="loutPFb11"
+;;
+
+
+
+
+    loutPFb21)
+startstreamlog aol${LOOPNUMBER}_outPFb2
+echo "1" > "./status/stat_log_outPFb2.txt"
+menurecord_default="loutPFb20"
+;;
+    loutPFb20)
+stopstreamlog aol${LOOPNUMBER}_outPFb2
+echo "0" > "./status/stat_log_outPFb2.txt"
+menurecord_default="loutPFb21"
+;;
+
+
+
+
+    loutPFb31)
+startstreamlog aol${LOOPNUMBER}_outPFb3
+echo "1" > "./status/stat_log_outPFb3.txt"
+menurecord_default="loutPFb30"
+;;
+    loutPFb30)
+stopstreamlog aol${LOOPNUMBER}_outPFb3
+echo "0" > "./status/stat_log_outPFb3.txt"
+menurecord_default="loutPFb31"
+;;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	setdmCaveC)
