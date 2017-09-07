@@ -623,7 +623,7 @@ long LINARFILTERPRED_SelectBlock(const char *IDin_name, const char *IDblknb_name
  * create it in shared memory by default
  * 
  */
-
+   
 long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, float PFlag, double SVDeps, double RegLambda, const char *IDoutPF_name, int outMode, int LOOPmode, float LOOPgain)
 {
     long IDin, IDmatA, IDout, IDinmask, IDoutmask;
