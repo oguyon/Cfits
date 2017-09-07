@@ -630,7 +630,11 @@ long AOloopControl_acquireCalib_Measure_WFSrespC(long loop, long delayfr, long d
  * 
  *  Measure the WFS linear response to a set of DM patterns
  * 
- * This function calls AOloopControl_acquireCalib_Measure_WFSrespC()
+ * This function calls AOloopControl_acquireCalib_Measure_WFSrespC() \n
+ * Bleeding from one pattern to the next due to limited DM time response is canceled by using two patterns \n
+ * 
+ * pattern a sequence : +- +- +- += ... \n
+ * pattern b sequence : +- -+ +- -+ ... \n
  * 
  */
 long AOloopControl_acquireCalib_Measure_WFS_linResponse(long loop, float ampl, long delayfr, long delayRM1us, long NBave, long NBexcl, const char *IDpokeC_name, const char *IDrespC_name, const char *IDwfsref_name, int normalize, int AOinitMode, long NBcycle)
@@ -745,6 +749,7 @@ long AOloopControl_acquireCalib_Measure_WFS_linResponse(long loop, float ampl, l
 
     // process data cube
     IDwfsresp2a = image_ID("wfsresp2a");
+    IDwfsresp2b = image_ID("wfsresp2b");
     wfsxsize = data.image[IDwfsresp2a].md[0].size[0];
     wfsysize = data.image[IDwfsresp2a].md[0].size[1];
     wfsxysize = wfsxsize*wfsysize;
