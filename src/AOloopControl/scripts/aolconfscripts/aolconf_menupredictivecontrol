@@ -1826,7 +1826,7 @@ sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
-tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 0" C-m
+tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 0 $PFb0start $PFb0end" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb0wON=" ON"
 file="./status/stat_PFb0wON.txt"
@@ -1858,7 +1858,7 @@ sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
-tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1" C-m
+tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 1 $PFb1start $PFb1end" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb1wON=" ON"
 file="./status/stat_PFb1wON.txt"
@@ -1889,7 +1889,7 @@ sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
-tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 2" C-m
+tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 2 $PFb2start $PFb2end" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb2wON=" ON"
 file="./status/stat_PFb2wON.txt"
@@ -1918,7 +1918,7 @@ sleep 0.2
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} " " C-m
 tmux send-keys -t ${tmuxname} "./AOloopControl" C-m
-tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 3" C-m
+tmux send-keys -t ${tmuxname} "aolPFwatchin ${LOOPNUMBER} 3 $PFb3start $PFb3end" C-m
 #tmux send-keys -t ${tmuxname} "exit" C-m
 PFb3wON=" ON"
 file="./status/stat_PFb3wON.txt"
