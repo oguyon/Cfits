@@ -556,17 +556,72 @@ fi
 file="./status/stat_log_modeval_ol.txt"
 logmodevalolstat=$( cat $file )
 if [[ -f "$file" && ( "$logmodevalolstat" = "0" || "$logmodevalolstat" = "1" ) ]]; then
-echo "OK"
+	echo "OK"
 else
-echo "0" > $file
-logmodevalolstat=0
+	echo "0" > $file
+	logmodevalolstat=0
 fi
 if [ "${logmodevalolstat}" = "0" ];
-then
-menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
+	then
+	menuitems+=( "lmodevalol1" "START logging aol${LOOPNUMBER}_modeval_ol           open loop mode values" )
 else
-menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn            open loop mode values" )
+	menuitems+=( "lmodevalol0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modeval_ol\Zn            open loop mode values" )
 fi
+
+
+
+
+file="./status/stat_log_modevalPF.txt"
+logmodevalolstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevalPFstat" = "0" || "$logmodevalPFstat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logmodevalPFstat=0
+fi
+if [ "${logmodevalPFstat}" = "0" ];
+	then
+	menuitems+=( "lmodevalPF1" "START logging aol${LOOPNUMBER}_modevalPF              Predictive filter error mode values" )
+else
+	menuitems+=( "lmodevalPF0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPF\Zn               Predictive filter mode values" )
+fi
+
+
+
+file="./status/stat_log_modevalPFsync.txt"
+logmodevalsyncstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevalPFsyncstat" = "0" || "$logmodevalPFsyncstat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logmodevalPFsyncstat=0
+fi
+if [ "${logmodevalPFsyncstat}" = "0" ];
+	then
+	menuitems+=( "lmodevalPFsync1" "START logging aol${LOOPNUMBER}_modevalPFsync          Predictive filter error mode values, synced with open loop rec" )
+else
+	menuitems+=( "lmodevalPFsync0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFsync\Zn           Predictive filter mode values, synced with open loop rec" )
+fi
+
+
+
+file="./status/stat_log_modevalPFres.txt"
+logmodevalolstat=$( cat $file )
+if [[ -f "$file" && ( "$logmodevalPFresstat" = "0" || "$logmodevalPFresstat" = "1" ) ]]; then
+	echo "OK"
+else
+	echo "0" > $file
+	logmodevalPFresstat=0
+fi
+if [ "${logmodevalPFresstat}" = "0" ];
+	then
+	menuitems+=( "lmodevalPFres1" "START logging aol${LOOPNUMBER}_modevalPFres           Measured predictive filter error mode values" )
+else
+	menuitems+=( "lmodevalPFres0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_modevalPFres\Zn            Measured predictive filter mode values" )
+fi
+
+
+
 
 fi
 
@@ -985,6 +1040,48 @@ stopstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "0" > "./status/stat_log_modeval_ol.txt"
 menurecord_default="lmodevalol1"
 ;;
+
+
+
+    lmodevalPF1)
+startstreamlog aol${LOOPNUMBER}_modevalPF
+echo "1" > "./status/stat_log_modevalPF.txt"
+menurecord_default="lmodevalPF0"
+;;
+    lmodevalPF0)
+stopstreamlog aol${LOOPNUMBER}_modevalPF
+echo "0" > "./status/stat_log_modevalPF.txt"
+menurecord_default="lmodevalPF1"
+;;
+
+
+
+    lmodevalPFsync1)
+startstreamlog aol${LOOPNUMBER}_modevalPFsync
+echo "1" > "./status/stat_log_modevalPFsync.txt"
+menurecord_default="lmodevalPFsync0"
+;;
+    lmodevalPFsync0)
+stopstreamlog aol${LOOPNUMBER}_modevalPFsync
+echo "0" > "./status/stat_log_modevalPFsync.txt"
+menurecord_default="lmodevalPFsync1"
+;;
+
+
+
+    lmodevalPFres1)
+startstreamlog aol${LOOPNUMBER}_modevalPFres
+echo "1" > "./status/stat_log_modevalPFres.txt"
+menurecord_default="lmodevalPFres0"
+;;
+    lmodevalPFres0)
+stopstreamlog aol${LOOPNUMBER}_modevalPFres
+echo "0" > "./status/stat_log_modevalPFres.txt"
+menurecord_default="lmodevalPFres1"
+;;
+
+
+
 
 	setdmCaveC)
 exec 3>&1;
