@@ -945,7 +945,8 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
             sem_wait(data.image[IDin].semptr[semtrig]);
 
 		// copy IDin to IDincp
-		//memcpy( data.image[IDincp].array.F, data.image[IDin].array.F, sizeof(float)*inNBelem);
+		IDincp = image_ID("PFin_cp");
+		memcpy( data.image[IDincp].array.F, data.image[IDin].array.F, sizeof(float)*inNBelem);
 
 		clock_gettime(CLOCK_REALTIME, &t1);
 
