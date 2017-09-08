@@ -1118,7 +1118,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder -1;
                 k0 += (long) PFlag_run;
 
-                valfarray[m] = (1.0-alpha)*data.image[IDincp].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDincp].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
+                valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
             }
 
 
