@@ -443,13 +443,13 @@ fi
 
 
 
-streamname="aol${LOOPNUMBER}_modeval_dm_filt"
+streamname="aol${LOOPNUMBER}_modeval_dm_now_filt"
 infostring="Correction mode values (after clipping)"
 logwritestartstopstrings
 if [ "${logstat}" = "0" ]; then
-menuitems+=( "laolmodevaldmfiltON" "$startlogstring" )
+menuitems+=( "laolmodevaldmnowfiltON" "$startlogstring" )
 else
-menuitems+=( "laolmodevaldmfiltOFF" "$stoplogstring" )
+menuitems+=( "laolmodevaldmnowfiltOFF" "$stoplogstring" )
 fi
 
 
@@ -786,9 +786,6 @@ menurecord_default="laolDMmodeMULTFON"
 ;;
 
 
-
-
-
     ldmdispON)
 streamname="dm${DMindex}disp"
 startstreamlog "$streamname"
@@ -801,7 +798,6 @@ stopstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdispON"
 ;;
-
 
 
     ldmdisp00ON)
@@ -818,8 +814,6 @@ menurecord_default="ldmdisp00ON"
 ;;
 
 
-
-
     ldmdisp01ON)
 streamname="dm${DMindex}disp01"
 startstreamlog "$streamname"
@@ -832,8 +826,6 @@ stopstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp01ON"
 ;;
-
-
 
 
     ldmdisp02ON)
@@ -850,8 +842,6 @@ menurecord_default="ldmdisp02ON"
 ;;
 
 
-
-
     ldmdisp03ON)
 streamname="dm${DMindex}disp03"
 startstreamlog "$streamname"
@@ -864,8 +854,6 @@ stopstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp03ON"
 ;;
-
-
 
 
     ldmdisp04ON)
@@ -882,155 +870,280 @@ menurecord_default="ldmdisp04ON"
 ;;
 
 
-
-
-
-
-
-
-    lmodeval1)
-startstreamlog aol${LOOPNUMBER}_modeval
-echo "1" > "./status/stat_log_modeval.txt"
-menurecord_default="lmodeval0"
+    ldmdisp05ON)
+streamname="dm${DMindex}disp05"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp05OFF"
 ;;
-    lmodeval0)
-stopstreamlog aol${LOOPNUMBER}_modeval
-echo "0" > "./status/stat_log_modeval.txt"
-menurecord_default="lmodeval1"
+    ldmdisp05OFF)
+streamname="dm${DMindex}disp05"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp05ON"
 ;;
 
 
-
-    lmodevaldmnow1)
-startstreamlog aol${LOOPNUMBER}_modeval_dm_now
-echo "1" > "./status/stat_log_modeval_dm_now.txt"
-menurecord_default="lmodevaldmnow0"
+    ldmdisp06ON)
+streamname="dm${DMindex}disp06"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp06OFF"
 ;;
-    lmodevaldmnow0)
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_now
-echo "0" > "./status/stat_log_modeval_dm_now.txt"
-menurecord_default="lmodevaldmnow1"
-;;
-
-
-    lmodevaldmnowfilt1)
-startstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
-echo "1" > "./status/stat_log_modeval_dm_now_filt.txt"
-menurecord_default="lmodevaldmnowfilt0"
-;;
-    lmodevaldmnowfilt0)
-stopstreamlog aol${LOOPNUMBER}_modeval_dm_now_filt
-echo "0" > "./status/stat_log_modeval_dm_now_filt.txt"
-menurecord_default="lmodevaldmnowfilt1"
+    ldmdisp06OFF)
+streamname="dm${DMindex}disp06"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp06ON"
 ;;
 
 
-
-
-
-    lmodevalol1)
-startstreamlog aol${LOOPNUMBER}_modeval_ol
-echo "1" > "./status/stat_log_modeval_ol.txt"
-menurecord_default="lmodevalol0"
+    ldmdisp07ON)
+streamname="dm${DMindex}disp07"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp07OFF"
 ;;
-    lmodevalol0)
-stopstreamlog aol${LOOPNUMBER}_modeval_ol
-echo "0" > "./status/stat_log_modeval_ol.txt"
-menurecord_default="lmodevalol1"
-;;
-
-
-
-    lmodevalPF1)
-startstreamlog aol${LOOPNUMBER}_modevalPF
-echo "1" > "./status/stat_log_modevalPF.txt"
-menurecord_default="lmodevalPF0"
-;;
-    lmodevalPF0)
-stopstreamlog aol${LOOPNUMBER}_modevalPF
-echo "0" > "./status/stat_log_modevalPF.txt"
-menurecord_default="lmodevalPF1"
+    ldmdisp07OFF)
+streamname="dm${DMindex}disp07"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp07ON"
 ;;
 
 
-
-    lmodevalPFsync1)
-startstreamlog aol${LOOPNUMBER}_modevalPFsync
-echo "1" > "./status/stat_log_modevalPFsync.txt"
-menurecord_default="lmodevalPFsync0"
+    ldmdisp08ON)
+streamname="dm${DMindex}disp08"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp08OFF"
 ;;
-    lmodevalPFsync0)
-stopstreamlog aol${LOOPNUMBER}_modevalPFsync
-echo "0" > "./status/stat_log_modevalPFsync.txt"
-menurecord_default="lmodevalPFsync1"
-;;
-
-
-
-    lmodevalPFres1)
-startstreamlog aol${LOOPNUMBER}_modevalPFres
-echo "1" > "./status/stat_log_modevalPFres.txt"
-menurecord_default="lmodevalPFres0"
-;;
-    lmodevalPFres0)
-stopstreamlog aol${LOOPNUMBER}_modevalPFres
-echo "0" > "./status/stat_log_modevalPFres.txt"
-menurecord_default="lmodevalPFres1"
+    ldmdisp08OFF)
+streamname="dm${DMindex}disp08"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp08ON"
 ;;
 
 
-    loutPFb01)
-startstreamlog aol${LOOPNUMBER}_outPFb0
-echo "1" > "./status/stat_log_outPFb0.txt"
-menurecord_default="loutPFb00"
+    ldmdisp09ON)
+streamname="dm${DMindex}disp09"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp09OFF"
 ;;
-    loutPFb00)
-stopstreamlog aol${LOOPNUMBER}_outPFb0
-echo "0" > "./status/stat_log_outPFb0.txt"
-menurecord_default="loutPFb01"
+    ldmdisp09OFF)
+streamname="dm${DMindex}disp09"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp09ON"
+;;
+
+
+    ldmdisp10ON)
+streamname="dm${DMindex}disp10"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp10OFF"
+;;
+    ldmdisp10OFF)
+streamname="dm${DMindex}disp10"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp10ON"
+;;
+
+
+    ldmdisp11ON)
+streamname="dm${DMindex}disp11"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp11OFF"
+;;
+    ldmdisp11OFF)
+streamname="dm${DMindex}disp11"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="ldmdisp11ON"
 ;;
 
 
 
 
-    loutPFb11)
-startstreamlog aol${LOOPNUMBER}_outPFb1
-echo "1" > "./status/stat_log_outPFb1.txt"
-menurecord_default="loutPFb10"
+
+
+    laolmodevalON)
+streamname="aol${LOOPNUMBER}_modeval"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalOFF"
 ;;
-    loutPFb10)
-stopstreamlog aol${LOOPNUMBER}_outPFb1
-echo "0" > "./status/stat_log_outPFb1.txt"
-menurecord_default="loutPFb11"
-;;
-
-
-
-
-    loutPFb21)
-startstreamlog aol${LOOPNUMBER}_outPFb2
-echo "1" > "./status/stat_log_outPFb2.txt"
-menurecord_default="loutPFb20"
-;;
-    loutPFb20)
-stopstreamlog aol${LOOPNUMBER}_outPFb2
-echo "0" > "./status/stat_log_outPFb2.txt"
-menurecord_default="loutPFb21"
+    laolmodevalOFF)
+streamname="aol${LOOPNUMBER}_modeval"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalON"
 ;;
 
 
 
+    laolmodevaldmcorrON)
+streamname="aol${LOOPNUMBER}_modeval_dm_corr"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevaldmcorrOFF"
+;;
+    laolmodevaldmcorrOFF)
+streamname="aol${LOOPNUMBER}_modeval_dm_corr"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevaldmcorrON"
+;;
 
-    loutPFb31)
-startstreamlog aol${LOOPNUMBER}_outPFb3
-echo "1" > "./status/stat_log_outPFb3.txt"
-menurecord_default="loutPFb30"
+
+    laolmodevaldmnowON)
+streamname="aol${LOOPNUMBER}_modeval_dm_now"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevaldmnowOFF"
 ;;
-    loutPFb30)
-stopstreamlog aol${LOOPNUMBER}_outPFb3
-echo "0" > "./status/stat_log_outPFb3.txt"
-menurecord_default="loutPFb31"
+    laolmodevaldmnowOFF)
+streamname="aol${LOOPNUMBER}_modeval_dm_now"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevaldmnowON"
 ;;
+
+
+    laolmodevaldmnowfiltON)
+streamname="aol${LOOPNUMBER}_modeval_dm_now_filt"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevaldmnowfiltOFF"
+;;
+    laolmodevaldmnowfiltOFF)
+streamname="aol${LOOPNUMBER}_modeval_dm_now_filt"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevaldmnowfiltON"
+;;
+
+
+    laolmodevalolON)
+streamname="aol${LOOPNUMBER}_modeval_ol"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalolOFF"
+;;
+    laolmodevalolOFF)
+streamname="aol${LOOPNUMBER}_modeval_ol"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalolON"
+;;
+
+
+    laolmodevalPFON)
+streamname="aol${LOOPNUMBER}_modevalPF"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalPFOFF"
+;;
+    laolmodevalPFOFF)
+streamname="aol${LOOPNUMBER}_modevalPF"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalPFON"
+;;
+
+
+    laolmodevalPFsyncON)
+streamname="aol${LOOPNUMBER}_modevalPF_sync"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalPFsyncOFF"
+;;
+    laolmodevalPFsyncOFF)
+streamname="aol${LOOPNUMBER}_modevalPF_sync"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalPFsyncON"
+;;
+
+
+    laolmodevalPFresON)
+streamname="aol${LOOPNUMBER}_modevalPFres"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalPFresOFF"
+;;
+    laolmodevalPFresOFF)
+streamname="aol${LOOPNUMBER}_modevalPFres"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolmodevalPFresON"
+;;
+
+
+    laoloutPFb0ON)
+streamname="aol${LOOPNUMBER}_outPFb0"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb0OFF"
+;;
+    laoloutPFb0OFF)
+streamname="aol${LOOPNUMBER}_outPFb0"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb0ON"
+;;
+
+
+    laoloutPFb1ON)
+streamname="aol${LOOPNUMBER}_outPFb1"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb1OFF"
+;;
+    laoloutPFb1OFF)
+streamname="aol${LOOPNUMBER}_outPFb1"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb1ON"
+;;
+
+
+    laoloutPFb2ON)
+streamname="aol${LOOPNUMBER}_outPFb2"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb2OFF"
+;;
+    laoloutPFb2OFF)
+streamname="aol${LOOPNUMBER}_outPFb2"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb2ON"
+;;
+
+
+    laoloutPFb3ON)
+streamname="aol${LOOPNUMBER}_outPFb3"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb3OFF"
+;;
+    laoloutPFb3OFF)
+streamname="aol${LOOPNUMBER}_outPFb3"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laoloutPFb3ON"
+;;
+
+
+
+
+
 
 
 
