@@ -62,7 +62,7 @@ NBframes="$1"
 
 function logwritestartstopstrings {
 startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
-stoplogstring=$( printf "\Z1\ZrSTOP logging %-25s\Zn   %s\n" "$streamname" "$infostring" )
+stoplogstring=$( printf "\Z1\ZrSTOP logging  %-25s\Zn   %s\n" "$streamname" "$infostring" )
 file="./status/stat_log_${streamname}.txt"
 logstat=$( cat $file )
 if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
@@ -166,10 +166,8 @@ menuitems+=( "laolwfsimOFF" "$stoplogstring" )
 fi
 
 
-
-
 streamname="aol${LOOPNUMBER}_wfsref0"
-infostring="WFS reference"
+infostring="WFS reference (calibration)"
 logwritestartstopstrings
 if [ "${logstat}" = "0" ]; then
 menuitems+=( "laolwfsref0ON" "$startlogstring" )
@@ -178,128 +176,68 @@ menuitems+=( "laolwfsref0OFF" "$stoplogstring" )
 fi
 
 
-
-
-
-file="./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
-logwfsref0stat=$( cat $file )
-if [[ -f "$file" && ( "$logwfsref0stat" = "0" || "$logwfsref0stat" = "1" ) ]]; then
-echo "OK"
+streamname="aol${LOOPNUMBER}_wfsref"
+infostring="WFS reference (runtime)"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolwfsrefON" "$startlogstring" )
 else
-echo "0" > $file
-logwfsref0stat="0"
-fi
-if [ "${logwfsref0stat}" = "0" ];
-then
-menuitems+=( "lwfsref01" "START logging aol${LOOPNUMBER}_wfsref0              WFS reference0" )
-else
-menuitems+=( "lwfsref00" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref0\Zn               WFS reference0\Zn" )
-fi
-
-
-file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
-logwfsrefstat=$( cat $file )
-if [[ -f "$file" && ( "$logwfsrefstat" = "0" || "$logwfsrefstat" = "1" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logwfsrefstat="0"
-fi
-if [ "${logwfsrefstat}" = "0" ];
-then
-menuitems+=( "lwfsref1" "START logging aol${LOOPNUMBER}_wfsref               WFS reference" )
-else
-menuitems+=( "lwfsref0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsref\Zn                WFS reference\Zn" )
+menuitems+=( "laolwfsrefOFF" "$stoplogstring" )
 fi
 
 menuitems+=( " " " " )
 
 
-
-
-file="./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
-loggainbstat=$( cat $file )
-if [[ -f "$file" && ( "$loggainbstat" = "0" || "$loggainbstat" = "1" ) ]]; then
-echo "OK"
+streamname="aol${LOOPNUMBER}_gainb"
+infostring="Block gains"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolgainbON" "$startlogstring" )
 else
-echo "0" > $file
-loggainbstat="0"
-fi
-if [ "${loggainbstat}" = "0" ];
-then
-menuitems+=( "lgainb1" "START logging aol${LOOPNUMBER}_gainb                Block gain" )
-else
-menuitems+=( "lgainb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_gainb\Zn                Block gain\Zn" )
+menuitems+=( "laolgainbOFF" "$stoplogstring" )
 fi
 
 
-
-file="./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
-logDMmodeGAINstat=$( cat $file )
-if [[ -f "$file" && ( "$logDMmodeGAINstat" = "0" || "$logDMmodeGAINstat" = "1" ) ]]; then
-echo "OK"
+streamname="aol${LOOPNUMBER}_DMmode_GAIN"
+infostring="Mode gains"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolDMmodeGAINON" "$startlogstring" )
 else
-echo "0" > $file
-logDMmodeGAINstat="0"
-fi
-if [ "${logDMmodeGAINstat}" = "0" ];
-then
-menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN          DM mode gain" )
-else
-menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn         DM mode gain\Zn" )
+menuitems+=( "laolDMmodeGAINOFF" "$stoplogstring" )
 fi
 
 
-
-
-file="./status/stat_log_aol${LOOPNUMBER}_limitb.txt"
-loglimitbstat=$( cat $file )
-if [[ -f "$file" && ( "$loglimitbstat" = "0" || "$loglimitbstat" = "1" ) ]]; then
-echo "OK"
+streamname="aol${LOOPNUMBER}_limitb"
+infostring="Block limits"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laollimitbON" "$startlogstring" )
 else
-echo "0" > $file
-loglimitbstat="0"
+menuitems+=( "laollimitbOFF" "$stoplogstring" )
 fi
-if [ "${loglimitbstat}" = "0" ];
-then
-menuitems+=( "llimitb1" "START logging aol${LOOPNUMBER}_limitb                Block limit" )
+
+
+streamname="aol${LOOPNUMBER}_DMmode_LIMIT"
+infostring="Mode limits"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolDMmodeLIMITON" "$startlogstring" )
 else
-menuitems+=( "llimitb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_limitb\Zn                Block limit\Zn" )
+menuitems+=( "laolDMmodeLIMITOFF" "$stoplogstring" )
 fi
 
 
 
-file="./status/stat_log_aol${LOOPNUMBER}_DMmode_LIMIT.txt"
-logDMmodeLIMITstat=$( cat $file )
-if [[ -f "$file" && ( "$logDMmodeLIMITstat" = "0" || "$logDMmodeLIMITstat" = "1" ) ]]; then
-echo "OK"
+streamname="aol${LOOPNUMBER}_multfb"
+infostring="Block mult factor"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolmultfbON" "$startlogstring" )
 else
-echo "0" > $file
-logDMmodeLIMITstat="0"
-fi
-if [ "${logDMmodeLIMITstat}" = "0" ];
-then
-menuitems+=( "ldmmodelimit1" "START logging aol${LOOPNUMBER}_DMmode_LIMIT         DM mode limit" )
-else
-menuitems+=( "ldmmodelimit0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_LIMIT\Zn          DM mode limit\Zn" )
+menuitems+=( "laolmultfbOFF" "$stoplogstring" )
 fi
 
-
-
-file="./status/stat_log_aol${LOOPNUMBER}_multfb.txt"
-logmultfbstat=$( cat $file )
-if [[ -f "$file" && ( "$logmultfbstat" = "0" || "$logmultfbstat" = "1" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logmultfbstat="0"
-fi
-if [ "${logmultfbstat}" = "0" ];
-then
-menuitems+=( "lmultfb1" "START logging aol${LOOPNUMBER}_multfb               Block mult factor" )
-else
-menuitems+=( "lmultfb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_multfb\Zn               Block mult factor\Zn" )
-fi
 
 
 
