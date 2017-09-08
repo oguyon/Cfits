@@ -704,6 +704,8 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 	long IDincp;
 	long inNBelem;
 
+	long tmpindex0, tmpindex1;
+	
 
 	
 	sprintf(imname, "%s_PFparam", IDoutPF_name);
@@ -764,7 +766,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         nbspl = data.image[IDin].md[0].size[2];
         xsize = data.image[IDin].md[0].size[0];
         ysize = data.image[IDin].md[0].size[1];
-        IDincp = create_3Dimage_ID("PFin_cp", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
+        IDincp = create_3Dimage_ID("PFin_copy", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
 		inNBelem = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*data.image[IDin].md[0].size[2];
         break;
 
@@ -945,9 +947,12 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
             sem_wait(data.image[IDin].semptr[semtrig]);
 
 		// copy IDin to IDincp
-		IDincp = image_ID("PFin_cp");
+		IDincp = image_ID("PFin_copy");
 		memcpy( data.image[IDincp].array.F, data.image[IDin].array.F, sizeof(float)*inNBelem);
-
+		
+		save_fits("PFin_copy", "!test_PFin_copy.fits");
+		save_fits(IDin_name, "!test_PFin.fits");
+		
 		clock_gettime(CLOCK_REALTIME, &t1);
 
 
@@ -1118,6 +1123,15 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder -1;
                 k0 += (long) PFlag_run;
 
+				tmpindex0 = (k0)*xysize + outpixarray_xy[PFpix];
+				tmpindex1 = (k0+1)*xysize + outpixarray_xy[PFpix];
+				
+				if((tmpindex0>inNBelem-1)||(tmpindex1>inNBelem-1))
+					{
+						printf("ERROR: pixel index out of range : %ld %ld / %ld \n", tmpindex0, tmpindex1, inNBelem);
+						exit(0);
+					}
+				
                 valfarray[m] = (1.0-alpha)*data.image[IDincp].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDincp].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
             }
 
