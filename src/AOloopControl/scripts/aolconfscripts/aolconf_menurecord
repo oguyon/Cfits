@@ -240,22 +240,14 @@ fi
 
 
 
-
-file="./status/stat_log_aol${LOOPNUMBER}_DMmode_MULTF.txt"
-logDMmodeMULTFstat=$( cat $file )
-if [[ -f "$file" && ( "$logDMmodeMULTFstat" = "0" || "$logDMmodeMULTFstat" = "1" ) ]]; then
-echo "OK"
+streamname="aol${LOOPNUMBER}_DMmode_MULTF"
+infostring="Mode mult factor"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolDMmodeMULTFON" "$startlogstring" )
 else
-echo "0" > $file
-logDMmodeMULTFstat="0"
+menuitems+=( "laolDMmodeMULTFOFF" "$stoplogstring" )
 fi
-if [ "${logDMmodeMULTFstat}" = "0" ];
-then
-menuitems+=( "ldmmodemultf1" "START logging aol${LOOPNUMBER}_DMmode_MULTF         DM mode mult factor" )
-else
-menuitems+=( "ldmmodemultf0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_MULTF\Zn        DM mode mult factor\Zn" )
-fi
-
 
 
 
@@ -263,20 +255,151 @@ menuitems+=( " " " " )
 
 
 
-file="./status/stat_log_dm${DMindex}disp.txt"
-logdmdispstat=$( cat $file )
-if [[ -f "$file" && ( "$logdmdispstat" = "0" || "$logdmdispstat" = "1" ) ]]; then
-echo "OK"
+
+streamname="dm${DMindex}disp"
+infostring="Total DM displacement"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdispON" "$startlogstring" )
 else
-echo "0" > $file
-logdmdispstat=0
+menuitems+=( "ldmdispOFF" "$stoplogstring" )
 fi
-if [ "${logdmdispstat}" = "0" ];
-then
-menuitems+=( "ldmdisp1" "START logging dm${DMindex}disp                  total DM displacement" )
+
+
+
+streamname="dm${DMindex}disp00"
+infostring="DM displacement channel 00"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp00ON" "$startlogstring" )
 else
-menuitems+=( "ldmdisp0" "\Z1\ZrSTOP logging dm${DMindex}disp\Zn                   total DM displacement" )
+menuitems+=( "ldmdisp00OFF" "$stoplogstring" )
 fi
+
+
+
+streamname="dm${DMindex}disp01"
+infostring="DM displacement channel 01"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp01ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp01OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp02"
+infostring="DM displacement channel 02"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp02ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp02OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp03"
+infostring="DM displacement channel 03"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp03ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp03OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp04"
+infostring="DM displacement channel 04"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp04ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp04OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp05"
+infostring="DM displacement channel 05"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp05ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp05OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp06"
+infostring="DM displacement channel 06"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp06ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp06OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp07"
+infostring="DM displacement channel 07"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp07ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp07OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp08"
+infostring="DM displacement channel 08"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp08ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp08OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp09"
+infostring="DM displacement channel 09"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp09ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp09OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp10"
+infostring="DM displacement channel 10"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp10ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp10OFF" "$stoplogstring" )
+fi
+
+
+
+streamname="dm${DMindex}disp11"
+infostring="DM displacement channel 11"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "ldmdisp11ON" "$startlogstring" )
+else
+menuitems+=( "ldmdisp11OFF" "$stoplogstring" )
+fi
+
+
+
+
 
 
 file="./status/stat_log_dm${DMindex}disp00.txt"
