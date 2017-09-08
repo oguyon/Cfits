@@ -143,9 +143,10 @@ menuitems+=( " " " " )
 
 streamname="wfsim"
 infostring="WFS input image"
+cmdON="lwfsim0"
 
-startlogstring=$( printf "START logging %-20s   %s\n" "$streamname" "$infostring" )
-stoplogstring=$( printf "\Z1\ZrSTOP logging %-20s\Zn   %s\n" "$streamname" "$infostring" )
+startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
+stoplogstring=$( printf "\Z1\ZrSTOP logging %-25s\Zn   %s\n" "$streamname" "$infostring" )
 file="./status/stat_log_aol${LOOPNUMBER}_${streamname}.txt"
 logstat=$( cat $file )
 if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
@@ -156,11 +157,9 @@ logstat="0"
 fi
 if [ "${logstat}" = "0" ];
 then
-menuitems+=( "lwfsim00" "$startlogstring" )
-menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_${streamname}                $infostring" )
+menuitems+=( "$cmdON" "$startlogstring" )
 else
-menuitems+=( "lwfsim01" "$stoplogstring" )
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_${streamname}\Zn                 $infostring\Zn" )
+menuitems+=( "lwfsim0" "$stoplogstring" )
 fi
 
 
