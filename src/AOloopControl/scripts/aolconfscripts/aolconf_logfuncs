@@ -67,27 +67,27 @@ function start_Telemetrylog_all {
 aoconflog "start ALL telemetry logging"
 
 
-for aolstreamname in "$TELEMETRY_aol_streams"; do
-	streamname="aol${LOOPNUMBER}_$aolstreamname"
-	startstreamlog $streamname
-	echo "startstreamlog $streamname"
+for aolstreamname in $TELEMETRY_aol_streams; do
+	streamname="aol${LOOPNUMBER}_${aolstreamname}"
+	startstreamlog ${streamname}
+	echo "startstreamlog ${streamname}"
 	echo "1" > "./status/stat_log_${streamname}.txt"
 done
 
 
-for streamname in "$TELEMETRY_hardw_streams"; do
+for streamname in $TELEMETRY_hardw_streams; do
 	startstreamlog $streamname
-	echo "startstreamlog $streamname"
+	echo "startstreamlog ${streamname}"
 	echo "1" > "./status/stat_log_${streamname}.txt"
 done
 
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
 if [ "${CMMODE}" = "0" ]; then
-for aolstreamname in "$TELEMETRY_modes_streams"; do
-	streamname="aol${LOOPNUMBER}_$aolstreamname"
+for aolstreamname in $TELEMETRY_modes_streams; do
+	streamname="aol${LOOPNUMBER}_${aolstreamname}"
 	startstreamlog $streamname
-	echo "startstreamlog $streamname"
+	echo "startstreamlog ${streamname}"
 	echo "1" > "./status/stat_log_${streamname}.txt"
 done
 fi
