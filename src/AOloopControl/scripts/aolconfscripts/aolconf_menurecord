@@ -1059,13 +1059,13 @@ menurecord_default="laolmodevalPFON"
 
 
     laolmodevalPFsyncON)
-streamname="aol${LOOPNUMBER}_modevalPF_sync"
+streamname="aol${LOOPNUMBER}_modevalPFsync"
 startstreamlog "$streamname"
 echo "1" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalPFsyncOFF"
 ;;
     laolmodevalPFsyncOFF)
-streamname="aol${LOOPNUMBER}_modevalPF_sync"
+streamname="aol${LOOPNUMBER}_modevalPFsync"
 stopstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalPFsyncON"
