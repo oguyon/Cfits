@@ -60,6 +60,8 @@ TELEMETRY_hardw_streams="dm${DMindex}disp dm${DMindex}disp00 dm${DMindex}disp01 
 TELEMETRY_modes_streams="modeval modeval_dm_corr modeval_dm_now_filt modeval_ol modevalPF modevalPFsync modevalPFres outPFb0 outPFb1 outPFb2 outPFb3"
 
 
+
+
 function start_Telemetrylog_all {
 
 aoconflog "start ALL telemetry logging"
@@ -68,12 +70,14 @@ aoconflog "start ALL telemetry logging"
 for aolstreamname in "$TELEMETRY_aol_streams"; do
 	streamname="aol${LOOPNUMBER}_$aolstreamname"
 	startstreamlog $streamname
+	echo "startstreamlog $streamname"
 	echo "1" > "./status/stat_log_${streamname}.txt"
 done
 
 
 for streamname in "$TELEMETRY_hardw_streams"; do
 	startstreamlog $streamname
+	echo "startstreamlog $streamname"
 	echo "1" > "./status/stat_log_${streamname}.txt"
 done
 
@@ -83,6 +87,7 @@ if [ "${CMMODE}" = "0" ]; then
 for aolstreamname in "$TELEMETRY_modes_streams"; do
 	streamname="aol${LOOPNUMBER}_$aolstreamname"
 	startstreamlog $streamname
+	echo "startstreamlog $streamname"
 	echo "1" > "./status/stat_log_${streamname}.txt"
 done
 fi
