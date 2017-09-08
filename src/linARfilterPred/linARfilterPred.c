@@ -701,6 +701,8 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 	float gain;
 
     uint32_t *imsize;
+	long IDincp;
+
 
 	
 	sprintf(imname, "%s_PFparam", IDoutPF_name);
@@ -752,12 +754,15 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         nbspl = data.image[IDin].md[0].size[1];
         xsize = data.image[IDin].md[0].size[0];
         ysize = 1;
+		// copy of image to avoid input change during computation
+		IDincp = create_2Dimage_ID("PFin_cp", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
         break;
 
     case 3 :
         nbspl = data.image[IDin].md[0].size[2];
         xsize = data.image[IDin].md[0].size[0];
         ysize = data.image[IDin].md[0].size[1];
+        IDincp = create_3Dimage_ID("PFin_cp", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
         break;
 
     default :
@@ -883,22 +888,6 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     list_image_ID();
 
 
-    if(DC_MODE == 1) // remove average
-    {
-        for(pix=0; pix<NBpixin; pix++)
-        {
-            ave_inarray[pix] = 0.0;
-            for(m=0; m<nbspl; m++)
-                ave_inarray[pix] += data.image[IDin].array.F[m*xysize+pixarray_xy[pix]];
-            ave_inarray[pix] /= nbspl;
-        }
-    }
-    else
-    {
-        for(pix=0; pix<NBpixin; pix++)
-            ave_inarray[pix] = 0.0;
-    }
-
 
 
 
@@ -952,7 +941,33 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         if(LOOPmode == 1)
             sem_wait(data.image[IDin].semptr[semtrig]);
 
+		// copy IDin to IDincp
+		memcpy( data.image[IDincp].array.F, data.image[IDin].array.F, sizeof(float)*nbspl*xsize*ysize);
+
 		clock_gettime(CLOCK_REALTIME, &t1);
+
+
+
+    if(DC_MODE == 1) // remove average
+    {
+        for(pix=0; pix<NBpixin; pix++)
+        {
+            ave_inarray[pix] = 0.0;
+            for(m=0; m<nbspl; m++)
+                ave_inarray[pix] += data.image[IDincp].array.F[m*xysize+pixarray_xy[pix]];
+            ave_inarray[pix] /= nbspl;
+        }
+    }
+    else
+    {
+        for(pix=0; pix<NBpixin; pix++)
+            ave_inarray[pix] = 0.0;
+    }
+
+
+
+
+
 
         if(LOOPmode == 0)
         {
@@ -961,7 +976,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder-1; // dt=0 index
                 for(pix=0; pix<NBpixin; pix++)
                     for(dt=0; dt<PForder; dt++)
-                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
+                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDincp].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
             }
             free(ave_inarray);
         }
@@ -972,7 +987,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder-1; // dt=0 index
                 for(pix=0; pix<NBpixin; pix++)
                     for(dt=0; dt<PForder; dt++)
-                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
+                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDincp].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
             }
         }
 
@@ -1099,7 +1114,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder -1;
                 k0 += (long) PFlag_run;
 
-                valfarray[m] = (1.0-alpha)*data.image[IDin].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDin].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
+                valfarray[m] = (1.0-alpha)*data.image[IDincp].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDincp].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
             }
 
 
