@@ -4383,6 +4383,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 
 
 // includes mode filtering (limits, multf)
+//
 long AOloopControl_ComputeOpenLoopModes(long loop)
 {
     long IDout;

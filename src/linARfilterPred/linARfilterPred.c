@@ -702,6 +702,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
     uint32_t *imsize;
 	long IDincp;
+	long inNBelem;
 
 
 	
@@ -756,6 +757,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         ysize = 1;
 		// copy of image to avoid input change during computation
 		IDincp = create_2Dimage_ID("PFin_cp", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1]);
+		inNBelem = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1];
         break;
 
     case 3 :
@@ -763,6 +765,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         xsize = data.image[IDin].md[0].size[0];
         ysize = data.image[IDin].md[0].size[1];
         IDincp = create_3Dimage_ID("PFin_cp", data.image[IDin].md[0].size[0], data.image[IDin].md[0].size[1], data.image[IDin].md[0].size[2]);
+		inNBelem = data.image[IDin].md[0].size[0]*data.image[IDin].md[0].size[1]*data.image[IDin].md[0].size[2];
         break;
 
     default :
@@ -942,7 +945,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
             sem_wait(data.image[IDin].semptr[semtrig]);
 
 		// copy IDin to IDincp
-		memcpy( data.image[IDincp].array.F, data.image[IDin].array.F, sizeof(float)*nbspl*xsize*ysize);
+		memcpy( data.image[IDincp].array.F, data.image[IDin].array.F, sizeof(float)*inNBelem);
 
 		clock_gettime(CLOCK_REALTIME, &t1);
 
