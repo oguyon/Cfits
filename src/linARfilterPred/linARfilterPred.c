@@ -1134,6 +1134,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 						printf("PFlag_run              = %f\n", PFlag_run);
 						printf("xysize                 = %6ld\n", xysize);
 						printf("outpixarray_xy[PFpix]  = %6ld\n", outpixarray_xy[PFpix]);
+						printf("nbsl                   = %6ld\n", nbsl);
 						exit(0);
 					}
 				
