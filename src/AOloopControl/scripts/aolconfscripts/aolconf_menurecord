@@ -852,24 +852,31 @@ kill_Telemetrylog_all
 ;;
 
 
-    lwfsim1)
-startstreamlog aol${LOOPNUMBER}_wfsim
-echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
-menurecord_default="lwfsim0"
+
+
+    laolwfsimON)
+streamname="aol${LOOPNUMBER}_wfsim"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolwfsimOFF"
 ;;
-    lwfsim0)
-stopstreamlog aol${LOOPNUMBER}_wfsim
-echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
-menurecord_default="lwfsim1"
+
+    laolwfsimOFF)
+streamname="aol${LOOPNUMBER}_wfsim"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laolwfsimON"
 ;;
 
 
-    lwfsref01)
+
+
+    laolwfsref01)
 startstreamlog aol${LOOPNUMBER}_wfsref0
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
 menurecord_default="lwfsref00"
 ;;
-    lwfsref00)
+    laolwfsref00)
 stopstreamlog aol${LOOPNUMBER}_wfsref0
 echo "0" > "./status/stat_log_aol${LOOPNUMBER}_wfsref0.txt"
 menurecord_default="lwfsref01"
