@@ -51,7 +51,14 @@ NBframes="$1"
 
 
 
-
+#
+# CONVENTIONS
+#
+# logging status is in file : ./status/stat_log_<streamname>.txt 
+# associated bash variable is logstat_<streamname1> (0 or 1), where <streamname1> does not include loop number or "_" ("aol0_modeval" -> "logstat_aolmodeval")
+#
+# menu entries are "l<streamname>ON" and "l<streamname>OFF"
+#
 
 
 
@@ -129,19 +136,27 @@ menuitems+=( "logOFF"       " STOP  logging ALL telemetry")
 menuitems+=( "logKILL"      " KILL  all telemetry logging processes")
 menuitems+=( " " " " )
 
-file="./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
-logwfsimstat=$( cat $file )
-if [[ -f "$file" && ( "$logwfsimstat" = "0" || "$logwfsimstat" = "1" ) ]]; then
+
+
+
+
+
+streamname="wfsim"
+infostring="WFS image"
+
+file="./status/stat_log_aol${LOOPNUMBER}_${streamname}.txt"
+logstat=$( cat $file )
+if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
 echo "OK"
 else
 echo "0" > $file
-logwfsimstat="0"
+logstat="0"
 fi
-if [ "${logwfsimstat}" = "0" ];
+if [ "${logstat}" = "0" ];
 then
-menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_wfsim                WFS image" )
+menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_${streamname}                $infostring" )
 else
-menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_wfsim\Zn                 WFS image\Zn" )
+menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_${streamname}\Zn                 $infostring\Zn" )
 fi
 
 
@@ -213,6 +228,24 @@ then
 menuitems+=( "ldmmodegain1" "START logging aol${LOOPNUMBER}_DMmode_GAIN          DM mode gain" )
 else
 menuitems+=( "ldmmodegain0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_DMmode_GAIN\Zn         DM mode gain\Zn" )
+fi
+
+
+
+
+file="./status/stat_log_aol${LOOPNUMBER}_limitb.txt"
+loglimitbstat=$( cat $file )
+if [[ -f "$file" && ( "$loglimitbstat" = "0" || "$loglimitbstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+loglimitbstat="0"
+fi
+if [ "${loglimitbstat}" = "0" ];
+then
+menuitems+=( "llimitb1" "START logging aol${LOOPNUMBER}_limitb                Block limit" )
+else
+menuitems+=( "llimitb0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_limitb\Zn                Block limit\Zn" )
 fi
 
 
@@ -788,7 +821,7 @@ menurecord_default="slogM2"
 
 
     logON)
-start_Telemetrylog_all
+start_Telemetrylog_all # function in aolconf_logfuncs
 ;;
 
     logOFF)
@@ -836,6 +869,9 @@ menurecord_default="lwfsref1"
 ;;
 
 
+
+
+
     lgainb1)
 startstreamlog aol${LOOPNUMBER}_gainb
 echo "1" > "./status/stat_log_aol${LOOPNUMBER}_gainb.txt"
@@ -859,6 +895,17 @@ echo "0" > "./status/stat_log_aol${LOOPNUMBER}_DMmode_GAIN.txt"
 menurecord_default="ldmmodegain1"
 ;;
 
+
+    llimitb1)
+startstreamlog aol${LOOPNUMBER}_limitb
+echo "1" > "./status/stat_log_aol${LOOPNUMBER}_limitb.txt"
+menurecord_default="llimitb0"
+;;
+    llimit0)
+stopstreamlog aol${LOOPNUMBER}_limitb
+echo "0" > "./status/stat_log_aol${LOOPNUMBER}_limitb.txt"
+menurecord_default="llimitb1"
+;;
 
 
     ldmmodelimit1)
