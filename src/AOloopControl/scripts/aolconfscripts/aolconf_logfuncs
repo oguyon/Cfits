@@ -106,14 +106,14 @@ function stop_Telemetrylog_all {
 aoconflog "stop ALL telemetry logging"
 
 
-for aolstreamname in "$TELEMETRY_aol_streams"; do
+for aolstreamname in $TELEMETRY_aol_streams; do
 	streamname="aol${LOOPNUMBER}_$aolstreamname"
 	stopstreamlog $streamname
 	echo "0" > "./status/stat_log_${streamname}.txt"
 done
 
 
-for streamname in "$TELEMETRY_hardw_streams"; do
+for streamname in $TELEMETRY_hardw_streams; do
 	stopstreamlog $streamname
 	echo "0" > "./status/stat_log_${streamname}.txt"
 done
@@ -121,7 +121,7 @@ done
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
 if [ "${CMMODE}" = "0" ]; then
-for aolstreamname in "$TELEMETRY_modes_streams"; do
+for aolstreamname in $TELEMETRY_modes_streams; do
 	streamname="aol${LOOPNUMBER}_$aolstreamname"
 	stopstreamlog $streamname
 	echo "0" > "./status/stat_log_${streamname}.txt"
@@ -144,14 +144,14 @@ aoconflog "kill ALL telemetry logging"
 
 
 
-for aolstreamname in "$TELEMETRY_aol_streams"; do
+for aolstreamname in $TELEMETRY_aol_streams; do
 	streamname="aol${LOOPNUMBER}_$aolstreamname"
 	killstreamlog $streamname
 	echo "0" > "./status/stat_log_${streamname}.txt"
 done
 
 
-for streamname in "$TELEMETRY_hardw_streams"; do
+for streamname in $TELEMETRY_hardw_streams; do
 	killstreamlog $streamname
 	echo "0" > "./status/stat_log_${streamname}.txt"
 done
@@ -159,7 +159,7 @@ done
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
 if [ "${CMMODE}" = "0" ]; then
-for aolstreamname in "$TELEMETRY_modes_streams"; do
+for aolstreamname in $TELEMETRY_modes_streams; do
 	streamname="aol${LOOPNUMBER}_$aolstreamname"
 	killstreamlog $streamname
 	echo "0" > "./status/stat_log_${streamname}.txt"
