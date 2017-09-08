@@ -54,10 +54,11 @@ tmux kill-session -t $tmuxnameC
 echo "0" > ./status/stat_log$1.txt
 }
 
+ConfReadParam DMindex "00"; DMindex="$paramvalue"
 
 TELEMETRY_aol_streams="wfsim wfsref0 wfsref gainb DMmode_GAIN limitb DMmode_LIMIT multfb DMmode_MULTF"
 TELEMETRY_hardw_streams="dm${DMindex}disp dm${DMindex}disp00 dm${DMindex}disp01 dm${DMindex}disp02 dm${DMindex}disp03 dm${DMindex}disp04 dm${DMindex}disp05 dm${DMindex}disp06 dm${DMindex}disp07 dm${DMindex}disp08 dm${DMindex}disp09 dm${DMindex}disp10 dm${DMindex}disp11"
-TELEMETRY_modes_streams="modeval modeval_dm_corr modeval_dm_now_filt modeval_ol modevalPF modevalPFsync modevalPFres outPFb0 outPFb1 outPFb2 outPFb3"
+TELEMETRY_modes_streams="modeval modeval_dm_corr modeval_dm_now modeval_dm_now_filt modeval_ol modevalPF modevalPFsync modevalPFres outPFb0 outPFb1 outPFb2 outPFb3"
 
 
 
