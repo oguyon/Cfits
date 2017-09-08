@@ -958,7 +958,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
         {
             ave_inarray[pix] = 0.0;
             for(m=0; m<nbspl; m++)
-                ave_inarray[pix] += data.image[IDin].array.F[m*xysize+pixarray_xy[pix]];
+                ave_inarray[pix] += data.image[IDincp].array.F[m*xysize+pixarray_xy[pix]];
             ave_inarray[pix] /= nbspl;
         }
     }
@@ -980,7 +980,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder-1; // dt=0 index
                 for(pix=0; pix<NBpixin; pix++)
                     for(dt=0; dt<PForder; dt++)
-                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
+                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDincp].array.F[(k0-dt)*xysize + pixarray_xy[pix]] - ave_inarray[pix];
             }
             free(ave_inarray);
         }
@@ -991,7 +991,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
                 k0 = m + PForder-1; // dt=0 index
                 for(pix=0; pix<NBpixin; pix++)
                     for(dt=0; dt<PForder; dt++)
-                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDin].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
+                        data.image[IDmatA].array.F[(NBpixin*dt+pix)*NBmvec1 + m] = data.image[IDincp].array.F[(k0-dt)*xysize + pixarray_xy[pix]];
             }
         }
 
