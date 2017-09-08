@@ -160,6 +160,7 @@ then
 menuitems+=( "lwfsim00" "$startlogstring" )
 menuitems+=( "lwfsim1" "START logging aol${LOOPNUMBER}_${streamname}                $infostring" )
 else
+menuitems+=( "lwfsim01" "$stoplogstring" )
 menuitems+=( "lwfsim0" "\Z1\ZrSTOP logging aol${LOOPNUMBER}_${streamname}\Zn                 $infostring\Zn" )
 fi
 
