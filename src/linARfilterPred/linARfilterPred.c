@@ -852,6 +852,16 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
 
 
+	if(ExternalPFparam == 1)
+		PFlag_run = data.image[IDPFparam].array.F[0];
+	else
+		PFlag_run = PFlag;
+
+
+
+
+
+
     // ===================== BUILD DATA MATRIX ============================
     //
     // NBmvec is the number of telemetry vectors (each corresponding to a different time)
@@ -859,7 +869,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     //
     // Data matrix is stored as image of size NBmvec x mvecsize, to be fed to routine compute_SVDpseudoInverse in linopt_imtools (CPU mode) or in cudacomp (GPU mode)
     //
-    NBmvec = nbspl - PForder - (int) (PFlag_run) - 1;
+    NBmvec = nbspl - PForder - (int) (PFlag_run) - 2;
     mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
 
     if(REG==0) // no regularization
