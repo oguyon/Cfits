@@ -144,7 +144,8 @@ menuitems+=( " " " " )
 streamname="wfsim"
 infostring="WFS input image"
 
-startlogstring=$( awk '{printf("START logging %20s   %s\n", "$streamname", "$infostring")}' )
+startlogstring=$( printf "START logging %20s   %s\n" "$streamname" "$infostring" )
+stoplogstring=$( printf "\Z1\ZrSTOP logging %20s\Zn   %s\n" "$streamname" "$infostring" )
 
 file="./status/stat_log_aol${LOOPNUMBER}_${streamname}.txt"
 logstat=$( cat $file )
