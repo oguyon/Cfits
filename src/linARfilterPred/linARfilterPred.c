@@ -1131,7 +1131,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 						printf("ERROR: pixel index out of range : %ld %ld / %ld \n", tmpindex0, tmpindex1, inNBelem);
 						printf("k0                     = %6ld\n", k0);
 						printf("m                      = %6ld / %6ld\n", m, NBmvec);
-						printf("PFlag_run              = %6ld\n", PFlag_run);
+						printf("PFlag_run              = %f\n", PFlag_run);
 						printf("xysize                 = %6ld\n", xysize);
 						printf("outpixarray_xy[PFpix]  = %6ld\n", outpixarray_xy[PFpix]);
 						exit(0);
