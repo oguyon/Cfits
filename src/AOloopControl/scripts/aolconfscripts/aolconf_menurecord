@@ -60,6 +60,20 @@ NBframes="$1"
 # menu entries are "l<streamname>ON" and "l<streamname>OFF"
 #
 
+function logwritestartstopstrings {
+startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
+stoplogstring=$( printf "\Z1\ZrSTOP logging %-25s\Zn   %s\n" "$streamname" "$infostring" )
+file="./status/stat_log_aol${LOOPNUMBER}_${streamname}.txt"
+logstat=$( cat $file )
+if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
+echo "OK"
+else
+echo "0" > $file
+logstat="0"
+fi
+}
+
+
 
 
 # =====================================================
@@ -143,21 +157,9 @@ menuitems+=( " " " " )
 
 streamname="wfsim"
 infostring="WFS input image"
-cmdON="lwfsim0"
-
-startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
-stoplogstring=$( printf "\Z1\ZrSTOP logging %-25s\Zn   %s\n" "$streamname" "$infostring" )
-file="./status/stat_log_aol${LOOPNUMBER}_${streamname}.txt"
-logstat=$( cat $file )
-if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-logstat="0"
-fi
-if [ "${logstat}" = "0" ];
-then
-menuitems+=( "$cmdON" "$startlogstring" )
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "lwfsim1" "$startlogstring" )
 else
 menuitems+=( "lwfsim0" "$stoplogstring" )
 fi
