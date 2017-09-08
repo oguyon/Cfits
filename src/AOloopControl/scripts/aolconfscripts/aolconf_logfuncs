@@ -129,6 +129,8 @@ echo "1" > "./status/stat_log_dm${DMindex}disp10.txt"
 startstreamlog dm${DMindex}disp11
 echo "1" > "./status/stat_log_dm${DMindex}disp11.txt"
 
+
+
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
 if [ "${CMMODE}" = "0" ];
 then
@@ -147,6 +149,8 @@ echo "1" > "./status/stat_log_modeval_dm_now_filt.txt"
 
 startstreamlog aol${LOOPNUMBER}_modeval_ol
 echo "1" > "./status/stat_log_modeval_ol.txt"
+
+
 
 fi
 }
