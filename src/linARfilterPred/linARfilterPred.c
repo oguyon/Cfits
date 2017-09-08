@@ -704,7 +704,6 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 	long IDincp;
 	long inNBelem;
 
-	long tmpindex0, tmpindex1;
 	
 
 	
@@ -869,7 +868,7 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     //
     // Data matrix is stored as image of size NBmvec x mvecsize, to be fed to routine compute_SVDpseudoInverse in linopt_imtools (CPU mode) or in cudacomp (GPU mode)
     //
-    NBmvec = nbspl - PForder - (int) (PFlag_run) - 2;
+    NBmvec = nbspl - PForder - (int) (PFlag_run) - 2;  // could put "-1", but "-2" allows user to change PFlag_run by up to 1 frame without reading out of array
     mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
 
     if(REG==0) // no regularization
@@ -1132,21 +1131,6 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
             {
                 k0 = m + PForder -1;
                 k0 += (long) PFlag_run;
-
-				tmpindex0 = (k0)*xysize + outpixarray_xy[PFpix];
-				tmpindex1 = (k0+1)*xysize + outpixarray_xy[PFpix];
-				
-				if((tmpindex0>inNBelem-1)||(tmpindex1>inNBelem-1))
-					{
-						printf("ERROR: pixel index out of range : %ld %ld / %ld \n", tmpindex0, tmpindex1, inNBelem);
-						printf("k0                     = %6ld\n", k0);
-						printf("m                      = %6ld / %6ld\n", m, NBmvec);
-						printf("PFlag_run              = %f\n", PFlag_run);
-						printf("xysize                 = %6ld\n", xysize);
-						printf("outpixarray_xy[PFpix]  = %6ld\n", outpixarray_xy[PFpix]);
-						printf("nbspl                  = %6ld\n", nbspl);
-						exit(0);
-					}
 				
                 valfarray[m] = (1.0-alpha)*data.image[IDincp].array.F[(k0)*xysize + outpixarray_xy[PFpix]] + alpha*data.image[IDincp].array.F[(k0+1)*xysize + outpixarray_xy[PFpix]];
             }
