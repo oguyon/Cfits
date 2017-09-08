@@ -654,6 +654,7 @@ kill_Telemetrylog_all
 
 
 
+
     laolwfsimON)
 streamname="aol${LOOPNUMBER}_wfsim"
 startstreamlog "$streamname"
