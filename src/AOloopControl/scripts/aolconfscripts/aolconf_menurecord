@@ -493,7 +493,7 @@ streamname="aol${LOOPNUMBER}_modevalPFres"
 infostring="Measured predictive filter error mode values"
 logwritestartstopstrings
 if [ "${logstat}" = "0" ]; then
-menuitems+=( "laolmodevalPFsresON" "$startlogstring" )
+menuitems+=( "laolmodevalPFresON" "$startlogstring" )
 else
 menuitems+=( "laolmodevalPFresOFF" "$stoplogstring" )
 fi
