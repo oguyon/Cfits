@@ -54,16 +54,16 @@ NBframes="$1"
 #
 # CONVENTIONS
 #
-# logging status is in file : ./status/stat_log_<streamname>.txt 
+# logging status is in file : ./status/stat_log_<FULLstreamname>.txt 
 # associated bash variable is logstat_<streamname1> (0 or 1), where <streamname1> does not include loop number or "_" ("aol0_modeval" -> "logstat_aolmodeval")
 #
-# menu entries are "l<streamname>ON" and "l<streamname>OFF"
+# menu entries are "l<streamname1>ON" and "l<streamname1>OFF"
 #
 
 function logwritestartstopstrings {
 startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
 stoplogstring=$( printf "\Z1\ZrSTOP logging %-25s\Zn   %s\n" "$streamname" "$infostring" )
-file="./status/stat_log_aol${LOOPNUMBER}_${streamname}.txt"
+file="./status/stat_log_${streamname}.txt"
 logstat=$( cat $file )
 if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
 echo "OK"
@@ -155,14 +155,28 @@ menuitems+=( " " " " )
 
 
 
-streamname="wfsim"
+streamname="aol${LOOPNUMBER}_wfsim"
 infostring="WFS input image"
+
 logwritestartstopstrings
 if [ "${logstat}" = "0" ]; then
-menuitems+=( "lwfsim1" "$startlogstring" )
+menuitems+=( "laolwfsimON" "$startlogstring" )
 else
-menuitems+=( "lwfsim0" "$stoplogstring" )
+menuitems+=( "laolwfsimOFF" "$stoplogstring" )
 fi
+
+
+
+
+streamname="aol${LOOPNUMBER}_wfsref0"
+infostring="WFS reference"
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laolwfsref0ON" "$startlogstring" )
+else
+menuitems+=( "laolwfsref0OFF" "$stoplogstring" )
+fi
+
 
 
 
