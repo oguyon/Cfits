@@ -840,7 +840,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
     statusdef[18] = "LOG DATA";
     statusdef[19] = "READING IMAGE";
-    statusdef[20] = "WAIT FOR IMAGE";
+    statusdef[20] = "... WAITING FOR IMAGE";
 
 
 
@@ -865,7 +865,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     statusMdef[17] = "";
     statusMdef[18] = "";
     statusMdef[19] = "";
-    statusMdef[20] = "WAIT FOR IMAGE imWFS0";
+    statusMdef[20] = "... WAITING FOR IMAGE imWFS0";
 
 
     statusM1def[0] = "WRITING MODAL CORRECTION IN CIRCULAR BUFFER";
