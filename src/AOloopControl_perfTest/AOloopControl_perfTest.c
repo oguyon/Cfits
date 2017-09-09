@@ -771,12 +771,14 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     long statusmax = 21;
     long *statuscnt;
     long *statusMcnt;
+    long *statusM1cnt;
     float usec0, usec1;
     int st;
     int RT_priority = 91; //any number from 0-99
     struct sched_param schedpar;
     const char *statusdef[21];
     const char *statusMdef[21];
+    const char *statusM1def[21];
     int gpu;
     int nbgpu;
     struct timespec t1;
@@ -866,7 +868,27 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     statusMdef[20] = "WAIT FOR IMAGE imWFS0";
 
 
-
+    statusM1def[0] = "";
+    statusM1def[1] = "";
+    statusM1def[2] = "";
+    statusM1def[3] = "";
+    statusM1def[4] = "";
+    statusM1def[5] = "";
+    statusM1def[6] = "";
+    statusM1def[7] = "";
+    statusM1def[8] = "";
+    statusM1def[9] = "";
+    statusM1def[10] = "";
+    statusM1def[11] = "";
+    statusM1def[12] = "";
+    statusM1def[13] = "";
+    statusM1def[14] = "";
+    statusM1def[15] = "";
+    statusM1def[16] = "";
+    statusM1def[17] = "";
+    statusM1def[18] = "";
+    statusM1def[19] = "";
+    statusM1def[20] = "";
 
 
 
@@ -889,6 +911,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
     statuscnt = (long*) malloc(sizeof(long)*statusmax);
     statusMcnt = (long*) malloc(sizeof(long)*statusmax);
+    statusM1cnt = (long*) malloc(sizeof(long)*statusmax);
     statusgpucnt = (long*) malloc(sizeof(long)*nbgpu*10);
     statusgpucnt2 = (long*) malloc(sizeof(long)*nbgpu*10);
 
@@ -897,6 +920,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     {
         statuscnt[st] = 0;
         statusMcnt[st] = 0;
+        statusM1cnt[st] = 0;
     }
 
     for(st=0; st<nbgpu*10; st++)
@@ -925,14 +949,21 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     for(k=0; k<NBkiter; k++)
     {
 		int stM;
+		int stM1;
 		
         usleep((long) (usec0 + usec1*(1.0*k/NBkiter)));
         st = AOconf[LOOPNUMBER].status;
         stM = AOconf[LOOPNUMBER].statusM;
+        stM1 = AOconf[LOOPNUMBER].statusM1;
+        
         if(st<statusmax)
             statuscnt[st]++;
         if(stM<statusmax)
             statusMcnt[stM]++;
+         if(stM1<statusmax)
+            statusMcnt[stM1]++;       
+        
+        
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             // 1st matrix mult
@@ -1090,7 +1121,16 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 	printf("\n--------------- MODAL STRING -------------------------------------------------------------\n");
     for(st=0; st<statusmax; st++)
         if(strlen(statusMdef[st])>0)
-            printf("STATUSM %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
+            printf("STATUSM  %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
+
+
+
+
+	printf("\n--------------- AUX STRING -------------------------------------------------------------\n");
+    for(st=0; st<statusmax; st++)
+        if(strlen(statusM1def[st])>0)
+            printf("STATUSM1 %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusM1cnt[st]/NBkiter, statusM1cnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusM1def[st]);
+
 
 
     free(statuscnt);
