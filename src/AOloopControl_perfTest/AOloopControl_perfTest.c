@@ -950,7 +950,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
     wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0;
     dmCcnt = data.image[aoconfID_dmC].md[0].cnt0;
 
-exit(0);
+
 
     loopcnt = AOconf[LOOPNUMBER].cnt;
     clock_gettime(CLOCK_REALTIME, &t1);
@@ -998,7 +998,7 @@ exit(0);
     printf("MISSED FRAMES = %lld    fraction = %7.4f %%\n", wfsimcnt-loopcnt, 100.0*(wfsimcnt-loopcnt)/wfsimcnt);
 
     printf("\n");
-
+exit(0);
 
     loopfrequ_measured = 1.0*loopcnt/tdiffv;
     if(updateconf==1)
