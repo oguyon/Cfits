@@ -807,7 +807,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
-exit(0);
+
 
     statusdef[0] = "LOAD IMAGE";
     statusdef[1] = "DARK SUBTRACT";
@@ -906,6 +906,9 @@ exit(0);
     sched_setscheduler(0, SCHED_FIFO, &schedpar);
 #endif
 
+
+
+
     nbgpu = AOconf[LOOPNUMBER].GPU0;
 
 
@@ -946,6 +949,8 @@ exit(0);
 
     wfsimcnt = data.image[aoconfID_wfsim].md[0].cnt0;
     dmCcnt = data.image[aoconfID_dmC].md[0].cnt0;
+
+exit(0);
 
     loopcnt = AOconf[LOOPNUMBER].cnt;
     clock_gettime(CLOCK_REALTIME, &t1);
