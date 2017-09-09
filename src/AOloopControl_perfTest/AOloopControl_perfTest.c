@@ -868,27 +868,27 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     statusMdef[20] = "WAIT FOR IMAGE imWFS0";
 
 
-    statusM1def[0] = "M1 0";
-    statusM1def[1] = "M1 1";
-    statusM1def[2] = "M1 2";
-    statusM1def[3] = "M1 3";
-    statusM1def[4] = "M1 4";
-    statusM1def[5] = "M1 5";
-    statusM1def[6] = "M1 6";
-    statusM1def[7] = "M1 7";
-    statusM1def[8] = "M1 8";
-    statusM1def[9] = "M1 9";
-    statusM1def[10] = "M1 10";
-    statusM1def[11] = "M1 11";
-    statusM1def[12] = "M1 12";
-    statusM1def[13] = "M1 13";
-    statusM1def[14] = "M1 14";
-    statusM1def[15] = "M1 15";
-    statusM1def[16] = "M1 16";
-    statusM1def[17] = "M1 17";
-    statusM1def[18] = "M1 18";
-    statusM1def[19] = "M1 19";
-    statusM1def[20] = "M1 20";
+    statusM1def[0] = "WRITING MODAL CORRECTION IN CIRCULAR BUFFER";
+    statusM1def[1] = "COMPUTING TIME-DELAYED MODAL CORRECTION";
+    statusM1def[2] = "COMPUTING TIME-DELAYED PREDICTED CORRECTION";
+    statusM1def[3] = "COMPUTING OPEN LOOP WF";
+    statusM1def[4] = "COMPUTING TELEMETRY";
+    statusM1def[5] = "... WAITING FOR INPUT";
+    statusM1def[6] = "";
+    statusM1def[7] = "";
+    statusM1def[8] = "";
+    statusM1def[9] = "";
+    statusM1def[10] = "";
+    statusM1def[11] = "";
+    statusM1def[12] = "";
+    statusM1def[13] = "";
+    statusM1def[14] = "";
+    statusM1def[15] = "";
+    statusM1def[16] = "";
+    statusM1def[17] = "";
+    statusM1def[18] = "";
+    statusM1def[19] = "";
+    statusM1def[20] = "";
 
 
 
