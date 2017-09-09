@@ -5223,7 +5223,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-        AOconf[loop].statusM1 = 2;
+        AOconf[loop].statusM1 = 3;
 
         //
         // OPEN LOOP STATE = most recent WFS reading - time-lagged DM
@@ -5251,7 +5251,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-        AOconf[loop].statusM1 = 3;
+        AOconf[loop].statusM1 = 4;
 
 		// increment modevalDMindex
         modevalDMindexl = modevalDMindex;
@@ -5319,7 +5319,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
             blockstatcnt = 0;
         }
 
-        AOconf[loop].statusM1 = 4;
+        AOconf[loop].statusM1 = 5;
     }
 
     free(modegain);
