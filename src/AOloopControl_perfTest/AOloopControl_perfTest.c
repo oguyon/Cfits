@@ -992,7 +992,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
 
     printf("\n");
 
-
+exit(0);
 
     loopfrequ_measured = 1.0*loopcnt/tdiffv;
     if(updateconf==1)
