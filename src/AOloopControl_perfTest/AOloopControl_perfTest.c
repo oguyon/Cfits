@@ -239,8 +239,8 @@ int_fast8_t AOloopControl_perfTest_loopMonitor_cli() {
 
 /** @brief CLI function for AOloopControl_statusStats */
 int_fast8_t AOloopControl_perfTest_statusStats_cli() {
-    if(CLI_checkarg(1,2)==0) {
-        AOloopControl_perfTest_statusStats(data.cmdargtoken[1].val.numl);
+    if(CLI_checkarg(1,2)+CLI_checkarg(2,2)==0) {
+        AOloopControl_perfTest_statusStats(data.cmdargtoken[1].val.numl, data.cmdargtoken[2].val.numl);
         return 0;
     }
     else return 1;
@@ -327,7 +327,7 @@ int_fast8_t init_AOloopControl_perfTest()
 
     RegisterCLIcommand("aolinjectmode",__FILE__, AOloopControl_perfTest_InjectMode_cli, "inject single mode error into RM channel", "<index> <ampl>", "aolinjectmode 20 0.1", "int AOloopControl_perfTest_InjectMode()");
 
-    RegisterCLIcommand("aolstatusstats", __FILE__, AOloopControl_perfTest_statusStats_cli, "measures distribution of status values", "<update flag [int]>", "aolstatusstats 0", "int AOloopControl_perfTest_statusStats(int updateconf)");
+    RegisterCLIcommand("aolstatusstats", __FILE__, AOloopControl_perfTest_statusStats_cli, "measures distribution of status values", "<update flag [int]> <NBsample [long]>", "aolstatusstats 0 100000", "int AOloopControl_perfTest_statusStats(int updateconf, long NBsample)");
 
     RegisterCLIcommand("aolmon", __FILE__, AOloopControl_perfTest_loopMonitor_cli, "monitor loop", "<frequ> <Nbcols>", "aolmon 10.0 3", "int AOloopControl_perfTest_loopMonitor(long loop, double frequ)");
 
@@ -763,11 +763,12 @@ int_fast8_t AOloopControl_perfTest_loopMonitor(long loop, double frequ, long nbc
 
 
 
+
+
 // if updateconf=1, update configuration
-int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
+int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
 {
     long k;
-    long NBkiter = 100000;
     long statusmax = 21;
     long *statuscnt;
     long *statusMcnt;
@@ -946,12 +947,12 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
     loopcnt = AOconf[LOOPNUMBER].cnt;
     clock_gettime(CLOCK_REALTIME, &t1);
-    for(k=0; k<NBkiter; k++)
+    for(k=0; k<NBsample; k++)
     {
 		int stM;
 		int stM1;
 		
-        usleep((long) (usec0 + usec1*(1.0*k/NBkiter)));
+        usleep((long) (usec0 + usec1*(1.0*k/NBsample)));
         st = AOconf[LOOPNUMBER].status;
         stM = AOconf[LOOPNUMBER].statusM;
         stM1 = AOconf[LOOPNUMBER].statusM1;
@@ -998,7 +999,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
         AOconf[LOOPNUMBER].loopfrequ = loopfrequ_measured;
 
 	// Primary control matrix computation latency
-    complatency_frame_measured = 1.0-1.0*statuscnt[20]/NBkiter;
+    complatency_frame_measured = 1.0-1.0*statuscnt[20]/NBsample;
     if(updateconf==1)
         AOconf[LOOPNUMBER].complatency_frame = complatency_frame_measured;
 
@@ -1008,8 +1009,8 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
 
 
-    wfsmextrlatency_frame_measured = 1.0-1.0*statusMcnt[20]/NBkiter;
-    printf("==========> %ld %ld -> %f\n", statusMcnt[20], NBkiter, wfsmextrlatency_frame_measured);
+    wfsmextrlatency_frame_measured = 1.0-1.0*statusMcnt[20]/NBsample;
+    printf("==========> %ld %ld -> %f\n", statusMcnt[20], NBsample, wfsmextrlatency_frame_measured);
     if(updateconf==1)
         AOconf[LOOPNUMBER].wfsmextrlatency_frame = wfsmextrlatency_frame_measured;
 
@@ -1067,7 +1068,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
 
     for(st=0; st<statusmax; st++)
-        printf("STATUS %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
+        printf("STATUS %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBsample, statuscnt[st], NBsample, loopiterus*statuscnt[st]/NBsample , statusdef[st]);
 
 
 	
@@ -1082,22 +1083,22 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             printf("GPU %2d  : ", gpu);
-            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+1]/NBkiter);
-            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+2]/NBkiter);
-            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+3]/NBkiter);
-            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+4]/NBkiter);
-            printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBkiter);
-            printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBkiter);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+1]/NBsample);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+2]/NBsample);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+3]/NBsample);
+            printf("  %5.2f %%",  100.0*statusgpucnt[10*gpu+4]/NBsample);
+            printf("  %5.2f %%",   100.0*statusgpucnt[10*gpu+5]/NBsample);
+            printf("  %5.2f %%\n",  100.0*statusgpucnt[10*gpu+6]/NBsample);
         }
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
         {
             printf("GPU %2d  : ", gpu);
-            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+1]/NBkiter);
-            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+2]/NBkiter);
-            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+3]/NBkiter);
-            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+4]/NBkiter);
-            printf(" %5.2f us",   loopiterus*statusgpucnt[10*gpu+5]/NBkiter);
-            printf(" %5.2f us\n",  loopiterus*statusgpucnt[10*gpu+6]/NBkiter);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+1]/NBsample);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+2]/NBsample);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+3]/NBsample);
+            printf(" %5.2f us",  loopiterus*statusgpucnt[10*gpu+4]/NBsample);
+            printf(" %5.2f us",   loopiterus*statusgpucnt[10*gpu+5]/NBsample);
+            printf(" %5.2f us\n",  loopiterus*statusgpucnt[10*gpu+6]/NBsample);
         }
 
         printf("\n");
@@ -1107,12 +1108,12 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
             for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
             {
                 printf("GPU %2d  : ", gpu);
-                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBkiter);
-                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+2]/NBkiter);
-                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+3]/NBkiter);
-                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+4]/NBkiter);
-                printf("  %5.2f %%",   100.0*statusgpucnt2[10*gpu+5]/NBkiter);
-                printf("  %5.2f %%\n",  100.0*statusgpucnt2[10*gpu+6]/NBkiter);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+1]/NBsample);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+2]/NBsample);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+3]/NBsample);
+                printf("  %5.2f %%",  100.0*statusgpucnt2[10*gpu+4]/NBsample);
+                printf("  %5.2f %%",   100.0*statusgpucnt2[10*gpu+5]/NBsample);
+                printf("  %5.2f %%\n",  100.0*statusgpucnt2[10*gpu+6]/NBsample);
             }
         }
     }
@@ -1121,7 +1122,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 	printf("\n--------------- MODAL STRING -------------------------------------------------------------\n");
     for(st=0; st<statusmax; st++)
         if(strlen(statusMdef[st])>0)
-            printf("STATUSM  %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
+            printf("STATUSM  %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBsample, statusMcnt[st], NBsample, loopiterus*statusMcnt[st]/NBsample , statusMdef[st]);
 
 
 
@@ -1129,7 +1130,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 	printf("\n--------------- AUX MODAL STRING ---------------------------------------------------------\n");
     for(st=0; st<statusmax; st++)
         if(strlen(statusM1def[st])>0)
-            printf("STATUSM1 %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusM1cnt[st]/NBkiter, statusM1cnt[st], NBkiter, loopiterus*statusM1cnt[st]/NBkiter , statusM1def[st]);
+            printf("STATUSM1 %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusM1cnt[st]/NBsample, statusM1cnt[st], NBsample, loopiterus*statusM1cnt[st]/NBsample , statusM1def[st]);
 
 
 
@@ -1141,6 +1142,8 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
     return 0;
 }
+
+
 
 
 
