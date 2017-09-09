@@ -7093,7 +7093,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 tmsg->partial = 0; // full cube
             }
 
-            fclose(fp);
+          //  fclose(fp);
 
             if(tOK == 1)
                 pthread_join(thread_savefits, NULL); //(void**)&thread_savefits);
