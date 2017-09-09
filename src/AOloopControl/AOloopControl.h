@@ -40,6 +40,8 @@ static FILE *loadcreateshm_fplog;
  */
 typedef struct
 {	
+	uint64_t LOOPiteration;
+	
     /* =============================================================================================== */
 	/** @name AOLOOPCONTROL_CONF: TIMING 
 	 * LOOP Timing info
