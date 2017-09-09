@@ -961,7 +961,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
         if(stM<statusmax)
             statusMcnt[stM]++;
          if(stM1<statusmax)
-            statusMcnt[stM1]++;       
+            statusM1cnt[stM1]++;       
         
         
         for(gpu=0; gpu<AOconf[LOOPNUMBER].GPU0; gpu++)
@@ -1129,7 +1129,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 	printf("\n--------------- AUX STRING -------------------------------------------------------------\n");
     for(st=0; st<statusmax; st++)
         if(strlen(statusM1def[st])>0)
-            printf("STATUSM1 %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusM1cnt[st]/NBkiter, statusM1cnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusM1def[st]);
+            printf("STATUSM1 %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusM1cnt[st]/NBkiter, statusM1cnt[st], NBkiter, loopiterus*statusM1cnt[st]/NBkiter , statusM1def[st]);
 
 
 
