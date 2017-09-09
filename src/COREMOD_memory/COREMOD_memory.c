@@ -7183,7 +7183,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			data.image[IDb].md[0].cnt0++;
 			data.image[IDb].md[0].write = 0;
 			
-
+			tmsg->cubesize = index;
             strcpy(tmsg->iname, iname);
             memcpy(array_time_cp, array_time, sizeof(double)*index);
             memcpy(array_cnt0_cp, array_cnt0, sizeof(uint64_t)*index);
