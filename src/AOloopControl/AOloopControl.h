@@ -462,7 +462,7 @@ int_fast8_t AOloopControl_set_AUTOTUNE_LIMITS_mcoeff(float AUTOTUNE_LIMITS_mcoef
 
 /** @brief Set gain auto tune : on */
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_on();
-
+ 
 /** @brief Set gain auto tune : off */
 int_fast8_t AOloopControl_AUTOTUNE_GAINS_off();
 
