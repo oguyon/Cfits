@@ -1866,7 +1866,7 @@ void *save_fits_function( void *ptr )
 	}
 	for(k=0;k<tmsg->cubesize;k++)
 		{
-			fprintf(fp, "%5ld   %8lud  %8lud   %15.9lf\n", k, tmsg->arraycnt0[k], tmsg->arraycnt1[k], tmsg->arraytime[k]);
+			fprintf(fp, "%5ld   %8lu  %8lu   %15.9lf\n", k, tmsg->arraycnt0[k], tmsg->arraycnt1[k], tmsg->arraytime[k]);
 		}
 	fclose(fp);
 
@@ -7120,7 +7120,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 //                fprintf(fp, "%02d:%02d:%02ld.%09ld ", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
 				array_cnt0[index] = data.image[ID].md[0].cnt0;
 				array_cnt1[index] = data.image[ID].md[0].cnt1;
-				array_time[index] = uttime->tm_hour*3600.0 + uttime->tm_min*60.0 + timenow.tv_sec % 60 + 1000000000.0*timenow.tv_nsec;
+				array_time[index] = uttime->tm_hour*3600.0 + uttime->tm_min*60.0 + timenow.tv_sec % 60 + 1.0e-9*timenow.tv_nsec;
 
 /*                if(unlikely(IDlogdata!=-1))
                 {
