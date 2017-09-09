@@ -123,8 +123,10 @@ struct savethreadmsg {
     char fname[200];
     int partial; // 1 if partial cube
     long cubesize; // size of the cube
-	long *arraycnt0;
-	long *arraycnt1;
+	
+	char fnameascii[200];
+	uint64_t *arraycnt0;
+	uint64_t *arraycnt1;
 	double *arraytime;
 };
 
@@ -1748,6 +1750,8 @@ void *save_fits_function( void *ptr )
     long framesize; // in bytes
     char *ptr0; // source
     char *ptr1; // destination
+    long k;
+    FILE *fp;
 
 
     imsizearray = (uint32_t*) malloc(sizeof(uint32_t)*3);
@@ -1853,7 +1857,18 @@ void *save_fits_function( void *ptr )
         save_fits("tmpsavecube", tmsg->fname);
         delete_image_ID("tmpsavecube");
     }
-
+    
+    
+    if((fp=fopen(tmsg->fnameascii, "w"))==NULL)
+    {
+		printf("ERROR: cannot create file \"%s\"\n", tmsg->fnameascii);
+		exit(0);
+	}
+	for(k=0;k<tmsg->cubesize;k++)
+		{
+			fprintf(fp, "%5ld   %8lud  %8lud   %15.9lf\n", k, tmsg->arraycnt0[k], tmsg->arraycnt1[k], tmsg->arraytime[k]);
+		}
+	fclose(fp);
 
     //    printf(" DONE\n");
     //fflush(stdout);
@@ -6763,7 +6778,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 	char *arraycnt1_ptr;
 
     FILE *fp;
-    char fname_asciilog[200];
+    char fnameascii[200];
 
     pthread_t thread_savefits; 
     int tOK = 0;
@@ -7019,7 +7034,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			clock_gettime(CLOCK_REALTIME, &timenowStart);
   
        //     sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
-       //     sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+//            sprintf(fnameascii,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
         }
 
 
@@ -7150,9 +7165,12 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             
             if(wOK==1) // image has arrived
             {
+				sprintf(fnameascii,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
 				sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
+                strcpy(tmsg->fnameascii, fnameascii); 
+                
                 tmsg->partial = 0; // full cube
             }
 
