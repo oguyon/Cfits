@@ -3624,11 +3624,11 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
             initWFSref_GPU[PIXSTREAM_SLICE] = 1;
 
             AOconf[loop].status = 6; // 6 execute
-
             clock_gettime(CLOCK_REALTIME, &tnow);
             tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
             tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
             data.image[aoconfID_looptiming].array.F[6] = tdiffv;
+
 
             if(AOconf[loop].GPUall == 1)
                 GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
@@ -3726,6 +3726,7 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 
                 initWFSref_GPU[PIXSTREAM_SLICE] = 1;
                 initcontrMcact_GPU[PIXSTREAM_SLICE] = 1;
+                
                 AOconf[loop].status = 6; // 6 execute
                 clock_gettime(CLOCK_REALTIME, &tnow);
                 tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
