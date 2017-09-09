@@ -1087,7 +1087,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     }
 
 
-	printf("--------------- MODAL STRING ---------------\n");
+	printf("\n--------------- MODAL STRING -------------------------------------------------------------\n");
     for(st=0; st<statusmax; st++)
         if(strlen(statusMdef[st])>0)
             printf("STATUSM %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
