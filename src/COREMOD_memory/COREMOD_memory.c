@@ -6744,8 +6744,9 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     char iname[200];
     time_t t;
     struct tm *uttime;
-    //struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
+    struct tm *uttimeStart;
     struct timespec timenow;
+    struct timespec timenowStart;
     long kw;
 
     long IDlogdata;
@@ -6794,6 +6795,9 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
     int RT_priority = 60; //any number from 0-99
     struct sched_param schedpar;
+    
+    
+    
     
 
     schedpar.sched_priority = RT_priority;
@@ -6953,8 +6957,8 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         {
             /// measure time
             t = time(NULL);
-            uttime = gmtime(&t);
-			clock_gettime(CLOCK_REALTIME, &timenow);
+            uttimeStart = gmtime(&t);
+			clock_gettime(CLOCK_REALTIME, &timenowStart);
   
        //     sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
        //     sprintf(fname_asciilog,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
@@ -7088,6 +7092,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             
             if(wOK==1) // image has arrived
             {
+				sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
                 tmsg->partial = 0; // full cube
