@@ -34,7 +34,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 
 int_fast8_t AOloopControl_perfTest_loopMonitor(long loop, double frequ, long nbcol);
 
-int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBiter);
+int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample);
 
 int_fast8_t AOloopControl_perfTest_resetRMSperf();
 
