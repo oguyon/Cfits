@@ -907,8 +907,6 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
 #endif
 
 
-
-
     nbgpu = AOconf[LOOPNUMBER].GPU0;
 
 

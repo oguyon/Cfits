@@ -1056,7 +1056,7 @@ case $retval in
   mt)
 mkdir -p timingstats
 echo "Measuring loop timing - please wait a few seconds...."
-./auxscripts/aolMeasureTiming 1000000 > timingstats/timingReport.txt 
+./auxscripts/aolMeasureTiming 100000 > timingstats/timingReport.txt 
 
 # software latency (frame)
 ConfReadParam wfsmextrlatency_frame "0.5"; wfsmextrlatency_frame="$paramvalue"

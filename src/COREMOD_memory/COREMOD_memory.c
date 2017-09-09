@@ -6750,9 +6750,13 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
     long IDlogdata;
 
-    char *ptr0; // source
-    char *ptr1; // destination
+    char *ptr0; // source image data
+    char *ptr1; // destination image data
     long framesize; // in bytes
+
+	char *arraytime_ptr;
+	char *arraycnt0_ptr;
+	char *arraycnt1_ptr;
 
     FILE *fp;
     char fname_asciilog[200];
@@ -6780,6 +6784,13 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
     LOGSHIM_CONF* logshimconf;
 
+	// recording time for each frame
+	double *array_time;
+	
+	// counters
+	uint64_t *array_cnt0;
+	uint64_t *array_cnt1;
+	
 
     int RT_priority = 60; //any number from 0-99
     struct sched_param schedpar;
@@ -6840,6 +6851,13 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     IDb1 = create_image_ID(logb1name, 3, imsizearray, atype, 1, 1);
 	COREMOD_MEMORY_image_set_semflush(logb0name, -1);
 	COREMOD_MEMORY_image_set_semflush(logb1name, -1);
+	
+	
+	// *2 to implement double buffer
+	array_time = (double*) malloc(sizeof(double)*zsize);
+	array_cnt0 = (uint64_t*) malloc(sizeof(uint64_t)*zsize);
+	array_cnt1 = (uint64_t*) malloc(sizeof(uint64_t)*zsize);
+
 
     IDb = IDb0;
 
@@ -6952,12 +6970,12 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 /// measure time
                 t = time(NULL);
                 uttime = gmtime(&t);
-                //clock_gettime(CLOCK_REALTIME, thetime);
+                
 				clock_gettime(CLOCK_REALTIME, &timenow);
 
-                if(index==0)
+     /*           if(index==0)
                     fp = fopen(fname_asciilog, "w");
-
+*/
 
                 switch ( atype ) {
 
@@ -7020,17 +7038,22 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 ptr1 += framesize*index;
 
                 memcpy((void *) ptr1, (void *) ptr0, framesize);
+                
 
-                fprintf(fp, "%02d:%02d:%02ld.%09ld ", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+//                fprintf(fp, "%02d:%02d:%02ld.%09ld ", uttime->tm_hour, uttime->tm_min, timenow.tv_sec % 60, timenow.tv_nsec);
+				array_cnt0[index] = data.image[ID].md[0].cnt0;
+				array_cnt1[index] = data.image[ID].md[0].cnt1;
+				array_time[index] = uttime->tm_hour*3600.0 + uttime->tm_min*60.0 + timenow.tv_sec % 60 + 1000000000.0*timenow.tv_nsec);
 
-                if(unlikely(IDlogdata!=-1))
+/*                if(unlikely(IDlogdata!=-1))
                 {
 
                     fprintf(fp, "%8ld", data.image[IDlogdata].md[0].cnt0);
                     for(i=0; i<data.image[IDlogdata].md[0].nelement; i++)
                         fprintf(fp, "  %f", data.image[IDlogdata].array.F[i]);
                 }
-
+*/
+/*
                 for(kw=0; kw<data.image[ID].md[0].NBkw; kw++)
                 {
                     switch (data.image[ID].kw[kw].type) {
@@ -7043,7 +7066,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                     }
                 }
                 fprintf(fp, "\n");
-
+*/
                 index++;
             }
         }
@@ -7113,6 +7136,10 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     free(imsizearray);
 	free(tmsg);
 
+	free(array_time);
+	free(array_cnt0);
+	free(array_cnt1);
+	
     return(0);
 }
 
