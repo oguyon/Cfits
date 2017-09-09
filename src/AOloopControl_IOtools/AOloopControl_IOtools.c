@@ -940,7 +940,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     //    for(ii=0; ii<AOconf[loop].sizeWFS; ii++)
     //       data.image[aoconfID_imWFS0].array.F[ii] -= data.image[IDdark].array.F[ii];
     //}
-    AOconf[loop].statusM = 2;
+    AOconf[loop].statusM = 1;
     if(RM==0)
     {
         AOconf[loop].status = 2; // 4 -> 002 : COMPUTE TOTAL OF IMAGE
@@ -1085,7 +1085,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     printf("TEST - READ CAM DONE\n");
     fflush(stdout);
 #endif
-
+	
+	AOconf[loop].statusM = 2;
 
     return(0);
 }

@@ -87,6 +87,9 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 
 
+#define likely(x)	__builtin_expect(!!(x), 1)
+#define unlikely(x)	__builtin_expect(!!(x), 0)
+
 
 
 
@@ -6715,7 +6718,7 @@ int_fast8_t COREMOD_MEMORY_logshim_set_logexit(const char *IDname, int setv)
  * uses data cube buffer to store frames
  * if an image name logdata exists (should ideally be in shared mem), then this will be included in the timing txt file
  */
-long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, uint32_t zsize, const char *logdir, const char *IDlogdata_name)
+long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, uint32_t zsize, const char *logdir, const char *IDlogdata_name)
 {
     long ID;
     uint32_t xsize, ysize;
@@ -6933,9 +6936,9 @@ long COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, uint32_t zsize, const
          //   fflush(stdout);
         }
 
-        if(logshimconf[0].on == 1)
+        if(likely(logshimconf[0].on == 1))
         {
-            if(wOK==1) // normal step: a frame has arrived
+            if(likely(wOK==1)) // normal step: a frame has arrived
             {
                 /// measure time
                 t = time(NULL);

@@ -131,7 +131,8 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 
 
-
+#define likely(x)	__builtin_expect(!!(x), 1)
+#define unlikely(x)	__builtin_expect(!!(x), 0)
 
 // data passed to each thread
 //typedef struct
@@ -3346,7 +3347,7 @@ int_fast8_t set_DM_modesRM(long loop)
 
 
 
-int_fast8_t AOcompute(long loop, int normalize)
+int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 {
     long k1, k2;
     long ii;
@@ -4384,7 +4385,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 
 // includes mode filtering (limits, multf)
 //
-long AOloopControl_ComputeOpenLoopModes(long loop)
+long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 {
     long IDout;
     long IDmodeval; // WFS measurement
@@ -4882,11 +4883,10 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             else
             {
 				ARPF_ok=1;
-//                printf("%s  %s  %d\n", __FILE__, __func__, __LINE__);fflush(stdout); //TEST
-                
                 // don't wait for modevalPF... assume it's here early
+                
+                // if waiting for modevalPF, uncomment this line, and the "drive semaphore to zero" line after the next loop
                 //sem_wait(data.image[IDmodevalPF].semptr[3]);
-//                printf("%s  %s  %d\n", __FILE__, __func__, __LINE__);fflush(stdout); //TEST
 
 				//
 				// prediction is mixed here with non-predictive output of WFS
@@ -4901,7 +4901,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
                 }
              
                 // drive semaphore to zero
-              //  while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
+				//  while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
 
 
 				//
@@ -4914,9 +4914,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[IDmodevalPF_C].md[0].cnt1 = modevalPFindex;
 				data.image[IDmodevalPF_C].md[0].cnt0++;
 				data.image[IDmodevalPF_C].md[0].write = 0;
-				
-//				printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
-				
+								
 				loopPFcnt++;
             }
         }
@@ -4990,6 +4988,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             data.image[aoconfID_limitb].md[0].write = 0;
 
         }
+
 
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
 		{
@@ -5162,6 +5161,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
         AOconf[loop].statusM = 6;
+		AOconf[loop].statusM1 = 0;
 
         //
         // update current location of dm correction circular buffer
@@ -5176,7 +5176,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-        AOconf[loop].statusM1 = 6;
+        AOconf[loop].statusM1 = 1;
 
 
 
@@ -5198,6 +5198,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
         data.image[IDmodevalDM].md[0].cnt0++;
         data.image[IDmodevalDM].md[0].write = 0;
 
+		AOconf[loop].statusM1 = 2;
 
 		if(AOconf[loop].ARPFon==1)
 		{
@@ -5222,7 +5223,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-        AOconf[loop].statusM1 = 7;
+        AOconf[loop].statusM1 = 2;
 
         //
         // OPEN LOOP STATE = most recent WFS reading - time-lagged DM
@@ -5250,7 +5251,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-        AOconf[loop].statusM1 = 8;
+        AOconf[loop].statusM1 = 3;
 
 		// increment modevalDMindex
         modevalDMindexl = modevalDMindex;
@@ -5318,7 +5319,7 @@ long AOloopControl_ComputeOpenLoopModes(long loop)
             blockstatcnt = 0;
         }
 
-        AOconf[loop].statusM1 = 9;
+        AOconf[loop].statusM1 = 4;
     }
 
     free(modegain);

@@ -843,8 +843,8 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
 
 
 
-    statusMdef[0] = "";
-    statusMdef[1] = "";
+    statusMdef[0] = "DARK SUBTRACT";
+    statusMdef[1] = "NORMALIZE";
     statusMdef[2] = "EXTRACT WFS MODES";
     statusMdef[3] = "UPDATE CURRENT DM STATE";
     statusMdef[4] = "MIX PREDICTION WITH CURRENT DM STATE";
@@ -1039,7 +1039,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
         printf("STATUS %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statuscnt[st]/NBkiter, statuscnt[st], NBkiter, loopiterus*statuscnt[st]/NBkiter , statusdef[st]);
 
 
-
+	
 
     if(AOconf[LOOPNUMBER].GPU0!=0)
     {
@@ -1087,7 +1087,7 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf)
     }
 
 
-
+	printf("--------------- MODAL STRING ---------------\n");
     for(st=0; st<statusmax; st++)
         if(strlen(statusMdef[st])>0)
             printf("STATUSM %2d     %5.2f %%    [   %6ld  /  %6ld  ]   [ %9.3f us] %s\n", st, 100.0*statusMcnt[st]/NBkiter, statusMcnt[st], NBkiter, loopiterus*statusMcnt[st]/NBkiter , statusMdef[st]);
