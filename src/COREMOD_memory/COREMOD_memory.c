@@ -2723,13 +2723,7 @@ long copy_image_ID(const char *name, const char *newname, int shared)
 
 
 
-    if(data.image[IDout].semlog!=NULL)
-    {
-        sem_getvalue(data.image[IDout].semlog, &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[IDout].semlog);
-    }
-    
+
     
 
     
@@ -4258,6 +4252,13 @@ long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
                 sem_post(data.image[ID].semptr[index]);
         }
     }
+    
+   if(data.image[ID].semlog!=NULL)
+    {
+        sem_getvalue(data.image[ID].semlog, &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(data.image[ID].semlog);
+    }  
 
     return(ID);
 }
@@ -4281,6 +4282,13 @@ long COREMOD_MEMORY_image_set_sempost_excl_byID(long ID, long index)
 					sem_post(data.image[ID].semptr[s]);
 			}
         }
+        
+   if(data.image[ID].semlog!=NULL)
+    {
+        sem_getvalue(data.image[ID].semlog, &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(data.image[ID].semlog);
+    }
 
     return(ID);
 }
@@ -6421,7 +6429,9 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
 
             if(slice==NBslice-1)   //if(slice<oldslice)
             {
-                sem_getvalue(data.image[IDout].semptr[0], &semval);
+				COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
+				
+/*                sem_getvalue(data.image[IDout].semptr[0], &semval);
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDout].semptr[0]);
 
@@ -6440,7 +6450,7 @@ long COREMOD_MEMORY_PixMapDecode_U(const char *inputstream_name, uint32_t xsizei
                 sem_getvalue(data.image[IDout].semlog, &semval);
                 if(semval<SEMAPHORE_MAXVAL)
                     sem_post(data.image[IDout].semlog);
-             
+  */           
                 data.image[IDout].md[0].cnt0 ++;
 
                 //     printf("[[ Timimg [us] :   ");

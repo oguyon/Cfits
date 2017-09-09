@@ -2746,9 +2746,6 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
         data.image[IDwfszp].md[0].cnt0 ++;
         data.image[IDwfszp].md[0].write = 0;
 
-        //        sem_getvalue(data.image[IDwfszp].semptr[0], &semval);
-        //        if(semval<SEMAPHORE_MAXVAL)
-        //            COREMOD_MEMORY_image_set_sempost(IDwfszp_name, 0);
         zpcnt++;
     }
 
@@ -3162,13 +3159,15 @@ int_fast8_t AOloopControl_run()
 
 
 
-                        int semnb;
+                      /*  int semnb;
                         for(semnb=0; semnb<data.image[aoconfID_dmC].md[0].sem; semnb++)
                         {
                             sem_getvalue(data.image[aoconfID_dmC].semptr[semnb], &semval);
                             if(semval<SEMAPHORE_MAXVAL)
                                 sem_post(data.image[aoconfID_dmC].semptr[semnb]);
-                        }
+                        }*/
+                        
+                        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_dmC, -1);
                         data.image[aoconfID_dmC].md[0].cnt0++;
                         data.image[aoconfID_dmC].md[0].write = 0;
                         // inform dmdisp that new command is ready in one of the channels
@@ -3744,12 +3743,13 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
                 for(act_active=0; act_active<AOconf[loop].sizeDM_active; act_active++)
                     data.image[aoconfID_meas_act].array.F[DM_active_map[act_active]] = data.image[aoconfID_meas_act_active].array.F[act_active];
 
-                for(semnb=0; semnb<data.image[aoconfID_meas_act].md[0].sem; semnb++)
+				COREMOD_MEMORY_image_set_sempost_byID(aoconfID_meas_act, -1);
+            /*    for(semnb=0; semnb<data.image[aoconfID_meas_act].md[0].sem; semnb++)
                 {
                     sem_getvalue(data.image[aoconfID_meas_act].semptr[semnb], &semval);
                     if(semval<SEMAPHORE_MAXVAL)
                         sem_post(data.image[aoconfID_meas_act].semptr[semnb]);
-                }
+                }*/
                 data.image[aoconfID_meas_act].md[0].cnt0++;
                 data.image[aoconfID_meas_act].md[0].write = 0;
             //}
