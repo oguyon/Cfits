@@ -807,6 +807,8 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
     if(AOloopcontrol_meminit==0)
         AOloopControl_InitializeMemory(1);
 
+exit(0);
+
     statusdef[0] = "LOAD IMAGE";
     statusdef[1] = "DARK SUBTRACT";
     statusdef[2] = "COMPUTE WFS IMAGE TOTAL";
@@ -992,7 +994,6 @@ int_fast8_t AOloopControl_perfTest_statusStats(int updateconf, long NBsample)
 
     printf("\n");
 
-exit(0);
 
     loopfrequ_measured = 1.0*loopcnt/tdiffv;
     if(updateconf==1)
