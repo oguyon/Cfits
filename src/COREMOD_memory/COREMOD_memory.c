@@ -122,7 +122,10 @@ struct savethreadmsg {
     char iname[100];
     char fname[200];
     int partial; // 1 if partial cube
-    long cubesize; // if partial cube, this is the size of the cube
+    long cubesize; // size of the cube
+	long *arraycnt0;
+	long *arraycnt1;
+	double *arraytime;
 };
 
 static long tret; // thread return value
@@ -6787,17 +6790,19 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
 	// recording time for each frame
 	double *array_time;
+	double *array_time_cp;
 	
 	// counters
 	uint64_t *array_cnt0;
+	uint64_t *array_cnt0_cp;
 	uint64_t *array_cnt1;
-	
+	uint64_t *array_cnt1_cp;
 
     int RT_priority = 60; //any number from 0-99
     struct sched_param schedpar;
     
     int use_semlog;
-    
+    int semval;
     
     
 
@@ -6858,10 +6863,13 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 	COREMOD_MEMORY_image_set_semflush(logb1name, -1);
 	
 	
-	// *2 to implement double buffer
 	array_time = (double*) malloc(sizeof(double)*zsize);
 	array_cnt0 = (uint64_t*) malloc(sizeof(uint64_t)*zsize);
 	array_cnt1 = (uint64_t*) malloc(sizeof(uint64_t)*zsize);
+
+	array_time_cp = (double*) malloc(sizeof(double)*zsize);
+	array_cnt0_cp = (uint64_t*) malloc(sizeof(uint64_t)*zsize);
+	array_cnt1_cp = (uint64_t*) malloc(sizeof(uint64_t)*zsize);
 
 
     IDb = IDb0;
@@ -6947,7 +6955,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
 		if(likely(use_semlog==1))
 		{	
-			sem_wait(data.image[IDtrig].semlog);
+			sem_wait(data.image[ID].semlog);
 			cntwait++;
             if(cntwait>cntwaitlim) // save current cube
             {
@@ -6955,6 +6963,15 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 strcpy(tmsg->fname, fname);
                 tmsg->partial = 1; // partial cube
                 tmsg->cubesize = index;
+                
+                memcpy(array_time_cp, array_time, sizeof(double)*index);
+                memcpy(array_cnt0_cp, array_cnt0, sizeof(uint64_t)*index);
+                memcpy(array_cnt1_cp, array_cnt1, sizeof(uint64_t)*index);
+
+                tmsg->arraycnt0 = array_cnt0_cp;
+                tmsg->arraycnt1 = array_cnt1_cp;
+                tmsg->arraytime = array_time_cp;
+                
                 wOK=0;
                 if(index==0)
                     noframe = 1;
@@ -6974,6 +6991,15 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 strcpy(tmsg->fname, fname);
                 tmsg->partial = 1; // partial cube
                 tmsg->cubesize = index;
+                
+                memcpy(array_time_cp, array_time, sizeof(double)*index);
+                memcpy(array_cnt0_cp, array_cnt0, sizeof(uint64_t)*index);
+                memcpy(array_cnt1_cp, array_cnt1, sizeof(uint64_t)*index);
+
+                tmsg->arraycnt0 = array_cnt0_cp;
+                tmsg->arraycnt1 = array_cnt1_cp;
+                tmsg->arraytime = array_time_cp;
+                
                 wOK=0;
                 if(index==0)
                     noframe = 1;
@@ -7110,7 +7136,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
         /// cases:
         /// index>zsize-1  buffer full
-        /// wOK==0 && index>0
+        /// wOK==0 && index>0  : partial
         if(  (index>zsize-1)  ||  ((wOK==0)&&(index>0)) )
         {
             /// save image
@@ -7141,6 +7167,13 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			
 
             strcpy(tmsg->iname, iname);
+            memcpy(array_time_cp, array_time, sizeof(double)*index);
+            memcpy(array_cnt0_cp, array_cnt0, sizeof(uint64_t)*index);
+            memcpy(array_cnt1_cp, array_cnt1, sizeof(uint64_t)*index);
+
+            tmsg->arraycnt0 = array_cnt0_cp;
+            tmsg->arraycnt1 = array_cnt1_cp;
+            tmsg->arraytime = array_time_cp;
             iret_savefits = pthread_create( &thread_savefits, NULL, save_fits_function, tmsg);
 
             logshimconf[0].cnt ++;
@@ -7176,6 +7209,10 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 	free(array_time);
 	free(array_cnt0);
 	free(array_cnt1);
+
+	free(array_time_cp);
+	free(array_cnt0_cp);
+	free(array_cnt1_cp);
 	
     return(0);
 }
