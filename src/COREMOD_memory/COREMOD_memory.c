@@ -6796,6 +6796,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     int RT_priority = 60; //any number from 0-99
     struct sched_param schedpar;
     
+    int use_semlog;
     
     
     
@@ -6925,6 +6926,17 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     exitflag = 0;
 
 
+	// using semlog ?
+	use_semlog = 0;
+   if(data.image[ID].semlog != NULL)
+    {
+        sem_getvalue(data.image[ID].semlog, &semval);
+        
+        if(semval>1)
+           use_semlog = 1;
+    }  
+
+
 
     while( (logshimconf[0].filecnt != NBfiles) && (logshimconf[0].logexit==0) )
     {
@@ -6933,6 +6945,25 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         wOK = 1;
         // printf("Entering wait loop   index = %ld %d\n", index, noframe);
 
+		if(likely(use_semlog==1))
+		{	
+			sem_wait(data.image[IDtrig].semlog);
+			cntwait++;
+            if(cntwait>cntwaitlim) // save current cube
+            {
+                strcpy(tmsg->iname, iname);
+                strcpy(tmsg->fname, fname);
+                tmsg->partial = 1; // partial cube
+                tmsg->cubesize = index;
+                wOK=0;
+                if(index==0)
+                    noframe = 1;
+                else
+                    noframe = 0;
+            }
+		}
+		else
+		{
         while(((cnt==data.image[ID].md[0].cnt0)||(logshimconf[0].on == 0))&&(wOK==1))
         {
             usleep(waitdelayus);
@@ -6950,6 +6981,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                     noframe = 0;
             }
         }
+		}
 
 
 
