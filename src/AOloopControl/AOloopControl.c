@@ -7,12 +7,10 @@
  * @author  O. Guyon
  * @date    10 Sept 2017 -- 
  *
- * 
  * @bug No known bugs.
  * 
  * @see http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html
- * 
- * 
+ *  
  * 
  * @defgroup AOloopControl_streams Image streams
  * @defgroup AOloopControl_AOLOOPCONTROL_CONF AOloopControl main data structure
