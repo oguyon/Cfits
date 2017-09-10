@@ -734,7 +734,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[aoconfID_looptiming].array.F[20] = tdiffv;
+        data.image[aoconfID_looptiming].array.F[24] = tdiffv;
     }
     else
         data.status1 = 2;
@@ -947,7 +947,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[aoconfID_looptiming].array.F[2] = tdiffv;
+        data.image[aoconfID_looptiming].array.F[1] = tdiffv;
     }
 
 #ifdef _PRINT_TEST
@@ -1029,7 +1029,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[aoconfID_looptiming].array.F[3] = tdiffv;
+        data.image[aoconfID_looptiming].array.F[14] = tdiffv;
     }
 
     data.image[aoconfID_imWFS0].md[0].cnt0 ++;
@@ -1087,6 +1087,13 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 #endif
 	
 	AOconf[loop].statusM = 2;
+	if(RM==0)
+    {
+		clock_gettime(CLOCK_REALTIME, &tnow);
+        tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
+        tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
+        data.image[aoconfID_looptiming].array.F[2] = tdiffv;
+	}
 
     return(0);
 }
