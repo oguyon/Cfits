@@ -4294,9 +4294,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     modeblock = (long*) malloc(sizeof(long)*NBmodes);
 
 
-    if(sprintf(name, "aol%ld_looptiming", loop) < 1)
+    if(sprintf(imname, "aol%ld_looptiming", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
+    aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
 
 
 
