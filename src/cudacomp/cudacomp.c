@@ -1974,6 +1974,9 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     {
 		data.image[gpumatmultconf[index].IDout].md[0].cnt1 = data.image[IDtiming].md[0].cnt1;
 		
+		printf("line %d   timer  %d\n", __LINE__, *status);
+		fflush(stdout);
+		
         *status = *status + 1; // -> 10
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
