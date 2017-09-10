@@ -3593,7 +3593,6 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 
 
 
-
 int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_WFSref_name, const char *ID_WFSim_name, const char *ID_WFSimtot_name, const char *ID_coeff_name)
 {
 #ifdef HAVE_CUDA
@@ -3620,7 +3619,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
     long ID_coefft;
 
     double alpha = 0.1;
-
+	char name[200];
 
 	// LOOPiteration is written in cnt1 of loop timing array
     if(sprintf(name, "aol%ld_looptiming", LOOPNUMBER) < 1)
@@ -3756,7 +3755,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
     int RT_priority = 80; //any number from 0-99
     struct sched_param schedpar;
 
-
+	char name[200];
 
 
     schedpar.sched_priority = RT_priority;
