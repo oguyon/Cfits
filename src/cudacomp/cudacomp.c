@@ -1949,7 +1949,7 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
             gpumatmultconf[index].dmVecTMP[m] += gpumatmultconf[index].dmVec_part[ptn][m];
     }
 
-    COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+
 
 
     /*  if(data.image[gpumatmultconf[index].IDout].md[0].sem > 0)
@@ -1969,17 +1969,22 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     */
 
 
-    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
-    data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
 
     if(timing == 1)
     {
+		data.image[gpumatmultconf[index].IDout].md[0].cnt1 = data.image[IDtiming].md[0].cnt1;
+		
         *status = *status + 1; // -> 10
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[IDtiming].array.F[*status] = tdiffv;
     }
+    
+    data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
+    COREMOD_MEMORY_image_set_sempost_byID(gpumatmultconf[index].IDout, -1);
+    data.image[gpumatmultconf[index].IDout].md[0].write = 0;
+
 
     return(0);
 }
