@@ -2637,7 +2637,7 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
 //
 // will run until SIGUSR1 received
 //
-// read LOOPiteration from shared memory stream "aol#_LOOPiteration" if available //TBD
+// read LOOPiteration from shared memory stream "aol#_LOOPiteration" if available 
 //
 int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *IDzrespM_name, const char *IDwfszp_name)
 {
@@ -2651,6 +2651,29 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
     int semval;
     struct timespec t1;
     struct timespec t2;
+	long ID_LOOPiteration;
+
+	char imname[200];
+	
+
+    if(sprintf(imname, "aol%ld_LOOPiteration", LOOPNUMBER) < 1)
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");	
+    ID_LOOPiteration = read_sharedmem_image(imname);
+    if(ID_LOOPiteration == -1)
+		{
+			uint32_t *sizearray;
+			
+			sizearray = (uint32_t*) malloc(sizeof(uint64_t)*2);
+			sizearray[0] = 1;
+			sizearray[1] = 1;
+			
+			ID_LOOPiteration = create_image_ID(imname, 2, sizearray, _DATATYPE_UINT64, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+			free(sizearray);
+		}
+	
+	
 	
 
     IDzpdm = image_ID(IDzpdm_name);
@@ -2780,6 +2803,8 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
     long ii;
     char name[200];
     int semval;
+
+
 
 
 
@@ -3579,9 +3604,9 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 #endif
 
                     data.image[aoconfID_imWFS0].md[0].write = 1;
-                    // TBD: replace by memcpy
-                    for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
-                        data.image[aoconfID_imWFS0].array.F[wfselem] = data.image[aoconfID_wfsref].array.F[wfselem];
+                    memcpy(data.image[aoconfID_imWFS0].array.F, data.image[aoconfID_wfsref].array.F, sizeof(float)*AOconf[loop].sizeWFS);
+             //       for(wfselem=0; wfselem<AOconf[loop].sizeWFS; wfselem++)
+             //           data.image[aoconfID_imWFS0].array.F[wfselem] = data.image[aoconfID_wfsref].array.F[wfselem];
                     COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0, -1);
                     data.image[aoconfID_imWFS0].md[0].cnt0++;
                     data.image[aoconfID_imWFS0].md[0].cnt1 = LOOPiter;
@@ -4065,9 +4090,9 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
             for(ii=0; ii<dmxsize*dmysize; ii++)
                 data.image[IDc].array.F[ii] = data.image[IDout].array.F[ii];
 
+			data.image[IDc].md[0].cnt0++;
             COREMOD_MEMORY_image_set_sempost_byID(IDc, -1);
             data.image[IDc].md[0].write = 0;
-            data.image[IDc].md[0].cnt0++;
             //TBD cnt1
         }
       
@@ -4214,7 +4239,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
     long cnt;
     long ii;
 	long IDalpha;
-	
+	long ID_LOOPiteration;
 
 	IDalpha = image_ID(IDalpha_name);
 	
@@ -4291,6 +4316,17 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         data.image[IDoutrms].array.F[ii] = 0.0;
 
 
+	sizearray[0] = 1;
+	sizearray[1] = 1;
+    if(sprintf(imname, "aol%ld_LOOPiteration", loop) < 1)
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");	
+    ID_LOOPiteration = read_sharedmem_image(imname);
+    if(ID_LOOPiteration == -1)
+		{
+			ID_LOOPiteration = create_image_ID(imname, 2, sizearray, _DATATYPE_UINT64, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(imname, 10);
+		}
+
     free(sizearray);
     
     for(;;)
@@ -4312,7 +4348,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         for(ii=0; ii<wfsxysize; ii++)
             data.image[IDout].array.F[ii] = data.image[IDimWFS0].array.F[ii]/data.image[IDtot].array.F[0] - data.image[IDwfsref].array.F[ii];
         data.image[IDout].md[0].cnt0++;
-        //TBD cnt1
+        data.image[IDout].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDout].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
 
@@ -4323,6 +4359,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         for(ii=0; ii<wfsxysize; ii++)
             data.image[IDoutm].array.F[ii] = data.image[IDout].array.F[ii] * data.image[IDwfsmask].array.F[ii];
         data.image[IDoutm].md[0].cnt0++;
+        data.image[IDoutm].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDoutm].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDoutm, -1);
 
@@ -4333,6 +4370,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         for(ii=0; ii<wfsxysize; ii++)
             data.image[IDoutave].array.F[ii] = (1.0-data.image[IDalpha].array.F[0])*data.image[IDoutave].array.F[ii] + data.image[IDalpha].array.F[0]*data.image[IDout].array.F[ii];
         data.image[IDoutave].md[0].cnt0++;
+        data.image[IDoutave].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDoutave].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDoutave, -1);
 
@@ -4342,6 +4380,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         for(ii=0; ii<wfsxysize; ii++)
             data.image[IDoutmave].array.F[ii] = data.image[IDoutave].array.F[ii] * data.image[IDwfsmask].array.F[ii];
         data.image[IDoutmave].md[0].cnt0++;
+        data.image[IDoutave].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDoutmave].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDoutmave, -1);
 
@@ -4351,6 +4390,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         for(ii=0; ii<wfsxysize; ii++)
             data.image[IDoutrms].array.F[ii] = (1.0-data.image[IDalpha].array.F[0])*data.image[IDoutrms].array.F[ii] + data.image[IDalpha].array.F[0]*(data.image[IDout].array.F[ii]-data.image[IDoutave].array.F[ii])*(data.image[IDout].array.F[ii]-data.image[IDoutave].array.F[ii]);
         data.image[IDoutrms].md[0].cnt0++;
+        data.image[IDoutave].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDoutrms].md[0].write = 0;
         COREMOD_MEMORY_image_set_sempost_byID(IDoutrms, -1);
 
@@ -5813,6 +5853,10 @@ long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, fl
     long ii;
     //long IDtmp;
 
+	long ID_LOOPiteration;
+	char imname[200];
+	
+	
 
     IDin = image_ID(streamin);
     IDout = image_ID(streamout);
@@ -5820,6 +5864,26 @@ long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, fl
     xsize = data.image[IDin].md[0].size[0];
     ysize = data.image[IDin].md[0].size[1];
     xysize = xsize*ysize;
+    
+
+    if(sprintf(imname, "aol%ld_LOOPiteration", LOOPNUMBER) < 1)
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");	
+    ID_LOOPiteration = read_sharedmem_image(imname);
+    if(ID_LOOPiteration == -1)
+		{
+			uint32_t *sizearray;
+			
+			sizearray = (uint32_t*) malloc(sizeof(uint64_t)*2);
+			sizearray[0] = 1;
+			sizearray[1] = 1;
+			
+			ID_LOOPiteration = create_image_ID(imname, 2, sizearray, _DATATYPE_UINT64, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+			free(sizearray);
+		}
+
+
 
     while(1)
     {
@@ -6594,6 +6658,27 @@ int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char 
 
     long IDdmbest;
     long IDpsfarray;
+	long ID_LOOPiteration;
+
+	char imname[200];
+	
+
+    if(sprintf(imname, "aol%ld_LOOPiteration", LOOPNUMBER) < 1)
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");	
+    ID_LOOPiteration = read_sharedmem_image(imname);
+    if(ID_LOOPiteration == -1)
+		{
+			uint32_t *sizearray;
+			
+			sizearray = (uint32_t*) malloc(sizeof(uint64_t)*2);
+			sizearray[0] = 1;
+			sizearray[1] = 1;
+			
+			ID_LOOPiteration = create_image_ID(imname, 2, sizearray, _DATATYPE_UINT64, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+			free(sizearray);
+		}
 
 
     ampl = 0.01; // modulation amplitude
@@ -6628,7 +6713,7 @@ int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char 
             data.image[IDdmstream].md[0].write = 1;
             memcpy(data.image[IDdmstream].array.F, data.image[IDdm].array.F, sizeof(float)*dmxsize*dmysize);
             data.image[IDdmstream].md[0].cnt0++;
-			//TBD cnt1 data.image[IDdmstream].md[0].cnt1 = 
+			data.image[IDdmstream].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
             data.image[IDdmstream].md[0].write = 0;
 
 
@@ -6678,6 +6763,28 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
     struct timespec *thetime = (struct timespec *)malloc(sizeof(struct timespec));
     long ii;
     int semval;
+
+	long ID_LOOPiteration;
+
+	char imname[200];
+	
+
+    if(sprintf(imname, "aol%ld_LOOPiteration", LOOPNUMBER) < 1)
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");	
+    ID_LOOPiteration = read_sharedmem_image(imname);
+    if(ID_LOOPiteration == -1)
+		{
+			uint32_t *sizearray;
+			
+			sizearray = (uint32_t*) malloc(sizeof(uint64_t)*2);
+			sizearray[0] = 1;
+			sizearray[1] = 1;
+			
+			ID_LOOPiteration = create_image_ID(imname, 2, sizearray, _DATATYPE_UINT64, 1, 0);
+			COREMOD_MEMORY_image_set_createsem(imname, 10);
+
+			free(sizearray);
+		}
 
 
 
@@ -6792,7 +6899,7 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
         if(semval<SEMAPHORE_MAXVAL)
             sem_post(data.image[IDdmstream].semptr[0]);
         data.image[IDdmstream].md[0].cnt0++;
-        //TBD cnt1
+        data.image[IDdmstream].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDdmstream].md[0].write = 0;
 
         // apply wfsref offset
@@ -6804,7 +6911,7 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
         if(semval<SEMAPHORE_MAXVAL)
             sem_post(data.image[IDwfsrefstream].semptr[0]);
         data.image[IDwfsrefstream].md[0].cnt0++;
-        //TBD cnt1
+        data.image[IDwfsrefstream].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
         data.image[IDwfsrefstream].md[0].write = 0;
 
         // write time in log
@@ -6840,7 +6947,7 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
     if(semval<SEMAPHORE_MAXVAL)
         sem_post(data.image[IDdmstream].semptr[0]);
     data.image[IDdmstream].md[0].cnt0++;
-    //TBD cnt1
+    data.image[IDdmstream].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
     data.image[IDdmstream].md[0].write = 0;
 
 
@@ -6851,7 +6958,7 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
     if(semval<SEMAPHORE_MAXVAL)
         sem_post(data.image[IDwfsrefstream].semptr[0]);
     data.image[IDwfsrefstream].md[0].cnt0++;
-    //TBD cnt1
+    data.image[IDwfsrefstream].md[0].cnt1 = data.image[ID_LOOPiteration].array.UI64[0];
     data.image[IDwfsrefstream].md[0].write = 0;
 
 
