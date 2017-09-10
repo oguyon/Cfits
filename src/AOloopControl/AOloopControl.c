@@ -5205,6 +5205,7 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
     long IDmodeval_dm;
     long IDmodeval_dm_now;
     long IDmodeval_dm_now_filt;
+	long IDmodeWFSnoise;
 
     long NBmodes;
     char imname[200];
@@ -5364,6 +5365,15 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 
 
 
+	// load/create aol_modeval_dm (modal DM correction at time of currently available WFS measurement)
+	sizearray = (uint32_t *) malloc(sizeof(uint32_t)*2);
+	sizearray[0] = NBmodes;
+	sizearray[1] = 1;
+	if(sprintf(imname, "aol%ld_modeWFSnoise", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	IDmodeWFSnoise = create_image_ID(imname, 2, sizearray, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+	free(sizearray);
 
     // blocks
     if(sprintf(imname, "aol%ld_mode_blknb", loop) < 1) // block indices
@@ -5561,8 +5571,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
             if(array_asq[m]<0.0)
                 array_asq[m] = 0.0;
 
+			// WFS variance
             //array_sig[m] = (4.0*array_sig1[m] - array_sig2[m])/6.0;
-
             // This formula is compatible with astromgrid, which alternates between patterns
             array_sig[m] = (4.0*array_sig2[m] - array_sig4[m])/6.0;
 
@@ -5595,7 +5605,13 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         data.image[IDout].md[0].write = 0;
 
 
-
+		// write noise
+		data.image[IDmodeWFSnoise].md[0].write = 1;
+		data.image[IDmodeWFSnoise].md[0].cnt0++;
+		for(m=0;m<NBmodes;m++)
+			data.image[IDmodeWFSnoise].array.F[m] = array_sig[m];		
+		data.image[IDmodeWFSnoise].md[0].cnt1 = AOconf[loop].LOOPiteration;
+		data.image[IDmodeWFSnoise].md[0].write = 0;
 
 
         if(AOconf[loop].AUTOTUNE_GAINS_ON==1) // automatically adjust gain values
@@ -5611,6 +5627,9 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
         
         printf("[%8ld]  %8ld   %8.6f -> %8.6f\n", iter, AOconf[loop].AUTOTUNEGAINS_NBsamples, AOconf[loop].AUTOTUNEGAINS_updateGainCoeff, GainCoeff1);
         
+        
+        
+     
         iter++;
 
     }
