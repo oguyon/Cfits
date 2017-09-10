@@ -11,7 +11,6 @@
  * 
  * @see http://oguyon.github.io/AdaptiveOpticsControl/src/AOloopControl/doc/AOloopControl.html
  *  
- * 
  * @defgroup AOloopControl_streams Image streams
  * @defgroup AOloopControl_AOLOOPCONTROL_CONF AOloopControl main data structure
  * 
