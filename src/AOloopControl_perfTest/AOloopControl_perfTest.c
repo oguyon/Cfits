@@ -372,7 +372,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 	float ratio0, ratio;
 	int color;
     long IDblknb;
-    
+    float valPFres, valOL, valWFS;
     
 
 
@@ -494,8 +494,21 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 		// WFS noise corrected
 		
 		printw("          WFS noise removed ------->               ");
-		printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
-		ratio0 = AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k];
+		
+		valOL = AOconf[loop].blockave_OLrms[k]*AOconf[loop].blockave_OLrms[k] - AOconf[loop].blockave_WFSnoise[k]*AOconf[loop].blockave_WFSnoise[k];
+		if(valOL>0.0)
+			valOL = sqrt(valOL);
+		else
+			valOL = 0.0;
+		
+		valWFS = AOconf[loop].blockave_WFSrms[k]*AOconf[loop].blockave_WFSrms[k] - AOconf[loop].blockave_WFSnoise[k]*AOconf[loop].blockave_WFSnoise[k];
+		if(valWFS>0.0)
+			valWFS = sqrt(valWFS);
+		else
+			valWFS = 0.0;
+			
+		printw("  |            %8.2f  ->  %8.2f", 1000.0*valOL, 1000.0*valWFS);
+		ratio0 = valWFS/valOL;
 		if(ratio0>0.999)
 			color=2;
 		else
@@ -508,14 +521,19 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         if( AOconf[loop].blockave_limFrac[k] > 0.01 )
             attron(A_BOLD | COLOR_PAIR(2));
 
-        printw("| %2ld | %9.3f  %6.2f\% |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
+        printw("|    |                   |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
         attroff(A_BOLD | COLOR_PAIR(2));
         
         if(AOconf[loop].ARPFon==1){
-			printw("%8.2f |", 1000.0*AOconf[loop].blockave_PFresrms[k]);
+			valPFres = AOconf[loop].blockave_PFresrms[k]*AOconf[loop].blockave_PFresrms[k] - AOconf[loop].blockave_WFSnoise[k]*AOconf[loop].blockave_WFSnoise[k];
+			if(valPFres>0.0)
+				valPFres = sqrt(valPFres);
+			else
+				valPFres = 0.0;
+			printw("%8.2f |", 1000.0*valPFres);
 			
 			
-			ratio = AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k];
+			ratio = valPFres/valOL;
 			color = 0;
 			if(ratio>1.0)
 				color=2;
