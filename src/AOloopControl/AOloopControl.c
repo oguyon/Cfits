@@ -4622,7 +4622,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     allavelimFrac = 0.0;
 
 
-
+	printf("line %d\n", __LINE__);
+	fflush(stdout);
+	
 	loopPFcnt = 0;
     for(;;)
     {		
