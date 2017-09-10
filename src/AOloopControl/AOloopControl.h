@@ -40,7 +40,7 @@ static FILE *loadcreateshm_fplog;
  */
 typedef struct
 {	
-	uint64_t LOOPiteration;
+	uint64_t LOOPiteration;                   /**< Loop iteration - set to zero on creation on aolrun start */
 	
     /* =============================================================================================== */
 	/** @name AOLOOPCONTROL_CONF: TIMING 
@@ -80,8 +80,8 @@ typedef struct
 	 */
 
     int_fast8_t init;                         /**< Has the structure been initialized ? */
-    uint_fast64_t cnt;                        /**<  */
-    uint_fast64_t cntmax;                     /**<  */
+    uint_fast64_t cnt;                        /**<  loop step counter, set to zero every time loop is stopped */
+    uint_fast64_t cntmax;                     /**<  max value of counter, used to step loop */
     uint_fast64_t DMupdatecnt;                /**<  */
     int_fast8_t kill;                         /**<  set to 1 to kill computation loop */
     char name[80];
