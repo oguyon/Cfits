@@ -4626,17 +4626,12 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     allavelimFrac = 0.0;
 
 
-	printf("line %d\n", __LINE__);
-	fflush(stdout);
-	
+
 	loopPFcnt = 0;
     for(;;)
     {		
 		long modevalDMindex0, modevalDMindex1;
 		long modevalPFindex0, modevalPFindex1;
-		
-		printf("line %d    aoconfID_looptiming = %ld\n", __LINE__, aoconfID_looptiming);
-	fflush(stdout);	
 		
 		
         // read WFS measured modes (residual)
@@ -4658,10 +4653,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
         data.image[aoconfID_looptiming].array.F[3] = tdiffv;
 
 		LOOPiter = data.image[IDmodeval].md[0].cnt1;
-
-
-	printf("line %d\n", __LINE__);
-	fflush(stdout);
 
 
         // write gain, mult, limit into arrays
@@ -4690,9 +4681,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDMcorr].md[0].write = 0;
 
 
-	printf("line %d    aoconfID_looptiming = %ld\n", __LINE__, aoconfID_looptiming);
-	fflush(stdout);
-
         AOconf[loop].statusM = 4;
 		clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
@@ -4703,9 +4691,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 		int ARPF_ok;
 		ARPF_ok = 0;
-
-	printf("line %d\n", __LINE__);
-	fflush(stdout);
 
         //
         //  MIX PREDICTION WITH CURRENT DM STATE
@@ -4767,10 +4752,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-
-
-	printf("line %d\n", __LINE__);
-	fflush(stdout);
 
 
 
@@ -4838,9 +4819,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
         }
 
-
-	printf("line %d\n", __LINE__);
-	fflush(stdout);
 
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
 		{
@@ -4914,9 +4892,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 				
 			}
 	
-		printf("line %d\n", __LINE__);
-	fflush(stdout);		
-			
 /*			float alphagain = 0.1;
 			
 			// if update available
