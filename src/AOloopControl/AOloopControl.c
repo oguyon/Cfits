@@ -4597,7 +4597,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     data.image[IDmodevalPF_C].md[0].write = 0;
 
     printf("FILTERMODE = %d\n", FILTERMODE);
-    list_image_ID();
+ 
 
     modevalDMindex = 0;
     modevalDMindexl = 0;
@@ -4655,6 +4655,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 		LOOPiter = data.image[IDmodeval].md[0].cnt1;
 
 
+	printf("line %d\n", __LINE__);
+	fflush(stdout);
+
 
         // write gain, mult, limit into arrays
         for(m=0; m<NBmodes; m++)
@@ -4693,6 +4696,8 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 		int ARPF_ok;
 		ARPF_ok = 0;
 
+	printf("line %d\n", __LINE__);
+	fflush(stdout);
 
         //
         //  MIX PREDICTION WITH CURRENT DM STATE
@@ -4756,7 +4761,8 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 
 
-
+	printf("line %d\n", __LINE__);
+	fflush(stdout);
 
 
 
@@ -4824,6 +4830,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
         }
 
+
+	printf("line %d\n", __LINE__);
+	fflush(stdout);
 
 		if(AOconf[loop].AUTOTUNE_GAINS_ON==1)
 		{
@@ -4897,7 +4906,8 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 				
 			}
 	
-			
+		printf("line %d\n", __LINE__);
+	fflush(stdout);		
 			
 /*			float alphagain = 0.1;
 			
