@@ -5,7 +5,7 @@
  * AO engine uses stream data structure
  *  
  * @author  O. Guyon
- * @date    10 Sept 2017
+ * @date    10 Sept 2017 -- 
  *
  * 
  * @bug No known bugs.
@@ -18,7 +18,6 @@
  * @defgroup AOloopControl_AOLOOPCONTROL_CONF AOloopControl main data structure
  * 
  */
-
 
 
 #define _GNU_SOURCE
@@ -47,7 +46,7 @@
 
 
 
-#ifdef __MACH__
+#ifdef __MACH__   // for Mac OS X - 
 #include <mach/mach_time.h>
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 0
@@ -85,6 +84,8 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 #include <fitsio.h>
 
+
+//libraries created by O. Guyon 
 #include "CLIcore.h"
 #include "00CORE/00CORE.h"
 #include "COREMOD_memory/COREMOD_memory.h"
@@ -130,7 +131,6 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 
 
-
 #define likely(x)	__builtin_expect(!!(x), 1)
 #define unlikely(x)	__builtin_expect(!!(x), 0)
 
@@ -145,8 +145,6 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 
 
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                  GLOBAL DATA DECLARATION                                        */
@@ -156,9 +154,8 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 
 
 
-
 /* =============================================================================================== */
-/*                    LOGGING ACCESS TO FUNCTIONS                                                  */
+/*                				    LOGGING ACCESS TO FUNCTIONS           	                       */
 /* =============================================================================================== */
 
 // uncomment at compilation time to enable logging of function entry/exit
@@ -317,39 +314,17 @@ int *DM_active_map; // used to map DM actuators into active array
 static long aoconfID_meas_act_active;
 static long aoconfID_imWFS2_active[100];
 
-
-
-
-
-
-
-
-
-
-
-
 float normfloorcoeff = 1.0;
-
-
-
-
 
 static long wfsrefcnt0 = -1;
 static long contrMcactcnt0[100] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};;
 
 
-
 // variables used by functions
-
 
 static int GPUcntMax = 100;
 static int *GPUset0;
 static int *GPUset1;
-
-
-
-
-
 
 
 
@@ -368,32 +343,6 @@ static int AOlooploadconf_init = 0;
 #define AOconfname "/tmp/AOconf.shm"
 AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // CLI commands
 //
 // function CLI_checkarg used to check arguments
@@ -406,9 +355,6 @@ AOLOOPCONTROL_CONF *AOconf; // configuration - this can be an array
 // 4: existing image
 // 5: string
 //
-
-
-
 
 
 
@@ -429,9 +375,6 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
 }
 
 
-
-
-
 /** @brief CLI function for AOloopControl_stream3Dto2D */
 /*int_fast8_t AOloopControl_stream3Dto2D_cli() {
     if(CLI_checkarg(1,4)+CLI_checkarg(2,3)+CLI_checkarg(3,2)+CLI_checkarg(4,2)==0) {
@@ -440,14 +383,6 @@ int_fast8_t AOloopControl_loadconfigure_cli() {
     }
     else return 1;
 }*/
-
-
-
-
-
-
-
-
 
 
 
@@ -539,10 +474,6 @@ int_fast8_t AOloopControl_sig2Modecoeff_cli() {
 
 
 
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl - 8.   LOOP CONTROL INTERFACE */
@@ -558,7 +489,6 @@ int_fast8_t AOloopControl_setLoopNumber_cli() {
     }
     else return 1;
 }
-
 
 
 /* =============================================================================================== */
@@ -590,11 +520,9 @@ int_fast8_t AOloopControl_setLoopNumber_cli() {
 /* =============================================================================================== */
 
 
-
 /* =============================================================================================== */
 /** @name AOloopControl - 8.7. LOOP CONTROL INTERFACE - CONTROL LOOP PARAMETERS                    */
 /* =============================================================================================== */
-
 
 
 /** @brief CLI function for AOloopControl_set_modeblock_gain */
@@ -813,7 +741,6 @@ int_fast8_t AOloopControl_DMmodulateAB_cli()
 }
 
 
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl - 11. PROCESS LOG FILES                                                    */
@@ -832,42 +759,6 @@ int_fast8_t AOloopControl_logprocess_modeval_cli() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 1: float
 // 2: long
 // 3: string, not existing image
@@ -877,30 +768,7 @@ int_fast8_t AOloopControl_logprocess_modeval_cli() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // OBSOLETE ??
-
 
 
 int_fast8_t AOloopControl_setparam_cli()
@@ -915,26 +783,12 @@ int_fast8_t AOloopControl_setparam_cli()
 }
 
 
-
-
-
-
-
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /*                                    FUNCTIONS SOURCE CODE                                        */
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl functions */
-
-
-
-
-
 
 
 /* =============================================================================================== */
@@ -944,6 +798,23 @@ int_fast8_t AOloopControl_setparam_cli()
 /* =============================================================================================== */
 
 
+// CODING STANDARD NOTE: minimal required documentation for doxygen
+/**
+ *  ## Purpose
+ * 
+ * Initialization of the AO loop Control with all of the CLI command line interface commands
+ * 
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * mode		INT
+ * 			mode sets up what function does
+ * -		does nothing
+ * -		also does nothing
+ * 
+ */
+// CODING STANDARD NOTE: function name start with module name
 
 int_fast8_t init_AOloopControl()
 {
@@ -983,7 +854,6 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 /* =============================================================================================== */
 
-
 /* =============================================================================================== */
 /** @name AOloopControl - 2.1. LOW LEVEL UTILITIES & TOOLS - LOAD DATA STREAMS                     */
 /* =============================================================================================== */
@@ -999,11 +869,6 @@ int_fast8_t init_AOloopControl()
 
 
 
-
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES                                          */
@@ -1011,18 +876,17 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
     
 
-    RegisterCLIcommand("aolrun", __FILE__, AOloopControl_run, "run AO loop", "no arg", "aolrun", "int AOloopControl_run()");
+    RegisterCLIcommand("aolrun", __FILE__, AOloopControl_run, "run AO loop", "no arg", "aolrun", "int AOloopControl_run()"); // run AO loop
 
-    RegisterCLIcommand("aolzpwfsloop",__FILE__, AOloopControl_WFSzpupdate_loop_cli, "WFS zero point offset loop", "<dm offset [shared mem]> <zonal resp M [shared mem]> <nominal WFS reference>  <modified WFS reference>", "aolzpwfsloop dmZP zrespM wfszp", "int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name)");
+    RegisterCLIcommand("aolzpwfsloop",__FILE__, AOloopControl_WFSzpupdate_loop_cli, "WFS zero point offset loop", "<dm offset [shared mem]> <zonal resp M [shared mem]> <nominal WFS reference>  <modified WFS reference>", "aolzpwfsloop dmZP zrespM wfszp", "int AOloopControl_WFSzpupdate_loop(char *IDzpdm_name, char *IDzrespM_name, char *IDwfszp_name)"); //WFS zero point offset loop
 
-    RegisterCLIcommand("aolzpwfscloop", __FILE__, AOloopControl_WFSzeropoint_sum_update_loop_cli, "WFS zero point offset loop: combine multiple input channels", "<name prefix> <number of channels> <wfsref0> <wfsref>", "aolzpwfscloop wfs2zpoffset 4 wfsref0 wfsref", "int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)");
+    RegisterCLIcommand("aolzpwfscloop", __FILE__, AOloopControl_WFSzeropoint_sum_update_loop_cli, "WFS zero point offset loop: combine multiple input channels", "<name prefix> <number of channels> <wfsref0> <wfsref>", "aolzpwfscloop wfs2zpoffset 4 wfsref0 wfsref", "int AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, char *ID_WFSzp_name, int NBzp, char *IDwfsref0_name, char *IDwfsref_name)"); //WFS zero point offset loop: combine multiple input channels
 
-    RegisterCLIcommand("aocmlrun", __FILE__, AOloopControl_CompModes_loop_cli, "run AO compute modes loop", "<CM> <wfsref> <WFS image stream> <WFS image total stream> <output stream>", "aocmlrun CM wfsref wfsim wfsimtot aomodeval", "int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)");
+    RegisterCLIcommand("aocmlrun", __FILE__, AOloopControl_CompModes_loop_cli, "run AO compute modes loop", "<CM> <wfsref> <WFS image stream> <WFS image total stream> <output stream>", "aocmlrun CM wfsref wfsim wfsimtot aomodeval", "int AOloopControl_CompModes_loop(char *ID_CM_name, char *ID_WFSref_name, char *ID_WFSim_name, char *ID_WFSimtot, char *ID_coeff_name)"); // run AO compute modes loop
 
-    RegisterCLIcommand("aolmc2dmfilt", __FILE__, AOloopControl_GPUmodecoeffs2dm_filt_loop_cli, "convert mode coefficients to DM map", "<GPUMATMULTindex> <mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex> <loopnb> <offloadMode>", "aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 0.2 1 2 1", "int AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFindex, char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, long offloadMode)");
+    RegisterCLIcommand("aolmc2dmfilt", __FILE__, AOloopControl_GPUmodecoeffs2dm_filt_loop_cli, "convert mode coefficients to DM map", "<GPUMATMULTindex> <mode coeffs> <DMmodes> <sem trigg number> <out> <GPUindex> <loopnb> <offloadMode>", "aolmc2dmfilt aolmodeval DMmodesC 2 dmmapc 0.2 1 2 1", "int AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFindex, char *modecoeffs_name, char *DMmodes_name, int semTrigg, char *out_name, int GPUindex, long loop, long offloadMode)"); //convert mode coefficients to DM map
 
-    RegisterCLIcommand("aolsig2mcoeff", __FILE__, AOloopControl_sig2Modecoeff_cli, "convert signals to mode coeffs", "<signal data cube> <reference> <Modes data cube> <output image>", "aolsig2mcoeff wfsdata wfsref wfsmodes outim", "long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)");
-
+    RegisterCLIcommand("aolsig2mcoeff", __FILE__, AOloopControl_sig2Modecoeff_cli, "convert signals to mode coeffs", "<signal data cube> <reference> <Modes data cube> <output image>", "aolsig2mcoeff wfsdata wfsref wfsmodes outim", "long AOloopControl_sig2Modecoeff(char *WFSim_name, char *IDwfsref_name, char *WFSmodes_name, char *outname)"); // convert signals to mode coeffs
 
 
 /* =============================================================================================== */
@@ -1031,12 +895,11 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 /* =============================================================================================== */
     
-    RegisterCLIcommand("aolnb", __FILE__, AOloopControl_setLoopNumber_cli, "set AO loop #", "<loop nb>", "AOloopnb 0", "int AOloopControl_setLoopNumber(long loop)");
+    RegisterCLIcommand("aolnb", __FILE__, AOloopControl_setLoopNumber_cli, "set AO loop #", "<loop nb>", "AOloopnb 0", "int AOloopControl_setLoopNumber(long loop)"); // set AO loop 
 
 /* =============================================================================================== */
 /** @name AOloopControl - 8.1. LOOP CONTROL INTERFACE - MAIN CONTROL : LOOP ON/OFF START/STOP/STEP/RESET */
 /* =============================================================================================== */
-
 
 /* =============================================================================================== */
 /** @name AOloopControl - 8.2. LOOP CONTROL INTERFACE - DATA LOGGING                               */
@@ -1066,11 +929,6 @@ int_fast8_t init_AOloopControl()
     RegisterCLIcommand("aolsetgain", __FILE__, AOloopControl_setgain_cli, "set gain", "<gain value>", "aolsetgain 0.1", "int AOloopControl_setgain(float gain)");
 
     RegisterCLIcommand("aolsetARPFgain", __FILE__, AOloopControl_setARPFgain_cli, "set auto-regressive predictive filter gain", "<gain value>", "aolsetARPFgain 0.1", "int AOloopControl_setARPFgain(float gain)");
-
-
-
-
-
 
 
 
@@ -1134,31 +992,6 @@ int_fast8_t init_AOloopControl()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     RegisterCLIcommand("aolsetloopfrequ",
                        __FILE__,
                        AOloopControl_set_loopfrequ_cli,
@@ -1185,24 +1018,7 @@ int_fast8_t init_AOloopControl()
 
 
 
-
-
-
-
-
-
-
-
-
-
     RegisterCLIcommand("aollogprocmodeval",__FILE__, AOloopControl_logprocess_modeval_cli, "process log image modeval", "<modeval image>", "aollogprocmodeval imc", "int AOloopControl_logprocess_modeval(const char *IDname);");
-
-
-
-
-
-
-
 
 
 
@@ -1239,31 +1055,11 @@ int_fast8_t init_AOloopControl()
 
 
 
-
-
-
-
     // add atexit functions here
-    // atexit((void*) myfunc);
+    // atexit((void*) myfunc); atexit = starts a function once the program exits (only if it is not a crash exit)
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1274,12 +1070,14 @@ int_fast8_t init_AOloopControl()
 /* =============================================================================================== */
 
 
-
+/* =============================================================================================== */
+/** @brief Read parameter value - float, char or int                                               */
+/* =============================================================================================== */
 
 /**
  * ## Purpose
  * 
- * Read parameter value (float)
+ * Read parameter value (float) from file 
  * 
  * ## Arguments
  * 
@@ -1340,7 +1138,7 @@ float AOloopControl_readParam_float(char *paramname, float defaultValue, FILE *f
 /**
  * ## Purpose
  * 
- * Read parameter value (int)
+ * Read parameter value (int) from file 
  * 
  * ## Arguments
  * 
@@ -1401,7 +1199,7 @@ int AOloopControl_readParam_int(char *paramname, int defaultValue, FILE *fplog)
 /**
  * ## Purpose
  * 
- * Read parameter value (char*)
+ * Read parameter value (char*) from file 
  * 
  * ## Arguments
  * 
@@ -1461,26 +1259,14 @@ char* AOloopControl_readParam_string(char *paramname, char* defaultValue, FILE *
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* =============================================================================================== */
+/** @brief Load / Setup configuration                                                              */
+/* =============================================================================================== */
 
 /**
  * ## Purpose
  * 
- * load / setup configuration
+ * load / setup configuration - amazingly loooong function, I am proud of you Boss ! 
  *
  * ## Arguments
  * 
@@ -1552,13 +1338,9 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         AOloopControl_InitializeMemory(0);
 
 
-
-
-
 	
 	//
     /** ### 1.2. Set names of key streams */
-    //
     // Here we define names of key streams used by loop
 
 	fprintf(fplog, "\n\n============== 1.2. Set names of key streams ===================\n\n");
@@ -1609,8 +1391,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     printf("contrM file name: %s\n", name);
     strcpy(AOconf[loop].contrMname, name);
-
-
 
 
 
@@ -1717,10 +1497,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
-
-
-
 	/** ### 1.9. Setup loop timing array 
 	 */
 	fprintf(fplog, "\n\n============== 1.9. Setup loop timing array ===================\n\n");
@@ -1729,8 +1505,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
-
-
 
 
 	/** ## 2. Read/load shared memory arrays
@@ -1767,9 +1541,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     AOconf[loop].sizeWFS = AOconf[loop].sizexWFS*AOconf[loop].sizeyWFS;
 
     fprintf(fplog, "WFS stream size = %ld x %ld\n", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS);
-
-
-
 
 
     /**
@@ -1820,7 +1591,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     if(sprintf(name, "aol%ld_imWFS2", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
     aoconfID_imWFS2 = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", AOconf[loop].sizexWFS, AOconf[loop].sizeyWFS, 0.0);
-
 
 
 
@@ -1886,8 +1656,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
-
 	/**
 	 * - AOconf[loop].dmRMname : DM response matrix channel
 	 * 
@@ -1904,7 +1672,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         }
     }
     fprintf(fplog, "stream %s loaded as ID = %ld\n", AOconf[loop].dmRMname, aoconfID_dmRM);
-
 
 
 
@@ -1925,17 +1692,13 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	printf("NBmodes = %ld\n", AOconf[loop].NBDMmodes);
 	
 	
-	
-	
 
 	/** 
 	 * ## 3. Load DM modes (if level >= 10)
 	 * 
-	 * 
 	 * */
 
 	fprintf(fplog, "\n\n============== 3. Load DM modes (if level >= 10)  ===================\n\n");
-
 
 	
     if(level>=10) // Load DM modes (will exit if not successful)
@@ -1948,8 +1711,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 		 */
 		
         aoconfID_DMmodes = image_ID(AOconf[loop].DMmodesname); 
-		
-
 
         if(aoconfID_DMmodes == -1) // If not, check file
         {
@@ -2073,7 +1834,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
     // TO BE CHECKED
 
     // AOconf[loop].NBMblocks = AOconf[loop].DMmodesNBblock;
@@ -2164,7 +1924,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         AOconf[loop].init_RM = 1;
 
 
-
         AOconf[loop].init_CM = 0;
         if(sprintf(fname, "conf/shmim_contrM.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -2190,7 +1949,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         }
 
 
-
         if(sprintf(name, "aol%ld_contrMc", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_contrMc.fits") < 1)
@@ -2202,7 +1960,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
         if(sprintf(fname, "conf/shmim_contrMcact_00.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         aoconfID_contrMcact[0] = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].activeWFScnt, AOconf[loop].activeDMcnt, 0.0);
-
 
 
 
@@ -2311,10 +2068,6 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 
-
-
-
-
     if(AOconf[loop].DMmodesNBblock==1)
         AOconf[loop].indexmaxMB[0] = AOconf[loop].NBDMmodes;
     else
@@ -2360,29 +2113,31 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
     CORE_logFunctionCall( AOLOOPCONTROL_logfunc_level, AOLOOPCONTROL_logfunc_level_max, 1, __FUNCTION__, __LINE__, "");
 #endif
 
-
-
-
-
     return(0);
 }
 
 
+/* ================== END HUGE FUNCTON =========================================================== */
 
 
 
 
+/**
+ * ## Purpose
+ * 
+ * Initialize memory of the loop  
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	int
+ * 				value of the mode
+ * 
+ *
+ *  
+ */
 
-
-
-
-
-
-
-
-
-
-/*** mode = 0 or 1. if mode == 1, simply connect */
+/***  */
 
 int_fast8_t AOloopControl_InitializeMemory(int mode)
 {
@@ -2399,12 +2154,7 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
     CORE_logFunctionCall( AOLOOPCONTROL_logfunc_level, AOLOOPCONTROL_logfunc_level_max, 0, __FUNCTION__, __LINE__, "");
 #endif
 
-
-
-
-
     loop = LOOPNUMBER;
-
 
 
 
@@ -2453,16 +2203,12 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
     }
 
 
-
-
     AOconf = (AOLOOPCONTROL_CONF*) mmap(0, sizeof(AOLOOPCONTROL_CONF)*NB_AOloopcontrol, PROT_READ | PROT_WRITE, MAP_SHARED, SM_fd, 0);
     if (AOconf == MAP_FAILED) {
         close(SM_fd);
         perror("Error mmapping the file");
         exit(0);
     }
-
-
 
 
     if((mode==0)||(create==1))
@@ -2608,28 +2354,11 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl - 6. REAL TIME COMPUTING ROUTINES                                          */
 /* =============================================================================================== */
 /* =============================================================================================== */
-
-
 
 
 
@@ -2708,7 +2437,6 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
     }
 
 
-
     IDtmp = create_2Dimage_ID("wfsrefoffset", wfsxsize, wfsysize);
 
 
@@ -2749,7 +2477,6 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
                 data.image[IDtmp].array.F[elem] += data.image[IDzpdm].array.F[act]*data.image[IDzrespM].array.F[act*wfsxysize+elem];
 
 
-
         clock_gettime(CLOCK_REALTIME, &t2);
         tdiff = info_time_diff(t1, t2);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
@@ -2771,8 +2498,6 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
 
     return 0;
 }
-
-
 
 
 //
@@ -2800,9 +2525,9 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
 
 	// LOOPiteration is written in cnt1 of loop timing array
-    if(sprintf(name, "aol%ld_looptiming", LOOPNUMBER) < 1)
-        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
+  // if(sprintf(name, "aol%ld_looptiming", LOOPNUMBER) < 1)
+  //      printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+  //  aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
 
 
     schedpar.sched_priority = RT_priority;
@@ -2843,7 +2568,6 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
         IDwfszparray[ch] = image_ID(name);
     }
 
-
     cntsumold = 0;
     for(;;)
     {
@@ -2860,7 +2584,6 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
         long cntsum = 0;
         for(ch=0; ch<NBzp; ch++)
             cntsum += data.image[IDwfszparray[ch]].md[0].cnt0;
-
 
 
         if(cntsum != cntsumold)
@@ -2890,8 +2613,6 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
     return(0);
 }
-
-
 
 
 
@@ -2941,7 +2662,6 @@ int_fast8_t AOloopControl_run()
 #endif
 
 
-
     loop = LOOPNUMBER;
 
 
@@ -2957,11 +2677,6 @@ int_fast8_t AOloopControl_run()
     AOloopControl_loadconfigure(LOOPNUMBER, 1, 10);
 
 	
-	
-	
-
-
-
     // pixel streaming ?
     COMPUTE_PIXELSTREAMING = 1;
 
@@ -2998,7 +2713,6 @@ int_fast8_t AOloopControl_run()
     }
 
 
-
     printf("============ FORCE pixel streaming = 0\n");
     fflush(stdout);
     COMPUTE_PIXELSTREAMING = 0; // TEST
@@ -3019,11 +2733,6 @@ int_fast8_t AOloopControl_run()
         for(k=0; k<AOconf[loop].GPU1; k++)
             printf("stream %2d      GPUset1 = %2d\n", (int) k, GPUset1[k]);
     }
-
-
-
-
-
 
 
 
@@ -3205,10 +2914,6 @@ int_fast8_t AOloopControl_run()
 
 
 
-
-
-
-
 int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long n, float *outvect)
 {
     long i;
@@ -3217,7 +2922,6 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
 
     return(0);
 }
-
 
 
 
@@ -3230,6 +2934,13 @@ int_fast8_t ControlMatrixMultiply( float *cm_array, float *imarray, long m, long
  * 
  * Takes mode values from aol_DMmode_cmd (ID = aoconfID_cmd_modes)
  * 
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	long
+ * 				number of the loop 
+ *
  */ 
 int_fast8_t set_DM_modes(long loop)
 {
@@ -3299,8 +3010,21 @@ int_fast8_t set_DM_modes(long loop)
 
 
 
-
-
+/**
+ * ## Purpose
+ * 
+ * Set deformable mirror modes related to the response matrix 
+ * 
+ * Takes mode values from ????????,
+ * 
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	long
+ * 				number of the loop 
+ *
+ */ 
 
 int_fast8_t set_DM_modesRM(long loop)
 {
@@ -3334,10 +3058,26 @@ int_fast8_t set_DM_modesRM(long loop)
 
 
 
-
-
-
-
+/**
+ * ## Purpose
+ * 
+ * 
+ * 
+ * Takes mode values from ????????
+ * 
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * paramname	long
+ * 				number of the loop 
+ *
+ *
+ * @param[in]
+ * paramname	int
+ * 				normalize 
+ * 
+ */ 
 int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 {
     long k1, k2;
@@ -3825,6 +3565,32 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 
     return(0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
