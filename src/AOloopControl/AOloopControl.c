@@ -2883,7 +2883,7 @@ int_fast8_t AOloopControl_run()
                 AOconf[loop].cnt++;
 
 				
-				printf("INCREMENT LOOPiteration -> %6lu\n", AOconf[loop].LOOPiteration);
+				printf("INCREMENT LOOPiteration -> %6lu\n\n", AOconf[loop].LOOPiteration);
 				fflush(stdout);
 				AOconf[loop].LOOPiteration++;
 				data.image[aoconfID_looptiming].md[0].cnt1 = AOconf[loop].LOOPiteration;
