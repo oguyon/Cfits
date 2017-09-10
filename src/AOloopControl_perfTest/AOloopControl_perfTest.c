@@ -521,7 +521,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         if( AOconf[loop].blockave_limFrac[k] > 0.01 )
             attron(A_BOLD | COLOR_PAIR(2));
 
-        printw("|    |                   |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
+        printw("|    |                    |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
         attroff(A_BOLD | COLOR_PAIR(2));
         
         if(AOconf[loop].ARPFon==1){
