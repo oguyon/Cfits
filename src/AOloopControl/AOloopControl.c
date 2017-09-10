@@ -191,17 +191,10 @@ static char flogcomment[200];
 
 
 
-
-
-
-
 // TIMING
 static struct timespec tnow;
 static struct timespec tdiff;
 static double tdiffv;
-
-
-
 
 
 
