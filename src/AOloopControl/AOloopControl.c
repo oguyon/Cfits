@@ -304,7 +304,7 @@ long aoconfID_looptiming = -1; // control loop timing data. Pixel values corresp
 // pixel 1 is time from beginning of loop to status 01
 // pixel 2 is time from beginning of loop to status 02
 // ...
-static long NBtimers = 21;
+static long NBtimers = 25;
 
 static long aoconfIDlogdata = -1;
 static long aoconfIDlog0 = -1;
