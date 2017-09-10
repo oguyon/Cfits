@@ -4631,7 +4631,8 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 		long modevalDMindex0, modevalDMindex1;
 		long modevalPFindex0, modevalPFindex1;
 		
-		
+		printf("line %d    aoconfID_looptiming = %ld\n", __LINE__, aoconfID_looptiming);
+	fflush(stdout);	
 		
 		
         // read WFS measured modes (residual)
