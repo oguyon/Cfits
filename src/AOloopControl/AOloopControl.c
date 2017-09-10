@@ -4685,6 +4685,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 		data.image[IDmodevalDMcorr].md[0].write = 0;
 
 
+	printf("line %d    aoconfID_looptiming = %ld\n", __LINE__, aoconfID_looptiming);
+	fflush(stdout);
+
         AOconf[loop].statusM = 4;
 		clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
