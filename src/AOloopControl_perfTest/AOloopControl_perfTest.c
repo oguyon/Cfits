@@ -383,6 +383,8 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         printw("loop is ON     ");
     else
         printw("loop is OFF    ");
+        
+     printw(" [%12ul]");
 
     /*  if(AOconf[loop].logon == 1)
           printw("log is ON   ");
