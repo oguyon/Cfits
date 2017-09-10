@@ -5609,7 +5609,8 @@ int_fast8_t AOloopControl_AutoTuneGains(long loop, const char *IDout_name, float
 		data.image[IDmodeWFSnoise].md[0].write = 1;
 		data.image[IDmodeWFSnoise].md[0].cnt0++;
 		for(m=0;m<NBmodes;m++)
-			data.image[IDmodeWFSnoise].array.F[m] = array_sig[m];		
+			data.image[IDmodeWFSnoise].array.F[m] = array_sig[m];
+		COREMOD_MEMORY_image_set_sempost_byID(IDmodeWFSnoise, -1);
 		data.image[IDmodeWFSnoise].md[0].cnt1 = AOconf[loop].LOOPiteration;
 		data.image[IDmodeWFSnoise].md[0].write = 0;
 
