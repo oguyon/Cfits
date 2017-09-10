@@ -490,7 +490,9 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 		}
 		printw("\n");
 		
-		printw("                                                  ");
+		
+		// WFS noise corrected
+		printw("                                                   ");
 		printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
 		ratio0 = AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k];
 		if(ratio0>0.999)
