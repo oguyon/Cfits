@@ -3115,9 +3115,12 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 
 	uint64_t LOOPiter;
 	
+	
+	
 	// lock loop iteration into variable so that it cannot increment 
 	LOOPiter = AOconf[loop].LOOPiteration;
-
+	printf("LOOPiter = %lu\n", LOOPiter);
+	fflush(stdout);
 
     // waiting for dark-subtracted image
     AOconf[loop].status = 19;  //  19: WAITING FOR IMAGE
