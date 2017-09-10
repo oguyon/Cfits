@@ -4208,7 +4208,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 	long IDmodeARPFgain; // predictive filter mixing ratio per gain (0=non-predictive, 1=predictive)
     long IDmodevalPF; // predictive filter output
 	long IDmodevalPFres; // predictive filter measured residual (real-time)
-
+	long IDmodeWFSnoise; // WFS noise
     long IDmodevalPF_C; // modal prediction, circular buffer to include history
     long modevalPFindexl = 0;
     long modevalPFindex = 0; // index in the circular buffer
@@ -4241,12 +4241,14 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     double blockaveOLrms[100];
     double blockaveCrms[100]; // correction RMS
     double blockaveWFSrms[100]; // WFS residual RMS
+    double blockaveWFSnoise[100]; // WFS noise
     double blockavelimFrac[100];
 
 	double allavePFresrms;
     double allaveOLrms;
     double allaveCrms;
     double allaveWFSrms;
+    double allaveWFSnoise;
     double allavelimFrac;
 
     float limitblockarray[100];
@@ -4447,6 +4449,14 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 	IDmodevalPFres = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
     COREMOD_MEMORY_image_set_createsem(imname, 10);
+    
+
+	// load/create WFS noise estimate
+	if(sprintf(imname, "aol%ld_modeWFSnoise", loop) < 1) 
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+	IDmodeWFSnoise = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+    COREMOD_MEMORY_image_set_createsem(imname, 10);
+    
 
 	
 	
@@ -5131,8 +5141,11 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 			blockavePFresrms[block] += data.image[IDmodevalPFres].array.F[m]*data.image[IDmodevalPFres].array.F[m];
             blockaveOLrms[block] += data.image[IDout].array.F[m]*data.image[IDout].array.F[m];
             blockaveCrms[block] += data.image[IDmodevalDMnow].array.F[m]*data.image[IDmodevalDMnow].array.F[m];
-            blockaveWFSrms[block] += data.image[IDmodeval].array.F[m]*data.image[IDmodeval].array.F[m];
+            blockaveWFSrms[block] += data.image[IDmodeval].array.F[m]*data.image[IDmodeval].array.F[m];          
+			
+			blockaveWFSnoise[block] += data.image[IDmodeWFSnoise].array.F[m];
         }
+        
 
         blockstatcnt ++;
         if(blockstatcnt == AOconf[loop].AveStats_NBpt)
@@ -5143,24 +5156,28 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
                 AOconf[loop].blockave_OLrms[block] = sqrt(blockaveOLrms[block]/blockstatcnt);
                 AOconf[loop].blockave_Crms[block] = sqrt(blockaveCrms[block]/blockstatcnt);
                 AOconf[loop].blockave_WFSrms[block] = sqrt(blockaveWFSrms[block]/blockstatcnt);
+				AOconf[loop].blockave_WFSnoise[block] = sqrt(blockaveWFSnoise[block]/blockstatcnt);
                 AOconf[loop].blockave_limFrac[block] = (blockavelimFrac[block])/blockstatcnt;
 
 				allavePFresrms += blockavePFresrms[block];
                 allaveOLrms += blockaveOLrms[block];
                 allaveCrms += blockaveCrms[block];
                 allaveWFSrms += blockaveWFSrms[block];
+                allaveWFSnoise += blockaveWFSnoise[block];
                 allavelimFrac += blockavelimFrac[block];
 
 				blockavePFresrms[block] = 0.0;
                 blockaveOLrms[block] = 0.0;
                 blockaveCrms[block] = 0.0;
                 blockaveWFSrms[block] = 0.0;
-                blockavelimFrac[block] = 0.0;
+                blockaveWFSnoise[block] = 0.0;
+                blockavelimFrac[block] = 0.0;                
             }
 
             AOconf[loop].ALLave_OLrms = sqrt(allaveOLrms/blockstatcnt);
             AOconf[loop].ALLave_Crms = sqrt(allaveCrms/blockstatcnt);
             AOconf[loop].ALLave_WFSrms = sqrt(allaveWFSrms/blockstatcnt);
+			AOconf[loop].ALLave_WFSrms = sqrt(allaveWFSnoise/blockstatcnt);
             AOconf[loop].ALLave_limFrac = allavelimFrac/blockstatcnt;
 
 			allavePFresrms = 0.0;
