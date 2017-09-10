@@ -452,7 +452,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         printw("    %4ld [ %4ld - %4ld ]   %5.3f  %7.5f  %5.3f", AOconf[loop].NBmodes_block[k], kmin, AOconf[loop].indexmaxMB[k]-1, data.image[aoconfID_gainb].array.F[k], data.image[aoconfID_limitb].array.F[k], data.image[aoconfID_multfb].array.F[k]);
         
         
-        printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
+        printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*(AOconf[loop].blockave_Crms[k]), 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
 		
 
 		
@@ -490,8 +490,39 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 		}
 		printw("\n");
 		
-		printw("                                                ");
+		printw("                                                  ");
 		printw("  |  %8.2f  %8.2f  ->  %8.2f", 1000.0*AOconf[loop].blockave_Crms[k], 1000.0*AOconf[loop].blockave_OLrms[k], 1000.0*AOconf[loop].blockave_WFSrms[k]);
+		ratio0 = AOconf[loop].blockave_WFSrms[k]/AOconf[loop].blockave_OLrms[k];
+		if(ratio0>0.999)
+			color=2;
+		else
+			color=3;
+			
+		attron(A_BOLD | COLOR_PAIR(color));
+        printw("   %5.3f  ", ratio0);
+        attroff(A_BOLD | COLOR_PAIR(color));
+
+        if( AOconf[loop].blockave_limFrac[k] > 0.01 )
+            attron(A_BOLD | COLOR_PAIR(2));
+
+        printw("| %2ld | %9.3f  %6.2f\% |", k, AOconf[loop].blockave_limFrac[k],  100.0*AOconf[loop].blockave_limFrac[k]/AOconf[loop].NBmodes_block[k]);
+        attroff(A_BOLD | COLOR_PAIR(2));
+        
+        if(AOconf[loop].ARPFon==1){
+			printw("%8.2f |", 1000.0*AOconf[loop].blockave_PFresrms[k]);
+			
+			
+			ratio = AOconf[loop].blockave_PFresrms[k]/AOconf[loop].blockave_OLrms[k];
+			color = 0;
+			if(ratio>1.0)
+				color=2;
+			if(ratio<ratio0)
+				color=3;
+				
+			attron(A_BOLD | COLOR_PAIR(color));
+			printw("  %5.3f |", ratio);
+			attroff(A_BOLD | COLOR_PAIR(color));
+		}
 		printw("\n");
 
     }
