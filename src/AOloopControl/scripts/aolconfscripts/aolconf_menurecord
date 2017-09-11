@@ -145,7 +145,7 @@ menuitems+=("slCubeSize" "[$LogCubeSize] Set log cube size" )
 
 ConfReadParam KillStopFlag "KILL"; KillStopFlag="$paramvalue"
 if [ "$KillStopFlag" = "KILL" ]; then
-menuitems+=( "setSTOP" "[\Z1\Zr$KillStopFlag\Zr]   Set to STOP" )
+menuitems+=( "setSTOP" "[\Z1\Zr$KillStopFlag\Zn]   Set to STOP" )
 else
 menuitems+=( "setKILL" "[\Z3\Zr$KillStopFlag\Zn]   Set to KILL" )
 fi
