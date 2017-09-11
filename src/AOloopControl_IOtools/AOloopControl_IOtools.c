@@ -831,7 +831,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 		
 		data.image[aoconfID_looptiming].md[0].write = 1;
         data.image[aoconfID_looptiming].md[0].atime.ts = tnow;
-		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_looptiming, -1)
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_looptiming, -1);
         data.image[aoconfID_looptiming].md[0].cnt0++;
 		data.image[aoconfID_looptiming].md[0].write = 0;
     }
