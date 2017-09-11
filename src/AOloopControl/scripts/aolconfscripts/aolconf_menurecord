@@ -62,7 +62,12 @@ NBframes="$1"
 
 function logwritestartstopstrings {
 startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
+if [ [$KillStopFlag] = "KILL" ]; then
 stoplogstring=$( printf "\Z1\Zr${KillStopFlag} logging  %-25s\Zn   %s\n" "$streamname" "$infostring" )
+else
+stoplogstring=$( printf "\Z3\Zr${KillStopFlag} logging  %-25s\Zn   %s\n" "$streamname" "$infostring" )
+fi
+
 file="./status/stat_log_${streamname}.txt"
 logstat=$( cat $file )
 if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
