@@ -98,6 +98,7 @@ int clock_gettime(int clk_id, struct mach_timespec *t) {
 /* =============================================================================================== */
 
 
+extern long AOcontrolNBtimers;           // declared in AOloopControl.c
 
 extern long aoconfID_wfsim;              // declared in AOloopControl.c
 extern long aoconfID_imWFS0;             // declared in AOloopControl.c
@@ -542,10 +543,23 @@ static void *compute_function_imtotal( void *ptr )
     long nelem;
     int semval;
 	float IMTOTAL;
-	
+	char imname[200];
+
 
 	printf("TEST - =========== ENTERING compute_function_imtotal ===================\n");
 	fflush(stdout);
+
+
+
+	if(aoconfID_looptiming == -1)
+	{
+		// LOOPiteration is written in cnt1 of loop timing array
+		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
+	}
+
+
 
 
     nelem = data.image[aoconfID_imWFS0].md[0].size[0]*data.image[aoconfID_imWFS0].md[0].size[1];
@@ -582,8 +596,11 @@ static void *compute_function_imtotal( void *ptr )
         
         AOconf[LOOPNUMBER].WFStotalflux = IMTOTAL;
         
-        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
+        
         data.image[aoconfID_imWFS0tot].md[0].cnt0++;
+        data.image[aoconfID_imWFS0tot].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
+        
+        COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0tot, -1);
         data.image[aoconfID_imWFS0tot].md[0].write = 0;
     }
 
@@ -934,6 +951,8 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
         }
 
+
+		
         for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
         {
             sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);

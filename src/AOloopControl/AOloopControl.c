@@ -291,7 +291,7 @@ long aoconfID_looptiming = -1; // control loop timing data. Pixel values corresp
 // pixel 1 is time from beginning of loop to status 01
 // pixel 2 is time from beginning of loop to status 02
 // ...
-static long NBtimers = 35;
+long AOcontrolNBtimers = 35;
 
 static long aoconfIDlogdata = -1;
 static long aoconfIDlog0 = -1;
@@ -1494,7 +1494,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 	// LOOPiteration is written in cnt1 
     if(sprintf(name, "aol%ld_looptiming", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", NBtimers, 1, 0.0);
+    aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(name, " ", AOcontrolNBtimers, 1, 0.0);
 
 
 	/** ## 2. Read/load shared memory arrays
@@ -2387,7 +2387,7 @@ int_fast8_t AOloopControl_WFSzpupdate_loop(const char *IDzpdm_name, const char *
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
     IDzpdm = image_ID(IDzpdm_name);
@@ -2524,7 +2524,7 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -3644,7 +3644,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -3791,7 +3791,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -4123,7 +4123,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -4333,7 +4333,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -5748,7 +5748,7 @@ long AOloopControl_dm2dm_offload(const char *streamin, const char *streamout, fl
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -6534,7 +6534,7 @@ int_fast8_t AOloopControl_OptimizePSF_LO(const char *psfstream_name, const char 
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
@@ -6630,7 +6630,7 @@ int_fast8_t AOloopControl_DMmodulateAB(const char *IDprobeA_name, const char *ID
 		// LOOPiteration is written in cnt1 of loop timing array
 		if(sprintf(imname, "aol%ld_looptiming", LOOPNUMBER) < 1)
 			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", NBtimers, 1, 0.0);
+		aoconfID_looptiming = AOloopControl_IOtools_2Dloadcreate_shmim(imname, " ", AOcontrolNBtimers, 1, 0.0);
 	}
 
 
