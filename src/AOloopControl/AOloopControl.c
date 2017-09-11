@@ -4533,7 +4533,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 	// modal prediction, circular buffer
     sizeout[1] = modeval_bsize;
-    if(sprintf(imname, "aol%ld_modeval_PF_C", loop) < 1) 
+    if(sprintf(imname, "aol%ld_modevalPF_C", loop) < 1) 
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
     IDmodevalPF_C = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
