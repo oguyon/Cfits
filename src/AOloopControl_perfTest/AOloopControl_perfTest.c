@@ -494,7 +494,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 		
 		
 		// WFS noise corrected
-		
+		/*
 		printw("          WFS noise removed ------->               ");
 		
 		valOL = AOconf[loop].blockave_OLrms[k]*AOconf[loop].blockave_OLrms[k] - AOconf[loop].blockave_WFSnoise[k]*AOconf[loop].blockave_WFSnoise[k];
@@ -545,7 +545,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			attron(A_BOLD | COLOR_PAIR(color));
 			printw("  %5.3f |", ratio);
 			attroff(A_BOLD | COLOR_PAIR(color));
-		}
+		}*/
 		printw("\n");
 
     }
