@@ -7018,14 +7018,15 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         while(((cnt==data.image[ID].md[0].cnt0)||(logshimconf[0].on == 0))&&(wOK==1))
         {
 			if(VERBOSE==1)
-				printf("%5d  Waiting for semaphore\n", __LINE__);
+				printf("%5d  waiting time step\n", __LINE__);
 
             usleep(waitdelayus);
             cntwait++;
 
-			if(VERBOSE==1)
+			if(VERBOSE==1){
 				printf("%5d  cntwait = %lld\n", __LINE__, cntwait);
-
+				fflush(stdout);
+			}
 
             if(cntwait>cntwaitlim) // save current cube
             {
