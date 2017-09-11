@@ -305,6 +305,11 @@ echo "####################################################"
 #	wfsref0.fits
 #   zrespM.fits
 #
+
+#testing
+cp wfsref00.fits rmtest_wfsref00.fits
+cp wfsmask.fits rmtest_wfsmask.fits
+
 $execname << EOF
 loadfits wfsref00.fits im0
 loadfits wfsmask.fits wfm
@@ -318,7 +323,7 @@ listim
 exitCLI
 EOF
 
-
+cp wfsref0.fits rmtest_wfsref0.fits
 
 
 echo "####################################################"
