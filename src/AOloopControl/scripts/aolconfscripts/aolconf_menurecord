@@ -77,6 +77,21 @@ fi
 
 
 
+# If KillStopFlag="KILL", kill. 
+# If KillStopFlag="STOP",stop.
+function skstreamlog {
+	if [ "$KillStopFlag" = "STOP" ]; then
+	stopstreamlog $1
+	else
+	killstreamlog $1
+	fi
+	
+}
+
+
+
+
+
 
 # =====================================================
 # ======== RECORD/ANALYZE  ============================
@@ -723,7 +738,7 @@ menurecord_default="laollooptimingOFF"
 ;;
     laollooptimingOFF)
 streamname="aol${LOOPNUMBER}_looptiming"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laollooptimingON"
 ;;
@@ -739,7 +754,7 @@ menurecord_default="laolwfsimOFF"
 ;;
     laolwfsimOFF)
 streamname="aol${LOOPNUMBER}_wfsim"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolwfsimON"
 ;;
@@ -753,7 +768,7 @@ menurecord_default="laolwfsref0OFF"
 ;;
     laolwfsref0OFF)
 streamname="aol${LOOPNUMBER}_wfsref0"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolwfsref0ON"
 ;;
@@ -767,7 +782,7 @@ menurecord_default="laolwfsrefOFF"
 ;;
     laolwfsrefOFF)
 streamname="aol${LOOPNUMBER}_wfsref"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolwfsrefON"
 ;;
@@ -782,7 +797,7 @@ menurecord_default="laolgainbOFF"
 ;;
     laolgainbOFF)
 streamname="aol${LOOPNUMBER}_gainb"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolgainbON"
 ;;
@@ -796,7 +811,7 @@ menurecord_default="laolDMmodeGAINOFF"
 ;;
     laolDMmodeGAINOFF)
 streamname="aol${LOOPNUMBER}_DMmode_GAIN"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolDMmodeGAINON"
 ;;
@@ -812,7 +827,7 @@ menurecord_default="laollimitbOFF"
 ;;
     laollimitbOFF)
 streamname="aol${LOOPNUMBER}_limitb"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laollimitbON"
 ;;
@@ -826,7 +841,7 @@ menurecord_default="laolDMmodeLIMITOFF"
 ;;
     laolDMmodeLIMITOFF)
 streamname="aol${LOOPNUMBER}_DMmode_LIMIT"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolDMmodeLIMITON"
 ;;
@@ -843,7 +858,7 @@ menurecord_default="laolmultfbOFF"
 ;;
     laolmultfbOFF)
 streamname="aol${LOOPNUMBER}_multfb"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmultfbON"
 ;;
@@ -857,7 +872,7 @@ menurecord_default="laolDMmodeMULTFOFF"
 ;;
     laolDMmodeMULTFOFF)
 streamname="aol${LOOPNUMBER}_DMmode_MULTF"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolDMmodeMULTFON"
 ;;
@@ -871,7 +886,7 @@ menurecord_default="ldmdispOFF"
 ;;
     ldmdispOFF)
 streamname="dm${DMindex}disp"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdispON"
 ;;
@@ -885,7 +900,7 @@ menurecord_default="ldmdisp00OFF"
 ;;
     ldmdisp00OFF)
 streamname="dm${DMindex}disp00"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp00ON"
 ;;
@@ -899,7 +914,7 @@ menurecord_default="ldmdisp01OFF"
 ;;
     ldmdisp01OFF)
 streamname="dm${DMindex}disp01"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp01ON"
 ;;
@@ -913,7 +928,7 @@ menurecord_default="ldmdisp02OFF"
 ;;
     ldmdisp02OFF)
 streamname="dm${DMindex}disp02"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp02ON"
 ;;
@@ -927,7 +942,7 @@ menurecord_default="ldmdisp03OFF"
 ;;
     ldmdisp03OFF)
 streamname="dm${DMindex}disp03"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp03ON"
 ;;
@@ -941,7 +956,7 @@ menurecord_default="ldmdisp04OFF"
 ;;
     ldmdisp04OFF)
 streamname="dm${DMindex}disp04"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp04ON"
 ;;
@@ -955,7 +970,7 @@ menurecord_default="ldmdisp05OFF"
 ;;
     ldmdisp05OFF)
 streamname="dm${DMindex}disp05"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp05ON"
 ;;
@@ -969,7 +984,7 @@ menurecord_default="ldmdisp06OFF"
 ;;
     ldmdisp06OFF)
 streamname="dm${DMindex}disp06"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp06ON"
 ;;
@@ -983,7 +998,7 @@ menurecord_default="ldmdisp07OFF"
 ;;
     ldmdisp07OFF)
 streamname="dm${DMindex}disp07"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp07ON"
 ;;
@@ -997,7 +1012,7 @@ menurecord_default="ldmdisp08OFF"
 ;;
     ldmdisp08OFF)
 streamname="dm${DMindex}disp08"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp08ON"
 ;;
@@ -1011,7 +1026,7 @@ menurecord_default="ldmdisp09OFF"
 ;;
     ldmdisp09OFF)
 streamname="dm${DMindex}disp09"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp09ON"
 ;;
@@ -1025,7 +1040,7 @@ menurecord_default="ldmdisp10OFF"
 ;;
     ldmdisp10OFF)
 streamname="dm${DMindex}disp10"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp10ON"
 ;;
@@ -1039,7 +1054,7 @@ menurecord_default="ldmdisp11OFF"
 ;;
     ldmdisp11OFF)
 streamname="dm${DMindex}disp11"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="ldmdisp11ON"
 ;;
@@ -1057,7 +1072,7 @@ menurecord_default="laolmodevalOFF"
 ;;
     laolmodevalOFF)
 streamname="aol${LOOPNUMBER}_modeval"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalON"
 ;;
@@ -1072,7 +1087,7 @@ menurecord_default="laolmodevaldmcorrOFF"
 ;;
     laolmodevaldmcorrOFF)
 streamname="aol${LOOPNUMBER}_modeval_dm_corr"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevaldmcorrON"
 ;;
@@ -1086,7 +1101,7 @@ menurecord_default="laolmodevaldmnowOFF"
 ;;
     laolmodevaldmnowOFF)
 streamname="aol${LOOPNUMBER}_modeval_dm_now"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevaldmnowON"
 ;;
@@ -1100,7 +1115,7 @@ menurecord_default="laolmodevaldmnowfiltOFF"
 ;;
     laolmodevaldmnowfiltOFF)
 streamname="aol${LOOPNUMBER}_modeval_dm_now_filt"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevaldmnowfiltON"
 ;;
@@ -1114,7 +1129,7 @@ menurecord_default="laolmodevalolOFF"
 ;;
     laolmodevalolOFF)
 streamname="aol${LOOPNUMBER}_modeval_ol"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalolON"
 ;;
@@ -1128,7 +1143,7 @@ menurecord_default="laolmodevalPFOFF"
 ;;
     laolmodevalPFOFF)
 streamname="aol${LOOPNUMBER}_modevalPF"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalPFON"
 ;;
@@ -1142,7 +1157,7 @@ menurecord_default="laolmodevalPFsyncOFF"
 ;;
     laolmodevalPFsyncOFF)
 streamname="aol${LOOPNUMBER}_modevalPFsync"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalPFsyncON"
 ;;
@@ -1156,7 +1171,7 @@ menurecord_default="laolmodevalPFresOFF"
 ;;
     laolmodevalPFresOFF)
 streamname="aol${LOOPNUMBER}_modevalPFres"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laolmodevalPFresON"
 ;;
@@ -1170,7 +1185,7 @@ menurecord_default="laoloutPFb0OFF"
 ;;
     laoloutPFb0OFF)
 streamname="aol${LOOPNUMBER}_outPFb0"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laoloutPFb0ON"
 ;;
@@ -1184,7 +1199,7 @@ menurecord_default="laoloutPFb1OFF"
 ;;
     laoloutPFb1OFF)
 streamname="aol${LOOPNUMBER}_outPFb1"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laoloutPFb1ON"
 ;;
@@ -1198,7 +1213,7 @@ menurecord_default="laoloutPFb2OFF"
 ;;
     laoloutPFb2OFF)
 streamname="aol${LOOPNUMBER}_outPFb2"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laoloutPFb2ON"
 ;;
@@ -1212,7 +1227,7 @@ menurecord_default="laoloutPFb3OFF"
 ;;
     laoloutPFb3OFF)
 streamname="aol${LOOPNUMBER}_outPFb3"
-stopstreamlog "$streamname"
+skstreamlog "$streamname"
 echo "0" > "./status/stat_log_${streamname}.txt"
 menurecord_default="laoloutPFb3ON"
 ;;
