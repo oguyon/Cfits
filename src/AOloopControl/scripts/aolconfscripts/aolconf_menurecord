@@ -422,7 +422,7 @@ menuitems+=( " " " " )
 
 
 ConfReadParam CMMODE "0"; CMMODE="$paramvalue"
-if [ "$CMMODE" = "0" ]; then
+#if [ "$CMMODE" = "0" ]; then
 
 
 streamname="aol${LOOPNUMBER}_modeval"
@@ -561,7 +561,7 @@ fi
 
 
 
-fi
+#fi
 
 
 
