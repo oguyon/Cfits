@@ -155,6 +155,24 @@ menuitems+=( " " " " )
 
 
 
+
+
+
+streamname="aol${LOOPNUMBER}_looptiming"
+infostring="Loop timing"
+
+logwritestartstopstrings
+if [ "${logstat}" = "0" ]; then
+menuitems+=( "laollooptimingON" "$startlogstring" )
+else
+menuitems+=( "laollooptimingOFF" "$stoplogstring" )
+fi
+
+
+
+
+
+
 streamname="aol${LOOPNUMBER}_wfsim"
 infostring="WFS input image"
 
@@ -651,6 +669,25 @@ stop_Telemetrylog_all
 kill_Telemetrylog_all
 ;;
 
+
+
+
+
+
+
+
+    laollooptimingON)
+streamname="aol${LOOPNUMBER}_looptiming"
+startstreamlog "$streamname"
+echo "1" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laollooptimingOFF"
+;;
+    laollooptimingOFF)
+streamname="aol${LOOPNUMBER}_looptiming"
+stopstreamlog "$streamname"
+echo "0" > "./status/stat_log_${streamname}.txt"
+menurecord_default="laollooptimingON"
+;;
 
 
 
