@@ -815,7 +815,12 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
 
 
+
+	// ===================================================================
+	//
     // THIS IS THE STARTING POINT FOR THE LOOP
+    //
+    // ===================================================================
     if(RM==0)
     {
         AOconf[loop].status = 1;  // 3->001: DARK SUBTRACT
@@ -823,9 +828,15 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
         tdiff = info_time_diff(data.image[aoconfID_looptiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[0] = tdiffv;
-
+		
+		data.image[aoconfID_looptiming].md[0].write = 1;
         data.image[aoconfID_looptiming].md[0].atime.ts = tnow;
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_looptiming, -1)
+        data.image[aoconfID_looptiming].md[0].cnt0++;
+		data.image[aoconfID_looptiming].md[0].write = 0;
     }
+
+
 
 #ifdef _PRINT_TEST
     printf("TEST - DARK SUBTRACT\n");
