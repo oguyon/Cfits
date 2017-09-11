@@ -1774,7 +1774,7 @@ long LINARFILTERPRED_PF_RealTimeApply(const char *IDmodevalIN_name, long IndexOf
 				printf("INITIALIZATION DONE\n\n");
 				fflush(stdout);
 			}
-			GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[100], 1.0, 0.0, 0);
+			GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[100], 1.0, 0.0, 0, 0);
 			#endif
 		}
 		else // if using CPU

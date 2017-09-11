@@ -291,7 +291,7 @@ long aoconfID_looptiming = -1; // control loop timing data. Pixel values corresp
 // pixel 1 is time from beginning of loop to status 01
 // pixel 2 is time from beginning of loop to status 02
 // ...
-static long NBtimers = 25;
+static long NBtimers = 35;
 
 static long aoconfIDlogdata = -1;
 static long aoconfIDlog0 = -1;
@@ -2993,7 +2993,7 @@ int_fast8_t set_DM_modes(long loop)
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
         data.image[aoconfID_looptiming].array.F[32] = tdiffv;
 
-        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
+        GPU_loop_MultMat_execute(1, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1, 30);
 #endif
     }
 
@@ -3367,6 +3367,8 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
             else
                 GPU_loop_MultMat_setup(0, data.image[aoconfID_contrM].name, data.image[aoconfID_imWFS2].name, data.image[aoconfID_meas_modes].name, AOconf[loop].GPU0, GPUset0, 0, AOconf[loop].GPUusesem, 1, loop);
 
+			
+
             initWFSref_GPU[PIXSTREAM_SLICE] = 1;
 
             AOconf[loop].status = 6; // 6 execute
@@ -3377,9 +3379,9 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 
 
             if(AOconf[loop].GPUall == 1)
-                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1, 25);
             else
-                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
+                GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1, 25);
         }
         else // direct pixel -> actuators linear transformation
         {
@@ -3484,9 +3486,9 @@ int_fast8_t __attribute__((hot)) AOcompute(long loop, int normalize)
 
 
                 if(AOconf[loop].GPUall == 1)
-                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1);
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], GPU_alpha, GPU_beta, 1, 25);
                 else
-                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1);
+                    GPU_loop_MultMat_execute(0, &AOconf[loop].status, &AOconf[loop].GPUstatus[0], 1.0, 0.0, 1, 25);
 
                 // re-map output vector
                 data.image[aoconfID_meas_act].md[0].write = 1;
@@ -3696,7 +3698,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
             printf("Computing reference\n");
             fflush(stdout);
             memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSref].array.F, sizeof(float)*wfsxsize*wfsysize);
-            GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
+            GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0, 0);
             for(m=0; m<NBmodes; m++)
             {
                 data.image[IDcoeff0].array.F[m] = data.image[ID_coefft].array.F[m];
@@ -3710,7 +3712,7 @@ int_fast8_t AOloopControl_CompModes_loop(const char *ID_CM_name, const char *ID_
         memcpy(data.image[ID_WFSim_n].array.F, data.image[ID_WFSim].array.F, sizeof(float)*wfsxsize*wfsysize);
         COREMOD_MEMORY_image_set_semwait(ID_WFSim_name, 0);
 
-        GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0);
+        GPU_loop_MultMat_execute(2, &status, &GPUstatus[0], 1.0, 0.0, 0, 0);
         totfluxave = (1.0-alpha)*totfluxave + alpha*data.image[ID_WFSimtot].array.F[0];
 
         data.image[ID_coeff].md[0].write = 1;
@@ -3877,7 +3879,7 @@ int_fast8_t AOloopControl_GPUmodecoeffs2dm_filt_loop(const int GPUMATMULTCONFind
       //      data.image[IDmodesC].array.F[m] = data.image[IDmodecoeffs].array.F[m];
 
 
-        GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[0], alpha, beta, write_timing);
+        GPU_loop_MultMat_execute(GPUMATMULTCONFindex, &status, &GPUstatus[0], alpha, beta, write_timing, 0);
 
         if(offloadMode==1) // offload back to dmC
         {

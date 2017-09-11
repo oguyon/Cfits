@@ -182,7 +182,7 @@ int GPUloadCmat(int index);
 int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb);
 
 
-int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing);
+int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing, int TimerOffsetIndex);
 
 
 int GPU_loop_MultMat_free(int index);

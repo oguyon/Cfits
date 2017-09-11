@@ -729,7 +729,7 @@ int_fast8_t GPUcomp_test(long NBact, long NBmodes, long WFSsize, long GPUcnt)
     for(iter=0; iter<NBiter; iter++)
     {
         status = 0;
-        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1);
+        GPU_loop_MultMat_execute(0, &status, &GPUstatus[0], 1.0, 0.0, 1, 0);
     }
     clock_gettime(CLOCK_REALTIME, &tnow);
     time2sec = 1.0*((long) tnow.tv_sec) + 1.0e-9*tnow.tv_nsec;
@@ -1797,17 +1797,21 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
 
 
-
+//
 // increments status by 4
-int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing)
+// 
+int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing, int TimerOffsetIndex)
 {
     int m;
     int ptn;
     int statustot;
     int semval;
     long cnt;
+	int TimerIndex;
 
 
+	TimerIndex = TimerOffsetIndex;
+	
     cublasSgemv_alpha = alpha;
     cublasSgemv_beta = beta;
 
@@ -1842,7 +1846,8 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+        TimerIndex++;
     }
 
 //    if((index==0)||(index==2)) /// main CM multiplication loop
@@ -1894,7 +1899,8 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+		TimerIndex++;
     }
 
 
@@ -1933,7 +1939,8 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+		TimerIndex++;
     }
 
     data.image[gpumatmultconf[index].IDout].md[0].write = 1;
@@ -1973,15 +1980,13 @@ int GPU_loop_MultMat_execute(int index, int_fast8_t *status, int_fast8_t *GPUsta
     if(timing == 1)
     {
 		data.image[gpumatmultconf[index].IDout].md[0].cnt1 = data.image[IDtiming].md[0].cnt1;
-		
-		printf("line %d   timer  %d\n", __LINE__, *status);
-		fflush(stdout);
-		
+				
         *status = *status + 1; // -> 10
         clock_gettime(CLOCK_REALTIME, &tnow);
         tdiff = info_time_diff(data.image[IDtiming].md[0].atime.ts, tnow);
         tdiffv = 1.0*tdiff.tv_sec + 1.0e-9*tdiff.tv_nsec;
-        data.image[IDtiming].array.F[*status] = tdiffv;
+        data.image[IDtiming].array.F[TimerIndex] = tdiffv;
+		TimerIndex++;
     }
     
     data.image[gpumatmultconf[index].IDout].md[0].cnt0++;
