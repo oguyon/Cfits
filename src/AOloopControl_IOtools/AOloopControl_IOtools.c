@@ -900,13 +900,15 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             exit(0);
             break;
         }
-
-        for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
+		data.image[aoconfID_imWFS0].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0, -1);
+        
+        /*for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
         {
             sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[aoconfID_imWFS0].semptr[s]);
-        }
+        }*/
     }
     else
     {
@@ -951,14 +953,15 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
             sem_wait(&AOLCOMPUTE_DARK_SUBTRACT_RESULT_sem_name[ti]);
         }
 
-
+		data.image[aoconfID_imWFS0].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
+		COREMOD_MEMORY_image_set_sempost_byID(aoconfID_imWFS0, -1);
 		
-        for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
+      /*  for(s=0; s<data.image[aoconfID_imWFS0].md[0].sem; s++)
         {
             sem_getvalue(data.image[aoconfID_imWFS0].semptr[s], &semval);
             if(semval<SEMAPHORE_MAXVAL)
                 sem_post(data.image[aoconfID_imWFS0].semptr[s]);
-        }
+        }*/
 #ifdef _PRINT_TEST
         printf("TEST - DARK SUBTRACT - END\n");
         fflush(stdout);
@@ -986,7 +989,9 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
 #endif
 
 
-    // Normalize
+	//
+    // Normalize: imWFS0 -> imWFS1
+    //
     if(normalize==1)
     {
         if((AOconf[loop].AOLCOMPUTE_TOTAL_ASYNC==0)||(AOLCOMPUTE_TOTAL_INIT==0)||(RM == 1)) // do it in main thread
