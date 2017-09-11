@@ -58,4 +58,6 @@ int_fast8_t AOloopControl_perfTest_AnalyzeRM_sensitivity(const char *IDdmmodes_n
 
 long AOloopControl_perfTest_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long NBmodes);
 
+long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfname);
+
 #endif

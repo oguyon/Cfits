@@ -268,7 +268,16 @@ int_fast8_t AOloopControl_perfTest_AnalyzeRM_sensitivity_cli()
 
 
 
-
+int_fast8_t AOloopControl_LoopTimer_Analysis_cli()
+{
+    if(CLI_checkarg(1,4)+CLI_checkarg(2,5)+CLI_checkarg(3,5)==0)    
+    {	
+		AOloopControl_LoopTimer_Analysis(data.cmdargtoken[1].val.string, data.cmdargtoken[2].val.string, data.cmdargtoken[3].val.string);
+		return 0;
+	}
+	else
+		return 1;
+}
 
 
 
@@ -336,6 +345,8 @@ int_fast8_t init_AOloopControl_perfTest()
     RegisterCLIcommand("aolmktestmseq", __FILE__, AOloopControl_perfTest_mkTestDynamicModeSeq_cli, "make modal periodic test sequence", "<outname> <number of slices> <number of modes>", "aolmktestmseq outmc 100 50", "long AOloopControl_perfTest_mkTestDynamicModeSeq(const char *IDname_out, long NBpt, long NBmodes)");
 
     RegisterCLIcommand("aolzrmsens", __FILE__, AOloopControl_perfTest_AnalyzeRM_sensitivity_cli, "Measure zonal RM sensitivity", "<DMmodes> <DMmask> <WFSref> <WFSresp> <WFSmask> <amplitude[nm]> <lambda[nm]> <outname>", "aolzrmsens DMmodes dmmask wfsref0 zrespmat wfsmask 0.1 outfile.txt", "long AOloopControl_perfTest_AnalyzeRM_sensitivity(const char *IDdmmodes_name, const char *IDdmmask_name, const char *IDwfsref_name, const char *IDwfsresp_name, const char *IDwfsmask_name, float amplimitnm, float lambdanm, const char *foutname)");
+
+	RegisterCLIcommand("aoltimingstat", __FILE__, AOloopControl_LoopTimer_Analysis_cli, "Analysis of loop timing data", "<TimingImage> <TimingTXTfile> <outFile>", "aoltimingstat aol0_looptiming timing.txt outfile.txt", "long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfname)");
 
 }
 
@@ -2577,3 +2588,144 @@ long AOloopControl_perfTest_mkTestDynamicModeSeq(const char *IDname_out, long NB
 
     return(IDout);
 }
+
+
+
+
+//
+// analysis of timing data
+// Takes two args: 
+//  looptiming FITS file
+//  looptiming txt file
+//
+
+long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfname)
+{
+	long ID;
+	int NBtimer;
+	long NBsample;
+	FILE *fpout;
+	FILE *fptxt;
+	
+	long frameNB;
+	uint64_t *cnt0array;
+	uint64_t *cnt1array;
+	double *frameTimearray;
+	long sp;
+	long frNB;
+	
+	int timer;
+	double timerval;
+	
+	
+	// analysis
+	long missedFrames;
+	
+	double *timer_ave;
+	double *timer_min;
+	double *timer_max;
+	double *timer_dev;
+	
+	double rms;
+	int ret;
+	
+	
+	ID = image_ID(IDname);
+	
+	NBtimer = data.image[ID].md[0].size[0];
+	NBsample = data.image[ID].md[0].size[1];
+	
+	cnt0array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
+	cnt1array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
+	
+	timer_ave = (double*) malloc(sizeof(double) * NBtimer);
+	timer_min = (double*) malloc(sizeof(double) * NBtimer);
+	timer_max = (double*) malloc(sizeof(double) * NBtimer);
+	timer_dev = (double*) malloc(sizeof(double) * NBtimer);
+	
+	
+	
+	if( (fpout = fopen(outfname, "w")) == NULL)
+	{
+		printf("ERROR: cannot create file %s\n", outfname);
+		exit(0);
+	}
+	
+	if( (fptxt=fopen(fnametxt, "r")) == NULL)
+	{
+		printf("ERROR: cannot open file %s\n", fnametxt);
+		exit(0);
+	}
+	
+	fprintf(fpout, "# AOloopControl timing\n\n");
+	
+	for(sp=0; sp< NBsample; sp++)
+	{
+		ret = fscanf(fptxt, "%ld %lu %lu %lf\n", &frNB, &cnt0array[sp], &cnt1array[sp], &frameTimearray[sp]);
+		
+		fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
+		
+		
+		if(sp==0)
+		{
+			for(timer=0; timer<NBtimer; timer++)
+			{
+				timer_min[timer] = data.image[ID].array.F[sp*NBtimer + timer];
+				timer_max[timer] = data.image[ID].array.F[sp*NBtimer + timer];
+			}
+		}
+		
+		for(timer=0; timer<NBtimer; timer++)
+		{	
+			fprintf(fpout, "  %12.9f", data.image[ID].array.F[sp*NBtimer + timer]);
+		
+			timer_ave[timer] += data.image[ID].array.F[sp*NBtimer + timer];
+			if(data.image[ID].array.F[sp*NBtimer + timer] < timer_min[timer])
+				timer_min[timer] = data.image[ID].array.F[sp*NBtimer + timer];
+			if(data.image[ID].array.F[sp*NBtimer + timer] > timer_max[timer])
+				timer_max[timer] = data.image[ID].array.F[sp*NBtimer + timer];
+		}
+		printf("\n");				
+	}
+	
+	missedFrames = (cnt1array[NBsample-1]-cnt1array[0]) - NBsample;
+	
+	
+	
+	for(timer=0; timer<NBtimer; timer++)
+	{
+		rms = 0.0;
+		for(sp=0; sp< NBsample; sp++)
+		{
+			timerval = data.image[ID].array.F[sp*NBtimer + timer];
+			rms += (timerval - timer_ave[timer]) * (timerval - timer_ave[timer]);
+		}
+		timer_dev[timer] = sqrt(rms/NBsample);
+	}
+	
+	
+	// Print report
+	printf("Missed frames   :   %5ld / %10ld  = %.6f\n", missedFrames, NBsample, 100.0*missedFrames/NBsample);
+	printf("-------------------------------------------------\n");
+	printf("| TIMER |   min   -   ave   -   max   | std dev |\n");
+	printf("|  XXX  | xxxx.xx - xxxx.xx - xxxx.xx | xxxx.xx |\n");
+	printf("-------------------------------------------------\n");
+	for(timer=0; timer<NBtimer; timer++)
+		printf("|  %3d  | %7.2f - %7.2f - %7.2f | %7.2f |\n", timer, timer_min[timer], timer_ave[timer], timer_max[timer], timer_dev[timer]);
+	printf("-------------------------------------------------\n");
+	
+	fclose(fpout);
+	
+	free(timer_ave);
+	free(timer_min);
+	free(timer_max);
+	free(timer_dev);
+	
+	free(cnt0array);
+	free(cnt1array);
+	free(frameTimearray);
+	
+	return(0);
+}
+
+
