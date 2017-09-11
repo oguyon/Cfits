@@ -7192,6 +7192,8 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         if(  (index>zsize-1)  ||  ((wOK==0)&&(index>0)) )
         {
             /// save image
+            if(VERBOSE==1)
+				printf("%5d  Save image   index = %ld  wOK = %d\n", __LINE__, index, wOK);
            // sprintf(iname, "logbuff%d", buffer);
             sprintf(iname, "%s_logbuff%d", IDname, buffer);
             if(buffer==0)
