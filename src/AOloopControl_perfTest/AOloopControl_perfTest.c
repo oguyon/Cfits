@@ -490,7 +490,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			printw("  %5.3f |", ratio);
 			attroff(A_BOLD | COLOR_PAIR(color));
 		}
-		printw("\n");
+		//printw("\n");
 		
 		
 		// WFS noise corrected
