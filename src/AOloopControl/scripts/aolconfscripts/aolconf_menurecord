@@ -62,7 +62,7 @@ NBframes="$1"
 
 function logwritestartstopstrings {
 startlogstring=$( printf "START logging %-25s   %s\n" "$streamname" "$infostring" )
-if [ [$KillStopFlag] = "KILL" ]; then
+if [ "$KillStopFlag" = "KILL" ]; then
 stoplogstring=$( printf "\Z1\Zr${KillStopFlag} logging  %-25s\Zn   %s\n" "$streamname" "$infostring" )
 else
 stoplogstring=$( printf "\Z3\Zr${KillStopFlag} logging  %-25s\Zn   %s\n" "$streamname" "$infostring" )
@@ -145,9 +145,9 @@ menuitems+=("slCubeSize" "[$LogCubeSize] Set log cube size" )
 
 ConfReadParam KillStopFlag "KILL"; KillStopFlag="$paramvalue"
 if [ "$KillStopFlag" = "KILL" ]; then
-menuitems+=( "setSTOP" "[$KillStopFlag]   Set to STOP" )
+menuitems+=( "setSTOP" "[\Z1\Zr$KillStopFlag\Zr]   Set to STOP" )
 else
-menuitems+=( "setKILL" "[$KillStopFlag]   Set to KILL" )
+menuitems+=( "setKILL" "[\Z3\Zr$KillStopFlag\Zn]   Set to KILL" )
 fi
 
 
