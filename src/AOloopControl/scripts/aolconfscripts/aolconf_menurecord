@@ -124,9 +124,9 @@ ConfReadParam LogCubeSize "1000"; LogCubeSize="$paramvalue"
 menuitems+=("slCubeSize" "[$LogCubeSize] Set log cube size" )
 
 if [ "$KillStopFlag" = "KILL" ]; then
-menuitems+=( "setSTOP" "Set to STOP" )
+menuitems+=( "setSTOP" "[$KillStopFlag]   Set to STOP" )
 else
-menuitems+=( "setKILL" "Set to KILL" )
+menuitems+=( "setKILL" "[$KillStopFlag]   Set to KILL" )
 fi
 
 
