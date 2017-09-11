@@ -6790,7 +6790,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     long NBfiles = -1; // run forever
     long long cntwait;
     long waitdelayus = 50;  // max speed = 20 kHz
-    long long cntwaitlim = 20000; // 10 sec
+    long long cntwaitlim = 10000; // 5 sec
     int wOK;
     int noframe;
 

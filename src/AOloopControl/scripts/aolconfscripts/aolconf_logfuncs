@@ -20,7 +20,7 @@ savedir=$(cat ./conf/conf_savedir_name.txt)
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/$1/
 ConfReadParam LogCubeSize "1000"; LogCubeSize="$paramvalue"
-tmux send-keys -t $tmuxnameC "logshim -c aol${LOOPNUMBER}log $1 $LogCubeSize $savedir/$datestr/$1/" C-m
+tmux send-keys -t $tmuxnameC "logshim -c aol${LOOPNUMBER}log $1 $2 $savedir/$datestr/$1/" C-m
 tmuxname="log_$1"
 sleep 0.1
 tmux new-session -d -s $tmuxname
