@@ -6820,7 +6820,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     int semval;
     
     
-    int VERBOSE = 1;
+    int VERBOSE = 0;
     
     
 
