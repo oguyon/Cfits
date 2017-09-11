@@ -5209,7 +5209,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
             AOconf[loop].ALLave_OLrms = sqrt(allaveOLrms/blockstatcnt);
             AOconf[loop].ALLave_Crms = sqrt(allaveCrms/blockstatcnt);
             AOconf[loop].ALLave_WFSrms = sqrt(allaveWFSrms/blockstatcnt);
-			AOconf[loop].ALLave_WFSrms = sqrt(allaveWFSnoise/blockstatcnt);
+			AOconf[loop].ALLave_WFSnoise = sqrt(allaveWFSnoise/blockstatcnt);
             AOconf[loop].ALLave_limFrac = allavelimFrac/blockstatcnt;
 
 			allavePFresrms = 0.0;

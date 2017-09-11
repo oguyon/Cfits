@@ -578,9 +578,13 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     //printw("            MODAL RMS (ALL MODES) : %6.4lf     AVERAGE :  %8.6lf       ( %20g / %8lld )\n", sqrt(AOconf[loop].RMSmodes), sqrt(AOconf[loop].RMSmodesCumul/AOconf[loop].RMSmodesCumulcnt), AOconf[loop].RMSmodesCumul, AOconf[loop].RMSmodesCumulcnt);
 
 
+
+	// ====================================================================
+	//                    SHOW INDIVIDUAL MODES
+	// ====================================================================
+
+
     print_header(" [ gain 1000xlimit  mult ] MODES [nm]    DM correction -- WFS value -- WFS average -- WFS RMS     ", '-');
-
-
 
 
     if(kmax>AOconf[loop].NBDMmodes)
