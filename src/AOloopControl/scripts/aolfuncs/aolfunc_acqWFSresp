@@ -319,7 +319,7 @@ listim
 exitCLI
 EOF
 
-
+cp wfsref0.fits rmtest_wfsref0.fits
 
 
 echo "####################################################"
