@@ -1353,7 +1353,7 @@ menucontrolloop_default="CMm1"
 
 # LOOP PROCESSES
    	 S)  	 
-function_AOloopProcess_ON "NULL"
+function_AOloopProcess_ON "NULL" # in aolconf_controlloop_funcs
 menucontrolloop_default="K"
 ;; 
 
@@ -1448,7 +1448,7 @@ tmux send-keys -t aol${LOOPNUMBER}-ctr "setpix aol${LOOPNUMBER}_wfsavecoeff $WFS
 
 
    	 Nloopon)
-function_LOOP_ON "NULL"
+function_LOOP_ON "NULL" # in aolconf_controlloop_funcs
 menucontrolloop_default="Floopoff"
 ;; 
 
