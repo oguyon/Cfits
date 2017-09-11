@@ -6982,7 +6982,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			sem_wait(data.image[ID].semlog);
 
 			if(VERBOSE==1)
-				printf("%5d  Image arrived  cntwait = %ld\n", __LINE__, cntwait);
+				printf("%5d  Image arrived  cntwait = %lld\n", __LINE__, cntwait);
 
 			cntwait++;
             if(cntwait>cntwaitlim) // save current cube
@@ -7024,7 +7024,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             cntwait++;
 
 			if(VERBOSE==1)
-				printf("%5d  cntwait = %ld\n", __LINE__, cntwait);
+				printf("%5d  cntwait = %lld\n", __LINE__, cntwait);
 
 
             if(cntwait>cntwaitlim) // save current cube
