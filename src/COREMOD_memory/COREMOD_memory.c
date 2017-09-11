@@ -6987,7 +6987,8 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			cntwait++;
             if(cntwait>cntwaitlim) // save current cube
             {
-				printf("%5d  Save current cube\n", __LINE__);
+				if(VERBOSE==1)
+					printf("%5d  ime elapsed -> Save current cube\n", __LINE__);
 				
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
@@ -7011,12 +7012,27 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 		}
 		else
 		{
+			if(VERBOSE==1)
+				printf("%5d  Not using semaphore, watching counter\n", __LINE__);
+			
         while(((cnt==data.image[ID].md[0].cnt0)||(logshimconf[0].on == 0))&&(wOK==1))
         {
+			if(VERBOSE==1)
+				printf("%5d  Waiting for semaphore\n", __LINE__);
+
             usleep(waitdelayus);
             cntwait++;
+
+			if(VERBOSE==1)
+				printf("%5d  cntwait = %ld\n", __LINE__, cntwait);
+
+
             if(cntwait>cntwaitlim) // save current cube
             {
+				if(VERBOSE==1)
+					printf("%5d  Time elapsed -> Save current cube\n", __LINE__);
+				
+				
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
                 tmsg->partial = 1; // partial cube
@@ -7043,6 +7059,9 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
         if(index==0)
         {
+			if(VERBOSE==1)
+				printf("%5d  Setting cube start time\n", __LINE__);
+			
             /// measure time
             t = time(NULL);
             uttimeStart = gmtime(&t);
@@ -7059,6 +7078,9 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         {
             if(likely(wOK==1)) // normal step: a frame has arrived
             {
+				if(VERBOSE==1)
+					printf("%5d  Frame has arrived index = %ld\n", __LINE__, index);
+				
                 /// measure time
                 t = time(NULL);
                 uttime = gmtime(&t);
