@@ -74,6 +74,8 @@ fi
 }
 
 
+KillStopFlag="KILL"
+
 
 
 # =====================================================
@@ -121,6 +123,15 @@ fi
 ConfReadParam LogCubeSize "1000"; LogCubeSize="$paramvalue"
 menuitems+=("slCubeSize" "[$LogCubeSize] Set log cube size" )
 
+if [ "$KillStopFlag" = "KILL" ]; then
+menuitems+=( "setSTOP" "Set to STOP" )
+else
+menuitems+=( "setKILL" "Set to KILL" )
+fi
+
+
+
+menuitems+=( " " " " )
 
 ConfReadParam logMode "0"; logMode="$paramvalue" # LOG mode
 
@@ -640,6 +651,15 @@ exec 3>&-;
 echo "$LogCubeSize" > ./conf/param_LogCubeSize.txt
 ;;
 
+setSTOP)
+KillStopFlag="STOP"
+menurecord_default="setKILL"
+;;
+
+setKILL)
+KillStopFlag="KILL"
+menurecord_default="setSTOP"
+;;
 
 
 
