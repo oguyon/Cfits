@@ -1526,7 +1526,7 @@ echo "WFS" > ./status/stat_zploopON6.txt
 tmuxname="aol${LOOPNUMBER}zploop6"
 tmux kill-session -t $tmuxname 
 menucontrolloop_default="zplon6"
-aoconflogext "stop zero-point offset loop 6"
+aoconflogext "STARTING afterburner"
 menucontrolloop_default="wresolOFF"
 ;;
 
@@ -1538,6 +1538,7 @@ echo "OFF" > $file
 tmux send-keys -t $tmuxname C-c
 tmux kill-session -t $tmuxname
 echo "OFF" > ./status/stat_zploopON6.txt
+aoconflogext "STOPPING afterburner"
 menucontrolloop_default="wresolON"
 ;;
 
