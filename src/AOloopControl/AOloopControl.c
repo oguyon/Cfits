@@ -4420,7 +4420,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     // predictive control output
     if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
     IDmodevalPF = read_sharedmem_image(imname);
     if(IDmodevalPF != -1)
     {
@@ -4713,7 +4712,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
         data.image[IDmodevalDMcorr].md[0].write = 1;
         for(m=0; m<NBmodes; m++)
             data.image[IDmodevalDMcorr].array.F[m] = modemult[m]*(data.image[IDmodevalDM_C].array.F[modevalDMindexl*NBmodes+m] - modegain[m]*data.image[IDmodeval].array.F[m]);
-		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPF_C, -1);
+		COREMOD_MEMORY_image_set_sempost_byID(IDmodevalDMcorr, -1);
 		data.image[IDmodevalDMcorr].md[0].cnt1 = LOOPiter; //modevalPFindex; //TBC
 		data.image[IDmodevalDMcorr].md[0].cnt0++;
 		data.image[IDmodevalDMcorr].md[0].write = 0;
