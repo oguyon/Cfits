@@ -6820,6 +6820,9 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
     int semval;
     
     
+    int VERBOSE = 1;
+    
+    
 
     schedpar.sched_priority = RT_priority;
     #ifndef __MACH__
@@ -6966,14 +6969,26 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         cntwait = 0;
         noframe = 0;
         wOK = 1;
-        // printf("Entering wait loop   index = %ld %d\n", index, noframe);
+        
+        if(VERBOSE==1)
+			printf("%5d  Entering wait loop   index = %ld %d\n", __LINE__, index, noframe);
 
 		if(likely(use_semlog==1))
 		{	
+			if(VERBOSE==1)
+				printf("%5d  Waiting for semaphore\n", __LINE__);
+
+			
 			sem_wait(data.image[ID].semlog);
+
+			if(VERBOSE==1)
+				printf("%5d  Image arrived  cntwait = %ld\n", __LINE__, cntwait);
+
 			cntwait++;
             if(cntwait>cntwaitlim) // save current cube
             {
+				printf("%5d  Save current cube\n", __LINE__);
+				
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
                 tmsg->partial = 1; // partial cube
