@@ -2637,7 +2637,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	ID = image_ID(IDname);
 	
 	NBtimer = data.image[ID].md[0].size[0];
-	NBsample = data.image[ID].md[0].size[1];
+	NBsample = data.image[ID].md[0].size[2];
 	fflush(stdout);
 	
 	cnt0array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
