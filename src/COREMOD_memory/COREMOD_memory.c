@@ -7243,7 +7243,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             /// save image
             if(VERBOSE==1)
                 printf("%5d  Save image   index = %ld  wOK = %d\n", __LINE__, index, wOK);
-            // sprintf(iname, "logbuff%d", buffer);
+            
             sprintf(iname, "%s_logbuff%d", IDname, buffer);
             if(buffer==0)
                 IDb = IDb0;
@@ -7253,13 +7253,29 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 
             if(wOK==1) // image has arrived
             {
+				if(VERBOSE==1)
+				{
+					printf("%5d  Building file names\n", __LINE__);
+					fflush(stdout);
+				}
+				
                 sprintf(fnameascii,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
                 sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
+				
+				
+				
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
                 strcpy(tmsg->fnameascii, fnameascii);
-
                 tmsg->partial = 0; // full cube
+           
+           
+				if(VERBOSE==1)
+				{
+					printf("%5d  Done\n", __LINE__);
+					fflush(stdout);
+				}
+				
             }
 
             //  fclose(fp);
@@ -7276,6 +7292,12 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             memcpy(array_time_cp, array_time, sizeof(double)*index);
             memcpy(array_cnt0_cp, array_cnt0, sizeof(uint64_t)*index);
             memcpy(array_cnt1_cp, array_cnt1, sizeof(uint64_t)*index);
+
+			if(VERBOSE==1)
+				{
+					printf("%5d  Starting thread\n", __LINE__);
+					fflush(stdout);
+				}			
 
             tmsg->arraycnt0 = array_cnt0_cp;
             tmsg->arraycnt1 = array_cnt1_cp;
