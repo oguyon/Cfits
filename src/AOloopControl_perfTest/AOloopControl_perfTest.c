@@ -541,7 +541,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			printw("  %5.3f |", ratio);
 			attroff(A_BOLD | COLOR_PAIR(color));
 			
-			printw(" %6.4f", ARPFgainAutob[block]);
+			printw(" %6.4f", ARPFgainAutob[k]);
 		}
 	
 
