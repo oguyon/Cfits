@@ -96,6 +96,9 @@ cp $1 _tmp_timing.fits
 cp $TimingFileTXT _tmp_timing.txt
 
 
+echo "TimingFileTXT = $TimingFileTXT"
+
+exit
 loopnb=$(cat LOOPNUMBER)
 
 ./AOloopControl -n aol${loopnb}timingproc << EOF
