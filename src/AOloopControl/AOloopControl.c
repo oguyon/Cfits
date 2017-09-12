@@ -4144,7 +4144,10 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
             cnt = data.image[IDimWFS0].md[0].cnt0;
         }
         else
+        {
+            printf("sem   ");
             sem_wait(data.image[IDimWFS0].semptr[3]);
+		}
 
 		//
 		// instantaneous WFS residual
