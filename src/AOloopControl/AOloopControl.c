@@ -4154,7 +4154,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 		
         data.image[IDout].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
-            data.image[IDout].array.F[ii] = data.image[IDwfsref].array.F[ii]; //data.image[aoconfID_imWFS0].array.F[ii]/data.image[IDtot].array.F[0]; // - data.image[IDwfsref].array.F[ii];
+            data.image[IDout].array.F[ii] = data.image[aoconfID_imWFS0].array.F[ii]/data.image[IDtot].array.F[0] - data.image[IDwfsref].array.F[ii];
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
         data.image[IDout].md[0].write = 0;
