@@ -4037,7 +4037,7 @@ long AOloopControl_sig2Modecoeff(const char *WFSim_name, const char *IDwfsref_na
 
 long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 {
-    long IDimWFS0, IDwfsref, IDwfsmask, IDtot, IDout, IDoutave, IDoutm, IDoutmave, IDoutrms;
+    long IDwfsref, IDwfsmask, IDtot, IDout, IDoutave, IDoutm, IDoutmave, IDoutrms;
     char imname[200];
     uint32_t *sizearray;
     long wfsxsize, wfsysize, wfsxysize;
@@ -4050,12 +4050,11 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 
     if(sprintf(imname, "aol%ld_imWFS0", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
-    IDimWFS0 = read_sharedmem_image(imname);
+	aoconfID_imWFS0 = read_sharedmem_image(imname);
 
     if(sprintf(imname, "aol%ld_wfsref", loop) < 1)
         printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
+	
     IDwfsref = read_sharedmem_image(imname);
 
     if(sprintf(imname, "aol%ld_wfsmask", loop) < 1)
@@ -4070,8 +4069,8 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 	
 	
 
-    wfsxsize = data.image[IDimWFS0].md[0].size[0];
-    wfsysize = data.image[IDimWFS0].md[0].size[1];
+    wfsxsize = data.image[aoconfID_imWFS0].md[0].size[0];
+    wfsysize = data.image[aoconfID_imWFS0].md[0].size[1];
     wfsxysize = wfsxsize*wfsysize;
 
     sizearray = (uint32_t*) malloc(sizeof(uint32_t)*2);
@@ -4136,28 +4135,26 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
     for(;;)
     {
 		
-        if(data.image[IDimWFS0].md[0].sem==0)
+        if(data.image[aoconfID_imWFS0].md[0].sem==0)
         {
-			printf("cnt0  ");
-            while(cnt==data.image[IDimWFS0].md[0].cnt0) // test if new frame exists
+            while(cnt==data.image[aoconfID_imWFS0].md[0].cnt0) // test if new frame exists
                 usleep(5);
-            cnt = data.image[IDimWFS0].md[0].cnt0;
+            cnt = data.image[aoconfID_imWFS0].md[0].cnt0;
         }
         else
         {
-            printf("sem   ");
-            sem_wait(data.image[IDimWFS0].semptr[3]);
+            sem_wait(data.image[aoconfID_imWFS0].semptr[3]);
 		}
 
 		//
 		// instantaneous WFS residual
         // imWFS0/tot0 - WFSref -> out
         //
-		printf("  %20f\n", data.image[IDtot].array.F[0]);
+		printf("  %20f\n", data.image[IDtot].array.F[0]);//TEST
 		
         data.image[IDout].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
-            data.image[IDout].array.F[ii] = data.image[IDwfsref].array.F[ii]; //data.image[IDimWFS0].array.F[ii]/data.image[IDtot].array.F[0]; // - data.image[IDwfsref].array.F[ii];
+            data.image[IDout].array.F[ii] = data.image[IDwfsref].array.F[ii]; //data.image[aoconfID_imWFS0].array.F[ii]/data.image[IDtot].array.F[0]; // - data.image[IDwfsref].array.F[ii];
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
         data.image[IDout].md[0].write = 0;

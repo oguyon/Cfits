@@ -700,6 +700,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     int semindex = 0;
 
 
+	usleep(1000000);// TEST
 
 
     if(RM==0)
@@ -831,7 +832,10 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     //   if(COMPUTE_PIXELSTREAMING==1) // multiple pixel groups
     PIXSTREAM_SLICE = data.image[aoconfID_wfsim].md[0].cnt1;
 
-
+	
+	
+	
+	
 
 	// ===================================================================
 	//
