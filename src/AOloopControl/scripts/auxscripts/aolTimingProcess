@@ -92,12 +92,14 @@ fi
 
 
 TimingFileTXT=$( sed 's/fits/txt/g' $1 )
+cp $1 _tmp_timing.fits
+cp $TimingFileTXT _tmp_timing.txt
 
 
 loopnb=$(cat LOOPNUMBER)
 
 ./AOloopControl -n aol${loopnb}timingproc << EOF
-loadfits "$1" imt
-aoltimingstat imt "$TimingFileTXT" timingstats.txt
+loadfits "_tmp_timing.fits" imt
+aoltimingstat imt "$TimingFileTXT" _tmp_timing.txt
 exitCLI
 EOF
