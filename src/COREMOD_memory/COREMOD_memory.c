@@ -7255,11 +7255,18 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             {
 				if(VERBOSE==1)
 				{
-					printf("%5d  Building file names\n", __LINE__);
+					printf("%5d  Building file name: ascii\n", __LINE__);
 					fflush(stdout);
 				}
 				
                 sprintf(fnameascii,"%s/%s_%02d:%02d:%02ld.%09ld.txt", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
+                
+                
+				if(VERBOSE==1)
+				{
+					printf("%5d  Building file name: fits\n", __LINE__);
+					fflush(stdout);
+				}
                 sprintf(fname,"!%s/%s_%02d:%02d:%02ld.%09ld.fits", logdir, IDname, uttimeStart->tm_hour, uttimeStart->tm_min, timenowStart.tv_sec % 60, timenowStart.tv_nsec);
 				
 				
