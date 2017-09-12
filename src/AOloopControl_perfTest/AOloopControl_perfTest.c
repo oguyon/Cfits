@@ -2683,8 +2683,8 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		fflush(stdout);
 		ret = fscanf(fptxt, "%ld %lu %lu %lf\n", &frNB, &cnt0array[sp], &cnt1array[sp], &frameTimearray[sp]);
 		
-		fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
-		
+		//fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
+		/*
 		
 		if(sp==0)
 		{
@@ -2704,7 +2704,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 				timer_min[timer] = data.image[ID].array.F[sp*NBtimer + timer];
 			if(data.image[ID].array.F[sp*NBtimer + timer] > timer_max[timer])
 				timer_max[timer] = data.image[ID].array.F[sp*NBtimer + timer];
-		}
+		}*/
 		printf("\n");				
 	}
 	
