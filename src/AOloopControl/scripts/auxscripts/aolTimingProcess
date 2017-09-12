@@ -103,6 +103,6 @@ loopnb=$(cat LOOPNUMBER)
 
 ./AOloopControl -n aol${loopnb}timingproc << EOF
 loadfits "_tmp_timing.fits" imt
-aoltimingstat imt "$TimingFileTXT" _tmp_timing.txt
+aoltimingstat imt _tmp_timing.txt TimingReport.txt
 exitCLI
 EOF
