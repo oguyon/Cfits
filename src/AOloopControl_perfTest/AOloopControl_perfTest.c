@@ -2686,10 +2686,10 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		printf("\r Sample %ld / %ld \n", sp, NBsample);
 		fflush(stdout);
 		
-		ret = fscanf(fptxt, "%20:ld %20:ld %20:ld %20:f\n", &frNB, &l1, &l2, &f1); 
+		ret = fscanf(fptxt, "%ld %ld %ld %lf\n", &frNB, &l1, &l2, &f1); 
 
 		
-		printf("read :   %20ld  %20ld  %20ld  20f\n", frNB, l1, l2, f1);
+		printf("read :   %20ld  %20ld  %20ld  %20lf\n", frNB, l1, l2, f1);
 		fflush(stdout);
 
 		cnt0array[sp] = l1;
