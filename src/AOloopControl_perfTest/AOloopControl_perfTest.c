@@ -2687,12 +2687,14 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		fflush(stdout);
 		
 		ret = fscanf(fptxt, "%20:ld %20:ld %20:ld %20:lf\n", &frNB, &l1, &l2, &f1); 
-		cnt0array[sp] = l1;
-		cnt1array[sp] = l2;
-		frameTimearray[sp] = f1;
+
 		
 		printf("read :   %20ld  %20ld  %20ld  20f\n", frNB, l1, l2, f1);
 		fflush(stdout);
+
+		cnt0array[sp] = l1;
+		cnt1array[sp] = l2;
+		frameTimearray[sp] = f1;
 		
 		//fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
 		/*
