@@ -2638,6 +2638,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	
 	NBtimer = data.image[ID].md[0].size[0];
 	NBsample = data.image[ID].md[0].size[1];
+	fflush(stdout);
 	
 	cnt0array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
 	cnt1array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
@@ -2647,6 +2648,9 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	timer_max = (double*) malloc(sizeof(double) * NBtimer);
 	timer_dev = (double*) malloc(sizeof(double) * NBtimer);
 	
+	
+	printf("%ld timers\n", NBtimer);
+	printf("%ld samples\n", NBsample);
 	
 	
 	if( (fpout = fopen(outfname, "w")) == NULL)
@@ -2663,8 +2667,15 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	
 	fprintf(fpout, "# AOloopControl timing\n\n");
 	
+	list_image_ID();
+	
+	
+	printf("Reading Files\n");
+	printf("\n");
 	for(sp=0; sp< NBsample; sp++)
 	{
+		printf("\r Sample %ld / %ld \n", sp, NBsample);
+		fflush(stdout);
 		ret = fscanf(fptxt, "%ld %lu %lu %lf\n", &frNB, &cnt0array[sp], &cnt1array[sp], &frameTimearray[sp]);
 		
 		fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
