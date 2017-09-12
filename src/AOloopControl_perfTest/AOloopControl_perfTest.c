@@ -2707,13 +2707,14 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		
 		for(timer=0; timer<NBtimer; timer++)
 		{	
-			fprintf(fpout, "  %12.9f", data.image[ID].array.F[sp*NBtimer + timer]);
+			timerval = data.image[ID].array.F[sp*NBtimer + timer];
+			fprintf(fpout, "  %12.9f", timerval);
 		
-			timer_ave[timer] += data.image[ID].array.F[sp*NBtimer + timer];
-			if(data.image[ID].array.F[sp*NBtimer + timer] < timer_min[timer])
-				timer_min[timer] = data.image[ID].array.F[sp*NBtimer + timer];
-			if(data.image[ID].array.F[sp*NBtimer + timer] > timer_max[timer])
-				timer_max[timer] = data.image[ID].array.F[sp*NBtimer + timer];
+			timer_ave[timer] += timerval;
+			if(timerval < timer_min[timer])
+				timer_min[timer] = timerval;
+			if(timerval > timer_max[timer])
+				timer_max[timer] = timerval;
 		}
 		fprintf(fpout, "\n");				
 	}
