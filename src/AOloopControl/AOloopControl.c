@@ -4138,6 +4138,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 		
         if(data.image[IDimWFS0].md[0].sem==0)
         {
+			printf("cnt0  ");
             while(cnt==data.image[IDimWFS0].md[0].cnt0) // test if new frame exists
                 usleep(5);
             cnt = data.image[IDimWFS0].md[0].cnt0;
