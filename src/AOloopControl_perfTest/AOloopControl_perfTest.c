@@ -440,8 +440,8 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 		
 		for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
 			{
-				ARPFgainAutob[block] = 0.0;
-				ARPFgainAutob_tot[block] = 0.0;
+				ARPFgainAutob[k] = 0.0;
+				ARPFgainAutob_tot[k] = 0.0;
 			}
 		
         for(m=0; m<AOconf[loop].NBDMmodes; m++)
@@ -452,7 +452,7 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         }
 		
 		for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
-			ARPFgainAutob[block] /= ARPFgainAutob_tot[block];
+			ARPFgainAutob[k] /= ARPFgainAutob_tot[k];
 		
 	}
 	
