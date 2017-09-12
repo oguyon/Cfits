@@ -2689,16 +2689,12 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		
 		ret = fscanf(fptxt, "%ld %ld %ld %lf\n", &frNB, &l1, &l2, &f1); 
 
-		
-		printf("read :   %20ld  %20ld  %20ld  %20lf\n", frNB, l1, l2, f1);
-		fflush(stdout);
-
 		cnt0array[sp] = l1;
 		cnt1array[sp] = l2;
 		frameTimearray[sp] = f1;
 		
-		//fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
-		/*
+		fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
+		
 		
 		if(sp==0)
 		{
@@ -2718,8 +2714,8 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 				timer_min[timer] = data.image[ID].array.F[sp*NBtimer + timer];
 			if(data.image[ID].array.F[sp*NBtimer + timer] > timer_max[timer])
 				timer_max[timer] = data.image[ID].array.F[sp*NBtimer + timer];
-		}*/
-		printf("\n");				
+		}
+		fprintf(fpout, "\n");				
 	}
 	
 	missedFrames = (cnt1array[NBsample-1]-cnt1array[0]) - NBsample;
