@@ -7239,6 +7239,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         {
 			// save partial if possible
 			//if(index>0)
+			wOK = 0;
 				
 		}
 
