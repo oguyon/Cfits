@@ -384,10 +384,13 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 	float ratio0, ratio;
 	int color;
     long IDblknb;
+    long block;
     float valPFres, valOL, valWFS;
-    long IDmodeARPFgainAuto;
 	long m;
 	uint32_t *sizeout;
+	float ARPFgainAutob[100];
+	float ARPFgainAutob_tot[100];
+
 
     printw("    loop number %ld    ", loop);
 
@@ -416,10 +419,10 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
         IDblknb = read_sharedmem_image(imname);
 
 	
-	
-
-	if(aoconfID_modeARPFgainAuto == -1)
+	if(AOconf[loop].ARPFon==1)
 	{
+		if(aoconfID_modeARPFgainAuto == -1)
+		{
 		// multiplicative auto ratio on top of gain above
 		sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
 		sizeout[0] = AOconf[loop].NBDMmodes;
@@ -433,7 +436,23 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 		for(m=0;m<AOconf[loop].NBDMmodes; m++)
 			data.image[aoconfID_modeARPFgainAuto].array.F[m] = 1.0;
 		free(sizeout);
+		}
+		
+		for(k=0; k<AOconf[loop].DMmodesNBblock; k++)
+			{
+				ARPFgainAutob[block] = 0.0;
+				ARPFgainAutob_tot[block] = 0.0;
+			}
+		
+        for(m=0; m<AOconf[loop].NBDMmodes; m++)
+        {
+            block = data.image[IDblknb].array.UI16[m];
+			ARPFgainAutob[block] += data.image[aoconfID_modeARPFgainAuto].array.F[m];
+			ARPFgainAutob_tot[block] += 1.0;
+        }
+		
 	}
+	
 
 
     if(aoconfID_LIMIT_modes == -1)
@@ -521,6 +540,8 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 			attron(A_BOLD | COLOR_PAIR(color));
 			printw("  %5.3f |", ratio);
 			attroff(A_BOLD | COLOR_PAIR(color));
+			
+			printw(" %6.4", ARPFgainAutob[block]);
 		}
 	
 
