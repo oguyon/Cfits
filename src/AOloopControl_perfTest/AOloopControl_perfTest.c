@@ -2653,12 +2653,17 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	printf("%ld samples\n", NBsample);
 	
 	
+	
+	printf("Creating file \"%s\"\n", outfname);
+	fflush(stdout);
 	if( (fpout = fopen(outfname, "w")) == NULL)
 	{
 		printf("ERROR: cannot create file %s\n", outfname);
 		exit(0);
 	}
 	
+	printf("Opening file \"%s\"\n", fnametxt);
+	fflush(stdout);
 	if( (fptxt=fopen(fnametxt, "r")) == NULL)
 	{
 		printf("ERROR: cannot open file %s\n", fnametxt);
@@ -2670,7 +2675,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	list_image_ID();
 	
 	
-	printf("Reading File %s\n", fnametxt);
+	printf("Reading File %s\n\n", fnametxt);
 	printf("\n");
 	for(sp=0; sp< NBsample; sp++)
 	{
