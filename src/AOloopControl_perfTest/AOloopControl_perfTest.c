@@ -114,7 +114,8 @@ extern long aoconfID_cmd_modes;          // declared in AOloopControl.c
 extern long aoconfID_meas_modes;         // declared in AOloopControl.c
 extern long aoconfID_RMS_modes;          // declared in AOloopControl.c
 extern long aoconfID_AVE_modes;          // declared in AOloopControl.c
-
+extern long aoconfID_modeARPFgainAuto;   // declared in AOloopControl.c
+     
 
 static int wcol, wrow; // window size
 

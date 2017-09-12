@@ -247,7 +247,7 @@ long aoconfID_cmd_modes = -1;
 long aoconfID_meas_modes = -1; // measured
 long aoconfID_RMS_modes = -1;
 long aoconfID_AVE_modes = -1;
-
+long aoconfID_modeARPFgainAuto = -1;
 
 
 // mode gains, multf, limit are set in 3 tiers
@@ -1957,8 +1957,14 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
         if(sprintf(fname, "conf/shmim_gainb.fits") < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-
         aoconfID_gainb = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].DMmodesNBblock, 1, 0.0);
+
+		if(sprintf(name, "aol%ld_modeARPFgainAuto", loop) < 1)
+            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        if(sprintf(fname, "conf/shmim_modeARPFgainAuto.fits") < 1)
+            printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+        aoconfID_modeARPFgainAuto = AOloopControl_IOtools_2Dloadcreate_shmim(name, fname, AOconf[loop].NBDMmodes, 1, 1.0);
+
 
         if(sprintf(name, "aol%ld_multfb", loop) < 1)
             printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
@@ -4246,7 +4252,6 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     long IDmodevalPFsync;
 
 	long IDmodeARPFgain; // predictive filter mixing ratio per gain (0=non-predictive, 1=predictive)
-	long IDmodeARPFgainAuto; // multiplicative ratio (auto)
     long IDmodevalPF; // predictive filter output
 	long IDmodevalPFres; // predictive filter measured residual (real-time)
 	long IDmodeWFSnoise; // WFS noise
@@ -4528,15 +4533,17 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 	for(m=0;m<NBmodes;m++)
 		data.image[IDmodeARPFgain].array.F[m] = 0.0;
 
-	// multiplicative auto ratio on top of gain above
-    if(sprintf(imname, "aol%ld_mode_ARPFgainAuto", loop) < 1) 
-        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    IDmodeARPFgainAuto = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
-    COREMOD_MEMORY_image_set_createsem(imname, 10);
-	// initialize the gain to zero for all modes
-	for(m=0;m<NBmodes;m++)
-		data.image[IDmodeARPFgainAuto].array.F[m] = 1.0;
-
+	if(aoconfID_modeARPFgainAuto == -1)
+	{
+		// multiplicative auto ratio on top of gain above
+		if(sprintf(imname, "aol%ld_mode_ARPFgainAuto", loop) < 1) 
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		aoconfID_modeARPFgainAuto = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(imname, 10);
+		// initialize the gain to zero for all modes
+		for(m=0;m<NBmodes;m++)
+			data.image[aoconfID_modeARPFgainAuto].array.F[m] = 1.0;
+	}
 
 
     sizeout[1] = modeval_bsize;
@@ -4780,7 +4787,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
                 {
 					float mixratio;
 					
-					mixratio = AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m] * data.image[IDmodeARPFgainAuto].array.F[m];
+					mixratio = AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m] * data.image[aoconfID_modeARPFgainAuto].array.F[m];
 				    data.image[IDmodevalDMnow].array.F[m] = -mixratio*data.image[IDmodevalPF].array.F[m]  + (1.0-mixratio)*data.image[IDmodevalDMcorr].array.F[m];
                 }
              
@@ -4802,6 +4809,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 					
 					
 				// autotune ARPFgainAuto
+				data.image[aoconfID_modeARPFgainAuto].md[0].write = 1;
 				for(m=0; m<NBmodes; m++)
 				{
 					float minVal = 0.1;
@@ -4809,16 +4817,18 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 					
 					
 					if (data.image[IDmodevalPFres].array.F[m]*data.image[IDmodevalPFres].array.F[m] < data.image[IDmodeval].array.F[m]*data.image[IDmodeval].array.F[m])
-						data.image[IDmodeARPFgainAuto].array.F[m] *= 1.001;
+						data.image[aoconfID_modeARPFgainAuto].array.F[m] *= 1.001;
 					else
-						data.image[IDmodeARPFgainAuto].array.F[m] *= 0.999;
+						data.image[aoconfID_modeARPFgainAuto].array.F[m] *= 0.999;
 						
-					if (data.image[IDmodeARPFgainAuto].array.F[m] > maxVal)
-						data.image[IDmodeARPFgainAuto].array.F[m] = maxVal;
-					if (data.image[IDmodeARPFgainAuto].array.F[m] < minVal)
-						data.image[IDmodeARPFgainAuto].array.F[m] = minVal;
+					if (data.image[aoconfID_modeARPFgainAuto].array.F[m] > maxVal)
+						data.image[aoconfID_modeARPFgainAuto].array.F[m] = maxVal;
+					if (data.image[aoconfID_modeARPFgainAuto].array.F[m] < minVal)
+						data.image[aoconfID_modeARPFgainAuto].array.F[m] = minVal;
 				}
-					
+				data.image[aoconfID_modeARPFgainAuto].md[0].cnt1 = LOOPiter; //modevalPFindex;
+				data.image[aoconfID_modeARPFgainAuto].md[0].cnt0++;
+				data.image[aoconfID_modeARPFgainAuto].md[0].write = 0;
 								
 				loopPFcnt++;
             }
