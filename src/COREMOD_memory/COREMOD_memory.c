@@ -7263,8 +7263,6 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 IDb = IDb1;
 
 
-            if(wOK==1) // image has arrived
-            {
 				if(VERBOSE==1)
 				{
 					printf("%5d  Building file name: ascii\n", __LINE__);
@@ -7286,16 +7284,29 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
                 strcpy(tmsg->fnameascii, fnameascii);
-                tmsg->partial = 0; // full cube
-           
-           
+
+
+
+            if(wOK==1) // full cube
+            {
+                tmsg->partial = 0; // full cube           
 				if(VERBOSE==1)
 				{
-					printf("%5d  Done\n", __LINE__);
+					printf("%5d  FULL CUBE\n", __LINE__);
 					fflush(stdout);
 				}
 				
             }
+            else // partial cube
+            {
+				tmsg->partial = 1; // partial cube           
+				if(VERBOSE==1)
+				{
+					printf("%5d  PARTIAL CUBE\n", __LINE__);
+					fflush(stdout);
+				}
+			}
+            
 
             //  fclose(fp);
 
