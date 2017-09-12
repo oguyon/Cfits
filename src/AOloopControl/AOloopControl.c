@@ -2633,9 +2633,11 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
             data.image[IDwfsref].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
             data.image[IDwfsref].md[0].write = 0;
 
-            sem_getvalue(data.image[IDwfsref].semptr[0], &semval);
+/*            sem_getvalue(data.image[IDwfsref].semptr[0], &semval); // do not update sem 1
             if(semval<SEMAPHORE_MAXVAL)
-                COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);
+                COREMOD_MEMORY_image_set_sempost(IDwfsref_name, 0);*/
+            COREMOD_MEMORY_image_set_sempost_excl_byID(IDwfsref, 1);
+            
 
             cntsumold = cntsum;
         }
