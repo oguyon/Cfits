@@ -2720,7 +2720,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	}
 	
 	missedFrames = (cnt1array[NBsample-1]-cnt1array[0]) - NBsample;
-	
+	timer_ave[timer] /= NBsample;
 	
 	
 	for(timer=0; timer<NBtimer; timer++)
@@ -2742,7 +2742,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	printf("|  XXX  | xxxx.xx - xxxx.xx - xxxx.xx | xxxx.xx |\n");
 	printf("-------------------------------------------------\n");
 	for(timer=0; timer<NBtimer; timer++)
-		printf("|  %3d  | %7.2f - %7.2f - %7.2f | %7.2f |\n", timer, timer_min[timer], timer_ave[timer], timer_max[timer], timer_dev[timer]);
+		printf("|  %3d  | %7.2f - %7.2f - %7.2f | %7.2f |\n", timer, timer_min[timer]*1e6, timer_ave[timer]*1e6, timer_max[timer]*1e6, timer_dev[timer]*1e6);
 	printf("-------------------------------------------------\n");
 	
 	fclose(fpout);
