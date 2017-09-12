@@ -2720,11 +2720,12 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	}
 	
 	missedFrames = (cnt1array[NBsample-1]-cnt1array[0]) - NBsample;
-	timer_ave[timer] /= NBsample;
 	
 	
 	for(timer=0; timer<NBtimer; timer++)
 	{
+		timer_ave[timer] /= NBsample;
+		
 		rms = 0.0;
 		for(sp=0; sp< NBsample; sp++)
 		{
