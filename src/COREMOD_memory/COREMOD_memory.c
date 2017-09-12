@@ -7004,7 +7004,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
             ret = sem_timedwait(data.image[ID].semlog, &ts);
 			if (ret == -1) { 
 				if (errno == ETIMEDOUT)
-					printf("sem_timedwait() timed out -> save\n");
+					printf("sem_timedwait() timed out -> save (%ld)\n", index);
 				
 				if(VERBOSE==1)
                     printf("%5d  sem time elapsed -> Save current cube (%ld)\n", __LINE__, index);
