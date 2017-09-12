@@ -91,7 +91,7 @@ fi
 
 
 
-TimingFileTXT=$( sed 's/fits/txt/g' $1 )
+TimingFileTXT=$( echo "$1" | sed 's/fits/txt/g' )
 cp $1 _tmp_timing.fits
 cp $TimingFileTXT _tmp_timing.txt
 
