@@ -2684,7 +2684,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	printf("\n");
 	for(sp=0; sp< NBsample; sp++)
 	{
-		printf("\r     sample %ld / %ld ", sp, NBsample);
+		printf("\r     sample %ld / %ld                ", sp, NBsample);
 		fflush(stdout);
 		
 		ret = fscanf(fptxt, "%ld %ld %ld %lf\n", &frNB, &l1, &l2, &f1); 
@@ -2734,6 +2734,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		}
 		timer_dev[timer] = sqrt(rms/NBsample);
 	}
+	printf("\n\n");
 	
 	
 	// Print report
