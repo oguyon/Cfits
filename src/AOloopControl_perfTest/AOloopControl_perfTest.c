@@ -384,8 +384,9 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
 	int color;
     long IDblknb;
     float valPFres, valOL, valWFS;
-    
-
+    long IDmodeARPFgainAuto;
+	long m;
+	uint32_t *sizeout;
 
     printw("    loop number %ld    ", loop);
 
@@ -413,6 +414,25 @@ int_fast8_t AOloopControl_perfTest_printloopstatus(long loop, long nbcol, long I
     if(IDblknb==-1)
         IDblknb = read_sharedmem_image(imname);
 
+	
+	
+
+	if(aoconfID_modeARPFgainAuto == -1)
+	{
+		// multiplicative auto ratio on top of gain above
+		sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
+		sizeout[0] = AOconf[loop].NBDMmodes;
+		sizeout[1] = 1;
+		
+		if(sprintf(imname, "aol%ld_mode_ARPFgainAuto", loop) < 1) 
+			printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		aoconfID_modeARPFgainAuto = create_image_ID(imname, 2, sizeout, _DATATYPE_FLOAT, 1, 0);
+		COREMOD_MEMORY_image_set_createsem(imname, 10);
+		// initialize the gain to zero for all modes
+		for(m=0;m<AOconf[loop].NBDMmodes; m++)
+			data.image[aoconfID_modeARPFgainAuto].array.F[m] = 1.0;
+		free(sizeout);
+	}
 
 
     if(aoconfID_LIMIT_modes == -1)
