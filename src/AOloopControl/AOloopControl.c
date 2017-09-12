@@ -4827,7 +4827,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 				for(m=0; m<NBmodes; m++)
 					data.image[IDmodevalPF_C].array.F[modevalPFindex*NBmodes+m] = data.image[IDmodevalPF].array.F[m];
 				COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPF_C, -1);
-				data.image[IDmodevalPF_C].md[0].cnt1 = LOOPiter; //modevalPFindex;
+				data.image[IDmodevalPF_C].md[0].cnt1 = modevalPFindex;
 				data.image[IDmodevalPF_C].md[0].cnt0++;
 				data.image[IDmodevalPF_C].md[0].write = 0;
 					
