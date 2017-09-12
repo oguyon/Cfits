@@ -4769,7 +4769,8 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 				
                 for(m=0; m<NBmodes; m++)
                 {
-				    data.image[IDmodevalDMnow].array.F[m] = -(AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalPF].array.F[m] + (1.0-AOconf[loop].ARPFgain* data.image[IDmodeARPFgain].array.F[m])*data.image[IDmodevalDMcorr].array.F[m];
+					mixratio = AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m];
+				    data.image[IDmodevalDMnow].array.F[m] = -mixratio*data.image[IDmodevalPF].array.F[m]  + (1.0-mixratio)*data.image[IDmodevalDMcorr].array.F[m];
                 }
              
                 // drive semaphore to zero
@@ -5093,24 +5094,25 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 		if(AOconf[loop].ARPFon==1)
 		{
-		//
-        // COMPUTE OPEN LOOP PREDICTION AT TIME OF WFS MEASUREMENT
-        // LINEAR INTERPOLATION BETWEEN NEAREST TWO VALUES
-        //
-        modevalPFindex0 = modevalPFindex - framelatency0;
-        if(modevalPFindex0<0)
-            modevalPFindex0 += modeval_bsize;
-        modevalPFindex1 = modevalPFindex - framelatency1;
-        if(modevalPFindex1<0)
-            modevalPFindex1 += modeval_bsize;
+			//
+			// COMPUTE OPEN LOOP PREDICTION AT TIME OF WFS MEASUREMENT
+			// LINEAR INTERPOLATION BETWEEN NEAREST TWO VALUES
+			//
+        
+			modevalPFindex0 = modevalPFindex - framelatency0;
+			if(modevalPFindex0<0)
+				modevalPFindex0 += modeval_bsize;
+			modevalPFindex1 = modevalPFindex - framelatency1;
+			if(modevalPFindex1<0)
+				modevalPFindex1 += modeval_bsize;
 
-        data.image[IDmodevalPFsync].md[0].write = 1;
-        for(m=0; m<NBmodes; m++)
-            data.image[IDmodevalPFsync].array.F[m] = (1.0-alpha)*data.image[IDmodevalPF_C].array.F[modevalPFindex0*NBmodes+m] + alpha*data.image[IDmodevalPF_C].array.F[modevalPFindex1*NBmodes+m];
-        COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPFsync, -1);
-        data.image[IDmodevalPFsync].md[0].cnt0++;
-        data.image[IDmodevalPFsync].md[0].cnt1 = LOOPiter;
-        data.image[IDmodevalPFsync].md[0].write = 0;
+			data.image[IDmodevalPFsync].md[0].write = 1;
+			for(m=0; m<NBmodes; m++)
+				data.image[IDmodevalPFsync].array.F[m] = (1.0-alpha)*data.image[IDmodevalPF_C].array.F[modevalPFindex0*NBmodes+m] + alpha*data.image[IDmodevalPF_C].array.F[modevalPFindex1*NBmodes+m];
+			COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPFsync, -1);
+			data.image[IDmodevalPFsync].md[0].cnt0++;
+			data.image[IDmodevalPFsync].md[0].cnt1 = LOOPiter;
+			data.image[IDmodevalPFsync].md[0].write = 0;
 		}
 
 
@@ -5136,16 +5138,16 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 		if(AOconf[loop].ARPFon==1)
 		{
-		//
-        // OPEN LOOP PREDICTION RESIDUAL = most recent OL - time-lagged PF
-        //
-        data.image[IDmodevalPFres].md[0].write = 1;
-        for(m=0; m<NBmodes; m++)
-            data.image[IDmodevalPFres].array.F[m] = data.image[IDout].array.F[m] - data.image[IDmodevalPFsync].array.F[m];
-        COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPFres, -1);
-        data.image[IDmodevalPFres].md[0].cnt0++;
-        data.image[IDmodevalPFres].md[0].cnt1 = LOOPiter;
-        data.image[IDmodevalPFres].md[0].write = 0;
+			//
+			// OPEN LOOP PREDICTION RESIDUAL = most recent OL - time-lagged PF
+			//
+			data.image[IDmodevalPFres].md[0].write = 1;
+			for(m=0; m<NBmodes; m++)
+				data.image[IDmodevalPFres].array.F[m] = data.image[IDout].array.F[m] - data.image[IDmodevalPFsync].array.F[m];
+			COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPFres, -1);
+			data.image[IDmodevalPFres].md[0].cnt0++;
+			data.image[IDmodevalPFres].md[0].cnt1 = LOOPiter;
+			data.image[IDmodevalPFres].md[0].write = 0;
 		}
 
 
@@ -5246,6 +5248,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
     return(IDout);
 }
+
+
+
 
 
 
