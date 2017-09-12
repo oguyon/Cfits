@@ -201,6 +201,8 @@ typedef struct
 	///@{  	
     int_fast8_t ARPFon; // 1 if auto-regressive predictive filter is ON
 	float ARPFgain; 
+	float ARPFgainAutoMin;
+	float ARPFgainAutoMax;
     ///@}
 	/* =============================================================================================== */
 

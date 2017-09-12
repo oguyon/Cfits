@@ -1330,6 +1330,7 @@ int_fast8_t AOloopControl_loadconfigure(long loop, int mode, int level)
 
 
 	
+	
 	//
     /** ### 1.2. Set names of key streams */
     // Here we define names of key streams used by loop
@@ -2217,6 +2218,8 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
         AOconf[loop].AUTOTUNE_LIMITS_ON = 0;
         AOconf[loop].AUTOTUNE_GAINS_ON = 0;
         AOconf[loop].ARPFon = 0;
+        AOconf[loop].ARPFgainAutoMin = 0.99;
+        AOconf[loop].ARPFgainAutoMax = 1.00;
         AOconf[loop].LOOPiteration = 0;
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
@@ -2256,6 +2259,8 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
             AOconf[loop].AUTOTUNE_LIMITS_mcoeff = 1.0; // multiplicative coeff
             AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-3;
             AOconf[loop].ARPFgain = 0.0;
+			AOconf[loop].ARPFgainAutoMin = 0.99;
+			AOconf[loop].ARPFgainAutoMax = 1.00;
             AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
             AOconf[loop].DMmodesNBblock = 1;
@@ -4812,8 +4817,8 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 				data.image[aoconfID_modeARPFgainAuto].md[0].write = 1;
 				for(m=0; m<NBmodes; m++)
 				{
-					float minVal = 0.1;
-					float maxVal = 9.0;
+					float minVal = AOconf[loop].ARPFgainAutoMin;
+					float maxVal = AOconf[loop].ARPFgainAutoMax;
 					
 					
 					if (data.image[IDmodevalPFres].array.F[m]*data.image[IDmodevalPFres].array.F[m] < data.image[IDmodeval].array.F[m]*data.image[IDmodeval].array.F[m])
