@@ -2642,6 +2642,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	
 	cnt0array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
 	cnt1array = (uint64_t *) malloc(sizeof(uint64_t) * NBsample);
+	frameTimearray = (double *) malloc(sizeof(double) * NBsample);
 	
 	timer_ave = (double*) malloc(sizeof(double) * NBtimer);
 	timer_min = (double*) malloc(sizeof(double) * NBtimer);
