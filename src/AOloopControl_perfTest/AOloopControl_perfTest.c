@@ -2653,7 +2653,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	
 	
 	
-	printf("%ld timers\n", NBtimer);
+	printf("%d timers\n", NBtimer);
 	printf("%ld samples\n", NBsample);
 	
 	
@@ -2686,10 +2686,10 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 		printf("\r Sample %ld / %ld \n", sp, NBsample);
 		fflush(stdout);
 		
-		ret = fscanf(fptxt, "%ld %ld %ld %f\n", &frNB, &l1  &l2 &f1); 
+		ret = fscanf(fptxt, "%ld %ld %ld %lf\n", &frNB, &l1, &l2, &f1); 
 		cnt0array[sp] = l1;
 		cnt1array[sp] = l2;
-		frameTimearray[sp]) = f1;
+		frameTimearray[sp] = f1;
 		
 		//fprintf(fpout, "%5ld  %10lu  %10lu  %18.9lf    ", sp, cnt0array[sp], cnt1array[sp], frameTimearray[sp]);
 		/*
