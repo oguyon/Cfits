@@ -2670,7 +2670,7 @@ long AOloopControl_LoopTimer_Analysis(char *IDname, char *fnametxt, char *outfna
 	list_image_ID();
 	
 	
-	printf("Reading Files\n");
+	printf("Reading File %s\n", fnametxt);
 	printf("\n");
 	for(sp=0; sp< NBsample; sp++)
 	{
