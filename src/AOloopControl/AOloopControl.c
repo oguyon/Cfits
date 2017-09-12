@@ -242,13 +242,14 @@ long aoconfID_DMmodes = -1;
 static long aoconfID_dmdisp = -1;  // to notify DMcomb that DM maps should be summed
 
 
+
 // Control Modes
 long aoconfID_cmd_modes = -1;
 long aoconfID_meas_modes = -1; // measured
 long aoconfID_RMS_modes = -1;
 long aoconfID_AVE_modes = -1;
 long aoconfID_modeARPFgainAuto = -1;
-
+long aoconfID_modevalPF = -1;
 
 // mode gains, multf, limit are set in 3 tiers
 // global gain
@@ -4277,7 +4278,7 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
     long IDmodevalPFsync;
 
 	long IDmodeARPFgain; // predictive filter mixing ratio per gain (0=non-predictive, 1=predictive)
-    long IDmodevalPF; // predictive filter output
+   // long IDmodevalPF; // predictive filter output
 	long IDmodevalPFres; // predictive filter measured residual (real-time)
 	long IDmodeWFSnoise; // WFS noise
     long IDmodevalPF_C; // modal prediction, circular buffer to include history
@@ -4459,16 +4460,18 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 
 
     // predictive control output
-    if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
-        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
-    IDmodevalPF = read_sharedmem_image(imname);
-    if(IDmodevalPF != -1)
+    if(aoconfID_modevalPF == -1)
     {
-        long ii;
-        for(ii=0; ii<data.image[IDmodevalPF].md[0].size[0]*data.image[IDmodevalPF].md[0].size[1]; ii++)
-            data.image[IDmodevalPF].array.F[ii] = 0.0;
-    }
-
+		if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
+        printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
+		aoconfID_modevalPF = read_sharedmem_image(imname);
+		if(aoconfID_modevalPF != -1)
+		{
+			long ii;
+			for(ii=0; ii<data.image[aoconfID_modevalPF].md[0].size[0]*data.image[aoconfID_modevalPF].md[0].size[1]; ii++)
+				data.image[aoconfID_modevalPF].array.F[ii] = 0.0;
+		}
+	}
 
     // OUPUT
     sizeout = (uint32_t*) malloc(sizeof(uint32_t)*2);
@@ -4786,12 +4789,12 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
         {
 		//	printf("%s  %s  %d\n",__FILE__, __func__, __LINE__);fflush(stdout); //TEST
 			
-            if(IDmodevalPF==-1)
+            if(aoconfID_modevalPF==-1)
             {
                 if(sprintf(imname, "aol%ld_modevalPF", loop) < 1)
                     printERROR(__FILE__, __func__, __LINE__, "sprintf wrote <1 char");
 
-                IDmodevalPF = read_sharedmem_image(imname);
+                aoconfID_modevalPF = read_sharedmem_image(imname);
             }
             else
             {
@@ -4813,11 +4816,11 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 					float mixratio;
 					
 					mixratio = AOconf[loop].ARPFgain*data.image[IDmodeARPFgain].array.F[m] * data.image[aoconfID_modeARPFgainAuto].array.F[m];
-				    data.image[IDmodevalDMnow].array.F[m] = -mixratio*data.image[IDmodevalPF].array.F[m]  + (1.0-mixratio)*data.image[IDmodevalDMcorr].array.F[m];
+				    data.image[IDmodevalDMnow].array.F[m] = -mixratio*data.image[aoconfID_modevalPF].array.F[m]  + (1.0-mixratio)*data.image[IDmodevalDMcorr].array.F[m];
                 }
              
                 // drive semaphore to zero
-				//  while(sem_trywait(data.image[IDmodevalPF].semptr[3])==0) {}
+				//  while(sem_trywait(data.image[aoconfID_modevalPF].semptr[3])==0) {}
 
 
 				//
@@ -4825,9 +4828,9 @@ long __attribute__((hot)) AOloopControl_ComputeOpenLoopModes(long loop)
 				//
 				data.image[IDmodevalPF_C].md[0].write = 1;
 				for(m=0; m<NBmodes; m++)
-					data.image[IDmodevalPF_C].array.F[modevalPFindex*NBmodes+m] = data.image[IDmodevalPF].array.F[m];
+					data.image[IDmodevalPF_C].array.F[modevalPFindex*NBmodes+m] = data.image[aoconfID_modevalPF].array.F[m];
 				COREMOD_MEMORY_image_set_sempost_byID(IDmodevalPF_C, -1);
-				data.image[IDmodevalPF_C].md[0].cnt1 = modevalPFindex;
+				data.image[IDmodevalPF_C].md[0].cnt1 = modevalPFindex; // NEEDS TO CONTAIN WRITTEN SLICE ?
 				data.image[IDmodevalPF_C].md[0].cnt0++;
 				data.image[IDmodevalPF_C].md[0].write = 0;
 					
