@@ -6975,6 +6975,8 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			   sem_wait(data.image[ID].semlog);
 				sem_getvalue(data.image[ID].semlog, &semval);
 		   }
+		if(semval==0)
+			sem_post(data.image[ID].semlog);
     }
 
 
@@ -7005,7 +7007,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 					printf("sem_timedwait() timed out -> save\n");
 				
 				if(VERBOSE==1)
-                    printf("%5d  sem time elapsed -> Save current cube\n", __LINE__);
+                    printf("%5d  sem time elapsed -> Save current cube (%ld)\n", __LINE__, index);
 
                 strcpy(tmsg->iname, iname);
                 strcpy(tmsg->fname, fname);
