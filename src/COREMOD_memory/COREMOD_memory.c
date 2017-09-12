@@ -2740,10 +2740,6 @@ long copy_image_ID(const char *name, const char *newname, int shared)
         memcpy (data.image[IDout].array.CD, data.image[ID].array.CD, SIZEOF_DATATYPE_COMPLEX_DOUBLE*nelement);
 
 
-
-
-    
-
     
     COREMOD_MEMORY_image_set_sempost_byID(IDout, -1);
     data.image[IDout].md[0].write = 0;

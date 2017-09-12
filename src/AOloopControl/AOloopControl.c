@@ -2587,7 +2587,9 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
         if(cntsum != cntsumold)
         {
+			// copy wfsref0 to tmp
             memcpy(data.image[IDtmp].array.F, data.image[IDwfsref0].array.F, sizeof(float)*wfsxysize);
+
             for(ch=0; ch<NBzp; ch++)
                 for(ii=0; ii<wfsxysize; ii++)
                     data.image[IDtmp].array.F[ii] += data.image[IDwfszparray[ch]].array.F[ii];
@@ -2612,6 +2614,9 @@ int_fast8_t AOloopControl_WFSzeropoint_sum_update_loop(long loopnb, const char *
 
     return(0);
 }
+
+
+
 
 
 
@@ -4140,12 +4145,14 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         else
             sem_wait(data.image[IDimWFS0].semptr[3]);
 
-
+		//
+		// instantaneous WFS residual
         // imWFS0/tot0 - WFSref -> out
+        //
 
         data.image[IDout].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
-            data.image[IDout].array.F[ii] = data.image[IDimWFS0].array.F[ii]/data.image[IDtot].array.F[0] - data.image[IDwfsref].array.F[ii];
+            data.image[IDout].array.F[ii] = data.image[IDimWFS0].array.F[ii]/data.image[IDtot].array.F[0]; // - data.image[IDwfsref].array.F[ii];
         data.image[IDout].md[0].cnt0++;
         data.image[IDout].md[0].cnt1 = data.image[aoconfID_looptiming].md[0].cnt1;
         data.image[IDout].md[0].write = 0;
@@ -4163,7 +4170,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
         COREMOD_MEMORY_image_set_sempost_byID(IDoutm, -1);
 
 
-        // apply gain
+        // apply gain -> outave
 
         data.image[IDoutave].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
