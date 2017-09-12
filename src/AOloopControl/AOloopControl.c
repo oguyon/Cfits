@@ -615,6 +615,26 @@ int_fast8_t AOloopControl_setARPFgain_cli() {
     else return 1;
 }
 
+/** @brief CLI function for AOloopControl_setARPFgain */
+int_fast8_t AOloopControl_setARPFgainAutoMin_cli() {
+    if(CLI_checkarg(1,1)==0) {
+        AOloopControl_setARPFgainAutoMin(data.cmdargtoken[1].val.numf);
+        return 0;
+    }
+    else return 1;
+}
+
+/** @brief CLI function for AOloopControl_setARPFgain */
+int_fast8_t AOloopControl_setARPFgainAutoMax_cli() {
+    if(CLI_checkarg(1,1)==0) {
+        AOloopControl_setARPFgainAutoMax(data.cmdargtoken[1].val.numf);
+        return 0;
+    }
+    else return 1;
+}
+
+
+
 /** @brief CLI function for AOloopControl_setWFSnormfloor */
 int_fast8_t AOloopControl_setWFSnormfloor_cli() {
     if(CLI_checkarg(1,1)==0) {
@@ -921,9 +941,9 @@ int_fast8_t init_AOloopControl()
 
     RegisterCLIcommand("aolsetARPFgain", __FILE__, AOloopControl_setARPFgain_cli, "set auto-regressive predictive filter gain", "<gain value>", "aolsetARPFgain 0.1", "int AOloopControl_setARPFgain(float gain)");
 
+    RegisterCLIcommand("aolsetARPFgainAmin", __FILE__, AOloopControl_setARPFgainAutoMin_cli, "set ARPF gain min", "<gain value>", "aolsetARPFgainAmin 0.1", "int AOloopControl_setARPFgainAutoMin(float val)");
 
-
-
+    RegisterCLIcommand("aolsetARPFgainAmax", __FILE__, AOloopControl_setARPFgainAutoMax_cli, "set ARPF gain max", "<gain value>", "aolsetARPFgainAmax 9.0", "int AOloopControl_setARPFgainAutoMax(float val)");
 
     RegisterCLIcommand("aolkill", __FILE__, AOloopControl_loopkill, "kill AO loop", "no arg", "aolkill", "int AOloopControl_setLoopNumber()");
 
@@ -2219,7 +2239,7 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
         AOconf[loop].AUTOTUNE_GAINS_ON = 0;
         AOconf[loop].ARPFon = 0;
         AOconf[loop].ARPFgainAutoMin = 0.99;
-        AOconf[loop].ARPFgainAutoMax = 1.00;
+        AOconf[loop].ARPFgainAutoMax = 1.01;
         AOconf[loop].LOOPiteration = 0;
         AOconf[loop].cnt = 0;
         AOconf[loop].cntmax = 0;
@@ -2260,7 +2280,7 @@ int_fast8_t AOloopControl_InitializeMemory(int mode)
             AOconf[loop].AUTOTUNE_LIMITS_delta = 1.0e-3;
             AOconf[loop].ARPFgain = 0.0;
 			AOconf[loop].ARPFgainAutoMin = 0.99;
-			AOconf[loop].ARPFgainAutoMax = 1.00;
+			AOconf[loop].ARPFgainAutoMax = 1.01;
             AOconf[loop].WFSnormfloor = 0.0;
             AOconf[loop].framesAve = 1;
             AOconf[loop].DMmodesNBblock = 1;
@@ -6291,6 +6311,31 @@ int_fast8_t AOloopControl_setARPFgain(float gain)
 
     return 0;
 }
+
+
+int_fast8_t AOloopControl_setARPFgainAutoMin(float val)
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].ARPFgainAutoMin = val;
+    AOloopControl_perfTest_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+int_fast8_t AOloopControl_setARPFgainAutoMax(float val)
+{
+    if(AOloopcontrol_meminit==0)
+        AOloopControl_InitializeMemory(1);
+
+    AOconf[LOOPNUMBER].ARPFgainAutoMax = val;
+    AOloopControl_perfTest_showparams(LOOPNUMBER);
+
+    return 0;
+}
+
+
 
 
 int_fast8_t AOloopControl_setWFSnormfloor(float WFSnormfloor)

@@ -510,6 +510,14 @@ int_fast8_t AOloopControl_setgain(float gain);
 */
 int_fast8_t AOloopControl_setARPFgain(float gain);
 
+
+/** @brief Set ARPF */
+int_fast8_t AOloopControl_setARPFgainAutoMin(float val);
+
+/** @brief Set ARPF */
+int_fast8_t AOloopControl_setARPFgainAutoMax(float val);
+
+
 /** @brief Coefficient attenuates AO correction in low loght level */
 int_fast8_t AOloopControl_setWFSnormfloor(float WFSnormfloor);
 
