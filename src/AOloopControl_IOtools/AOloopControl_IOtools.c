@@ -700,7 +700,7 @@ int_fast8_t Read_cam_frame(long loop, int RM, int normalize, int PixelStreamMode
     int semindex = 0;
 
 
-	usleep(1000000);// TEST
+	//usleep(1000000);// TEST
 
 
     if(RM==0)

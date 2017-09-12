@@ -4150,7 +4150,7 @@ long AOloopControl_computeWFSresidualimage(long loop, char *IDalpha_name)
 		// instantaneous WFS residual
         // imWFS0/tot0 - WFSref -> out
         //
-		printf("  %20f\n", data.image[IDtot].array.F[0]);//TEST
+		//printf("  %20f\n", data.image[IDtot].array.F[0]);//TEST
 		
         data.image[IDout].md[0].write = 1;
         for(ii=0; ii<wfsxysize; ii++)
