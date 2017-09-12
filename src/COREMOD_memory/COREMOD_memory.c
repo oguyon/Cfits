@@ -7000,7 +7000,7 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
 			ts.tv_sec += WaitSec;
 
             ret = sem_timedwait(data.image[ID].semlog, &ts);
-			if (ret == -1) {
+			if (ret == -1) { 
 				if (errno == ETIMEDOUT)
 					printf("sem_timedwait() timed out -> save\n");
 				
@@ -7121,6 +7121,8 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
         }
 
 
+		if(VERBOSE==1)
+            printf("%5d  logshimconf[0].on = %d\n", __LINE__, logshimconf[0].on);
 
 
         if(likely(logshimconf[0].on == 1))
@@ -7233,7 +7235,16 @@ long __attribute__((hot)) COREMOD_MEMORY_sharedMem_2Dim_log(const char *IDname, 
                 index++;
             }
         }
+        else
+        {
+			// save partial if possible
+			//if(index>0)
+				
+		}
 
+
+		if(VERBOSE==1)
+            printf("%5d  index = %ld  wOK = %d\n", __LINE__, index, wOK);
 
         /// cases:
         /// index>zsize-1  buffer full
