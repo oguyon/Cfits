@@ -1,6 +1,6 @@
 % AOloopControl
 % Olivier Guyon
-% Aug 28, 2017
+% Sep 29, 2017
 
 
 
@@ -13,7 +13,7 @@
 
 ## Scope
 
-AO loop control package
+AO loop control package. Includes high-performance CPU/GPU computation engine and higher level scripts.
 
 ## Pre-requisites
 
@@ -69,29 +69,37 @@ Conventions:
 - `<srcdir>` is the source code directory, usually `.../AdaptiveOpticsControl-<version>`
 - `<workdir>` is the work directory where the program and scripts will be executed. Note that the full path should end with `.../AOloop<#>` where `<#>` ranges from 0 to 9. For example, `AOloop2`.
 
-The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory by executing from the source directory the 'syncscript -e' command:
+The work directory is where all scripts and high level commands should be run from. You will first need to create the work directory and then load scripts from the source directory to the work directory.
+
+First, execute from the source directory the 'syncscript -e' command to export key install scripts:
 
 	mkdir /<workdir>
 	cd <srcdir>/src/AOloopControl/scripts
 	./syncscripts -e /<workdir>
+
+The 'syncscript' script should now be in the work directory. Execute it to copy all scripts to the work directory:
+
 	cd /<workdir>
 	./syncscripts
 
-Symbolic links to the source scripts and executable are now installed in the work directory :
+Symbolic links to the source scripts and executable are now installed in the work directory (exact links / directories may vary) :
 
-	olivier@ubuntu:/data/AOloopControl/AOloop1$ ls -l
-	total 28
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aocustomscripts
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aohardsim
-	lrwxrwxrwx 1 olivier olivier   57 Feb 21 18:14 aolconf -> /home/olivier/src/Cfits/src/AOloopControl/scripts/aolconf
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aolconfscripts
-	lrwxrwxrwx 1 olivier olivier   70 Feb 21 19:08 AOloopControl -> /home/olivier/src/Cfits/src/AOloopControl/scripts/../../../bin/cfitsTK
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 aosetup
-	drwxrwxr-x 2 olivier olivier 4096 Feb 21 18:14 auxscripts
-	lrwxrwxrwx 1 olivier olivier   61 Feb 21 18:13 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
+	olivier@ubuntu:/data/AOloopControl/AOloopTest$ ls -l
+	total 32
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aocscripts
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aohardsim
+	lrwxrwxrwx 1 olivier olivier   57 Sep 29 19:27 aolconf -> /home/olivier/src/Cfits/src/AOloopControl/scripts/aolconf
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aolconfscripts
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aolfuncs
+	lrwxrwxrwx 1 olivier olivier   70 Sep 29 19:26 AOloopControl -> /home/olivier/src/Cfits/src/AOloopControl/scripts/../../../bin/cfitsTK
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 aosetup
+	drwxrwxr-x 2 olivier olivier 4096 Sep 29 19:27 auxscripts
+	lrwxrwxrwx 1 olivier olivier   61 Sep 29 19:26 syncscripts -> /home/olivier/src/Cfits/src/AOloopControl/scripts/syncscripts
 
 If new scripts are added in the source directory, running `./syncscripts` again from the work directory will add them to the work directory.
 
+
+## Main executable
 
 The main executable is `./AOloopControl`, which provides a command line interface (CLI) to all compiled code. Type `AOloopControl -h` for help. You can enter the CLI and list the available libraries (also called modules) that are linked to the CLI. You can also list the functions available within each module (`m? <module.c>`) and help for each function (`cmd? <functionname>`). Type `help` within the CLI for additional directions.
 
@@ -100,28 +108,6 @@ olivier@ubuntu:/data/AOloopControl/AOloop1$ ./AOloopControl
 type "help" for instructions
 Running with openMP, max threads = 8  (defined by environment variable OMP_NUM_THREADS)
 LOADED: 21 modules, 269 commands
-./AOloopControl > m?
-    0            cudacomp.c    CUDA wrapper for AO loop
-    1  AtmosphericTurbulence.c    Atmospheric Turbulence
-    2     AtmosphereModel.c    Atmosphere Model
-    3                 psf.c    memory management for images and variables
-    4       AOloopControl.c    AO loop control
-    5           AOsystSim.c    conversion between image format, I/O
-    6    AOloopControl_DM.c    AO loop Control DM operation
-    7         OptSystProp.c    Optical propagation through system
-    8        ZernikePolyn.c    create and fit Zernike polynomials
-    9         WFpropagate.c    light propagation
-   10         image_basic.c    basic image routines
-   11        image_filter.c    image filtering
-   12           image_gen.c    creating images (shapes, useful functions and patterns)
-   13      linopt_imtools.c    image linear decomposition and optimization tools
-   14           statistic.c    statistics functions and tools
-   15                 fft.c    FFTW wrapper
-   16                info.c    image information and statistics
-   17       COREMOD_arith.c    image arithmetic operations
-   18      COREMOD_iofits.c    FITS format input/output
-   19      COREMOD_memory.c    memory management for images and variables
-   20       COREMOD_tools.c    image information and statistics
 ./AOloopControl > exit
 Closing PID 5291 (prompt process)
 ~~~
@@ -136,40 +122,48 @@ The top level script is `aolconf`. Run it with `-h` option for a quick help
 
 
 
-## Supporting scripts, aolconfscripts directory
+## High-level GUI (aolconfscripts directory)
 
-Scripts in the `aolconfscripts` directory are part of the high-level ASCII control GUI
+High-level ASCII control GUI scripts are in the `aolconfscripts` directory
 
------------------------------- -----------------------------------------------------------
-Script                         Description
------------------------------- -----------------------------------------------------------
-**aolconf_DMfuncs**            DM functions 
+---------------------------------- -----------------------------------------------------------
+Script                             Description
+---------------------------------- -----------------------------------------------------------
+**aolconf_menutop**                Top level menu
 
-**aolconf_DMturb**             DM turbulence functions
+-**aolconf_configureloop_funcs**    Functions used within the configureloop GUI screen
 
-**aolconf_funcs**              Misc functions
+-**aolconf_controlloop_funcs**      Functions used within the controlloop GUI screen
 
-**aolconf_logfuncs**           data and command logging
+-**aolconf_controlmatrix_funcs**    Functions used within the controlmatrix GUI screen
 
-**aolconf_menuconfigureloop**  configure loop menu
+-**aolconf_DMfuncs**                DM Functions
 
-**aolconf_menucontrolloop**    control loop menu
+-**aolconf_DMturb**                 DM turbulence functions
 
-**aolconf_menucontrolmatrix**  control matrix menu
+-**aolconf_funcs**                  Misc functions
 
-**aolconf_menu_mkFModes**      Make modes
+-**aolconf_logfuncs**               Data and command logging
 
-**aolconf_menurecord**         
+-**aolconf_menuconfigureloop**      Configure loop menu
 
-**aolconf_menutestmode**       Test mode menu
+-**aolconf_menucontrolloop**        Control loop menu
 
-**aolconf_menutop**            Top level menu
+-**aolconf_menucontrolmatrix**      Control matrix menu
 
-**aolconf_menuview**           Data view menu
+-**aolconf_menu_mkFModes**          Make modes
 
-**aolconf_readconf**           Configuration read functions
+-**aolconf_menupredictivecontrol**  Predictive control
 
-**aolconf_template**           Template (not used)
+-**aolconf_menurecord**             Record / log telemetry
+
+-**aolconf_menutestmode**           Test mode menu
+
+-**aolconf_menuview**               Data view menu
+
+-**aolconf_readconf**               Configuration read functions
+
+-**aolconf_template**               Template (not used)
 ------------------------------ -----------------------------------------------------------
 
 

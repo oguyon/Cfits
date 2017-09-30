@@ -307,7 +307,7 @@ stringcenter "PREDICTIVE CONTROL"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( " " " ")
 menuitems+=( "P" "Predictive Control")
-menuitems+=( "Fi" "Filtering")
+# menuitems+=( "Fi" "Filtering")
 menuitems+=( " " " ")
 menuitems+=( " " " ")
 menuitems+=( " " " ")

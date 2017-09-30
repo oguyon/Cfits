@@ -868,8 +868,8 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
     //
     // Data matrix is stored as image of size NBmvec x mvecsize, to be fed to routine compute_SVDpseudoInverse in linopt_imtools (CPU mode) or in cudacomp (GPU mode)
     //
-    NBmvec = nbspl - PForder - (int) (PFlag_run) - 2;  // could put "-1", but "-2" allows user to change PFlag_run by up to 1 frame without reading out of array
-    mvecsize = NBpixin * PForder; // size of each sample vector for AR filter, excluding regularization
+    NBmvec = nbspl - PForder - (int) (PFlag_run) - 2;   // could put "-1", but "-2" allows user to change PFlag_run by up to 1 frame without reading out of array
+    mvecsize = NBpixin * PForder;                       // size of each sample vector for AR filter, excluding regularization
 
     if(REG==0) // no regularization
     {
@@ -920,8 +920,6 @@ long LINARFILTERPRED_Build_LinPredictor(const char *IDin_name, long PForder, flo
 
     for(iter=0; iter<NBiter; iter++)
     {
-		
-
 		if(ExternalPFparam == 1)
 		{
 			PFlag_run = data.image[IDPFparam].array.F[0];
@@ -1463,6 +1461,7 @@ long LINARFILTERPRED_Apply_LinPredictor(const char *IDfilt_name, const char *IDi
 
 
 
+
 //
 // IDPF_name and IDPFM_name should be pre-loaded
 //
@@ -1514,6 +1513,7 @@ long LINARFILTERPRED_PF_updatePFmatrix(const char *IDPF_name, const char *IDPFM_
 
 	return(IDPFM);
 }
+
 
 
 

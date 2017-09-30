@@ -2836,7 +2836,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     // STEP 3 :   Compute trans(A) x A    : magmaf_d_A x magmaf_d_A      -> magmaf_d_AtA      (NxN matrix on device)
 	// ****************************************************
 	
-	    
+	// -> magma_ssyrk / magma_dsyrk / blas 3 routine for *2
     if(MAGMAfloat==1)
         magma_sgemm(  MagmaTrans, MagmaNoTrans, N, N, M, 1.0, magmaf_d_A, M, magmaf_d_A, M, 0.0,  magmaf_d_AtA, N, magmaqueue);
     else
@@ -2871,6 +2871,7 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     clock_gettime(CLOCK_REALTIME, &t3);
 
 
+
 	// ****************************************************    
 	// STEP 4 :   Compute eigenvalues and eigenvectors of AT A   -> magmaf_d_AtA      (NxN matrix on device)
 	//
@@ -2879,8 +2880,6 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 	// 
 	//
 	// ****************************************************    
-
-
 
 	if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 	{
@@ -2899,6 +2898,11 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 				magma_ssyevdx_gpu( MagmaVec, MagmaRangeI, MagmaLower, N, NULL, N, 0.0, 1.0, N-MaxNBmodes, N, NULL, NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
 			else
 				magma_ssyevd_gpu(  MagmaVec,              MagmaLower, N, NULL, N,                       NULL, NULL, N, auxf_work, -1, magma_aux_iwork, -1, &info );
+            // -> change to 2-stage magma SVD
+            // evd -> evr
+            // PALSMA
+            
+            // alt -> LQ reduction -> SVD magma_dgsvd (more stable numerically)
             
             magma_lwork  = (magma_int_t) MAGMA_S_REAL( auxf_work[0] );
         }
