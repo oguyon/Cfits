@@ -9,16 +9,7 @@ fi
 
 
 # is the loop control in combined/ZONAL CM or MODAL CM mode ?
-CMMODEfile="conf/param_CMMODE.txt"
-if [ -f $CMMODEfile ]; then
-CMMODE=$( cat ${CMMODEfile} )
-else
-CMMODE="0"
-echo "$CMMODE" > $CMMODEfile
-fi
-
-
-
+ConfReadParam CMMODE "0"; CMMODE="${paramvalue}"
 
 
 
@@ -454,7 +445,7 @@ fi
 #if [ ! -f "$file" ]; then
 #echo "echo \"1.0\" > $file" >> $scriptfile
 #fi
-#gainb[10#${gi}]=$(cat $file )
+#gainb[10#${gi}]=$( head -1 $file )
 #echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"aolsetmbgain ${gi} ${gainb[10#${gi}]} 1\" C-m" >> $scriptfile
 #echo "tmux send-keys -t aol${LOOPNUMBER}-ctr \"# test: ${gainb[10#${gi}]}\" C-m" >> $scriptfile
 

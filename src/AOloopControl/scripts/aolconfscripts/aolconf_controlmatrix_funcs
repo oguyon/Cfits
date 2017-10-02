@@ -8,202 +8,6 @@ exit
 fi
 
 
-# TO BE RETIRED
-function RETIRED_function_controlmatrix_readparams {
-
-
-SVDlimall=0.01
-if [ -f "./conf/param_SVDlimall.txt" ]; then
-SVDlimall=$( cat ./conf/param_SVDlimall.txt )
-fi
-
-
-if [ "$DMMODE" = "1" ]; then # modal DM
-
-getshmimsize aol${LOOPNUMBER}_zrespM
-mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
-NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
-
-
-
-if [ "0" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block00end.txt"
-block00end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "001" > $file
-block00end="001"
-fi
-fi
-
-
-if [ "1" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block01end.txt"
-block01end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "001" > $file
-block01end="001"
-fi
-fi
-
-
-if [ "2" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block02end.txt"
-block02end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "02" > $file
-block02end="02"
-fi
-fi
-
-
-if [ "3" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block03end.txt"
-block03end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "03" > $file
-block03end="03"
-fi
-fi
-
-
-if [ "4" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block04end.txt"
-block04end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "04" > $file
-block04end="04"
-fi
-fi
-
-
-if [ "5" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block05end.txt"
-block05end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "05" > $file
-block05end="05"
-fi
-fi
-
-
-if [ "6" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block06end.txt"
-block06end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "06" > $file
-block06end="06"
-fi
-fi
-
-
-if [ "7" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block07end.txt"
-block07end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "07" > $file
-block07end="07"
-fi
-fi
-
-
-if [ "8" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block08end.txt"
-block08end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "08" > $file
-block08end="08"
-fi
-fi
-
-
-if [ "9" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block09end.txt" 'OPEN' 1
-block09end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "09" > $file
-block09end="09"
-fi
-fi
-
-
-if [ "10" -lt "$NBmodeblocks" ]; then
-file="./conf/param_block10end.txt"
-block10end=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "10" > $file
-block10end="10"
-fi
-fi
-
-
-fi
-
-
-SVDNBmodesfile="SVDmodes.log"
-if [ -f ${SVDNBmodesfile} ]; then
-SVDNBmodesstr=$( cat ${SVDNBmodesfile} )
-SVDNBmodes=$( echo ${SVDNBmodesstr} | awk '{ printf("%03d", $1)}' )
-else
-SVDNBmodes="-"
-echo "$SVDNBmodes" > $SVDNBmodes
-fi
-
-
-
-
-if [ "$DMMODE" = "0" ]; then # zonal DM
-
- CMMODEfile="conf/param_CMMODE.txt"
- if [ -f $CMMODEfile ]; then
- CMMODE=$( cat ${CMMODEfile} )
- else
- CMMODE="1"
- echo "$CMMODE" > $CMMODEfile
- fi
- 
- 
- file="./conf/param_extrablockMindex.txt"
- if [ -f $file ]; then
- extrablockIndex=$(echo "$(cat ./conf/param_extrablockIndex.txt)")
- else
- echo "4" > $file
- extrablockIndex="4"
- fi
- 
- 
- mkmodesdatestr=$(TZ=utc stat -c %y ./conf/param_NBmodeblocks.txt)
- mkmodesdatestr=${mkmodesdatestr% *}
- NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
- NBmodes=$( cat ./conf/param_NBmodes.txt )
-
- staged_mkmodesdatestr=$(TZ=utc stat -c %y ./conf_staged/param_NBmodeblocks.txt)
- staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
- staged_NBmodeblocks=$( cat ./conf_staged/param_NBmodeblocks.txt )
- staged_NBmodes=$( cat ./conf_staged/param_NBmodes.txt )
-
-fi
-
-
-
-for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
-do
-i2=$(printf "%02d" "$i")
-SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
-done
-
-
-
-file="./conf/param_cpamax.txt"
-cpamax=$( cat $file )
-if [ ! -f "$file" ]; then
-echo "00.2" > $file
-cpamax="10"
-fi
-
-
-}
-
-
 
 
 
@@ -305,12 +109,11 @@ tmux send-keys -t ${tmuxnameSMlCM} "aoconflogext \"LOAD CM to shared memory\"" C
 # zonal calib
 for imname in DMmodes respM contrM wfsref0
 do
-tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolReadConfFile ${imname}" C-m	
-tmux send-keys -t ${tmuxnameSMlCM} "./auxscripts/aolgetshmimsize aol${LOOPNUMBER}_${imname}" C-m
+tmux send-keys -t ${tmuxnameSMlCM} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m
 done
 
 
-NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
 rm script_SharedMemLoadCM
 touch script_SharedMemLoadCM
 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
@@ -330,21 +133,5 @@ done
 chmod +x script_SharedMemLoadCM
 tmux send-keys -t ${tmuxnameSMlCM} "./script_SharedMemLoadCM" C-m	
 tmux send-keys -t ${tmuxnameSMlCM} "rm runproc/SharedMemLoadCM.runproc" C-m	
-
-
-#ReadConfFile "DMmodes${i2}"
-#getshmimsize aol${LOOPNUMBER}_DMmodes${i2}
-
-#ReadConfFile "respM${i2}"
-#getshmimsize aol${LOOPNUMBER}_respM${i2}
-
-#ReadConfFile "contrM${i2}"
-#getshmimsize aol${LOOPNUMBER}_contrM${i2}
-
-#ReadConfFile "contrMc${i2}"
-#getshmimsize aol${LOOPNUMBER}_contrMc${i2}
-
-#ReadConfFile "contrMcact${i2}_00"
-#getshmimsize aol${LOOPNUMBER}_contrMcact${i2}_00
 }
 

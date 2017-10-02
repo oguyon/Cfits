@@ -71,7 +71,7 @@ stoplogstring=$( printf "\Z3\Zr${KillStopFlag} logging  %-25s\Zn   %s\n" "$strea
 fi
 
 file="./status/stat_log_${streamname}.txt"
-logstat=$( cat $file )
+logstat=$( head -1 $file )
 if [[ -f "$file" && ( "$logstat" = "0" || "$logstat" = "1" ) ]]; then
 echo "OK"
 else
@@ -119,12 +119,12 @@ stringcenter "DATA LOGGING"
 menuitems+=( "1 ->" "\Zb\Zr$string\Zn" )
 
 
-savedir=$( cat ./conf/conf_savedir_name.txt )
+savedir=$( head -1 ./conf/param_savedir.txt )
 datestr=`date -u +%Y%m%d`
 menuitems+=( "sdir" "[${savedir}] Save directory prefix -> $savedir/$datestr")
 
 file="./status/stat_log_aol${LOOPNUMBER}_wfsim.txt"
-logwfsimstat=$( cat $file )
+logwfsimstat=$( head -1 $file )
 if [[ -f "$file" && ( "$logwfsimstat" = "0" || "$logwfsimstat" = "1" ) ]]; then
 echo "OK"
 else
@@ -133,7 +133,7 @@ fi
 
 
 file="./status/stat_log_aol${LOOPNUMBER}_wfsref.txt"
-logwfsrefstat=$( cat $file )
+logwfsrefstat=$( head -1 $file )
 if [[ -f "$file" && ( "$logwfsrefstat" = "0" || "$logwfsrefstat" = "1" ) ]]; then
 echo "OK"
 else
@@ -612,12 +612,12 @@ stringcenter "TEMPORAL STATISTICS"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
 
 file="./conf/conf_dmCavecoeff.txt"
-dmCavecoeff=$( cat $file )
+dmCavecoeff=$( head -1 $file )
 menuitems+=( "setdmCaveC" "[${dmCavecoeff}] Set dmC averaging coefficient value" )
 
 
 file="./status/stat_taveC_ON.txt"
-taveC_ON=$( cat $file )
+taveC_ON=$( head -1 $file )
 if [[ -f "$file" && ( "$taveC_ON" = "0" || "$taveC_ON" = "1" ) ]]; then
 echo "OK"
 else
@@ -648,7 +648,7 @@ dialog --colors --title "RECORD and ANALYZE  - LOOP ${LOOPNUMBER}" --ok-label " 
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 menurecord_default="$choiceval"
 state="menurecord"
 case $retval in
@@ -659,7 +659,7 @@ case $retval in
 exec 3>&1;
 savedir=$(dialog --inputbox "savedir" 0 0 "$savedir" 2>&1 1>&3);
 exec 3>&-;
-echo "$savedir" > ./conf/conf_savedir_name.txt
+echo "$savedir" > ./conf/param_savedir.txt
 ;;
 
 
@@ -697,7 +697,7 @@ menurecord_default="slogM0"
     slogM1)
 logMode="1"
 echo "1" > "./conf/conf_logmode.txt"
-loopON=$( cat ./status/stat_loopON.txt )
+loopON=$( head -1 ./status/stat_loopON.txt )
 aoconflog "TEST: loopON=$loopON"
 if [ "$loopON" = " ON" ];
 then

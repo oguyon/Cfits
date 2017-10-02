@@ -33,7 +33,7 @@ then
 	echo "creating loop number"
 	echo "$LOOPNUMBER_default" > $LOOPNUMBER_file
 else
-	LOOPNUMBER=$(cat $LOOPNUMBER_file)
+	LOOPNUMBER=$( head -1 $LOOPNUMBER_file)
 	echo "LOOPNUMBER = $LOOPNUMBER"
 fi
 
@@ -41,7 +41,7 @@ fi
 
 
 # ======================= LOGGING =================================
-LOOPNAME=$( cat LOOPNAME )
+LOOPNAME=$( head -1 LOOPNAME )
 echo "LOOPNAME = $LOOPNAME"
 
 # internal log - logs EVERYTHING
@@ -86,7 +86,7 @@ dmDCum150="0.7857"
 # Set DM Vmax 
 function Set_dmVmax {
 file="./status/status_dmVmax.txt"
-currentfw=$(echo "$(cat $file)")
+currentfw=$(echo "$( head -1 $file)")
 if [ ! "${current_dmVmax}" == "$1" ]
 then
 echo "CHANGING dmVmax to $1"# &> ${outmesg}
@@ -126,7 +126,7 @@ menuname="HARDWARE CONTROL - LOOP ${LOOPNAME} ($LOOPNUMBER})\n"
 
 file="./conf/instconf_dmVmax.txt"
 if [ -f $file ]; then
-dmVmax=$(cat $file)
+dmVmax=$( head -1 $file)
 else
 dmVmax="125"
 echo "$dmVmax" > $file
@@ -134,7 +134,7 @@ fi
 
 file="./conf/instconf_dmDCum.txt"
 if [ -f $file ]; then
-dmDCum=$(cat $file)
+dmDCum=$( head -1 $file)
 else
 dmDCum="125"
 echo "$dmDCum" > $file
@@ -246,7 +246,7 @@ dialog --colors --title "Hardware Control" \
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 
 
 menualign_default="$choiceval"

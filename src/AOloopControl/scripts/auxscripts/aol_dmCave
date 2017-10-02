@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       dmC temporal averaging\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       dmC temporal averaging\n" "$0" 
 }
 
 
@@ -93,7 +93,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 pname="aol${loopnb}-$0"
 
 ./AOloopControl -n $pname << EOF

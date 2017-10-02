@@ -31,7 +31,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Compute real-time WFS residual image\n" "$0" 
 }
 
 
@@ -91,11 +91,11 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
-DMindex=$(cat conf/param_DMindex.txt)
-DMxsize=$(cat conf/param_DMxsize.txt)
-DMysize=$(cat conf/param_DMysize.txt)
+DMindex=$( head -1 conf/param_DMindex.txt )
+DMxsize=$( head -1 conf/param_DMxsize.txt )
+DMysize=$( head -1 conf/param_DMysize.txt )
 echo "DM size = $DMxsize $DMysize"
 
 # DM mode
@@ -103,7 +103,7 @@ echo "DM size = $DMxsize $DMysize"
 # 1=MODAL : each DM actuiator represents a single WF mode
 DMMODEfile="conf/param_DMMODE.txt"
 if [ -f $DMMODEfile ]; then
-DMMODE=$( cat ${DMMODEfile} )
+DMMODE=$( head -1 ${DMMODEfile} )
 else
 DMMODE="0"
 echo "$DMMODE" > $DMMODEfile

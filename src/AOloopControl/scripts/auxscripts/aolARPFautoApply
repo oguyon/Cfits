@@ -44,7 +44,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Apply real-time AR linear predictive filter\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Apply real-time AR linear predictive filter\n" "$0" 
 }
 
 
@@ -130,7 +130,7 @@ fi
 block="$1"
 PForder="$2"
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 offset="0"
 semtrig="2"
 
@@ -140,12 +140,12 @@ offset="0"
 outPFmodevalname="aol${loopnb}_modevalPF"
 else
 PFmatname="PFmat${loopnb}_${block}"
-offset=$( cat ./conf/conf_blockoffset_${block}.txt )
+offset=$( head -1 ./conf/conf_blockoffset_${block}.txt )
 outPFmodevalname="aol${loopnb}_modevalPF_block${block}"
 fi
 
 if [ -f "conf/conf_GPU_ARPF.txt" ]; then
-nbGPU=$( cat conf/conf_GPU_ARPF.txt )
+nbGPU=$( head -1 conf/conf_GPU_ARPF.txt )
 else
 nbGPU="0"
 fi

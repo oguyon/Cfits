@@ -39,7 +39,6 @@ var searchData=
   ['nbstreams',['NBstreams',['../structGPUMATMULTCONF.html#af828d497cf54c0196f27528c30b96519',1,'GPUMATMULTCONF']]],
   ['nbsubpix',['NBsubPix',['../PIAACMCsimul_8c.html#aa451146b5668b770521ed85d16907c89',1,'PIAACMCsimul.c']]],
   ['nbtimer',['NBtimer',['../structAOLOOPCONTROL__CONF.html#a56ca79cfd9d34d2895d3a2137aa6c8b1',1,'AOLOOPCONTROL_CONF']]],
-  ['nbtimers',['NBtimers',['../AOloopControl_8c.html#a6ddeb5df9aea7a9591c8e8fce7da51d8',1,'AOloopControl.c']]],
   ['ncoeff',['ncoeff',['../structASPHSURFR.html#a06a64705ac7cbc0d7e54467d9b91c039',1,'ASPHSURFR']]],
   ['nelement',['nelement',['../struct____attribute____.html#a81543993f67af81d9ea33afd60da5391',1,'__attribute__']]],
   ['next',['next',['../structsymrec.html#a799aa9b5b3ee76aa0634b0ad96f80ea1',1,'symrec::next()'],['../structres__node.html#a218ec7f9710d71366f6ee1bcd647897b',1,'res_node::next()']]],

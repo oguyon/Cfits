@@ -8,7 +8,7 @@ NBARGS=1
 pname="aol${loopnb}lindm2wfsim"
 
 
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -41,7 +41,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Convert DM stream to WFS image stream\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Convert DM stream to WFS image stream\n" "$0" 
 }
 
 

@@ -59,7 +59,7 @@ dialog --colors --title "VIEW MODE  - LOOP ${LOOPNUMBER}" \
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 menutestmode_default="$choiceval"
 state="menuview"
 case $retval in

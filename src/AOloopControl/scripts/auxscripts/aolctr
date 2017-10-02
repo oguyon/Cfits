@@ -1,8 +1,8 @@
 #! /bin/bash
 
 NBARGS=0
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
-confnb=$(cat ./conf/conf_CONFNUMBER.txt 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
+confnb=$( head -1 ./conf/conf_CONFNUMBER.txt 2> /dev/null)
 pname="aolctr-$loopnb"
 
 
@@ -26,7 +26,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       AO control process\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       AO control process\n" "$0" 
 }
 
 

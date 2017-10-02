@@ -29,7 +29,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Get shared memory image size\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Get shared memory image size\n" "$0" 
 }
 
 
@@ -97,7 +97,7 @@ readshmimsize $1 _size.txt
 exitCLI
 EOF
 
-sizestring=$( cat _size.txt )
+sizestring=$( head -1 _size.txt )
 sizestring=$(printf "%+12s\n" "$sizestring" )
 echo "$sizestring" > conf/conf_imsize_$1.txt
 rm -f _size.txt

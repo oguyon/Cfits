@@ -38,7 +38,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Compute real-time WFS residual image\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr 0)       Compute real-time WFS residual image\n" "$0" 
 }
 
 
@@ -103,7 +103,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 
 
@@ -111,7 +111,7 @@ loopnb=$(cat LOOPNUMBER)
 # select most recent files -> sym link to modeval_ol.fits, modeval_cl.fits
 
 datestr=`date -u +%Y%m%d`
-logdir=$(cat ./conf/conf_savedir_name.txt)
+logdir=$( head -1 ./conf/param_savedir.txt )
 
 OLdir="$logdir/$datestr/aol${loopnb}_modeval_ol"
 CLdir="$logdir/$datestr/aol${loopnb}_modeval"

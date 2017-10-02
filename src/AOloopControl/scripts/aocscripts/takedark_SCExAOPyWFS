@@ -14,7 +14,7 @@ fi
 
 NBframes=10000
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER)
 
 echo "moving filter wheel..."
 pywfs_filter 3

@@ -11,7 +11,7 @@ NBARGS=1
 pname=`echo "$0" | sed "s/\.\///g"`
 
 
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -39,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       GPU-based predictive filter coeffs -> DM MAP\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       GPU-based predictive filter coeffs -> DM MAP\n" "$0" 
 }
 
 

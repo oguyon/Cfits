@@ -163,7 +163,7 @@ function StatReadStat {
 mkdir -p status
 file="./status/stat_$1.txt"
 if [ -f "$file" ]; then
-statusvalue=$( cat $file )
+statusvalue=$( head -1 $file )
 else
 statusvalue="$2"
 echo "$2" > $file
@@ -181,7 +181,7 @@ fi
 function ConfReadParam {
 file="./conf/param_$1.txt"
 if [ -f "$file" ]; then
-paramvalue=$( cat $file )
+paramvalue=$( head -1 $file )
 else
 paramvalue="$2"
 echo "$2" > $file
@@ -220,7 +220,7 @@ fi
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER

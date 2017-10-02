@@ -49,19 +49,19 @@ menuitems+=( "mt" "Measure Timing (-> timingstats/timingReport.txt)    $hardwlat
 
 file="./conf/param_PForder.txt"
 if [ -f $file ]; then
-PForder=$(cat $file)
+PForder=$( head -1 $file)
 else
 echo "0" > $file
-PForder=$(cat $file)
+PForder=$( head -1 $file)
 fi
 menuitems+=( "PFord" "[$PForder] Select Predictive Filter order" )
 
 file="./conf/param_predcontr_blockSel.txt"
 if [ -f $file ]; then
-blockSel=$(cat $file)
+blockSel=$( head -1 $file)
 else
 echo "0" > $file
-blockSel=$(cat $file)
+blockSel=$( head -1 $file)
 fi
 menuitems+=( "selB" "[$blockSel] Select block" )
 
@@ -120,10 +120,10 @@ menuitems+=( " " " ")
 
 file="./conf/param_NBPFblock.txt"
 if [ -f $file ]; then
-NBPFblock=$(cat $file)
+NBPFblock=$( head -1 $file)
 else
 echo "4" > $file
-NBPFblock=$(cat $file)
+NBPFblock=$( head -1 $file)
 fi
 menuitems+=( "NBpfb" "[$NBPFblock] Select number of predictive filter blocks" )
 
@@ -160,7 +160,7 @@ menuitems+=( "PFb0nbGPU" "[$PFb0nbGPU] set Predictive filter block 0 number of G
 
 if [ "0" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU0device.txt"
-PFb0GPU0device=$( cat $file )
+PFb0GPU0device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -172,7 +172,7 @@ fi
 
 if [ "1" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU1device.txt"
-PFb0GPU1device=$( cat $file )
+PFb0GPU1device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU1device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -184,7 +184,7 @@ fi
 
 if [ "2" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU2device.txt"
-PFb0GPU2device=$( cat $file )
+PFb0GPU2device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU2device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -196,7 +196,7 @@ fi
 
 if [ "3" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU3device.txt"
-PFb0GPU3device=$( cat $file )
+PFb0GPU3device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU3device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -208,7 +208,7 @@ fi
 
 if [ "4" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU4device.txt"
-PFb0GPU4device=$( cat $file )
+PFb0GPU4device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU4device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -220,7 +220,7 @@ fi
 
 if [ "5" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU5device.txt"
-PFb0GPU5device=$( cat $file )
+PFb0GPU5device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU5device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -232,7 +232,7 @@ fi
 
 if [ "6" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU6device.txt"
-PFb0GPU6device=$( cat $file )
+PFb0GPU6device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU6device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -244,7 +244,7 @@ fi
 
 if [ "7" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU7device.txt"
-PFb0GPU7device=$( cat $file )
+PFb0GPU7device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU7device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -256,7 +256,7 @@ fi
 
 if [ "8" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU8device.txt"
-PFb0GPU8device=$( cat $file )
+PFb0GPU8device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU8device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -268,7 +268,7 @@ fi
 
 if [ "9" -lt "$PFb0nbGPU" ]; then
 file="./conf/param_PFb0GPU9device.txt"
-PFb0GPU9device=$( cat $file )
+PFb0GPU9device=$( head -1 $file )
 if [[ -f "$file" && ${PFb0GPU9device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -310,7 +310,7 @@ menuitems+=( "PFb1nbGPU" "[$PFb1nbGPU] set Predictive filter block 1 number of G
 
 if [ "0" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU0device.txt"
-PFb1GPU0device=$( cat $file )
+PFb1GPU0device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -322,7 +322,7 @@ fi
 
 if [ "1" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU1device.txt"
-PFb1GPU1device=$( cat $file )
+PFb1GPU1device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU1device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -334,7 +334,7 @@ fi
 
 if [ "2" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU2device.txt"
-PFb1GPU2device=$( cat $file )
+PFb1GPU2device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU2device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -346,7 +346,7 @@ fi
 
 if [ "3" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU3device.txt"
-PFb1GPU3device=$( cat $file )
+PFb1GPU3device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU3device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -358,7 +358,7 @@ fi
 
 if [ "4" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU4device.txt"
-PFb1GPU4device=$( cat $file )
+PFb1GPU4device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU4device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -370,7 +370,7 @@ fi
 
 if [ "5" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU5device.txt"
-PFb1GPU5device=$( cat $file )
+PFb1GPU5device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU5device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -382,7 +382,7 @@ fi
 
 if [ "6" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU6device.txt"
-PFb1GPU6device=$( cat $file )
+PFb1GPU6device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU6device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -394,7 +394,7 @@ fi
 
 if [ "7" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU7device.txt"
-PFb1GPU7device=$( cat $file )
+PFb1GPU7device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU7device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -406,7 +406,7 @@ fi
 
 if [ "8" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU8device.txt"
-PFb1GPU8device=$( cat $file )
+PFb1GPU8device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU8device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -418,7 +418,7 @@ fi
 
 if [ "9" -lt "$PFb1nbGPU" ]; then
 file="./conf/param_PFb1GPU9device.txt"
-PFb1GPU9device=$( cat $file )
+PFb1GPU9device=$( head -1 $file )
 if [[ -f "$file" && ${PFb1GPU9device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -466,7 +466,7 @@ menuitems+=( "PFb2nbGPU" "[$PFb2nbGPU] set Predictive filter block 2 number of G
 
 if [ "0" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU0device.txt"
-PFb2GPU0device=$( cat $file )
+PFb2GPU0device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -478,7 +478,7 @@ fi
 
 if [ "1" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU1device.txt"
-PFb2GPU1device=$( cat $file )
+PFb2GPU1device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU1device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -490,7 +490,7 @@ fi
 
 if [ "2" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU2device.txt"
-PFb2GPU2device=$( cat $file )
+PFb2GPU2device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU2device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -502,7 +502,7 @@ fi
 
 if [ "3" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU3device.txt"
-PFb2GPU3device=$( cat $file )
+PFb2GPU3device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU3device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -514,7 +514,7 @@ fi
 
 if [ "4" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU4device.txt"
-PFb2GPU4device=$( cat $file )
+PFb2GPU4device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU4device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -526,7 +526,7 @@ fi
 
 if [ "5" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU5device.txt"
-PFb2GPU5device=$( cat $file )
+PFb2GPU5device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU5device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -538,7 +538,7 @@ fi
 
 if [ "6" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU6device.txt"
-PFb2GPU6device=$( cat $file )
+PFb2GPU6device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU6device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -550,7 +550,7 @@ fi
 
 if [ "7" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU7device.txt"
-PFb2GPU7device=$( cat $file )
+PFb2GPU7device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU7device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -562,7 +562,7 @@ fi
 
 if [ "8" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU8device.txt"
-PFb2GPU8device=$( cat $file )
+PFb2GPU8device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU8device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -574,7 +574,7 @@ fi
 
 if [ "9" -lt "$PFb2nbGPU" ]; then
 file="./conf/param_PFb2GPU9device.txt"
-PFb2GPU9device=$( cat $file )
+PFb2GPU9device=$( head -1 $file )
 if [[ -f "$file" && ${PFb2GPU9device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -618,7 +618,7 @@ menuitems+=( "PFb3nbGPU" "[$PFb3nbGPU] set Predictive filter block 3 number of G
 
 if [ "0" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU0device.txt"
-PFb3GPU0device=$( cat $file )
+PFb3GPU0device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU0device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -630,7 +630,7 @@ fi
 
 if [ "1" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU1device.txt"
-PFb3GPU1device=$( cat $file )
+PFb3GPU1device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU1device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -642,7 +642,7 @@ fi
 
 if [ "2" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU2device.txt"
-PFb3GPU2device=$( cat $file )
+PFb3GPU2device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU2device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -654,7 +654,7 @@ fi
 
 if [ "3" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU3device.txt"
-PFb3GPU3device=$( cat $file )
+PFb3GPU3device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU3device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -666,7 +666,7 @@ fi
 
 if [ "4" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU4device.txt"
-PFb3GPU4device=$( cat $file )
+PFb3GPU4device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU4device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -678,7 +678,7 @@ fi
 
 if [ "5" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU5device.txt"
-PFb3GPU5device=$( cat $file )
+PFb3GPU5device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU5device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -690,7 +690,7 @@ fi
 
 if [ "6" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU6device.txt"
-PFb3GPU6device=$( cat $file )
+PFb3GPU6device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU6device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -702,7 +702,7 @@ fi
 
 if [ "7" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU7device.txt"
-PFb3GPU7device=$( cat $file )
+PFb3GPU7device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU7device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -714,7 +714,7 @@ fi
 
 if [ "8" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU8device.txt"
-PFb3GPU8device=$( cat $file )
+PFb3GPU8device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU8device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -726,7 +726,7 @@ fi
 
 if [ "9" -lt "$PFb3nbGPU" ]; then
 file="./conf/param_PFb3GPU9device.txt"
-PFb3GPU9device=$( cat $file )
+PFb3GPU9device=$( head -1 $file )
 if [[ -f "$file" && ${PFb3GPU9device} =~ [0-9]$ ]]; then
 echo "OK"
 else
@@ -759,7 +759,7 @@ menuitems+=( " " " ")
 
 
 file="./status/stat_PFb0wON.txt"
-PFb0wON=$( cat $file )
+PFb0wON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb0wON" = " ON" || "$PFb0wON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -776,7 +776,7 @@ fi
 
 if [ "$NBPFblock" -gt "1" ]; then
 file="./status/stat_PFb1wON.txt"
-PFb1wON=$( cat $file )
+PFb1wON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb1wON" = " ON" || "$PFb1wON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -794,7 +794,7 @@ fi
 
 if [ "$NBPFblock" -gt "2" ]; then
 file="./status/stat_PFb2wON.txt"
-PFb2wON=$( cat $file )
+PFb2wON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb2wON" = " ON" || "$PFb2wON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -812,7 +812,7 @@ fi
 
 if [ "$NBPFblock" -gt "3" ]; then
 file="./status/stat_PFb3wON.txt"
-PFb3wON=$( cat $file )
+PFb3wON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb3wON" = " ON" || "$PFb3wON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -841,7 +841,7 @@ ConfReadParam PFb0decayCoeff "0.8"; PFb0decayCoeff="$paramvalue"
 menuitems+=( "PFb0sDecay" "[$PFb0decayCoeff] set Predictive filter block 0 integrator decay coefficient" )
 menuitems+=( "PFb0sAve" "Set PF block 0 to integrator, DecayCoeff = ${PFb0decayCoeff}" )
 file="./status/stat_PFb0cON.txt"
-PFb0cON=$( cat $file )
+PFb0cON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb0cON" = " ON" || "$PFb0cON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -868,7 +868,7 @@ menuitems+=( "PFb1sDecay" "[$PFb1decayCoeff] set Predictive filter block 1 integ
 menuitems+=( "PFb1sAve" "Set PF block 1 to integrator, DecayCoeff = ${PFb1decayCoeff}" )
 
 file="./status/stat_PFb1cON.txt"
-PFb1cON=$( cat $file )
+PFb1cON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb1cON" = " ON" || "$PFb1cON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -895,7 +895,7 @@ menuitems+=( "PFb2sDecay" "[$PFb2decayCoeff] set Predictive filter block 2 integ
 menuitems+=( "PFb2sAve" "Set PF block 2 to integrator, DecayCoeff = ${PFb2decayCoeff}" )
 
 file="./status/stat_PFb2cON.txt"
-PFb2cON=$( cat $file )
+PFb2cON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb2cON" = " ON" || "$PFb2cON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -922,7 +922,7 @@ menuitems+=( "PFb3sDecay" "[$PFb3decayCoeff] set Predictive filter block 3 integ
 menuitems+=( "PFb3sAve" "Set PF block 3 to integrator, DecayCoeff = ${PFb3decayCoeff}" )
 
 file="./status/stat_PFb3cON.txt"
-PFb3cON=$( cat $file )
+PFb3cON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb3cON" = " ON" || "$PFb3cON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -957,7 +957,7 @@ menuitems+=( " " " ")
 
 # FILTER 0
 file="./status/stat_PFb0aON.txt"
-PFb0aON=$( cat $file )
+PFb0aON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb0aON" = " ON" || "$PFb0aON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -975,7 +975,7 @@ fi
 if [ "$NBPFblock" -gt "1" ]; then
 # FILTER 1
 file="./status/stat_PFb1aON.txt"
-PFb1aON=$( cat $file )
+PFb1aON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb1aON" = " ON" || "$PFb1aON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -994,7 +994,7 @@ fi
 if [ "$NBPFblock" -gt "2" ]; then
 # FILTER 2
 file="./status/stat_PFb2aON.txt"
-PFb2aON=$( cat $file )
+PFb2aON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb2aON" = " ON" || "$PFb2aON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -1012,7 +1012,7 @@ fi
 if [ "$NBPFblock" -gt "3" ]; then
 # FILTER 3
 file="./status/stat_PFb3aON.txt"
-PFb3aON=$( cat $file )
+PFb3aON=$( head -1 $file )
 if [[ -f "$file" && ( "$PFb3aON" = " ON" || "$PFb3aON" = "OFF" ) ]]; then
 echo "OK"
 else
@@ -1045,7 +1045,7 @@ dialog --colors --title "PREDICTIVE CONTROL - LOOP ${LOOPNUMBER}" --ok-label " S
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 menupred_default="$choiceval"
 state="menupredictivecontrol"
 case $retval in

@@ -43,7 +43,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       CREATE CM MODES FOR AO LOOP, MODAL DM\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       CREATE CM MODES FOR AO LOOP, MODAL DM\n" "$0" 
 }
 
 
@@ -109,7 +109,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 pname0=$0
 pname=${pname0#"./"}-$loopnb
@@ -128,7 +128,7 @@ execnamestring="./AOloopControl"
 
 
 
-NBmblock=$( cat conf/conf_NBmodeblocks.txt )
+NBmblock=$( head -1 conf/conf_NBmodeblocks.txt )
 
 $execnamestring -n $pname << EOF
 aolnb $loopnb

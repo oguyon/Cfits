@@ -32,7 +32,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Automatic gain tuning\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Automatic gain tuning\n" "$0" 
 }
 
 
@@ -95,7 +95,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 csetname="aol${loopnb}RT"
 
 

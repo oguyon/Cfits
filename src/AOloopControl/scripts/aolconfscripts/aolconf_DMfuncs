@@ -12,17 +12,17 @@ fi
 
 function initDMfunc {
     aoconflog "start initDM ${DMindex}"
-    file="./conf/conf_dm${DMindex}xsize.txt"
+    file="./conf/param_dm${DMindex}xsize.txt"
     if [ -a $file ]
         then
-        dmxsize=$(echo "$(cat $file)")
+        dmxsize=$(echo "$( head -1 $file )")
         else
         dmxsize=32 #default
         fi
-    file="./conf/conf_dm${DMindex}ysize.txt"
+    file="./conf/param_dm${DMindex}ysize.txt"
     if [ -a $file ]
          then          
-         dmysize=$(echo "$(cat $file)")
+         dmysize=$(echo "$( head -1 $file )")
          else
          dmysize=32 #default
          fi
@@ -67,15 +67,15 @@ function initDMfunc {
     fi
 
 
-	if [ -f "./conf/conf_dmdelayON.txt" ]; then
-	dmDelayON=$(cat ./conf/conf_dmdelayON.txt)
+	if [ -f "./conf/param_dmdelayON.txt" ]; then
+	dmDelayON=$( head -1 ./conf/param_dmdelayON.txt )
 	else
 	dmDelayON="OFF"
 	fi
 	
 	if [ "$dmDelayON" = " ON" ]; then
-	if [ -f "./conf/conf_dmdelayus.txt" ]; then
-	dmdelayus=$(cat ./conf/conf_dmdelayus.txt)
+	if [ -f "./conf/param_dmdelayus.txt" ]; then
+	dmdelayus=$( head -1 ./conf/param_dmdelayus.txt )
 	tmux send-keys -t $tmuxname "DMTWAIT=${dmdelayus}" C-m
 	fi
 	fi
@@ -105,7 +105,7 @@ EOF
     # by default, set # of blocks to 1 
 	file="./conf/conf_NBmodeblocks.txt"
     echo "1" > $file
-    NBmodeblocks=$( cat ./conf/conf_NBmodeblocks.txt )
+    NBmodeblocks=$( head -1 ./conf/conf_NBmodeblocks.txt )
 }
 
 

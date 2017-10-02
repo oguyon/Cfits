@@ -31,7 +31,7 @@ LOOPNUMBER_file="LOOPNUMBER"
 function ConfReadInstConf {
 file="./conf/instconf_$1.txt"
 if [ -f "$file" ]; then
-instconfvalue=$( cat $file )
+instconfvalue=$( head -1 $file )
 else
 instconfvalue="$2"
 echo "$2" > $file
@@ -56,7 +56,7 @@ then
 	echo "creating loop number"
 	echo "$LOOPNUMBER_default" > $LOOPNUMBER_file
 else
-	LOOPNUMBER=$(cat $LOOPNUMBER_file)
+	LOOPNUMBER=$( head -1 $LOOPNUMBER_file)
 	echo "LOOPNUMBER = $LOOPNUMBER"
 fi
 
@@ -64,7 +64,7 @@ fi
 
 
 # ======================= LOGGING =================================
-LOOPNAME=$( cat LOOPNAME )
+LOOPNAME=$( head -1 LOOPNAME )
 echo "LOOPNAME = $LOOPNAME"
 #
  internal log - logs EVERYTHING
@@ -99,9 +99,9 @@ line=$1
 function recomputeLatency {
 frHz=$1
 # read latencies 
-hardwlatency1=$( cat conf/param_hardwlatency1.txt )
-wfsmextrlatency=$( cat conf/param_wfsmextrlatency.txt )
-complatency=$( cat conf/param_complatency.txt )
+hardwlatency1=$( head -1 conf/param_hardwlatency1.txt )
+wfsmextrlatency=$( head -1 conf/param_wfsmextrlatency.txt )
+complatency=$( head -1 conf/param_complatency.txt )
 echo "$hardwlatency1 $wfsmextrlatency $complatency $frHz" > tmpfile.txt
 hardwlatency=$( awk '{ printf("%.6f\n", ($1*$4+0.5)/$4) }' tmpfile.txt )
 hardwlatency_frame=$( awk '{ printf("%05.3f\n", $1*$4+0.5) }' tmpfile.txt )
@@ -163,7 +163,7 @@ stateok=0
 mkdir -p status
 
 statfile="./status/status_alignTT.txt"
-TTloopstat=$(cat $statfile)
+TTloopstat=$( head -1 $statfile)
 if [[ -f "$statfile" && ( "$TTloopstat" = " ON" || "$TTloopstat" = "OFF" || "$TTloopstat" = "PAU" ) ]]; then
 echo "OK" &> $mesgfile
 else
@@ -172,7 +172,7 @@ TTloopstat="OFF"
 fi
 
 statfile="./status/status_alignPcam.txt"
-Pcamloopstat=$(cat $statfile)
+Pcamloopstat=$( head -1 $statfile)
 if [[ -f "$statfile" && ( "$Pcamloopstat" = " ON" || "$Pcamloopstat" = "OFF" || "$Pcamloopstat" = "PAU" ) ]]; then
 echo "OK" &> $mesgfile
 else
@@ -181,7 +181,7 @@ Pcamloopstat="OFF"
 fi
 
 
-PyrFilter=$(cat ./conf/instconf_pywfs_filter.txt)
+PyrFilter=$( head -1 ./conf/instconf_pywfs_filter.txt)
 
 if [ "$TTloopstat" = " ON" ]; then
 TTloopstat_C="\Zr\Z2 ON\Zn"
@@ -205,8 +205,8 @@ menuname="ALIGNMENT - LOOP ${LOOPNAME} ($LOOPNUMBER})\n
    Pyr Filter   : $PyrFilter\n"
 
 
-pyTTloopgain=$(cat ./status/gain_PyAlignTT.txt)
-Pcamloopgain=$(cat ./status/gain_PyAlignCam.txt)
+pyTTloopgain=$( head -1 ./status/gain_PyAlignTT.txt)
+Pcamloopgain=$( head -1 ./status/gain_PyAlignCam.txt)
 
 
 
@@ -223,7 +223,7 @@ menuitems=( "1 ->" "\Zb\Zr$string\Zn" )
 menuitems+=( "" "" )
 file="./conf/instconf_pywfs_freq.txt"
 if [ -f $file ]; then
-pyfreq=$(cat $file)
+pyfreq=$( head -1 $file)
 else
 pyfreq="2000"
 echo "$pyfreq" > $file
@@ -285,7 +285,7 @@ menuitems+=( "" "" )
 
 file="./conf/instconf_pywfs_modampl.txt"
 if [ -f $file ]; then
-pymodampl=$(cat $file)
+pymodampl=$( head -1 $file)
 else
 pymodampl="05"
 echo "$pymodampl" > $file
@@ -442,7 +442,7 @@ menuitems+=( "" "" )
 
 file="./conf/instconf_pywfs_filter.txt"
 if [ -f $file ]; then
-pyfilter=$(cat $file)
+pyfilter=$( head -1 $file)
 else
 pyfilter="1"
 echo "$pyfilter" > $file
@@ -497,7 +497,7 @@ menuitems+=( "" "" )
 
 file="./conf/instconf_pywfs_pickoff.txt"
 if [ -f $file ]; then
-pypickoff=$(cat $file)
+pypickoff=$( head -1 $file)
 else
 pypickoff="01"
 echo "$pypickoff" > $file
@@ -590,11 +590,11 @@ menuitems+=( "" "" )
 
 
 
-TTposX=$( cat status/stat_AnalogVoltage_D.txt )
-TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+TTposX=$( head -1 status/stat_AnalogVoltage_D.txt )
+TTposY=$( head -1 status/stat_AnalogVoltage_C.txt )
 
-TTposXref=$( cat status/stat_AnalogVoltage_Dref.txt )
-TTposYref=$( cat status/stat_AnalogVoltage_Cref.txt )
+TTposXref=$( head -1 status/stat_AnalogVoltage_Dref.txt )
+TTposYref=$( head -1 status/stat_AnalogVoltage_Cref.txt )
 
 stringcenter "Pyramid TT align ( 90.3 mas/V )"
 menuitems+=( "2 ->" "\Zb\Zr$string\Zn" )
@@ -696,7 +696,7 @@ dialog --colors --title "Alignment" \
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 
 
 menualign_default="$choiceval"
@@ -1118,7 +1118,7 @@ menualign_default="tst3"
 state="menualign"
 ;;
         txm)
-TTposX=$( cat status/stat_AnalogVoltage_D.txt )
+TTposX=$( head -1 status/stat_AnalogVoltage_D.txt )
 TTposXn=$( echo "$TTposX-$TTstep" | bc )
 ./aocscripts/SCExAO_analogoutput D $TTposXn
 aoconflog "TT move x ${TTposXn}"
@@ -1126,7 +1126,7 @@ menualign_default="txm"
 state="menualign"
 ;;
         txp)
-TTposX=$( cat status/stat_AnalogVoltage_D.txt )
+TTposX=$( head -1 status/stat_AnalogVoltage_D.txt )
 TTposXn=$( echo "$TTposX+$TTstep" | bc )
 ./aocscripts/SCExAO_analogoutput D $TTposXn
 aoconflog "TT move x ${TTposXn}"
@@ -1134,7 +1134,7 @@ menualign_default="txp"
 state="menualign"
 ;;
         tym)
-TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+TTposY=$( head -1 status/stat_AnalogVoltage_C.txt )
 TTposYn=$( echo "$TTposY-$TTstep" | bc )
 ./aocscripts/SCExAO_analogoutput C $TTposYn
 aoconflog "TT move y ${TTposYn}"
@@ -1142,7 +1142,7 @@ menualign_default="tym"
 state="menualign"
 ;;
         typ)
-TTposY=$( cat status/stat_AnalogVoltage_C.txt )
+TTposY=$( head -1 status/stat_AnalogVoltage_C.txt )
 TTposYn=$( echo "$TTposY+$TTstep" | bc )
 ./aocscripts/SCExAO_analogoutput C $TTposYn
 aoconflog "TT move y ${TTposYn}"
@@ -1171,7 +1171,7 @@ state="menualign"
   	 tr) # resume TT align loop
 aoconflogext "TT align loop resume" 
 rm status/pause_PyAlignTT.txt stop_PyAlignTT.txt
-if [ "$(cat ./status/status_alignTT.txt)" = "OFF" ]
+if [ "$( head -1 ./status/status_alignTT.txt)" = "OFF" ]
 then
 dialog --title "Message" --msgbox "Starting TT align\n (CTRL-C now to abort)\n" 8 30
 fi
@@ -1183,7 +1183,7 @@ state="menualign"
 
 	tg)
 dialog --title "PyTT loop gain" --inputbox "Enter loop gain" 8 40 ${pyTTloopgain} 2> $tempfile
-pyTTloopgain=$(cat $tempfile)
+pyTTloopgain=$( head -1 $tempfile)
 echo ${pyTTloopgain} > ./status/gain_PyAlignTT.txt
 aoconflogext "TT align set gain ${pyTTloopgain}"
 menualign_default="tg"
@@ -1287,7 +1287,7 @@ state="menualign"
    	 pr)
 aoconflogext "Pupil align loop resume"
 rm status/pause_PyAlignCam.txt status/stop_PyAlignCam.txt
-if [ "$(cat ./status/status_alignPcam.txt)" == "off" ]
+if [ "$( head -1 ./status/status_alignPcam.txt)" == "off" ]
 then
 dialog --title "Message" --msgbox "Starting Pcam align\n (CTRL-C now to abort)\n" 8 30
 fi
@@ -1298,7 +1298,7 @@ state="menualign"
 ;;  
  	pg)
 dialog --title "Pcam loop gain" --inputbox "Enter loop gain" 8 40 ${Pcamloopgain} 2> $tempfile
-Pcamloopgain=$(cat $tempfile)
+Pcamloopgain=$( head -1 $tempfile)
 echo ${Pcamloopgain} > ./status/gain_PyAlignCam.txt
 aoconflog "Pupil align loop set gain ${Pcamloopgain}"
 menualign_default="pg"

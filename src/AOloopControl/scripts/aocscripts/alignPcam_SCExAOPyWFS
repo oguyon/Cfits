@@ -12,8 +12,8 @@ then
   exit
 fi
 
-loopnb=$(cat LOOPNUMBER)
-confnb=$(cat ./conf/conf_CONFNUMBER.txt)
+loopnb=$( head -1 LOOPNUMBER)
+confnb=$( head -1 ./conf/conf_CONFNUMBER.txt)
 
 
 pname0=$0

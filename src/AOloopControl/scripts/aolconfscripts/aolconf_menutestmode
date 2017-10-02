@@ -201,14 +201,22 @@ fi
 ConfReadParam dmturbampl "0.01"; dmturbampl="$paramvalue"
 menuitems+=( "DMtamp" "DM turbulence amplitude      = ${dmturbampl} um" )
 
-ConfReadParam dmturbws "0"; dmturbws="$paramvalue"
+ConfReadParam dmturbamplmult "1.0"; dmturbamplmult="$paramvalue"
+dmturbampl_applied=$( echo $dmturbampl $dmturbamplmult | awk '{printf("%5.3f",$1*$2)}')
+menuitems+=( "DMtampmult" "DM turbulence amplitude multiplier  = ${dmturbamplmult} x  -> ${dmturbampl_applied} um" )
+
+ConfReadParam dmturbws "10"; dmturbws="$paramvalue"
 menuitems+=( "DMtws" "DM turbulence wind speed      = ${dmturbws} m/s" )
 
-ConfReadParam dmturblo "10"; dmturblo="$paramvalue"
+ConfReadParam dmturblo "1.0"; dmturblo="$paramvalue"
 menuitems+=( "DMtlo" "DM turbulence low order coeff = ${dmturblo}" )
 
 ConfReadParam dmturbtint "1000"; dmturbtint="$paramvalue"
 menuitems+=( "DMttint" "DM turbulence interval  = ${dmturbtint} us" )
+
+ConfReadParam dmturbtintmult "1.0"; dmturbtintmult="$paramvalue"
+dmturbtint_applied=$( echo $dmturbtint $dmturbtintmult | awk '{printf("%d", $1*$2)}')
+menuitems+=( "DMttintmult" "DM turbulence interval multiplier  = ${dmturbtintmult} x ${dmturbtint} -> ${dmturbtint_applied} us" )
 
 menuitems+=( "dm1v" "View DM chan 10 (turbulence) stream" )
 menuitems+=( "dm1m" "Monitor DM chan 10 (turbulence) stream" )
@@ -417,7 +425,7 @@ dialog --colors --title "TEST MODE  - LOOP ${LOOPNAME} (${LOOPNUMBER})" \
  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 state="menutestmode"
 menutestmode_default="$choiceval"
 case $retval in
@@ -532,8 +540,9 @@ sleep 0.2
 tmux send-keys -t $tmuxname "$execname" C-m
 tmux send-keys -t $tmuxname "csetpmove aol${LOOPNUMBER}RT2" C-m
 tmux send-keys -t $tmuxname "loadfits \"wfturbC.fits\" wfc" C-m
+tmux send-keys -t $tmuxname "wfcn=wfc*${dmturbamplmult}" C-m
 tmux send-keys -t $tmuxname "readshmim dm${DMindex}disp10" C-m
-tmux send-keys -t $tmuxname "creaimstream wfc dm${DMindex}disp10 ${dmturbtint} 1 0 0 null 0 0" C-m
+tmux send-keys -t $tmuxname "creaimstream wfcn dm${DMindex}disp10 ${dmturbtint_applied} 1 0 0 null 0 0" C-m
 menutestmode_default="DMtf2sOFF"
 ;;
 
@@ -574,6 +583,15 @@ exec 3>&-;
 echo "$dmturbampl" > ./conf/param_dmturbampl.txt
 aoconflog "dmturbampl = ${dmturbampl}"
 ;;
+
+	DMtampmult)
+exec 3>&1;dmturbamplmult=$(dialog --inputbox "DM turbulence amplitude multiplier" 0 0 "$dmturbamplmult" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmturbamplmult" > ./conf/param_dmturbamplmult.txt
+aoconflog "dmturbamplmult = ${dmturbamplmult}"
+;;
+
+
 	DMtws)
 exec 3>&1;dmturbws=$(dialog --inputbox "DM turbulence wind speed [m/s]" 0 0 "$dmturbws" 2>&1 1>&3);
 exec 3>&-;
@@ -592,6 +610,14 @@ exec 3>&-;
 echo "$dmturbtint" > ./conf/param_dmturbtint.txt
 aoconflog "dmturbtint = $dmturbtint"
 ;;
+
+	DMttintmult)
+exec 3>&1;dmturbtintmult=$(dialog --inputbox "DM turbulence interval multiplier" 0 0 "$dmturbtintmult" 2>&1 1>&3);
+exec 3>&-;
+echo "$dmturbtintmult" > ./conf/param_dmturbtintmult.txt
+aoconflog "dmturbtintmult = $dmturbtintmult"
+;;
+
 
 
 	dm1v)
@@ -686,7 +712,7 @@ ConfReadParam wfslambdanm "800"; wfslambdanm="$paramvalue"
 
 file="conf/conf_conflastloaded_name.txt"
 if [ -f "$file" ]; then
-confnameloaded=$( cat $file )
+confnameloaded=$( head -1 $file )
 else
 confnameloaded=" "
 fi

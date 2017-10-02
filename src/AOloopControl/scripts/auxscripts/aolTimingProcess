@@ -32,7 +32,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Analysis of timing data\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Analysis of timing data\n" "$0" 
 }
 
 
@@ -99,7 +99,7 @@ cp $TimingFileTXT _tmp_timing.txt
 echo "TimingFileTXT = $TimingFileTXT"
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 ./AOloopControl -n aol${loopnb}timingproc << EOF
 loadfits "_tmp_timing.fits" imt

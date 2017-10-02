@@ -47,7 +47,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Acquire modal response matrix\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Acquire modal response matrix\n" "$0" 
 }
 
 
@@ -134,7 +134,7 @@ normalize_flag="$5"
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 pname0=$0
 pname="aol${loopnb}LOrespM"

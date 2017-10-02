@@ -24,7 +24,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       List running AOloop processes\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       List running AOloop processes\n" "$0" 
 }
 
 
@@ -104,7 +104,7 @@ echo "Start Time                          Process Name                      Tmux
 echo "-------------------------------------------------------------------------------------------------------------------------------"
 for file in runproc/*.runproc
 do
-line=$( cat $file )
+line=$( head -1 $file )
 arr=($line)
 comment=`sed 's/^ *[^ ][^ ]*  *//' $file | sed 's/^ *[^ ][^ ]*  *//'| sed 's/^ *[^ ][^ ]*  *//'`
 
@@ -118,7 +118,7 @@ echo "Start Time                          Process Name                      Tmux
 echo "-------------------------------------------------------------------------------------------------------------------------------"
 for file in runproc/*.runprocQ
 do
-line=$( cat $file )
+line=$( head -1 $file )
 arr=($line)
 comment=`sed 's/^ *[^ ][^ ]*  *//' $file | sed 's/^ *[^ ][^ ]*  *//'| sed 's/^ *[^ ][^ ]*  *//'`
 

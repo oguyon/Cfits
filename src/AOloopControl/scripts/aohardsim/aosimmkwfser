@@ -1,21 +1,20 @@
-#! /bin/bash
-
+#!/bin/bash
 
 
 # number of arguments to script
 NBARGS=0
-loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 
-#pname0=`basename $0`
-#pname=$pname0-$loopnb
 
-pname=aol${loopnb}run
+
+
+
+
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : Run AO control loop $(tput sgr0)"
+echo "$(tput bold) GENERATE ATMOSPHERIC WAVEFRONTS $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "  Run AO control loop"
+echo "  Create WF series"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
 echo "     $0 [-h]"
@@ -23,14 +22,23 @@ echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"
 echo ""
+echo ""
 echo "------------------------------------------------------------------------"
 }
 
 
 printHELP1 ()
 {
-    printf "     $(tput bold)%-25s$(tput sgr0)       Run AO control loop\n" "$0" 
+    printf "%20s       Create WF series\n" "$0"
 }
+
+
+
+EXITSTATUS=0
+
+
+
+# ================= OPTIONS =============================
 
 
 
@@ -41,8 +49,8 @@ for arg in "$@"; do
   shift
   case "$arg" in
     "--help") set -- "$@" "-h" ;;
-    "--help1") 
-set -- "$@" "-h" 
+    "--help1")
+set -- "$@" "-h"
 singlelinehelp=1;
 ;;
     *)        set -- "$@" "$arg"
@@ -50,7 +58,9 @@ singlelinehelp=1;
 done
 
 
-while getopts :h FLAG; do
+
+
+while getopts :hH:L:N:Cc FLAG; do
   case $FLAG in
     h)  #show help
       if [ "$singlelinehelp" -eq "0" ]; then
@@ -60,6 +70,7 @@ while getopts :h FLAG; do
       fi
       exit
       ;;
+
     \?) #unrecognized option - show help
       echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed."
       printHELP
@@ -67,7 +78,9 @@ while getopts :h FLAG; do
   esac
 done
 
-shift $((OPTIND-1)) 
+shift $((OPTIND-1))
+
+
 
 
 
@@ -88,31 +101,28 @@ fi
 
 
 
-execname="./AOloopControl"
 
-if [ ! -f "LOOPNUMBER" ]; then
+
+if [ $EXITSTATUS -eq 1 ]; then
 echo ""
-echo "ERROR: file LOOPNUMBER is missing"
-echo " File LOOPNUMBER must exist and contain a integer"
+echo "$(tput setaf 1)$(tput bold) REQUIRED FILES, COMMANDS NOT FOUND: EXITING $(tput sgr0)"
 echo ""
 exit
+else
+echo ""
 fi
 
 
-confnb=$( head -1 ./conf/conf_CONFNUMBER.txt )
-
-csetname="aol${loopnb}RT"
 
 
-# Reload/update FITS->SHM if needed
-Fits2shm -c -p aol${loopnb}_ respM
-Fits2shm -c -p aol${loopnb}_ DMmodes
-Fits2shm -c -p aol${loopnb}_ contrM
+# ======================= SCRIPT CODE STARTS HERE =================================
 
-$execname -n $pname << EOF
-csetpmove ${csetname}
-aolnb $loopnb
-aolrun
-exitCLI
-EOF
 
+
+
+
+srcdir=$( cat .scripts_src_dir.conf )
+mkdir atmwf
+cp $srcdir/../../AtmosphericTurbulence/scripts/runturb ./atmwf/
+cd atmwf
+./runturb -e ../AOloopControl 1.650

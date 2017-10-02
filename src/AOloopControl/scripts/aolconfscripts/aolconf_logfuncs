@@ -16,7 +16,7 @@ tmuxnameC="logC_$1"
 sleep 0.1
 tmux new-session -d -s $tmuxnameC
 sleep 0.1
-savedir=$(cat ./conf/conf_savedir_name.txt)
+savedir=$( head -1 ./conf/param_savedir.txt )
 datestr=`date -u +%Y%m%d`
 mkdir -p $savedir/$datestr/$1/
 ConfReadParam LogCubeSize "1000"; LogCubeSize="$paramvalue"

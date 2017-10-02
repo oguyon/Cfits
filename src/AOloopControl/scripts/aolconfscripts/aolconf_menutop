@@ -20,20 +20,14 @@ if [ $state = "menutop" ]; then
 stateok=1
 dateUTC=$( date -u )
 #aoconflog "$0 state = ${state}"
-confselected="0" #$(cat "./conf/conf_CONFNUMBER.txt")
+confselected="0" #$( head -1 "./conf/conf_CONFNUMBER.txt")
 menuname="TOP MENU\n [Active conf = ${confselected}]    [ $dateUTC ]"
 
 
-file="./conf/param_DMcombave_mode.txt"
-DMcombave_mode=$( cat $file )
-if [[ -f "$file" && ( "$DMcombave_mode" = "0" || "$DMcombave_mode" = "1" || "$DMcombave_mode" = "2" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-DMcombave_mode=0
-fi
 
-DMindex=$(cat "./conf/param_DMindex.txt")
+ConfReadParam DMcombave_mode "0"; DMcombave_mode="$paramvalue"
+
+DMindex=$( head -1 "./conf/param_DMindex.txt")
 
 
 
@@ -78,8 +72,8 @@ fi
 
 
 
-file="./conf/conf_dm2dmModes_name.txt"
-dm2dmModesMast=$( cat $file )
+file="./conf/param_dm2dmModes_name.txt"
+dm2dmModesMast=$( head -1 $file )
 
 
 
@@ -101,8 +95,8 @@ menuitems+=( "dm2dmMode0" " [   ON  ] DM-to-DM is ON  (select to de-activate)" )
 
 dm2dmMfile="/tmp/aol${LOOPNUMBER}_dm2dmM.im.shm"
 if [ -f $dmd2dmMfile ]; then
-sizestring=$( cat conf/streamlink_dm2dmM.imsize.txt )
-streamname=$( cat conf/streamlink_dm2dmM.name.txt )
+sizestring=$( head -1 conf/streamlink_dm2dmM.imsize.txt )
+streamname=$( head -1 conf/streamlink_dm2dmM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dm2dmM" "[\Z2\Zr${OKstr}\Zn] DM to DM output modes        \Z4\Zbaol${LOOPNUMBER}_dm2dmM\Zn -> \Z4${streamname}\Zn" )
 else
@@ -113,8 +107,8 @@ fi
 
 dm2dmOfile="/tmp/aol${LOOPNUMBER}_dm2dmO.im.shm"
 if [ -f $dmd2dmMfile ]; then
-sizestring=$( cat conf/streamlink_dm2dmO.imsize.txt )
-streamname=$( cat conf/streamlink_dm2dmO.name.txt )
+sizestring=$( head -1 conf/streamlink_dm2dmO.imsize.txt )
+streamname=$( head -1 conf/streamlink_dm2dmO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dm2dmO" "[\Z2\Zr${OKstr}\Zn] DM output stream        \Z4\Zbaol${LOOPNUMBER}_dm2dmO\Zn -> \Z4${streamname}\Zn" )
 else
@@ -153,8 +147,8 @@ fi
 
 dmwrefRMfile="/tmp/aol${LOOPNUMBER}_dmwrefRM.im.shm"
 if [ -f $dmwrefRMfile ]; then
-sizestring=$( cat conf/streamlink_dmwrefRM.imsize.txt )
-streamname=$( cat conf/streamlink_dmwrefRM.name.txt )
+sizestring=$( head -1 conf/streamlink_dmwrefRM.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmwrefRM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmwrefRM" "[\Z2\Zr${OKstr}\Zn] WFS Resp Matrix            \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${streamname}\Zn" )
 else
@@ -169,8 +163,8 @@ fi
 
 dmwrefOfile="/tmp/aol${LOOPNUMBER}_dmwrefO.im.shm"
 if [ -f $dmwrefOfile ]; then
-sizestring=$( cat conf/streamlink_dmwrefO.imsize.txt )
-streamname=$( cat conf/streamlink_dmwrefO.name.txt )
+sizestring=$( head -1 conf/streamlink_dmwrefO.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmwrefO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmwrefO" "[\Z2\Zr${OKstr}\Zn] WFS zp output stream        \Z4\Zbaol${LOOPNUMBER}_dmwrefRM\Zn -> \Z4${streamname}\Zn" )
 else
@@ -183,15 +177,8 @@ fi
 
 
 
+ConfReadParam DMvolt_mode "0"; DMvolt_mode="$paramvalue"
 
-file="./conf/conf_dmvolt_mode.txt"
-DMvolt_mode=$( cat $file )
-if [[ -f "$file" && ( "$DMvolt_mode" = "1" || "$DMvolt_mode" = "0" ) ]]; then
-echo "OK"
-else
-echo "0" > $file
-DMvolt_mode=0
-fi
 
 menuitems+=( " " " ")
 if [ "${DMvolt_mode}" = "0" ];
@@ -208,21 +195,12 @@ menuitems+=( "dmcombam" "[${DMcombave_mode}] DM combination averaging mode" )
 
 
 menuitems+=( " " " ")
-if [ -f "./conf/conf_dmdelayus.txt" ]; then
-dmdelayus=$(cat ./conf/conf_dmdelayus.txt)
-else
-echo "0" > ./conf/conf_dmdelayus.txt
-dmdelayus=$(cat ./conf/conf_dmdelayus.txt)
-fi
+
+
+ConfReadParam dmdelayus "0"; dmdelayus="$paramvalue"
 menuitems+=( "setDMdelayval" "[${dmdelayus}] Set DM delay value [us]" )
 
-if [ -f "./conf/conf_dmdelayON.txt" ]; then
-dmDelayON=$(cat ./conf/conf_dmdelayON.txt)
-else
-echo "OFF" > ./conf/conf_dmdelayON.txt
-dmDelayON=$(cat ./conf/conf_dmdelayON.txt)
-fi
-	
+ConfReadParam dmdelayON "OFF"; dmdelayON="$paramvalue"
 if [ "$dmDelayON" = " ON" ]; then
 menuitems+=( "setDMdelayOFF" "[DM delay is  ON] press to toggle DM delay to OFF state" )
 else
@@ -233,7 +211,7 @@ fi
 
 menuitems+=( " " " ")
 file="status/stat_initdm${DMindex}.txt"
-initDMstat=$( cat $file )
+initDMstat=$( head -1 $file )
 if [[ -f "$file" && ( "$initDMstat" = "1" || "$initDMstat" = "0" ) ]]; then
 echo "OK"
 else
@@ -389,7 +367,7 @@ dialog --colors --title "AO loop top menu  - LOOP ${LOOPNAME} (${LOOPNUMBER})  [
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 menutop_default="$choiceval"
 case $retval in
    0) # button
@@ -414,7 +392,7 @@ echo "$DMindex" > ./conf/param_DMindex.txt
 echo "dm${DMindex}disp" > ./conf/streamlink_dmdisp.name.txt # total DM displacement channel
 ./aolfuncs/aolfunc_StreamLink dmdisp
 
-sizestring=$( cat conf/streamlink_dmdisp.imsize.txt )
+sizestring=$( head -1 conf/streamlink_dmdisp.imsize.txt )
 read -r DMxsize DMysize <<< "$sizestring"
 echo "$DMxsize" > ./conf/param_DMxsize.txt
 echo "$DMysize" > ./conf/param_DMysize.txt
@@ -501,7 +479,7 @@ menuitems1+=( "$i" "loop $i (directory ../AOloop$i/)" )
 done 
 cmd=( dialog --default-item "${vali}" --menu "Choose one:" 50 80 100 "${menuitems1[@]}" )
 dmolinknb=$("${cmd[@]}" 2>&1 >/dev/tty)
-dmnb=$( cat ../AOloop${dmolinknb}/conf/param_DMindex.txt )
+dmnb=$( head -1 ../AOloop${dmolinknb}/conf/param_DMindex.txt )
 
 
 menuitems1=( " " " " )
@@ -520,7 +498,7 @@ dmolinkchan=$("${cmd[@]}" 2>&1 >/dev/tty)
 # set external loop DM modes controlled by this loop 
 $execname << EOF
 loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodes0all.fits[*,*,1:$DMxsize]" im
-savefits im "!./conf/conf_dm2dmM.fits" 
+savefits im "!./conf/param_dm2dmM.fits" 
 cpsh im aol${dmolinknb}_modes0_$DMxsize
 quit
 EOF
@@ -539,7 +517,7 @@ echo "$dm2dmO" > ./conf/streamlink_dm2dmO.name.txt
 # external loop WFS response of modes controlled by this loop
 $execname << EOF
 loadfits "../AOloop${dmolinknb}/mkmodestmp/fmodesWFS00all.fits[*,*,1:$DMxsize]" im
-savefits im "!./conf/conf_dmwrefRM.fits" 
+savefits im "!./conf/param_dmwrefRM.fits" 
 cpsh im aol${dmolinknb}_modesWFS0_$DMxsize
 quit
 EOF
@@ -651,12 +629,12 @@ menutop_default="dmwref0"
 ;;
 
     dmvolt0)
-aoconflog "set dmvolt_mode = 0"
+aoconflog "set DMvolt_mode = 0"
 echo "0" > "./conf/param_DMvolt_mode.txt"
 menutop_default="dmvolt1"
 ;;
     dmvolt1)
-aoconflog "set dmvolt_mode = 1"
+aoconflog "set DMvolt_mode = 1"
 echo "1" > "./conf/param_DMvolt_mode.txt"
 menutop_default="dmvolt0"
 ;;
@@ -822,7 +800,7 @@ mkdir -p ./CONF
 CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 if [ -f "./conf/conf_loopconfname.txt" ]; then
-loopconfname=$(cat ./conf/conf_loopconfname.txt)
+loopconfname=$( head -1 ./conf/conf_loopconfname.txt)
 else
 loopconfname=""
 fi
@@ -830,7 +808,7 @@ fi
 dialog --title "Select Configuration" --title "Select Configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/${CALIBdatestr}_${loopconfname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
-confname=$(cat $tempfile)
+confname=$( head -1 $tempfile)
 
 aoconflogext "SAVE configuration to ${confname}"
 echo "saving to ${confname}   tempfile = $tempfile"
@@ -840,9 +818,9 @@ aoconflog "CONFIGURATION ${confname}"
 
 
 # IF LOOP IS ON - TURN IT OFF HERE
-procONstat=$( cat ./status/stat_procON.txt )
+procONstat=$( head -1 ./status/stat_procON.txt )
 procONstat_old="$procONstat"
-loopONstat=$( cat ./status/stat_loopON.txt )
+loopONstat=$( head -1 ./status/stat_loopON.txt )
 loopONstat_old="$loopONstat"
 if [ "$procONstat" = " ON" ]; then
  if [ "$loopONstat" = " ON" ]; then

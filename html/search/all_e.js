@@ -39,7 +39,6 @@ var searchData=
   ['nbstreams',['NBstreams',['../structGPUMATMULTCONF.html#af828d497cf54c0196f27528c30b96519',1,'GPUMATMULTCONF']]],
   ['nbsubpix',['NBsubPix',['../PIAACMCsimul_8c.html#aa451146b5668b770521ed85d16907c89',1,'PIAACMCsimul.c']]],
   ['nbtimer',['NBtimer',['../structAOLOOPCONTROL__CONF.html#a56ca79cfd9d34d2895d3a2137aa6c8b1',1,'AOLOOPCONTROL_CONF']]],
-  ['nbtimers',['NBtimers',['../AOloopControl_8c.html#a6ddeb5df9aea7a9591c8e8fce7da51d8',1,'AOloopControl.c']]],
   ['nbwords',['NBwords',['../linARfilterPred_8c.html#a757c5f80b839ea32731ba61082ffe185',1,'NBwords(const char sentence[]):&#160;linARfilterPred.c'],['../linARfilterPred_8h.html#a757c5f80b839ea32731ba61082ffe185',1,'NBwords(const char sentence[]):&#160;linARfilterPred.c']]],
   ['ncoeff',['ncoeff',['../structASPHSURFR.html#a06a64705ac7cbc0d7e54467d9b91c039',1,'ASPHSURFR']]],
   ['neg',['NEG',['../calc__bison_8c.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3',1,'NEG():&#160;calc_bison.c'],['../calc__bison_8h.html#a15c9f7bd2f0e9686df5d9df4f3314aa9af6ac87750a3d0fb390234808731fd4b3',1,'NEG():&#160;calc_bison.h']]],

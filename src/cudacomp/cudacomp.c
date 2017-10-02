@@ -1710,12 +1710,23 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
 
         }
 
+
+		printf("TEST %s  %d\n", __FILE__, __LINE__);
+		fflush(stdout);
+
+
+
         for(device = 0; device < gpumatmultconf[index].NBstreams; device++)
             for (n=gpumatmultconf[index].Noffset[device]; n<gpumatmultconf[index].Noffset[device]+gpumatmultconf[index].Nsize[device]; n++)
             {
                 gpumatmultconf[index].wfsVec_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsVec[n];
                 gpumatmultconf[index].wfsRef_part[device][n-gpumatmultconf[index].Noffset[device]] = gpumatmultconf[index].wfsRef[n];
             }
+
+		printf("TEST %s  %d\n", __FILE__, __LINE__);
+		fflush(stdout);
+
+
 
         // copy memory to devices
         for(device=0; device<gpumatmultconf[index].NBstreams; device++)
@@ -1739,7 +1750,15 @@ int GPU_loop_MultMat_setup(int index, const char *IDcontrM_name, const char *IDw
             }
         }
 
+		printf("TEST %s  %d\n", __FILE__, __LINE__);
+		fflush(stdout);
+
+
         GPUloadCmat(index);
+
+		printf("TEST %s  %d\n", __FILE__, __LINE__);
+		fflush(stdout);
+
 
 
         printf("SETUP %d DONE, READY TO START COMPUTATIONS  ", index);
@@ -2954,8 +2973,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
     if(MAGMAfloat==1)
     {
 
-	printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
+//	printf("============== %s %d\n", __FILE__, __LINE__);
+//	fflush(stdout);
 
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{
@@ -2969,8 +2988,8 @@ int CUDACOMP_magma_compute_SVDpseudoInverse(const char *ID_Rmatrix_name, const c
 		else
 			magma_ssyevd_gpu( MagmaVec,               MagmaLower, N, magmaf_d_AtA, N,                        magmaf_w1, magmaf_h_R, N, magmaf_h_work, magma_lwork, magma_iwork, magma_liwork, &info );
 				
-			printf("============== %s %d\n", __FILE__, __LINE__);
-	fflush(stdout);
+//			printf("============== %s %d\n", __FILE__, __LINE__);
+//	fflush(stdout);
 		
 		if(VERBOSE_CUDACOMP_magma_compute_SVDpseudoInverse==1)
 		{

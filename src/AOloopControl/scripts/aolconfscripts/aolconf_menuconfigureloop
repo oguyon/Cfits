@@ -9,7 +9,13 @@ fi
 
 
 
-
+function updateRMtiming {
+echo "$hardwlatency_frame $RMexfr $loopfrequ" > tmpfile.txt
+RMdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
+echo "$RMdelayfr" > ./conf/param_RMdelayfr.txt
+delayRM1us=$( awk '{ printf("%d\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
+echo "$delayRM1us" > ./conf/param_delayRM1us.txt
+}
 
 
 # =====================================================
@@ -64,8 +70,8 @@ menuitems+=( "lslat" "            Filtered DM write computing Latency   ${wfsmex
 
 dmCfile="/tmp/aol${LOOPNUMBER}_dmC.im.shm"
 if [ -f $dmCfile ]; then
-sizestring=$( cat conf/streamlink_dmC.imsize.txt )
-streamname=$( cat conf/streamlink_dmC.name.txt )
+sizestring=$( head -1 conf/streamlink_dmC.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmC.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmC" "[\Z2\Zr${OKstr}\Zn] DM control channel        \Z4\Zbaol${LOOPNUMBER}_dmC\Zn -> \Z4${streamname}\Zn" )
 else
@@ -76,8 +82,8 @@ fi
 
 dmOfile="/tmp/aol${LOOPNUMBER}_dmO.im.shm"
 if [ -f $dmOfile ]; then
-sizestring=$( cat conf/streamlink_dmO.imsize.txt )
-streamname=$( cat conf/streamlink_dmO.name.txt )
+sizestring=$( head -1 conf/streamlink_dmO.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmO.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmO" "[\Z2\Zr${OKstr}\Zn] DM offset channel         \Z4\Zbaol${LOOPNUMBER}_dmO\Zn -> \Z4${streamname}\Zn" )
 else
@@ -89,8 +95,8 @@ fi
 
 dmZP0file="/tmp/aol${LOOPNUMBER}_dmZP0.im.shm"
 if [ -f $dmZP0file ]; then
-sizestring=$( cat conf/streamlink_dmZP0.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP0.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP0.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP0.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP0" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP0\Zn -> \Z4${streamname}\Zn" )
 else
@@ -101,8 +107,8 @@ fi
 
 dmZP1file="/tmp/aol${LOOPNUMBER}_dmZP1.im.shm"
 if [ -f $dmZP1file ]; then
-sizestring=$( cat conf/streamlink_dmZP1.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP1.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP1.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP1.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP1" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP1\Zn -> \Z4${streamname}\Zn" )
 else
@@ -113,8 +119,8 @@ fi
 
 dmZP2file="/tmp/aol${LOOPNUMBER}_dmZP2.im.shm"
 if [ -f $dmZP2file ]; then
-sizestring=$( cat conf/streamlink_dmZP2.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP2.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP2.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP2.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP2" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP2\Zn -> \Z4${streamname}\Zn" )
 else
@@ -125,8 +131,8 @@ fi
 
 dmZP3file="/tmp/aol${LOOPNUMBER}_dmZP3.im.shm"
 if [ -f $dmZP3file ]; then
-sizestring=$( cat conf/streamlink_dmZP3.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP3.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP3.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP3.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP3" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP3\Zn -> \Z4${streamname}\Zn" )
 else
@@ -137,8 +143,8 @@ fi
 
 dmZP4file="/tmp/aol${LOOPNUMBER}_dmZP4.im.shm"
 if [ -f $dmZP4file ]; then
-sizestring=$( cat conf/streamlink_dmZP4.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP4.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP4.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP4.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP4" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP4\Zn -> \Z4${streamname}\Zn" )
 else
@@ -149,8 +155,8 @@ fi
 
 dmZP5file="/tmp/aol${LOOPNUMBER}_dmZP5.im.shm"
 if [ -f $dmZP5file ]; then
-sizestring=$( cat conf/streamlink_dmZP5.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP5.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP5.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP5.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP5" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP5\Zn -> \Z4${streamname}\Zn" )
 else
@@ -161,8 +167,8 @@ fi
 
 dmZP6file="/tmp/aol${LOOPNUMBER}_dmZP6.im.shm"
 if [ -f $dmZP6file ]; then
-sizestring=$( cat conf/streamlink_dmZP6.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP6.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP6.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP6.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP6" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP6\Zn -> \Z4${streamname}\Zn" )
 else
@@ -173,8 +179,8 @@ fi
 
 dmZP7file="/tmp/aol${LOOPNUMBER}_dmZP7.im.shm"
 if [ -f $dmZP7file ]; then
-sizestring=$( cat conf/streamlink_dmZP7.imsize.txt )
-streamname=$( cat conf/streamlink_dmZP7.name.txt )
+sizestring=$( head -1 conf/streamlink_dmZP7.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmZP7.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmZP7" "[${OKstr}] DM control offset chan.  \Z4\Zbaol${LOOPNUMBER}_dmZP7\Zn -> \Z4${streamname}\Zn" )
 else
@@ -187,8 +193,8 @@ fi
 
 dmdispfile="/tmp/aol${LOOPNUMBER}_dmdisp.im.shm"
 if [ -f $dmdispfile ]; then
-sizestring=$( cat conf/streamlink_dmdisp.imsize.txt )
-streamname=$( cat conf/streamlink_dmdisp.name.txt )
+sizestring=$( head -1 conf/streamlink_dmdisp.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmdisp.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmdisp" "[${OKstr}] DM total displacement  \Z4\Zbaol${LOOPNUMBER}_dmdisp\Zn -> \Z4${streamname}\Zn" )
 else
@@ -199,8 +205,8 @@ fi
 
 dmRMfile="/tmp/aol${LOOPNUMBER}_dmRM.im.shm"
 if [ -f $dmRMfile ]; then
-sizestring=$( cat conf/streamlink_dmRM.imsize.txt )
-streamname=$( cat conf/streamlink_dmRM.name.txt )
+sizestring=$( head -1 conf/streamlink_dmRM.imsize.txt )
+streamname=$( head -1 conf/streamlink_dmRM.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "dmRM" "[${OKstr}] DM RM acqu channel      \Z4\Zbaol${LOOPNUMBER}_dmdRM\Zn -> \Z4${streamname}\Zn" )
 else
@@ -215,8 +221,8 @@ menuitems+=( "zerodm" "Zero all DM arrays\Zn" )
 
 wfsimfile="/tmp/aol${LOOPNUMBER}_wfsim.im.shm"
 if [ -f $wfsimfile ]; then
-sizestring=$( cat conf/streamlink_wfsim.imsize.txt )
-streamname=$( cat conf/streamlink_wfsim.name.txt )
+sizestring=$( head -1 conf/streamlink_wfsim.imsize.txt )
+streamname=$( head -1 conf/streamlink_wfsim.name.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menuitems+=( "wfs" "[${OKstr}] WFS camera image        \Z4\Zbaol${LOOPNUMBER}_wfsim\Zn -> \Z4${streamname}\Zn" )
 else
@@ -277,7 +283,7 @@ stringcenter "AUTOMATIC SYSTEM CALIBRATION"
 menuitems+=( "3 ->" "\Zb\Zr$string\Zn" )
 
 
-ConfReadParam ACzrmtime "10"; ACzrmtime="$paramvalue"
+ConfReadParam ACzrmtime "600"; ACzrmtime="$paramvalue"
 menuitems+=( "sACzrmt" "            Zonal RM maximum running time          ${ACzrmtime} sec" )
 
 ConfReadParam ACzrmNBcycle "10"; ACzrmNBcycle="$paramvalue"
@@ -287,7 +293,7 @@ menuitems+=( "sACzrmN" "            Zonal RM maximum number of Cycles      ${ACz
 
 if [ "$DMMODE" = "0" ]; then
 
-ConfReadParam ACmrmtime "10"; ACmrmtime="$paramvalue"
+ConfReadParam ACmrmtime "600"; ACmrmtime="$paramvalue"
 menuitems+=( "sACmrmt" "            Modal RM maximum running time          ${ACmrmtime} sec" )
 
 ConfReadParam ACmrmNBcycle "10"; ACmrmNBcycle="$paramvalue"
@@ -300,7 +306,7 @@ fi
 
 
 
-ConfReadParam RMfrave "0"; RMfrave="$paramvalue"
+ConfReadParam RMfrave "1"; RMfrave="$paramvalue"
 ConfReadParam RMexfr "0"; RMexfr="$paramvalue"
 
 
@@ -315,7 +321,7 @@ menuitems+=( "nAUTOCr" "        \Zb\ZuSTART AUTO SYSTEM CALIBRATION (same modes)
 fi
 
 menuitems+=( "confUp" "              CONFIGURATION UPDATE ALL  (./conf_staged/*.txt -> ./conf/*.txt)" )
-menuitems+=( "calibL" "              Load calibration files   (load calibration files to ./conf/*.fits and shared memory" )
+menuitems+=( "calibL" "              Load RM calibration files (load calibration files to ./conf/*.fits and shared memory" )
 menuitems+=( "Sconf" "        \Zb\ZuSAVE CURRENT SYSTEM CONFIGURATION as...\Zn" )
 
 menuitems+=( "Lconf" "        \Zb\ZuLOAD SAVED SYSTEM CONFIGURATION\Zn" )
@@ -333,7 +339,7 @@ menuitems+=( " " " " )
 stringcenter "ACQUISITION TIMING"
 menuitems+=( "4 ->" "\Zb\Zr$string\Zn" )
 
-ConfReadParam RMamplum "0.1"; RMamplum="$paramvalue"
+ConfReadParam RMamplum "0.05"; RMamplum="$paramvalue"
 menuitems+=( "rmamp" "            RM amplitude                    ${RMamplum} um" )
 
 ConfReadParam RMdelayfr "0"; RMdelayfr="$paramvalue"
@@ -364,7 +370,7 @@ menuitems+=( "zrespM" "$menustring" )
 
 
 
-ConfReadParam RMpokeMode "1"; RMpokeMode="$paramvalue"
+ConfReadParam RMpokeMode "0"; RMpokeMode="$paramvalue"
 if [ "${RMpokeMode}" -eq "0" ]; then
 	menuitems+=( "Hon" "\ZbHadamard mode is OFF\ZB   press to turn on")
 	else
@@ -416,31 +422,31 @@ menuitems+=(" " " ")
 
 if [ "$DMMODE" = "0" ]; then
 
-ConfReadParam DMmaskRMp0 "0"; DMmaskRMp0="$paramvalue"
+ConfReadParam DMmaskRMp0 "0.2"; DMmaskRMp0="$paramvalue"
 menuitems+=( "DMmaskRMp0"  "            DM mask RM: low level percentile                                ${DMmaskRMp0}" )
 
-ConfReadParam DMmaskRMc0 "0"; DMmaskRMc0="$paramvalue"
+ConfReadParam DMmaskRMc0 "1.0"; DMmaskRMc0="$paramvalue"
 menuitems+=( "DMmaskRMc0"  "            DM mask RM: low level coefficient                               ${DMmaskRMc0}" )
 
-ConfReadParam DMmaskRMp1 "0"; DMmaskRMp1="$paramvalue"
+ConfReadParam DMmaskRMp1 "0.5"; DMmaskRMp1="$paramvalue"
 menuitems+=( "DMmaskRMp1"  "            DM mask RM: high level percentile                               ${DMmaskRMp1}" )
 
-ConfReadParam DMmaskRMc1 "0"; DMmaskRMc1="$paramvalue"
+ConfReadParam DMmaskRMc1 "0.5"; DMmaskRMc1="$paramvalue"
 menuitems+=( "DMmaskRMc1"  "            DM mask RM: high level coefficient                              ${DMmaskRMc1}" )
 
-ConfReadParam WFSmaskRMp0 "0"; WFSmaskRMp0="$paramvalue"
+ConfReadParam WFSmaskRMp0 "0.2"; WFSmaskRMp0="$paramvalue"
 menuitems+=( "WFSmaskRMp0" "            WFS mask RM: low level percentile                               ${WFSmaskRMp0}" )
 
-ConfReadParam WFSmaskRMc0 "0"; WFSmaskRMc0="$paramvalue"
+ConfReadParam WFSmaskRMc0 "1.0"; WFSmaskRMc0="$paramvalue"
 menuitems+=( "WFSmaskRMc0" "            WFS mask RM: low level coefficient                              ${WFSmaskRMc0}" )
 
-ConfReadParam WFSmaskRMp1 "0"; WFSmaskRMp1="$paramvalue"
+ConfReadParam WFSmaskRMp1 "0.6"; WFSmaskRMp1="$paramvalue"
 menuitems+=( "WFSmaskRMp1" "            WFS mask RM: high level percentile                              ${WFSmaskRMp1}" )
 
-ConfReadParam WFSmaskRMc1 "0"; WFSmaskRMc1="$paramvalue"
+ConfReadParam WFSmaskRMc1 "0.6"; WFSmaskRMc1="$paramvalue"
 menuitems+=( "WFSmaskRMc1" "            WFS mask RM: high level coefficient                             ${WFSmaskRMc1}" )
 
-ConfReadParam WFSmaskSNRr "0"; WFSmaskSNRr="$paramvalue"
+ConfReadParam WFSmaskSNRr "0.05"; WFSmaskSNRr="$paramvalue"
 menuitems+=( "WFSmaskSNRr" "            WFS mask RN: fraction of pixels rejected for poor SNR           ${WFSmaskSNRr}" )
 
 
@@ -462,12 +468,15 @@ menuitems+=( " " " " )
 stringcenter "SYSTEM CALIBRATION (MODAL) : $RMMODALCALIBlist"
 menuitems+=( "6 ->" "\Zb\Zr$string\Zn" )
 
+
+
+ConfReadParam RMmodal "OFF"; RMmodal="$paramvalue"
+
 if [ "${RMmodal}" = "OFF" ];
 then
     menuitems+=( "RMMon" "           RM modal is currently OFF. Select to toggle to ON" )
 fi
 
-ConfReadParam RMmodal "OFF"; RMmodal="$paramvalue"
 if [ "${RMmodal}" = " ON" ];
 then
    
@@ -485,7 +494,7 @@ ConfReadParam RMMcpa "0"; RMMcpa="$paramvalue"
 
 fi
 
-fi
+fi # end of DMMODE loop 
 
 
 
@@ -509,7 +518,7 @@ dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER}) 
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 
 menucontrolloop_default="$choiceval"
 state="menuconfigureloop"
@@ -867,7 +876,7 @@ echo "wfsdark/$wfsdarkfname" > ./conf/shmim_wfsdark.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
 ;;
 	1)
-imname=$( cat ./conf/shmim_wfsdark.name.txt )
+imname=$( head -1 ./conf/shmim_wfsdark.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -903,19 +912,19 @@ menucontrolloop_default="zerodark"
 
 	smlock) # set masks lock files (from conf file)
 aoconflogext "Set masks lock files"
-fname=$( cat ./conf/shmim_dmmask.name.txt )
+fname=$( head -1 ./conf/shmim_dmmask.name.txt )
 cp ./conf/shmim_dmmask.name.txt ./conf/shmim_dmmask.name.LOCK.txt
 cp $fname ./conf/dmmask.LOCK.fits
 
-fname=$( cat ./conf/shmim_dmmaskRM.name.txt )
+fname=$( head -1 ./conf/shmim_dmmaskRM.name.txt )
 cp ./conf/shmim_dmmaskRM.name.txt ./conf/shmim_dmmaskRM.name.LOCK.txt 
 cp $fname ./conf/dmmaskRM.LOCK.fits
 
-fname=$( cat ./conf/shmim_dmslaved.name.txt )
+fname=$( head -1 ./conf/shmim_dmslaved.name.txt )
 cp ./conf/shmim_dmslaved.name.txt ./conf/shmim_dmslaved.name.LOCK.txt
 cp $fname ./conf/dmslaved.LOCK.fits
 
-fname=$( cat ./conf/shmim_wfsmask.name.txt )
+fname=$( head -1 ./conf/shmim_wfsmask.name.txt )
 cp ./conf/shmim_wfsmask.name.txt ./conf/shmim_wfsmask.name.LOCK.txt
 cp $fname ./conf/wfsmask.LOCK.fits
 
@@ -1006,7 +1015,7 @@ echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
 #
 CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 if [ -f "./conf/conf_loopconfname.txt" ]; then
-loopconfname=$(cat ./conf/conf_loopconfname.txt)
+loopconfname=$( head -1 ./conf/conf_loopconfname.txt)
 else
 loopconfname=""
 fi
@@ -1033,7 +1042,7 @@ echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
 #
 CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
 if [ -f "./conf/conf_loopconfname.txt" ]; then
-loopconfname=$(cat ./conf/conf_loopconfname.txt)
+loopconfname=$( head -1 ./conf/conf_loopconfname.txt)
 else
 loopconfname=""
 fi
@@ -1072,7 +1081,7 @@ cp ./conf_staged/*.txt ./conf/
 
 
 	calibL)
-aoconflogext "Update configuration files"
+aoconflogext "Update RM calibration files"
 
 # zonal calib
 for imname in $RMZONALCALIBlist
@@ -1098,7 +1107,7 @@ done
 # CALIBname is the name of the calibration corresponding to the configuration
 # CALIBname can only be written by nAUTOC (auto calibration)
 #
-CALIBname="$(cat conf/calib_name.txt)"
+CALIBname="$( head -1 conf/calib_name.txt)"
 
 #
 # CONFname is constructed by appending current date + user-provided string to CALIBname
@@ -1110,7 +1119,7 @@ mkdir -p ./CONF/
 dialog --title "Select configuration" --title "Select configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/${CONFname}" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
-CONFdir=$(cat $tempfile)
+CONFdir=$( head -1 $tempfile)
 
 aoconflogext "SAVE configuration to ${CONFdir}"
 aoconflog "CONFIGURATION save ${CONFdir}"
@@ -1142,7 +1151,7 @@ mkdir -p ./CONF
 dialog --title "Select cconfiguration" --title "Select configuration" --ok-label "Select" \
 --cancel-label "Exit" --fselect "./CONF/" $nbwlines $nbwcols 2> $tempfile
 retval="$?"
-confname=$(cat $tempfile)
+confname=$( head -1 $tempfile)
 
 aoconflogext "LOAD configuration from ${confname}"
 aoconflog "CONFIGURATION ${confname}"
@@ -1178,7 +1187,7 @@ cp conf/param_conflastloaded_time.txt1 conf/param_conflastloaded_time.txt
 
 
 # blocks: set up symbolic links to FITS files in conf directory
-#NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+#NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
 #for namet in contrM contrMc contrMcact DMmodes respM
 #do
 
@@ -1279,12 +1288,7 @@ exec 3>&1;
 RMexfr=$(dialog --inputbox "RM excluded frames" 0 0 "$RMexfr" 2>&1 1>&3);
 exec 3>&-;
 echo "$RMexfr" > ./conf/param_RMexfr.txt
-
-echo "$hardwlatency_frame $RMexfr $loopfrequ" > tmpfile.txt
-RMdelayfr=$( awk '{ printf("%d\n", int($1-0.5-0.5*$2)+1) }' tmpfile.txt )
-echo "$RMdelayfr" > ./conf/param_RMdelayfr.txt
-delayRM1us=$( awk '{ printf("%d\n", (int($1-0.5-0.5*$2)+1-($1-0.5-0.5*$2))/$3*1000000) }' tmpfile.txt )
-echo "$delayRM1us" > ./conf/param_delayRM1us.txt
+updateRMtiming
 aoconflogext "set RM NB frame excluded $RMexfr frames"
 ;;
 
@@ -1312,6 +1316,9 @@ $execname << EOF
 aolsethlat ${hardwlatency_frame}
 exit
 EOF
+
+updateRMtiming
+
 aoconflogext "set hardware latency $hardwlatency_frame frame"
 ;;
 
@@ -1345,7 +1352,7 @@ Fits2shm -c -p aol${LOOPNUMBER}_ dmmask
 ;;
 	1)
 ds9 $imname &
-imname=$( cat ./conf/shmim_zrespM.name.txt )
+imname=$( head -1 ./conf/shmim_zrespM.name.txt )
 ;;
 esac
 ;;
@@ -1355,12 +1362,7 @@ esac
 
 	Hon)
 echo "1" > ./conf/param_RMpokeMode.txt
-
-#if [ -f "./conf/Hpoke.fits.gz" ]; then
-#echo "OK"
-#else
 ./auxscripts/mkHpoke 
-#fi
 mv Hpoke.fits.gz ./conf/Hpoke.fits.gz
 ln -s $PWD/conf/Hpoke.fits.gz $PWD/conf/RMpokeCube.fits.gz
 mv Hpixindex.fits.gz ./conf/
@@ -1635,7 +1637,7 @@ echo "./wfsmask/$wfsmaskfname" > ./conf/shmim_wfsmask.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ wfsmask
 ;;
 	1)
-imname=$( cat ./conf/shmim_wfsmask.name.txt )
+imname=$( head -1 ./conf/shmim_wfsmask.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1655,7 +1657,7 @@ echo "./dmmap/$dmmapfname" > ./conf/shmim_dmmap.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ dmmap
 ;;
 	1)
-imname=$( cat ./conf/shmim_dmmap.name.txt )
+imname=$( head -1 ./conf/shmim_dmmap.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1674,7 +1676,7 @@ echo "./dmmaskRM/$dmmaskRMfname" > ./conf/shmim_dmmaskRM.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ dmmaskRM
 ;;
 	1)
-imname=$( cat ./conf/shmim_dmmaskRM.name.txt )
+imname=$( head -1 ./conf/shmim_dmmaskRM.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1694,7 +1696,7 @@ echo "$fname" > ./conf/shmim_dmslaved.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ dmslaved
 ;;
         1)
-imname =$( cat ./conf/shmim_dmslaved.name.txt )
+imname =$( head -1 ./conf/shmim_dmslaved.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1711,7 +1713,7 @@ echo "./dmmask/$dmmaskfname" > ./conf/shmim_dmmask.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ dmmask
 ;;
 	1)
-imname=$( cat ./conf/shmim_dmmask.name.txt )
+imname=$( head -1 ./conf/shmim_dmmask.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1731,7 +1733,7 @@ echo "./wfsref0/$wfsref0fname" > ./conf/shmim_wfsref0.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0
 ;;
 	1)
-imname=$( cat ./conf/shmim_wfsref.name.txt )
+imname=$( head -1 ./conf/shmim_wfsref.name.txt )
 ds9 $imname &
 ;;
 esac
@@ -1858,7 +1860,7 @@ Fits2shm -c -p aol${LOOPNUMBER}_ LODMmodes
 ;;
 	1)
 ds9 $imname &
-imname=$( cat ./conf/shmim_LOrespM.name.txt )
+imname=$( head -1 ./conf/shmim_LOrespM.name.txt )
 ;;
 esac
 ;;

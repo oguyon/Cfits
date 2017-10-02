@@ -42,7 +42,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Apply predictive filter to stream\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Apply predictive filter to stream\n" "$0" 
 }
 
 
@@ -195,7 +195,7 @@ outmaskname="outmask${PFINDEX}.fits"
 
 
 
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 
 
 

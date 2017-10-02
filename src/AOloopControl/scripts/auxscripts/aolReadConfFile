@@ -33,7 +33,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       AOloop load file to stream\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       AOloop load file to stream\n" "$0" 
 }
 
 
@@ -97,16 +97,16 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 file="./conf/conf_$1_name.txt"
 if [ -a $file ]
 	then
-	fname=$(echo "$(cat $file)")
+	fname=$(echo "$( head -1 $file )")
 	else
 	fname="$1.fits" #default
 fi
 aoconflog "linking $1 to ${fname}" 
-./auxscripts/Fits2shm ${fname} aol${loopnb}_$1
+Fits2shm ${fname} aol${loopnb}_$1
 rm conf/aol${loopnb}_$1.fits
 ln -s $PWD/${fname} conf/aol${loopnb}_$1.fits

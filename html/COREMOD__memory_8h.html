@@ -1115,6 +1115,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us </p>
+<p>takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us</p>
 <p>If NBcubes=1, then the circular buffer named IDinname is sent to IDoutname at a frequency of 1/usperiod MHz If NBcubes&gt;1, several circular buffers are used, named ("%S_%03ld", IDinname, cubeindex). Semaphore semtrig of image IDsync_name triggers switch between circular buffers, with a delay of offsetus. The number of consecutive sem posts required to advance to the next circular buffer is period</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1126,11 +1127,10 @@ Functions</h2></td></tr>
     <tr><td class="paramname">offsetus</td><td>If NBcubes&gt;1: time offset [us] between input trigger and input buffer switch </td></tr>
     <tr><td class="paramname">IDsync_name</td><td>If NBcubes&gt;1: Stream used for synchronization </td></tr>
     <tr><td class="paramname">semtrig</td><td>If NBcubes&gt;1: semaphore used for synchronization </td></tr>
-    <tr><td class="paramname">timingmode</td><td>Not used</td></tr>
+    <tr><td class="paramname">timingmode</td><td>Not used </td></tr>
   </table>
   </dd>
 </dl>
-<p>takes a 3Dimage (circular buffer) and writes slices to a 2D image with time interval specified in us </p>
 
 </div>
 </div>
@@ -1417,13 +1417,6 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>logs a shared memory stream onto disk uses semlog semaphore</p>
-<p>uses data cube buffer to store frames if an image name logdata exists (should ideally be in shared mem), then this will be included in the timing txt file </p>
-<p>create the 2 buffers</p>
-<p>measure time</p>
-<p>measure time</p>
-<p>cases: index&gt;zsize-1 buffer full wOK==0 &amp;&amp; index&gt;0</p>
-<p>save image </p>
 
 </div>
 </div>
@@ -2860,7 +2853,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3263a6acd0ffe1d4fb8f1f8557ae17b7.html">COREMOD_memory</a></li><li class="navelem"><a class="el" href="COREMOD__memory_8h.html">COREMOD_memory.h</a></li>
-    <li class="footer">Generated on Mon Sep 4 2017 19:29:34 for cfitsTK by
+    <li class="footer">Generated on Sun Oct 1 2017 12:40:38 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

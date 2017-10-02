@@ -13,7 +13,7 @@ execname="./AOloopControl"
 mkdir -p status
 file="./status/stat_acqWFSON.txt"
 if [ -a $file ]; then
-	acqWFSONstat=$( cat $file )
+	acqWFSONstat=$( head -1 $file )
 else
 	acqWFSONstat="OFF"
 	echo "$acqWFSONstat" > $file
@@ -22,6 +22,7 @@ fi
 
 if [ "$acqWFSONstat" = " ON" ]; then
 echo "WFS RM acquisition already running"
+echo "remove $file to force"
 exit
 fi
 
@@ -54,7 +55,7 @@ dir_conf_staged="conf_staged"
 function ConfReadParam {
 file="./conf/param_$1.txt"
 if [ -f "$file" ]; then
-paramvalue=$( cat $file )
+paramvalue=$( head -1 $file )
 else
 paramvalue="$2"
 echo "$2" > $file
@@ -70,7 +71,7 @@ echo "##########################################"
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER
@@ -114,14 +115,15 @@ fi
 
 # IF MODAL DM, SET MODES TO SIMPLE IDENTITY MATRIX
 if [ "$DMMODE" = "1" ]; then
-DMxsize=$( cat ./conf/param_DMxsize.txt )
-DMysize=$( cat ./conf/param_DMysize.txt )
+DMxsize=$( head -1 ./conf/param_DMxsize.txt )
+DMysize=$( head -1 ./conf/param_DMysize.txt )
 ./AOloopControl << EOF
 aolmksimplezpM ${DMxsize} ${DMysize} pokeM
 savefits pokeM "!./conf/"
 exitCLI
 EOF
 fi
+
 
 
 
@@ -164,8 +166,6 @@ fi
 
 
 
-
-
 echo "##########################################"
 echo "# ACQUIRE ZONAL RESPONSE MATRIX           "
 echo "##########################################"
@@ -186,6 +186,7 @@ then # use option -r to re-use AO shared memory configuration
 else
     ./auxscripts/aolMeasureZrespmat2 -c aol${LOOPNUMBER}RT2 -n ${ACzrmNBcycle} -d ${delayRM1us} ${RMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}
 fi
+
 
 
 

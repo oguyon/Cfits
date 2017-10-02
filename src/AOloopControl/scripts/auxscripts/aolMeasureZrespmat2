@@ -32,12 +32,8 @@ echo "     <nb frames excl>     Number of WFS frames to be excluded upon DM stat
 echo "     <normalize flag>     1 if WFS frames to be normalized"
 echo ""
 echo " $(tput bold)OUTPUT:$(tput sgr0)"
-echo "    ./zresptmp/zrespmat_pos_NNN.fits    : zonal response, positive pokes"
-echo "    ./zresptmp/zrespmat_pos_NNN.fits    : zonal response, negative pokes"
-echo "    ./zresptmp/wfsref0_NNN.fits         : wfs reference"
-echo "    ./zresptmp/wfsimRMS_NNN.fits         : wfs reference"
-#echo "    ./zresptmp/wfsmap.fits    : WFS response map"
-#echo "    ./zresptmp/dmmap.fits     : DM response map"
+echo "     ./zrespmat0.fits           : zonal response matrix"
+echo "     ./wfsref00.fits            : reference"
 echo
 echo "runs forever until killed with USR1 signal"
 #echo "Default output files updated at each cycle" 
@@ -48,7 +44,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Acquire zonal response matrix\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Acquire zonal response matrix\n" "$0" 
 }
 
 
@@ -136,16 +132,16 @@ normalize_flag="$5"
 
 
 
-loopnb=$(cat LOOPNUMBER )
-dmindex=$(cat conf/param_DMindex.txt)
+loopnb=$( head -1 LOOPNUMBER )
+dmindex=$( head -1 conf/param_DMindex.txt )
 
 pname0=$0
 pname="aol${loopnb}zrespM"
 
 
 if [ ! -f ./conf/RMpokeCubeZ.fits.gz ]; then
-DMxsize=$( cat ./conf/param_DMxsize.txt )
-DMysize=$( cat ./conf/param_DMysize.txt )
+DMxsize=$( head -1 ./conf/param_DMxsize.txt )
+DMysize=$( head -1 ./conf/param_DMysize.txt )
 ./AOloopControl << EOF
 aolmksimplezpM ${DMxsize} ${DMysize} pokeM
 savefits pokeM "!./conf/RMpokeCubeZ.fits.gz"

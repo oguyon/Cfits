@@ -5,14 +5,14 @@
 
 # number of arguments to script
 NBARGS=1
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 pname="$aol${loopnb}mc2dmmap"
 
 # ======================= PROCESS NAME =================================
 
 
 
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 
 function printHELP {
 echo "------------------------------------------------------------------------"
@@ -39,7 +39,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       GPU-based  MODE COEFFS -> DM MAP\n" "$0" 
 }
 
 

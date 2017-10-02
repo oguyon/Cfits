@@ -578,7 +578,7 @@ if [ "$DMMODE" = "0" ]; then # zonal DM
 	do
 	i2=$(printf "%02d" "$i")
 
-	NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
+	NBblockmodes=$( head -1 ./conf/block${i2}_NBmodes.txt )
 	
 	string=$( printf "% 3d" "${NBblockmodes}" )
 
@@ -924,7 +924,7 @@ dialog --colors --title "LOOP CONTROL  - LOOP ${LOOPNAME} (${LOOPNUMBER}) - (CMM
  $nbwlines $nbwcols $nbwlines "${menuitems[@]}"  2> $tempfile
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 menucontrolloop_default="$choiceval"
 state="menucontrolloop"
 case $retval in
@@ -3000,7 +3000,7 @@ menucontrolloop_default="GPUzplon7"
 aoconflogext "(re) STARTING GPU-based Modal WFSref offset loop"
 file="./conf/param_GPUdm2wfsrefM.txt"
 echo "1" > $file
-wfrefO=$( cat conf/conf_dmwrefO_name.txt )
+wfrefO=$( head -1 conf/conf_dmwrefO_name.txt )
 tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux kill-session -t $tmuxname
 sleep 0.2
@@ -3019,7 +3019,7 @@ menucontrolloop_default="GPUd2wMoff"
 aoconflogext "STOPPING GPU-based Modal WFSref offset loop"
 file="./conf/conf_GPUdm2wfsrefM.txt"
 echo "0" > $file
-wfrefO=$( cat conf/conf_dmwrefO_name.txt )
+wfrefO=$( head -1 conf/conf_dmwrefO_name.txt )
 tmuxname="GPUdm2wfsrefM_dm${LOOPNUMBER}"
 tmux send-keys -t $tmuxname "" C-c
 sleep 0.1

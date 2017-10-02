@@ -85,6 +85,8 @@ ConfReadParam dmturblo "10"; dmturblo="$paramvalue"
 
 ConfReadParam dmturbtint "1000"; dmturbtint="$paramvalue"
 
+echo "DM turb parameters:  ${DMindex} ${dmturbampl} ${dmturbws} ${dmturblo} ${dmturbtint}"
+
 tmux send-keys -t $tmuxname "$execname -n dmmkturb" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturampl ${DMindex} ${dmturbampl}" C-m
 tmux send-keys -t $tmuxname "aoloopcontroldmturws ${DMindex} ${dmturbws}" C-m

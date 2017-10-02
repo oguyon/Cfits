@@ -135,6 +135,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a90c08b75f4f631211f74bdb44355adb3"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#a90c08b75f4f631211f74bdb44355adb3">CUDACOMP_init</a> ()</td></tr>
 <tr class="memdesc:a90c08b75f4f631211f74bdb44355adb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize CUDA and MAGMA.  <a href="#a90c08b75f4f631211f74bdb44355adb3">More...</a><br /></td></tr>
 <tr class="separator:a90c08b75f4f631211f74bdb44355adb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fd7986590f046a9412ba7f1d0f5d3d9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#a1fd7986590f046a9412ba7f1d0f5d3d9">CUDACOMP_printGPUMATMULTCONF</a> (int index)</td></tr>
+<tr class="separator:a1fd7986590f046a9412ba7f1d0f5d3d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace7a08d17977c4b4ac33379b38083fbb"><td class="memItemLeft" align="right" valign="top">int_fast8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#ace7a08d17977c4b4ac33379b38083fbb">GPUcomp_test</a> (long NBact, long NBmodes, long WFSsize, long GPUcnt)</td></tr>
 <tr class="separator:ace7a08d17977c4b4ac33379b38083fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">2. LOW-LEVEL MATRIX VECTOR MULTIPLICATION FUNCTIONS</div></td></tr>
@@ -148,9 +150,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a3ac450b18f8301d2c3f0ad5d003f4acf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#a3ac450b18f8301d2c3f0ad5d003f4acf">GPUloadCmat</a> (int index)</td></tr>
 <tr class="separator:a3ac450b18f8301d2c3f0ad5d003f4acf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad654a86af832bf54b9587bdb9fe730b7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#ad654a86af832bf54b9587bdb9fe730b7">GPU_loop_MultMat_setup</a> (int index, const char *IDcontrM_name, const char *IDwfsim_name, const char *IDoutdmmodes_name, long NBGPUs, int *GPUdevice, int orientation, int USEsem, int initWFSref, long loopnb)</td></tr>
+<tr class="memdesc:ad654a86af832bf54b9587bdb9fe730b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup memory and process for GPU-based matrix-vector multiply.  <a href="#ad654a86af832bf54b9587bdb9fe730b7">More...</a><br /></td></tr>
 <tr class="separator:ad654a86af832bf54b9587bdb9fe730b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31ad960993133514843a157d7663688a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#a31ad960993133514843a157d7663688a">GPU_loop_MultMat_execute</a> (int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing)</td></tr>
-<tr class="separator:a31ad960993133514843a157d7663688a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2270415c2fe29a781e411e2047702e65"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#a2270415c2fe29a781e411e2047702e65">GPU_loop_MultMat_execute</a> (int index, int_fast8_t *status, int_fast8_t *GPUstatus, float alpha, float beta, int timing, int TimerOffsetIndex)</td></tr>
+<tr class="separator:a2270415c2fe29a781e411e2047702e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a687d05f78bca83f55a69c25a4ea03f05"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cudacomp_8h.html#a687d05f78bca83f55a69c25a4ea03f05">GPU_loop_MultMat_free</a> (int index)</td></tr>
 <tr class="separator:a687d05f78bca83f55a69c25a4ea03f05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">3. SINGULAR VALUE DECOMPOSITION, PSEUDO-INVERSE</div></td></tr>
@@ -579,7 +582,25 @@ EIGENVALUES are good to about 1e-6 of peak eigenvalue in single precision, much 
 
 </div>
 </div>
-<a class="anchor" id="a31ad960993133514843a157d7663688a"></a>
+<a class="anchor" id="a1fd7986590f046a9412ba7f1d0f5d3d9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CUDACOMP_printGPUMATMULTCONF </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>synchronization</p>
+<p>one semaphore per thread </p>
+
+</div>
+</div>
+<a class="anchor" id="a2270415c2fe29a781e411e2047702e65"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -617,7 +638,13 @@ EIGENVALUES are good to about 1e-6 of peak eigenvalue in single precision, much 
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>timing</em>&#160;</td>
+          <td class="paramname"><em>timing</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>TimerOffsetIndex</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -716,6 +743,8 @@ EIGENVALUES are good to about 1e-6 of peak eigenvalue in single precision, much 
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Setup memory and process for GPU-based matrix-vector multiply. </p>
 <p>setup matrix multiplication using multiple GPUs </p>
 <p>Load Control Matrix</p>
 <p>Load Input vectors </p>
@@ -889,7 +918,7 @@ EIGENVALUES are good to about 1e-6 of peak eigenvalue in single precision, much 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_dca209fe662ec0d146440db0aa5b9932.html">cudacomp</a></li><li class="navelem"><a class="el" href="cudacomp_8h.html">cudacomp.h</a></li>
-    <li class="footer">Generated on Mon Sep 4 2017 19:29:34 for cfitsTK by
+    <li class="footer">Generated on Sun Oct 1 2017 12:40:38 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

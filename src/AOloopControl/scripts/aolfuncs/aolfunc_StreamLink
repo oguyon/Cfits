@@ -32,12 +32,12 @@ if [ -a $file ]; then
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 fi
 
-	streamname=$( cat $file )
+	streamname=$( head -1 $file )
 	rm /tmp/aol${LOOPNUMBER}_$1.im.shm
 	ln -s /tmp/${streamname}.im.shm /tmp/aol${LOOPNUMBER}_$1.im.shm
 

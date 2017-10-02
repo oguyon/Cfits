@@ -10,8 +10,8 @@ execname="./AOloopControl"
 LHSwfsref0namefile="./conf/shmim_wfsref0linsim.name.txt"
 LHSzrepMnamefile="./conf/shmim_zrespMlinsim.name.txt"
 
-LHSwfsref0_FITS=$( cat $LHSwfsref0namefile )
-LHSzrespM_FITS=$( cat $LHSzrepMnamefile )
+LHSwfsref0_FITS=$( head -1 $LHSwfsref0namefile )
+LHSzrespM_FITS=$( head -1 $LHSzrepMnamefile )
 
 printHELP ()
 {
@@ -173,7 +173,7 @@ function StatReadStat {
 mkdir -p status
 file="./status/stat_$1.txt"
 if [ -f "$file" ]; then
-statusvalue=$( cat $file )
+statusvalue=$( head -1 $file )
 else
 statusvalue="$2"
 echo "$2" > $file
@@ -190,7 +190,7 @@ fi
 function ConfReadParam {
 file="./conf/param_$1.txt"
 if [ -f "$file" ]; then
-paramvalue=$( cat $file )
+paramvalue=$( head -1 $file )
 else
 paramvalue="$2"
 echo "$2" > $file
@@ -208,7 +208,7 @@ fi
 function ConfReadInstConf {
 file="./conf/instconf_$1.txt"
 if [ -f "$file" ]; then
-instconfvalue=$( cat $file )
+instconfvalue=$( head -1 $file )
 else
 instconfvalue="$2"
 echo "$2" > $file
@@ -255,7 +255,7 @@ fi
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER

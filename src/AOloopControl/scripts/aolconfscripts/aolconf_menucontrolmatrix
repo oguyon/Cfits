@@ -200,19 +200,19 @@ fi
 
 staged_mkmodesdatestr=$(TZ=utc stat -c %y ./conf_staged/param_NBmodeblocks.txt)
 staged_mkmodesdatestr=${staged_mkmodesdatestr% *}
-staged_NBmodeblocks=$( cat ./conf_staged/param_NBmodeblocks.txt )
-staged_NBmodes=$( cat ./conf_staged/param_NBmodes.txt )
+staged_NBmodeblocks=$( head -1 ./conf_staged/param_NBmodeblocks.txt )
+staged_NBmodes=$( head -1 ./conf_staged/param_NBmodes.txt )
 
 stringcenter " STAGED CONFIGURATION :  <$staged_mkmodesdatestr>  [$staged_NBmodeblocks blocks, $staged_NBmodes modes]"
 menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update (cp conf_staged/*.txt ./conf/) \Zn" )
 
 
-menuitems+=( "SMloadCM" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
+menuitems+=( "SMload" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
 
 
-#mNBmodes=$( cat conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
-#NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+#mNBmodes=$( head -1 conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
+#NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
 
 mkmodesdatestr=$(TZ=utc stat -c %y ./conf/param_NBmodeblocks.txt)
 mkmodesdatestr=${mkmodesdatestr% *}
@@ -251,9 +251,9 @@ for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
 
-NBblockmodes=$( cat ./conf/block${i2}_NBmodes.txt )
+NBblockmodes=$( head -1 ./conf/block${i2}_NBmodes.txt )
 
-SVDlim[10#${i2}]=$( cat ./conf/block${i2}_SVDlim.txt)
+SVDlim[10#${i2}]=$( head -1 ./conf/block${i2}_SVDlim.txt)
 menuitems+=( "SetSVD${i2}" "\Zb\ZrBLOCK $i2 - ${NBblockmodes} modes - SVD = ${SVDlim[10#${i2}]}\Zn")
 
 makemenuitemstringaolshm "DMmodes${i2}" "DM control modes"
@@ -289,7 +289,7 @@ dialog --colors --title "LOOP CONFIGURATION  - LOOP ${LOOPNAME} (${LOOPNUMBER})"
 
 
 retval=$?
-choiceval=$(cat $tempfile)
+choiceval=$( head -1 $tempfile)
 
 menucontrolmatrix_default="$choiceval"
 state="menucontrolmatrix"
@@ -353,7 +353,7 @@ SYSTEM MODAL RESPONSE AND CONTROL:\n
 
 
      sNBb) 
-NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
+NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
 menuitems1=( "01" "NBmodeblocks = 01" )
 for i in 02 03 04 05 06 07 08 09 10 11 12 13 14 15;
         do
@@ -601,7 +601,7 @@ menucontrolmatrix_default="RM2CMm"
 
 
 	zRM)
-fname=$( cat ./conf/shmim_zrespM.name.txt )
+fname=$( head -1 ./conf/shmim_zrespM.name.txt )
 fname=$(dialog --title "Select zonal Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/shmim_zrespM.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ zrespM
@@ -695,35 +695,36 @@ function_computeModesCM
 
 
 	confUp)
-aoconflogext "UPDATE all configuration files"
+aoconflogext "Update all configuration files"
 cp conf_staged/*.txt ./conf/
 ;;
 
 
 
-SMloadCM)
-function_SharedMemLoadCM # funtion in aolconfcontrolmatrix_funcs
-menucontrolmatrix_default="SMloadCM"
+SMload)
+AOloadMem 1
+#function_SharedMemLoadCM # funtion in aolconfcontrolmatrix_funcs
+menucontrolmatrix_default="SMload"
 ;;
 
 
 
 	DMmodes)
-fname=$( cat ./conf/shmim_DMmodes.name.txt )
+fname=$( head -1 ./conf/shmim_DMmodes.name.txt )
 fname=$(dialog --title "Select DM Control Modes" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/shmim_DMmodes.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
 menucontrolmatrix_default="DMmodes"
 ;;
 	RM)
-fname=$( cat ./conf/conf_respM_name.txt )
+fname=$( head -1 ./conf/conf_respM_name.txt )
 fname=$(dialog --title "Select Resp Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/shmim_respM.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ respM
 menucontrolmatrix_default="RM"
 ;;
 	CM)
-fname=$( cat ./conf/conf_contrM_name.txt )
+fname=$( head -1 ./conf/conf_contrM_name.txt )
 fname=$(dialog --title "Select contr Matrix" --stdout --fselect ${fname} $nbwlines $nbwcols)
 echo "$fname" > ./conf/shmim_contrM.name.txt
 Fits2shm -c -p aol${LOOPNUMBER}_ contrM

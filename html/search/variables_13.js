@@ -34,6 +34,8 @@ var searchData=
   ['tsfixed',['tsfixed',['../struct____attribute____.html#a8d59a783e8c46f7509012c892c942491',1,'__attribute__']]],
   ['tstart',['tstart',['../structAOLOOPCONTROL__DM__DISPCOMB__CONF.html#a3be151c816bca61cb3b71ca59a4eb637',1,'AOLOOPCONTROL_DM_DISPCOMB_CONF::tstart()'],['../structAOLOOPCONTROL__DMTURBCONF.html#aab4485b269aa4f1908abc5f563585eef',1,'AOLOOPCONTROL_DMTURBCONF::tstart()'],['../structSCEXAO__DISPCOMB__CONF.html#a2caaa62689a2795eacc0a25d777c61f4',1,'SCEXAO_DISPCOMB_CONF::tstart()'],['../structSCEXAO__DMTURBCONF.html#a56d25fd1fb67d71752743fd4cef0806d',1,'SCEXAO_DMTURBCONF::tstart()']]],
   ['twfs',['twfs',['../structEXAOSIMCONF.html#a4a6c6f36d6b693a3a60acbf71c833894',1,'EXAOSIMCONF']]],
+  ['twfs_5fa',['twfs_A',['../structEXAOSIMCONF.html#aacc97989aacc9da835d17d6de4dff6e8',1,'EXAOSIMCONF']]],
+  ['twfs_5faopt',['twfs_Aopt',['../structEXAOSIMCONF.html#a3a6b339e973b4e91396657fc3174b654',1,'EXAOSIMCONF']]],
   ['twfs_5fopt',['twfs_opt',['../structEXAOSIMCONF.html#a3ff9079e312b1f21948f78cffd63198a',1,'EXAOSIMCONF']]],
   ['twfs_5fopt_5famp',['twfs_opt_amp',['../structEXAOSIMCONF.html#aa6530b0fef51c913ba9f57b3c033bdb5',1,'EXAOSIMCONF']]],
   ['twfssci',['twfssci',['../structEXAOSIMCONF.html#a036d88223438b4b217f8b5d1df5c9da1',1,'EXAOSIMCONF']]],

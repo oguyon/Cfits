@@ -32,10 +32,11 @@ function StatReadStat {
 mkdir -p status
 file="./status/stat_$1.txt"
 if [ -f "$file" ]; then
-statusvalue=$( cat $file )
+statusvalue=$( head -1 $file )
 else
 statusvalue="$2"
 echo "$2" > $file
+echo "# default value set by function StatReadStat on $( date -u )" >> $file
 fi
 }
 
@@ -49,10 +50,11 @@ fi
 function ConfReadParam {
 file="./conf/param_$1.txt"
 if [ -f "$file" ]; then
-paramvalue=$( cat $file )
+paramvalue=$( head -1 $file )
 else
 paramvalue="$2"
 echo "$2" > $file
+echo "# default value set by function ConfReadParam on $( date -u )" >> $file
 fi
 }
 
@@ -77,8 +79,8 @@ cp  ./conf/shmim_zrespM.name.txt $LHSzrepMnamefile
 fi
 
 
-LHSwfsref0_FITS=$( cat $LHSwfsref0namefile )
-LHSzrespM_FITS=$( cat $LHSzrepMnamefile )
+LHSwfsref0_FITS=$( head -1 $LHSwfsref0namefile )
+LHSzrespM_FITS=$( head -1 $LHSzrepMnamefile )
 
 
 
@@ -89,7 +91,7 @@ LHSzrespM_FITS=$( cat $LHSzrepMnamefile )
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER
@@ -100,6 +102,7 @@ ConfReadParam linsimdt "2000"; linsimdt="$paramvalue" # READ LHS loop interval [
 ConfReadParam GPUlinsim "7"; GPUlinsim="$paramvalue" # READ GPU index for LHS 
 ConfReadParam DMindex "00"; DMindex="$paramvalue" # DM index 
 
+echo "GPUlinsim = $GPUlinsim"
 
 
 printHELP ()
@@ -289,26 +292,6 @@ exit
 fi
 
 
-
-
-
-
-##############################################
-# FUNCTION: READ PARAMETER FROM FILE
-##############################################
-# arg 1: parameter name
-# arg 2: default value
-# 
-# param value is stored in variable "paramvalue"
-function ConfReadParam {
-file="./conf/param_$1.txt"
-if [ -f "$file" ]; then
-paramvalue=$( cat $file )
-else
-paramvalue="$2"
-echo "$2" > $file
-fi
-}
 
 
 

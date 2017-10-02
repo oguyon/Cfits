@@ -42,7 +42,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Create AO wfs and DM masks\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Create AO wfs and DM masks\n" "$0" 
 }
 
 
@@ -109,7 +109,7 @@ fi
 function ConfReadParam {
 file="./conf/param_$1.txt"
 if [ -f "$file" ]; then
-paramvalue=$( cat $file )
+paramvalue=$( head -1 $file )
 else
 paramvalue="$2"
 echo "$2" > $file
@@ -120,7 +120,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 datestr=`date -u +%Y-%m-%d_%H:%M:%S`
 
 

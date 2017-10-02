@@ -5,7 +5,7 @@
 NBARGS=1
 
 # ======================= PROCESS NAME =================================
-loopnb=$(cat LOOPNUMBER 2> /dev/null)
+loopnb=$( head -1 LOOPNUMBER 2> /dev/null)
 pname="aol${loopnb}mexwfs"
 
 
@@ -37,7 +37,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Extract mode values from WFS images\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Extract mode values from WFS images\n" "$0" 
 }
 
 
@@ -101,7 +101,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 # this version does not use masking (yet)
 

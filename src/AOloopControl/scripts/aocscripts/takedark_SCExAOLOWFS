@@ -1,6 +1,6 @@
 #!/bin/bash
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER)
 
 mkdir -p wfsdark
 

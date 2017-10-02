@@ -6,13 +6,13 @@ aolconfFLAG="1"
 NBARGS=0
 
 if [ -f LOOPNAME ]; then
-LOOPNAME=$( cat LOOPNAME )
+LOOPNAME=$( head -1 LOOPNAME )
 else
 LOOPNAME="null"
 fi
 
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 fi
@@ -364,15 +364,6 @@ cp LOOPNAME ./conf/conf_LOOPNAME.txt
 
 
 
-# CONFSELECTED (conf numnber)
-#if [ ! -f $confnbfile ]
-#then
-#	echo "creating configuration number"
-#	echo "$CONFSELECTED_default" > ./conf/conf_CONFNUMBER.txt
-#else
-#	CONFSELECTED=$(cat $confnbfile)
-#	echo "selected configuration = $CONFSELECTED"
-#fi
 
 
 
@@ -395,17 +386,11 @@ echo "FUNCTIONS..."
 
 . ./aolconfscripts/aolconf_logfuncs
 
-
 . ./aolconfscripts/aolconf_configureloop_funcs
-function_configureloop_readparams
 
 . ./aolconfscripts/aolconf_controlmatrix_funcs
-function_controlmatrix_readparams
 
 . ./aolconfscripts/aolconf_controlloop_funcs
-function_controlloop_readparams
-
-
 
 
 
@@ -434,14 +419,6 @@ echo "aosimwfsim" > ./conf/conf_wfsim_name.txt
 #echo "dhfield" > ./conf/conf_wfsim_name.txt
 Readwfsimcamname
 
-echo "0.1" > ./conf/conf_loopgain.txt
-ReadLoopGain
-
-echo "1.0" > ./conf/conf_loopmaxlim.txt
-ReadLoopMaxLim 
-
-echo "0.99" > ./conf/conf_loopmultcoeff.txt
-ReadLoopMultCoeff
 }
 
 
@@ -495,17 +472,15 @@ done
 
 
 # System response and control
-ReadCPAmax
 
 Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
 Fits2shm -c -p aol${LOOPNUMBER}_ respM
 Fits2shm -c -p aol${LOOPNUMBER}_ contrM
 
 
-
 if [ "$1" -eq 1 ];then
-NBmodeblocks=$( cat ./conf/param_NBmodeblocks.txt )
-NBmodes=$( cat ./conf/param_NBmodes.txt )
+NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
+NBmodes=$( head -1 ./conf/param_NBmodes.txt )
 for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
 do
 i2=$(printf "%02d" "$i")
@@ -543,13 +518,11 @@ rm "./conf/shmim_contrMcact${i2}_00.name.txt" &> /dev/null
 rm "./conf/shmim_contrMcact${i2}_00.imsize.txt" &> /dev/null
 done
 
-
-ReadLoopGain
-ReadLoopMaxLim
-ReadLoopMultCoeff
-
 echo "memory loaded"
 }
+
+
+
 
 
 
@@ -581,7 +554,6 @@ stateok=0
 . ./aolconfscripts/aolconf_menucontrolmatrix
 . ./aolconfscripts/aolconf_menucontrolloop
 . ./aolconfscripts/aolconf_menupredictivecontrol
-. ./aolconfscripts/aolconf_menudmCfiltering
 . ./aolconfscripts/aolconf_menutestmode
 . ./aolconfscripts/aolconf_menuview
 . ./aolconfscripts/aolconf_menurecord

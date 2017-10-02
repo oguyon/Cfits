@@ -34,7 +34,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Merge HO and LO resp matrices\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Merge HO and LO resp matrices\n" "$0" 
 }
 
 
@@ -102,7 +102,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 ./AOloopControl -n aol${loopnb}-$0 << EOF
 loadfits "$1" m_in0

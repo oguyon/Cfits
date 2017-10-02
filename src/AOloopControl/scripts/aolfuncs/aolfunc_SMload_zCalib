@@ -19,7 +19,7 @@ RMZONALCALIBlist="wfsref0 zrespM wfsmap dmmap wfsmask dmmaskRM dmslaved dmmask"
 mkdir -p status
 statfile="./status/stat_SMload_zCalib_ON.txt"
 if [ -a $statfile ]; then
-	SMload_zCalib_ON_stat=$( cat $statfile )
+	SMload_zCalib_ON_stat=$( head -1 $statfile )
 else
 	SMload_zCalib_ON_stat="OFF"
 	echo "$SMload_zCalib_ON_stat" > $statfile
@@ -42,7 +42,7 @@ fi
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER

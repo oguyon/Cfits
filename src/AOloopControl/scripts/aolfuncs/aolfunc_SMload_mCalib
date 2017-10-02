@@ -19,7 +19,7 @@ RMMODALCALIBlist="LODMmodes LOrespM LOwfsref0"
 mkdir -p status
 statfile="./status/stat_SMload_mCalib_ON.txt"
 if [ -a $statfile ]; then
-	SMload_mCalib_ON_stat=$( cat $statfile )
+	SMload_mCalib_ON_stat=$( head -1 $statfile )
 else
 	SMload_mCalib_ON_stat="OFF"
 	echo "$SMload_mCalib_ON_stat" > $statfile
@@ -42,7 +42,7 @@ fi
 
 # READ LOOP NUMBER
 if [ -f LOOPNUMBER ]; then
-LOOPNUMBER=$( cat LOOPNUMBER )
+LOOPNUMBER=$( head -1 LOOPNUMBER )
 else
 LOOPNUMBER="7"
 echo "$LOOPNUMBER" > LOOPNUMBER

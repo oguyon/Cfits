@@ -79,10 +79,11 @@ function logRunningProcess
 function ConfReadParam {
 file="./conf/param_$1.txt"
 if [ -f "$file" ]; then
-paramvalue=$( cat $file )
-else
+paramvalue=$( head -1 $file )
+else # write default value
 paramvalue="$2"
 echo "$2" > $file
+echo "# default value set by function ConfReadParam on $( date -u )" >> $file
 fi
 }
 # Example:
@@ -100,7 +101,7 @@ function StatReadStat {
 mkdir -p status
 file="./status/stat_$1.txt"
 if [ -f "$file" ]; then
-statusvalue=$( cat $file )
+statusvalue=$( head -1 $file )
 else
 statusvalue="$2"
 echo "$2" > $file
@@ -120,7 +121,7 @@ fi
 function ConfReadInstConf {
 file="./conf/instconf_$1.txt"
 if [ -f "$file" ]; then
-instconfvalue=$( cat $file )
+instconfvalue=$( head -1 $file )
 else
 instconfvalue="$2"
 echo "$2" > $file
@@ -154,7 +155,7 @@ $execname << EOF
 readshmimsize $1 _size.txt
 quit
 EOF
-sizestring=$( cat _size.txt )
+sizestring=$( head -1 _size.txt )
 sizestring=$(printf "%+12s\n" "$sizestring" )
 echo "$sizestring" > conf/conf_imsize_$1.txt
 echo "$sizestring" > loadedSM/$1.imsize
@@ -168,9 +169,9 @@ function makemenuitemstringaolshm {
 name="$1"
 textfield=$( printf " %-20s" "$2" )
 tf1=$( printf " %+17s" "aol${LOOPNUMBER}_${name}")
-fname=$( cat ./conf/shmim_${name}.name.txt )
+fname=$( head -1 ./conf/shmim_${name}.name.txt )
 if [ -f "$fname" ] && [ -f "./conf/shmim_${name}.name.txt" ]; then
-sizestring=$( cat conf/shmim_${name}.imsize.txt )
+sizestring=$( head -1 conf/shmim_${name}.imsize.txt )
 OKstr="\Z2\Zr$sizestring\Zn"
 menustring="[${OKstr}] $textfield          \Z4\Zb$tf1\Zn <- \Zu${fname}\Zn"
 else

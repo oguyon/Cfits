@@ -48,7 +48,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Automatic update of AR linear predictive filter\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Automatic update of AR linear predictive filter\n" "$0" 
 }
 
 
@@ -133,7 +133,7 @@ fi
 
 echo "Update Coefficient = ${updatecoeff}"
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 block="$1"
 latency="$2"
 PForder="$3"
@@ -147,7 +147,7 @@ updatecoeff1="1.0"
 while [ ! -f "$filestop" ]; do
 
 ./auxscripts/selectLatestTelemetry &> /dev/null
-fname=$( cat ./conf/conf_PF_lastOL.txt )
+fname=$( head -1 ./conf/conf_PF_lastOL.txt )
 printf "[%6ld] latest file = %s\n" "$cnt" "$fname" 
 
 if [ -f "$fname" ]; then

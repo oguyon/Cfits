@@ -47,7 +47,7 @@ echo "------------------------------------------------------------------------"
 
 printHELP1 ()
 {
-    printf "%25s       Cleans zonal resp matrix\n" "$0" 
+    printf "     $(tput bold)%-25s$(tput sgr0)       Cleans zonal resp matrix\n" "$0" 
 }
 
 
@@ -119,7 +119,7 @@ fi
 
 
 
-loopnb=$(cat LOOPNUMBER)
+loopnb=$( head -1 LOOPNUMBER )
 
 pname0=$0
 pname="aol${loopnb}zrespM"
