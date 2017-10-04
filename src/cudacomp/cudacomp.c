@@ -75,7 +75,7 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 
 #ifdef HAVE_MAGMA
 
-#include "magma.h"
+//#include "magma.h"
 #include "magma_v2.h"
 #include "magma_lapack.h"
 
