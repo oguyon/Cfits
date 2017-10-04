@@ -440,7 +440,7 @@ echo "OFF" > ./status/testloopstatus.txt
 # =================== READ CONFIGURATION====================================
 
 
-function AOloadMem {
+function StreamsConnect {
 
 # set up symbolic links to streams
 # Custom hardware I/O functions [shared memory]
@@ -457,40 +457,58 @@ function AOloadMem {
 ./aolfuncs/aolfunc_StreamLink dmZP6
 ./aolfuncs/aolfunc_StreamLink dmZP7
 ./aolfuncs/aolfunc_StreamLink wfsim  # WFS image
+}
 
 
-# LOAD SYSTEM CALIBRATION (FITS -> shared mem)
-Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark
 
+function function_SharedMemLoad {
+
+touch runproc/SharedMemLoad.runproc # process is starting 
+
+tmuxnameSMl="aol${LOOPNUMBER}SMload"
+echo "tmux new-session -s ${tmuxnameSMl} -d"
+echo "CREATING SESSION : ${tmuxnameSMl}"
+sleep 0.2
+tmux new-session -s ${tmuxnameSMl} -d
+sleep 0.2
+tmux send-keys -t ${tmuxnameSMl} "" C-c
+tmux send-keys -t ${tmuxnameSMl} " " C-m
+
+tmux send-keys -t ${tmuxnameSMl} "./auxscripts/waitonfile FUNCTION_SharedMemLoad.block" C-m
+logRunningProcessQ "SharedMemLoad" "${tmuxnameSMl}" "Load control matrix into shared memory" 
+tmux send-keys -t ${tmuxnameSMl} "aoconflogext \"LOAD files to shared memory\"" C-m
+
+
+# WFS dark
+tmux send-keys -t ${tmuxnameSMl} "Fits2shm -c -p aol${LOOPNUMBER}_ wfsdark" C-m
+
+# zonal calib
 for imname in $RMZONALCALIBlist; do
-Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
+tmux send-keys -t ${tmuxnameSMl} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m
 done
 
+# modal calib
 for imname in $RMMODALCALIBlist; do
-Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}
+tmux send-keys -t ${tmuxnameSMl} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m
 done
-
 
 # System response and control
-
-Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes
-Fits2shm -c -p aol${LOOPNUMBER}_ respM
-Fits2shm -c -p aol${LOOPNUMBER}_ contrM
-
-
-if [ "$1" -eq 1 ];then
-NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
-NBmodes=$( head -1 ./conf/param_NBmodes.txt )
-for i in `seq 0 $(( $NBmodeblocks - 1 ))`;
+for imname in DMmodes respM contrM
 do
-i2=$(printf "%02d" "$i")
-Fits2shm -c -p aol${LOOPNUMBER}_ DMmodes${i2}
-Fits2shm -c -p aol${LOOPNUMBER}_ respM${i2}
-Fits2shm -c -p aol${LOOPNUMBER}_ contrM${i2}
-Fits2shm -c -p aol${LOOPNUMBER}_ contrMc${i2}
-Fits2shm -c -p aol${LOOPNUMBER}_ contrMcact${i2}_00
+tmux send-keys -t ${tmuxnameSMl} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m
 done
-fi
+
+
+if [ "$1" -eq 1 ];then # BLOCK FILES
+NBmodeblocks=$( head -1 ./conf/param_NBmodeblocks.txt )
+#NBmodes=$( head -1 ./conf/param_NBmodes.txt )
+for i in `seq 0 $(( $NBmodeblocks - 1 ))`; do
+	i2=$(printf "%02d" "$i")
+	for imname in DMmodes${i2} respM${i2} contrM${i2} contrMc${i2} contrMcact${i2}_00 ; do
+		tmux send-keys -t ${tmuxnameSMl} "Fits2shm -c -p aol${LOOPNUMBER}_ ${imname}" C-m	
+	done
+done
+
 
 # remove links/names for files beyond number of blocks
 for i in `seq $NBmodeblocks 20`;
@@ -518,6 +536,17 @@ rm "./conf/shmim_contrMcact${i2}_00.name.txt" &> /dev/null
 rm "./conf/shmim_contrMcact${i2}_00.imsize.txt" &> /dev/null
 done
 
+fi # end of BLOCK FILES if statement
+
+tmux send-keys -t ${tmuxnameSMl} "rm runproc/SharedMemLoad.runproc" C-m	 # process is done
+}
+
+
+
+
+function AOloadMem {
+StreamsConnect
+function_SharedMemLoad $1
 echo "memory loaded"
 }
 

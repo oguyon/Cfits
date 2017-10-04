@@ -260,7 +260,7 @@ rm function_LOresp_off.wait
 sleep 0.2
 tmux new-session -d -s $1
 sleep 0.2
-tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_on_tmux.lock" C-m
+tmux send-keys -t $1 "./auxscripts/waitonfile ./runproc/function_LOresp_on_tmux.lock" C-m
 tmux send-keys -t $1 "echo \" ON\" > ./status/stat_LOrespM.txt" C-m
 logRunningProcess "aolMeasureLOrespmat" "$1" "Acquiring LO modal response matrix"
 tmux send-keys -t $1 "./auxscripts/aolmkLO_DMmodes ${RMMcpa}" C-m
@@ -274,7 +274,7 @@ fi
 echo "./auxscripts/aolMeasureLOrespmat -n ${ACmrmNBcycle} -d ${delayRM1us} ${RMMamplum} ${RMdelayfr} ${RMfrave} ${RMexfr} ${WFSnorm}" > aolcmd.txt
 aoconflogext "START LO RM acquisition   CPA=$RMMcpa  amp=$RMMamplum delay=$RMdelayfr frame NBframe_average $RMfrave frames, $RMexfr frames excluded"
 
-tmux send-keys -t ${tmuxname} "touch function_LOresp_off.wait" C-m
+tmux send-keys -t ${tmuxname} "touch function_LOresp_off.unlock" C-m
 tmux send-keys -t $1 "rm runproc/aolMeasureLOrespmat.runproc" C-m
 }
 
@@ -287,9 +287,7 @@ tmux new-session -d -s $1
 sleep 0.2
 LOrespMstat="OFF"
 tmux send-keys -t $1 "./auxscripts/waitonfile function_LOresp_off_tmux.lock" C-m
-#tmux send-keys -t ${tmuxname} "rm function_LOresp_off.wait" C-m
-#tmux send-keys -t ${tmuxname} "sleep $2 && touch function_LOresp_off.wait &" C-m
-tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $2 function_LOresp_off.wait" C-m
+tmux send-keys -t ${tmuxname} "./auxscripts/waitforfilek -t $2 function_LOresp_off" C-m
 
 tmux send-keys -t $1 "pkill -USR1 aol${LOOPNUMBER}LOrespM" C-m
 tmux send-keys -t $1 "echo \"OFF\" > ./status/stat_LOrespM.txt" C-m

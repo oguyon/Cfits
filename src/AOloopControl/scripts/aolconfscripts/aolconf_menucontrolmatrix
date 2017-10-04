@@ -190,7 +190,7 @@ ConfReadParam extrablockIndex "5"; extrablockIndex=${paramvalue}
 ConfReadParam cpamax "00"; cpamax=${paramvalue}
  menuitems+=( "modeCPA" "[$cpamax] Select maximum CPA" )
 
- menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation)" )
+ menuitems+=( "mkModes0" "Create DM control modes file, control matrices (full computation, input/output in ./conf_staged/ )" )
  #menuitems+=( "mkModes1" "<$mkmodesdatestr>  [$NBmodeblocks blocks, $NBmodes modes] Create DM control modes file, control matrices (re-use DM modes)" )
 
 fi 
@@ -208,7 +208,7 @@ menuitems+=( " " "\Zb\Zr$string\Zn" )
 menuitems+=( "confUp" "\Z1 Configuration Update (cp conf_staged/*.txt ./conf/) \Zn" )
 
 
-menuitems+=( "SMload" "\Z1 Load active configuration files Files: modes, response and control matrices \Zn" )
+menuitems+=( "SMload" "\Z1 Load shared memory from conf \Zn" )
 
 
 #mNBmodes=$( head -1 conf/shmim_zrespM.imsize.txt | awk '{printf("%03ld", $3)}' )
@@ -702,8 +702,7 @@ cp conf_staged/*.txt ./conf/
 
 
 SMload)
-AOloadMem 1
-#function_SharedMemLoadCM # funtion in aolconfcontrolmatrix_funcs
+function_SharedMemLoad 1
 menucontrolmatrix_default="SMload"
 ;;
 

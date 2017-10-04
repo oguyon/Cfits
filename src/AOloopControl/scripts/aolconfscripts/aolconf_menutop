@@ -743,9 +743,9 @@ RMCalibReuseMasks=0
 echo "$RMCalibReuseMasks" > "./conf/param_RMCalibReuseMasks.txt"
 
 # block computeModesCM until this file is removed (will be done after RMs acquisition)
-touch FUNCTION_computeModesCM.block
+touch ./runproc/FUNCTION_computeModesCM.lock
 if [ $C0test -eq 0 ]; then
-touch FUNCTION_SharedMemLoadCM.block
+touch ./runproc/FUNCTION_SharedMemLoadCM.lock
 fi
 
 tmuxnameC0="aol${LOOPNUMBER}caliball"
@@ -767,7 +767,7 @@ tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile runproc/FUNCTION_nAUTOC
 # COMPUTE CM
 mkModesMODE=0; # full computation
 tmux send-keys -t ${tmuxnameC0} "aoconflogext \"START control matrix computation mkModesMODE 0\"" C-m
-tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_computeModesCM.block" C-m
+tmux send-keys -t ${tmuxnameC0} "rm ./runproc/FUNCTION_computeModesCM.lock" C-m
 function_computeModesCM
 
 tmux send-keys -t ${tmuxnameC0} "rm runproc/FUNCTION_C0.runproc" C-m
@@ -794,7 +794,7 @@ tmuxnameC0="aol${LOOPNUMBER}caliball"
 tmux send-keys -t ${tmuxnameC0} " " C-c
 tmux send-keys -t ${tmuxnameC0} "" C-m
 
-touch FUNCTION_SharedMemLoadCM.block
+touch ./runproc/FUNCTION_SharedMemLoadCM.lock
 # SELECT CONFIGURATION NAME
 mkdir -p ./CONF
 CALIBdatestr=`date -u +%Y-%m-%d_%H:%M:%S`
@@ -869,8 +869,8 @@ echo "$confloadedtime" > conf/conf_conflastloaded_time.txt
 
 # LOAD CM (conf -> shared mem)
 tmux send-keys -t ${tmuxnameC0} "./auxscripts/waitonfile runproc/aolmkmodes.runproc" C-m # waiting for mkmodes to complete
-tmux send-keys -t ${tmuxnameC0} "rm FUNCTION_SharedMemLoadCM.block" C-m
-function_SharedMemLoadCM
+tmux send-keys -t ${tmuxnameC0} "rm ./runproc/FUNCTION_SharedMemLoad.lock" C-m
+function_SharedMemLoad
 
 
 # IF LOOP WAS ON, RESTART HERE

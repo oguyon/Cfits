@@ -41,9 +41,13 @@ function logRunningProcessQ0
 
 
 ##########################################
-# queued process becomes active
-# sends command to tmux session
+# Log process as queued in a tmux session
+# sends command to tmux session, write corresponding .runprocQ file
+# when tmux session gets to launch process, .runprocQ file becomes .runproc
 ##########################################
+# arg1 : process name
+# arg2 : tmux session name
+#
 function logRunningProcessQ
 {
 	datestr=`date -u +%Y-%m-%d_%H:%M:%S`

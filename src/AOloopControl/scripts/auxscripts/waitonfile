@@ -8,12 +8,12 @@ pname=`echo "$0" | sed "s/\.\///g"`
 
 function printHELP {
 echo "------------------------------------------------------------------------"
-echo "$(tput bold) $pname : Wait for file to appear $(tput sgr0)"
+echo "$(tput bold) $pname : Wait for file to disappear $(tput sgr0)"
 echo "------------------------------------------------------------------------"
 echo "   Wait for file to disappear"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <fname>"
+echo "     $0 [-h] <filename>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)          help"

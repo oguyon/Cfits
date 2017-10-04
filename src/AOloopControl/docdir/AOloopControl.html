@@ -158,6 +158,11 @@ code > span.in { color: #808080; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#starting-the-linear-hardware-simulator"><span class="toc-section-number">16.1</span> Starting the linear hardware simulator</a></li>
 <li><a href="#acquiring-calibration-compute-control-matrix"><span class="toc-section-number">16.2</span> Acquiring calibration, compute control matrix</a></li>
 </ul></li>
+<li><a href="#appendix-d-managing-multiple-processes"><span class="toc-section-number">17</span> APPENDIX D: Managing multiple processes</a><ul>
+<li><a href="#queued-process"><span class="toc-section-number">17.1</span> Queued process</a></li>
+<li><a href="#active-process"><span class="toc-section-number">17.2</span> Active process</a></li>
+<li><a href="#lockingunlocking-processes"><span class="toc-section-number">17.3</span> Locking/unlocking processes</a></li>
+</ul></li>
 </ul>
 </div>
 <div id="initial-setup" class="section level1">
@@ -3111,21 +3116,65 @@ cd &lt;workdir&gt;
 <p><strong>STEP 7</strong>: Turn off dmvolt: <code>dmvolt0</code> in GUI top menu.</p>
 <p><strong>STEP 8</strong>: Set DM averaging mode to 2: <code>dmcombam</code> in GUI top menu.</p>
 <p><strong>STEP 9</strong>: Start DMcomb. <code>initDM</code> in GUI top menu.</p>
-<p><strong>STEP 7</strong>: Link LHS files</p>
-<p><strong>STEP 8</strong>: Start the LHS process</p>
+<p><strong>STEP 10</strong>: Load all memory. <code>M</code> in GUI top menu</p>
+<p><strong>STEP 11</strong>: Link LHS files</p>
+<p><strong>STEP 12</strong>: Start the LHS process</p>
 </div>
 <div id="acquiring-calibration-compute-control-matrix" class="section level2">
 <h2><span class="header-section-number">16.2</span> Acquiring calibration, compute control matrix</h2>
 <p>Under configuration GUI menu :</p>
 <ul>
 <li>Measure hardware timing: <code>mlat</code></li>
+<li>set Hadamard mode to ON: <code>Hon</code></li>
+<li>set RM modal to ON: <code>RMMon</code></li>
 <li>Acquire automatic calibration: <code>nAUTOc</code></li>
 </ul>
 <p>Under control matrix GUI menu :</p>
 <ul>
 <li>Select maximum control spatial frequency: <code>modeCPA</code></li>
 <li>Create modes and control matrix: <code>mkModes0</code></li>
+<li>update configuration: <code>confUp</code></li>
 </ul>
+<p>Load and manage configuration : - load configuration - save configuration</p>
+</div>
+</div>
+<div id="appendix-d-managing-multiple-processes" class="section level1">
+<h1><span class="header-section-number">17</span> APPENDIX D: Managing multiple processes</h1>
+<p>Note: Here, a process can consist of any operation or set of operations, as defined by the user. In this appendix, a process does not strictly correspond to a CPU process.</p>
+<p>AOCCE's bash script includes tools to manage logical links between processes. A process can be <strong>queued</strong>, waiting to start until some condition is met, and its status (running, waiting to be launched, or completed) can be checked.</p>
+<p>The command <code>l</code> under the GUI top menu will launch a window displaying processes status.</p>
+<div id="queued-process" class="section level2">
+<h2><span class="header-section-number">17.1</span> Queued process</h2>
+<p>A queued process is a process that has been sent to a tmux session but is awaiting previous operations, within the same tmux session, to be completed. The process is logged as queued when the corresponding command is sent to the tmux session. When the tmux session reaches the command, it will move it from queued to active.</p>
+<p>To log queued processes as such, follow this bash template:</p>
+<pre><code>logRunningProcessQ &lt;process_tag&gt; &lt;tmux_session_name&gt;
+tmux send-keys -t &lt;tmux_session_name&gt; &quot;process_command&quot; C-m</code></pre>
+<p>or</p>
+<pre><code>logRunningProcessQ0 &quot;&lt;process_tag&gt;&quot; &quot;&lt;tmux_session_name&gt;&quot; &quot;&lt;comments&gt;&quot;
+tmux send-keys -t &lt;tmux_session_name&gt; &quot;mv runproc/&lt;process_tag&gt;.runprocQ runproc/&lt;process_tag&gt;.runproc&quot; C-m
+tmux send-keys -t &lt;tmux_session_name&gt; &quot;process_command&quot; C-m</code></pre>
+<p><code>process_tag</code> is a name chosen to represent the operations performed. The second option can be used when writing to a script, so it is more flexible.</p>
+</div>
+<div id="active-process" class="section level2">
+<h2><span class="header-section-number">17.2</span> Active process</h2>
+<p>To mark a process as active, it can either be queued as described above, or the user can include at the time the process starts:</p>
+<pre><code>touch runproc/&lt;process_tag&gt;.runproc</code></pre>
+<p>Once the process is completed, it needs to be removed from the active process list :</p>
+<pre><code>rm runproc/&lt;process_tag&gt;.runproc</code></pre>
+</div>
+<div id="lockingunlocking-processes" class="section level2">
+<h2><span class="header-section-number">17.3</span> Locking/unlocking processes</h2>
+<p>The command <code>./auxscripts/waitforfilek</code> in <code>&lt;srcdir&gt;/scripts</code> locks the bash script execution until a file <code>&lt;tagname&gt;.unlock</code> appears. The command will remove the unlock file once it appears, and continue execution. It can take a timeout option. Typical use:</p>
+<pre><code>tmux send-keys -t &lt;tmux_session_name&gt; &quot;command_that_needs_to_be_completed_before_non-tmux_script_commands&quot; C-m
+tmux send-keys -t &lt;tmux_session_name&gt; &quot;touch &lt;tagname&gt;.unlock&quot; C-m  # command will unlock the script once the unlock file appears
+./auxscripts/waitforfilek -t &lt;timeout_sec&gt; &lt;tagname&gt;
+&lt;non-tmux_script_commands_to_be_executed_AFTER_tmux_commands&gt;</code></pre>
+<p>The command creates a &quot;<tagname>.lock&quot; file, and waits for a &quot;<tagname>.unlock&quot; to appear. When the unlock file is detected, both lock and unlock files are removed. The lock file indicates that a process is currently locked. This scheme can be employed to synchronize multiple scripts.</p>
+<p>The lower level <code>./auxscripts/waitonfile</code> command allows users to manually setup locks between proceses, by waiting for a file to disappear. Typical use:</p>
+<pre><code>touch fname.lock
+&lt;some other process here, will remove fname.lock file when done&gt;
+./auxscripts/waitonfile fname.lock
+&lt;more bask instructions here&gt;</code></pre>
 </div>
 </div>
 </body>

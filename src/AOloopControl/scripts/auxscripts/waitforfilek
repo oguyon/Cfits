@@ -10,10 +10,12 @@ function printHELP {
 echo "------------------------------------------------------------------------"
 echo "$(tput bold) $pname : Wait for file to appear $(tput sgr0)"
 echo "------------------------------------------------------------------------"
-echo "   Wait for file to appear and then remove it"
+echo "   Create file ./runproc/<tagname>.lock indicating a process is locked"
+echo "   Wait for file ./runproc/<tagname>.unlock to appear and then remove it."
+echo "   File ./runproc/<tagname>.lock will also be removed"
 echo "   "
 echo " $(tput bold)USAGE:$(tput sgr0)"
-echo "     $0 [-h] <fname>"
+echo "     $0 [-ht] <tagname>"
 echo ""
 echo " $(tput bold)OPTIONS:$(tput sgr0)"
 echo "     $(tput bold)-h$(tput sgr0)              help"
@@ -90,7 +92,7 @@ fi
 
 
 
-
+mkdir -p runproc
 
 
 
@@ -99,12 +101,14 @@ cntlim=$(($MaxWait*10))
 
 init="0"
 cnt=0
-while [[ ! -f $1 ]] && [[ "$cnt" -lt "${cntlim}" ]]; do 
+while [[ ! -f "./runproc/$1.unlock" ]] && [[ "$cnt" -lt "${cntlim}" ]]; do 
 if [ "$init" -eq "0" ]; then
 init="1"
-echo "waiting for file \"$1\""
+echo "waiting for file \"./runproc/$1.unlock\""
 fi
 sleep 0.1; 
 let cnt+=1
 done
-rm $1
+rm ./runproc/$1.unlock
+rm ./runproc/$1.lock
+
