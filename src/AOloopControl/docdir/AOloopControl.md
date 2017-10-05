@@ -1745,7 +1745,7 @@ stat_lsimON.txt                       " ON" if linear hardware simulator is runn
 	cd <srcdir>/src/AOloopControl/scripts
 	syncscripts -e <workdir>
 	cd <workdir>
-	<workdir>/syncscripts
+	./syncscripts
 
 **STEP 3**: Download a calibration, consisting of zonal response matrix and a WFS reference. Place the file in a new directory `<workdir>/simLHS`
 

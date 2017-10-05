@@ -2198,7 +2198,7 @@ stat_lsimON.txt                       " ON" if linear hardware simulator is runn
 	cd <srcdir>/src/AOloopControl/scripts
 	syncscripts -e <workdir>
 	cd <workdir>
-	<workdir>/syncscripts
+	./syncscripts
 
 **STEP 3**: Download a calibration, consisting of zonal response matrix and a WFS reference. Place the file in a new directory `<workdir>/simLHS`
 
@@ -2241,6 +2241,7 @@ Under control matrix GUI menu :
 - update configuration: `confUp`
 
 Load and manage configuration :
+
 - load configuration
 - save configuration
 
@@ -2260,12 +2261,12 @@ A queued process is a process that has been sent to a tmux session but is awaiti
 
 To log queued processes as such, follow this bash template:
 
-	logRunningProcessQ <process_tag> <tmux_session_name>
+	logRunningProcessQ "<process_tag>" <tmux_session_name>
 	tmux send-keys -t <tmux_session_name> "process_command" C-m
 
 or
 
-	logRunningProcessQ0 "<process_tag>" "<tmux_session_name>" "<comments>"
+	logRunningProcessQ0 "<process_tag>" <tmux_session_name> "<comments>"
 	tmux send-keys -t <tmux_session_name> "mv runproc/<process_tag>.runprocQ runproc/<process_tag>.runproc" C-m
 	tmux send-keys -t <tmux_session_name> "process_command" C-m
 
@@ -2298,7 +2299,7 @@ The lower level `./auxscripts/waitonfile` command allows users to manually setup
 	touch fname.lock
 	<some other process here, will remove fname.lock file when done>
 	./auxscripts/waitonfile fname.lock
-	<more bask instructions here>
+	<more bash instructions here>
 
 
 

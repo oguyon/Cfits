@@ -3106,7 +3106,7 @@ Fits2shm -c -p aol${LOOPNUMBER}_ wfsref0</code></pre>
 <pre><code>cd &lt;srcdir&gt;/src/AOloopControl/scripts
 syncscripts -e &lt;workdir&gt;
 cd &lt;workdir&gt;
-&lt;workdir&gt;/syncscripts</code></pre>
+./syncscripts</code></pre>
 <p><strong>STEP 3</strong>: Download a calibration, consisting of zonal response matrix and a WFS reference. Place the file in a new directory <code>&lt;workdir&gt;/simLHS</code></p>
 <p><strong>STEP 4</strong>: Launch aolconf, loop number 5, loop name simtest:</p>
 <pre><code>./aolconf -L 5 -N simtest</code></pre>
@@ -3135,7 +3135,11 @@ cd &lt;workdir&gt;
 <li>Create modes and control matrix: <code>mkModes0</code></li>
 <li>update configuration: <code>confUp</code></li>
 </ul>
-<p>Load and manage configuration : - load configuration - save configuration</p>
+<p>Load and manage configuration :</p>
+<ul>
+<li>load configuration</li>
+<li>save configuration</li>
+</ul>
 </div>
 </div>
 <div id="appendix-d-managing-multiple-processes" class="section level1">
@@ -3147,10 +3151,10 @@ cd &lt;workdir&gt;
 <h2><span class="header-section-number">17.1</span> Queued process</h2>
 <p>A queued process is a process that has been sent to a tmux session but is awaiting previous operations, within the same tmux session, to be completed. The process is logged as queued when the corresponding command is sent to the tmux session. When the tmux session reaches the command, it will move it from queued to active.</p>
 <p>To log queued processes as such, follow this bash template:</p>
-<pre><code>logRunningProcessQ &lt;process_tag&gt; &lt;tmux_session_name&gt;
+<pre><code>logRunningProcessQ &quot;&lt;process_tag&gt;&quot; &lt;tmux_session_name&gt;
 tmux send-keys -t &lt;tmux_session_name&gt; &quot;process_command&quot; C-m</code></pre>
 <p>or</p>
-<pre><code>logRunningProcessQ0 &quot;&lt;process_tag&gt;&quot; &quot;&lt;tmux_session_name&gt;&quot; &quot;&lt;comments&gt;&quot;
+<pre><code>logRunningProcessQ0 &quot;&lt;process_tag&gt;&quot; &lt;tmux_session_name&gt; &quot;&lt;comments&gt;&quot;
 tmux send-keys -t &lt;tmux_session_name&gt; &quot;mv runproc/&lt;process_tag&gt;.runprocQ runproc/&lt;process_tag&gt;.runproc&quot; C-m
 tmux send-keys -t &lt;tmux_session_name&gt; &quot;process_command&quot; C-m</code></pre>
 <p><code>process_tag</code> is a name chosen to represent the operations performed. The second option can be used when writing to a script, so it is more flexible.</p>
@@ -3174,7 +3178,7 @@ tmux send-keys -t &lt;tmux_session_name&gt; &quot;touch &lt;tagname&gt;.unlock&q
 <pre><code>touch fname.lock
 &lt;some other process here, will remove fname.lock file when done&gt;
 ./auxscripts/waitonfile fname.lock
-&lt;more bask instructions here&gt;</code></pre>
+&lt;more bash instructions here&gt;</code></pre>
 </div>
 </div>
 </body>
