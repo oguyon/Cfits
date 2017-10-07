@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-
+#include <dlfcn.h>
 #include <unistd.h>
 
 //#include <pthread_np.h>
@@ -117,7 +117,8 @@ static int clock_gettime(int clk_id, struct mach_timespec *t){
 /* =============================================================================================== */
 
 
-
+int DLib_index;
+void *DLib_handle[1000];
 
 
 extern int yy_scan_string(const char *);
@@ -202,6 +203,7 @@ static int_fast8_t help();
 
 static int_fast8_t list_commands();
 static int_fast8_t list_commands_module(char *modulename);
+static int_fast8_t load_module_shared(char *modulename);
 static int_fast8_t help_command(char *cmdkey);
 
 
@@ -417,6 +419,22 @@ static int_fast8_t help_module()
 
     return 0;
 }
+
+
+static int_fast8_t load_module()
+{
+
+    if(data.cmdargtoken[1].type == 3)
+    {
+        load_module_shared(data.cmdargtoken[1].val.string);
+        return 0;
+    }
+    else
+        return 1;
+}
+
+
+
 
 
 
@@ -1308,6 +1326,17 @@ void main_init()
   strcpy(data.cmd[data.NBcmd].Ccall,"int list_commands_module()");
   data.NBcmd++;
 
+
+  strcpy(data.cmd[data.NBcmd].key,"mload");
+  strcpy(data.cmd[data.NBcmd].module,__FILE__);
+  data.cmd[data.NBcmd].fp = load_module;
+  strcpy(data.cmd[data.NBcmd].info,"load module from shared object");
+  strcpy(data.cmd[data.NBcmd].syntax,"module name");
+  strcpy(data.cmd[data.NBcmd].example,"mload mymodule");
+  strcpy(data.cmd[data.NBcmd].Ccall,"int load_module_shared(char *modulename)");
+  data.NBcmd++;
+
+
   strcpy(data.cmd[data.NBcmd].key,"ci");
   strcpy(data.cmd[data.NBcmd].module,__FILE__);
   data.cmd[data.NBcmd].fp = printInfo;
@@ -1697,49 +1726,110 @@ static int_fast8_t list_commands()
   return 0;
 }
 
+
+
 static int_fast8_t list_commands_module(char *modulename)
 {
-  long i;
-  int mOK = 0;
-  char cmdinfoshort[38];
+    long i;
+    int mOK = 0;
+    char cmdinfoshort[38];
 
-  if(strlen(modulename)>0)
+    if(strlen(modulename)>0)
     {
-      for(i=0;i<data.NBcmd;i++)
-	{
-	  //  printf(" %s %s\n", modulename, data.cmd[i].module);
-	  if(strcmp(modulename, data.cmd[i].module)==0)
-	    {
-	      if(mOK==0)
-		printf("---- MODULE %s: LIST OF COMMANDS ---------\n", modulename);
-	      strncpy(cmdinfoshort, data.cmd[i].info, 38);
-	      printf("   %-16s %-20s %-40s %-30s\n", data.cmd[i].key, data.cmd[i].module, cmdinfoshort, data.cmd[i].example);
-	      mOK = 1;
-	    }
-	}
+        for(i=0; i<data.NBcmd; i++)
+        {
+            //  printf(" %s %s\n", modulename, data.cmd[i].module);
+            if(strcmp(modulename, data.cmd[i].module)==0)
+            {
+                if(mOK==0)
+                    printf("---- MODULE %s: LIST OF COMMANDS ---------\n", modulename);
+                strncpy(cmdinfoshort, data.cmd[i].info, 38);
+                printf("   %-16s %-20s %-40s %-30s\n", data.cmd[i].key, data.cmd[i].module, cmdinfoshort, data.cmd[i].example);
+                mOK = 1;
+            }
+        }
     }
 
-  if(mOK==0)
+    if(mOK==0)
     {
-      if(strlen(modulename)>0)
-	printf("---- MODULE %s DOES NOT EXIST OR DOES NOT HAVE COMMANDS ---------\n", modulename);
-      
-      for(i=0;i<data.NBcmd;i++)
-	{
-	  if(strncmp(modulename, data.cmd[i].module, strlen(modulename))==0)
-	    {
-	      if(mOK==0)
-		printf("---- MODULES %s* commands  ---------\n", modulename);
-	      strncpy(cmdinfoshort, data.cmd[i].info, 38);
-	      printf("   %-16s %-20s %-40s %-30s\n", data.cmd[i].key, data.cmd[i].module, cmdinfoshort, data.cmd[i].example);
-	      mOK = 1;
-	    }
-	}
-    }
-  
+        if(strlen(modulename)>0)
+            printf("---- MODULE %s DOES NOT EXIST OR DOES NOT HAVE COMMANDS ---------\n", modulename);
 
-  return 0;
+        for(i=0; i<data.NBcmd; i++)
+        {
+            if(strncmp(modulename, data.cmd[i].module, strlen(modulename))==0)
+            {
+                if(mOK==0)
+                    printf("---- MODULES %s* commands  ---------\n", modulename);
+                strncpy(cmdinfoshort, data.cmd[i].info, 38);
+                printf("   %-16s %-20s %-40s %-30s\n", data.cmd[i].key, data.cmd[i].module, cmdinfoshort, data.cmd[i].example);
+                mOK = 1;
+            }
+        }
+    }
+
+
+    return 0;
 }
+
+
+
+
+
+
+static int_fast8_t load_module_shared(char *modulename)
+{
+    char libname[200];
+    char modulenameLC[200];
+    char c;
+    int n;
+    int (*libinitfunc) ();
+    char *error;
+    char initfuncname[200];
+
+
+
+    sprintf(modulenameLC, "%s", modulename);
+    for(n=0; n<strlen(modulenameLC); n++)
+    {
+        c = modulenameLC[n];
+        modulenameLC[n] = tolower(c);
+    }
+
+    sprintf(libname, "src/%s/.libs/lib%s.so", modulename, modulenameLC);
+    printf("libname = %s\n", libname);
+
+
+    printf("[%5d] Loading object \"%s\"\n", DLib_index, libname);
+
+
+    DLib_handle[DLib_index] = dlopen(libname, RTLD_LAZY);
+    if (!DLib_handle[DLib_index]) {
+        fprintf(stderr, "%s\n", dlerror());
+        exit(EXIT_FAILURE);
+    }
+
+    dlerror();
+
+	sprintf(initfuncname, "initlib_%s", modulenameLC);
+    libinitfunc = dlsym(DLib_handle[DLib_index], initfuncname);
+    if ((error = dlerror()) != NULL) {
+        fputs(error, stderr);
+    exit(1);
+	}
+
+	(*libinitfunc)();
+
+    //dlclose(DLib_handle);
+
+	// increment number of libs dynamically loaded
+	DLib_index ++;
+
+    return 0;
+}
+
+
+
 
 
 

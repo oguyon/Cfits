@@ -122,12 +122,25 @@ Functions</h2></td></tr>
 <tr class="separator:a6996ee2254bfcc9b0b31759259975202"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a624307f4589e1b05a4c8d53a4235de14"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#a624307f4589e1b05a4c8d53a4235de14">ImageStreamIO_printERROR</a> (const char *file, const char *func, int <a class="el" href="CLIcore_8c.html#a8adb30f4f6669f927fd9232f686c637b">line</a>, char *errmessage)</td></tr>
 <tr class="separator:a624307f4589e1b05a4c8d53a4235de14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d9fdb844a8ac77653d7cfba9dbf528a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#a5d9fdb844a8ac77653d7cfba9dbf528a">ImageStreamIO_createSem</a> (IMAGE *image, long NBsem)</td></tr>
-<tr class="separator:a5d9fdb844a8ac77653d7cfba9dbf528a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">1. READ / WRITE STREAM</div></td></tr>
 <tr class="memitem:a8fc3bb169fb87361c1e136e3c6a55dfb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#a8fc3bb169fb87361c1e136e3c6a55dfb">ImageStreamIO_createIm</a> (IMAGE *image, const char *name, long naxis, uint32_t *size, uint8_t atype, int shared, int NBkw)</td></tr>
+<tr class="memdesc:a8fc3bb169fb87361c1e136e3c6a55dfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create shared memory image stream.  <a href="#a8fc3bb169fb87361c1e136e3c6a55dfb">More...</a><br /></td></tr>
 <tr class="separator:a8fc3bb169fb87361c1e136e3c6a55dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af64adde8baff4fbdba23ac51192f9882"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#af64adde8baff4fbdba23ac51192f9882">ImageStreamIO_read_sharedmem_image_toIMAGE</a> (const char *name, IMAGE *image)</td></tr>
+<tr class="memdesc:af64adde8baff4fbdba23ac51192f9882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read / connect to existing shared memory image stream.  <a href="#af64adde8baff4fbdba23ac51192f9882">More...</a><br /></td></tr>
 <tr class="separator:af64adde8baff4fbdba23ac51192f9882"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">2. MANAGE SEMAPHORES</div></td></tr>
+<tr class="memitem:a9e3731c2f1dbaee42302fc2c625065c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#a9e3731c2f1dbaee42302fc2c625065c6">ImageStreamIO_createsem</a> (IMAGE *image, long NBsem)</td></tr>
+<tr class="memdesc:a9e3731c2f1dbaee42302fc2c625065c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create shmim semaphores.  <a href="#a9e3731c2f1dbaee42302fc2c625065c6">More...</a><br /></td></tr>
+<tr class="separator:a9e3731c2f1dbaee42302fc2c625065c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38798c712af6126e31dcd0eda930d9a1"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#a38798c712af6126e31dcd0eda930d9a1">ImageStreamIO_sempost</a> (IMAGE *image, long index)</td></tr>
+<tr class="memdesc:a38798c712af6126e31dcd0eda930d9a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Post all shmim semaphores.  <a href="#a38798c712af6126e31dcd0eda930d9a1">More...</a><br /></td></tr>
+<tr class="separator:a38798c712af6126e31dcd0eda930d9a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a613b61cdeb72e83385b0f1cfbb7a87"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#a9a613b61cdeb72e83385b0f1cfbb7a87">ImageStreamIO_sempost_excl</a> (IMAGE *image, long index)</td></tr>
+<tr class="memdesc:a9a613b61cdeb72e83385b0f1cfbb7a87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Post all shmim semaphores except one.  <a href="#a9a613b61cdeb72e83385b0f1cfbb7a87">More...</a><br /></td></tr>
+<tr class="separator:a9a613b61cdeb72e83385b0f1cfbb7a87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2f7c60e00c3c37f7bd281f39fcd19aa"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8c.html#af2f7c60e00c3c37f7bd281f39fcd19aa">ImageStreamIO_sempost_loop</a> (IMAGE *image, long index, long dtus)</td></tr>
+<tr class="separator:af2f7c60e00c3c37f7bd281f39fcd19aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Read and Create image. </p>
@@ -224,14 +237,16 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Create shared memory image stream. </p>
+
 </div>
 </div>
-<a class="anchor" id="a5d9fdb844a8ac77653d7cfba9dbf528a"></a>
+<a class="anchor" id="a9e3731c2f1dbaee42302fc2c625065c6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ImageStreamIO_createSem </td>
+          <td class="memname">int ImageStreamIO_createsem </td>
           <td>(</td>
           <td class="paramtype">IMAGE *&#160;</td>
           <td class="paramname"><em>image</em>, </td>
@@ -249,6 +264,18 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Create shmim semaphores. </p>
+<h2>Purpose</h2>
+<p>Create semaphore of a shmim</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">image</td><td>IMAGE* pointer to shmim</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">NBsem</td><td>number of semaphores to be created </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -314,6 +341,127 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Read / connect to existing shared memory image stream. </p>
+
+</div>
+</div>
+<a class="anchor" id="a38798c712af6126e31dcd0eda930d9a1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long ImageStreamIO_sempost </td>
+          <td>(</td>
+          <td class="paramtype">IMAGE *&#160;</td>
+          <td class="paramname"><em>image</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Post all shmim semaphores. </p>
+<h2>Purpose</h2>
+<p>Posts semaphore of a shmim if index &lt; 0, post all semaphores</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">image</td><td>IMAGE* pointer to shmim</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>semaphore index index of semaphore to be posted if index=-1, post all semaphores </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a9a613b61cdeb72e83385b0f1cfbb7a87"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long ImageStreamIO_sempost_excl </td>
+          <td>(</td>
+          <td class="paramtype">IMAGE *&#160;</td>
+          <td class="paramname"><em>image</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Post all shmim semaphores except one. </p>
+<h2>Purpose</h2>
+<p>Posts all semaphores of a shmim except one</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">image</td><td>IMAGE* pointer to shmim</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>semaphore index index of semaphore to be excluded </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="af2f7c60e00c3c37f7bd281f39fcd19aa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long ImageStreamIO_sempost_loop </td>
+          <td>(</td>
+          <td class="paramtype">IMAGE *&#160;</td>
+          <td class="paramname"><em>image</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">long&#160;</td>
+          <td class="paramname"><em>dtus</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<h2>Purpose</h2>
+<p>Posts all semaphores of a shmim at regular time intervals</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">image</td><td>IMAGE* pointer to shmim</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>semaphore index is =-1, post all semaphores</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dtus</td><td>time interval [us] </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a class="anchor" id="a6996ee2254bfcc9b0b31759259975202"></a>
@@ -337,7 +485,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_f9bfd6d7838ce96d8ef51017747ec480.html">ImageStreamIO</a></li><li class="navelem"><a class="el" href="ImageStreamIO_8c.html">ImageStreamIO.c</a></li>
-    <li class="footer">Generated on Sun Oct 1 2017 12:40:38 for cfitsTK by
+    <li class="footer">Generated on Thu Oct 5 2017 11:40:24 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

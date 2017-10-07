@@ -33,10 +33,10 @@
 #include "TransitLC/TransitLC.h"
 
 
+
 extern DATA data;
 
 #define SBUFFERSIZE 2000
-
 
 
 
@@ -65,6 +65,15 @@ int_fast8_t TransitLC_run_cli()
 
 
 
+
+int initlib_transitlc()
+{
+	printf("Initializing library TransitLC\n");
+	init_TransitLC();
+}
+
+
+
 int_fast8_t init_TransitLC()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -85,6 +94,9 @@ int_fast8_t init_TransitLC()
   return 0;
 
 }
+
+
+
 
 
 //
@@ -351,6 +363,7 @@ long TransitLC_scanTE(const char *IDin_name, const char *IDout_name, double Pmin
 
 
 
+
 long TransitLC_run(long index)
 {
 	long IDpl;
@@ -377,7 +390,8 @@ long TransitLC_run(long index)
 	FILE *fp;
 	
 	
-	
+	printf("Starting TransitLC_run\n");
+	fflush(stdout);
 	
 	IDpl = create_2Dimage_ID("lcplanets", NBpl, 4);
 	
@@ -388,6 +402,8 @@ long TransitLC_run(long index)
 			data.image[IDpl].array.F[2*NBpl + pl] = 3600.0*1.0; // duration
 			data.image[IDpl].array.F[3*NBpl + pl] = 1.0e-5; // depth			
 		}
+	
+	list_image_ID();
 	
 	IDlc = image_ID("tlc00");
 	if(IDlc == -1)

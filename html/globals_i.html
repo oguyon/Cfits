@@ -406,9 +406,9 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 : <a class="el" href="ImageStreamIO_8c.html#a8fc3bb169fb87361c1e136e3c6a55dfb">ImageStreamIO.c</a>
 , <a class="el" href="ImageStreamIO_8h.html#a8fc3bb169fb87361c1e136e3c6a55dfb">ImageStreamIO.h</a>
 </li>
-<li>ImageStreamIO_createSem()
-: <a class="el" href="ImageStreamIO_8c.html#a5d9fdb844a8ac77653d7cfba9dbf528a">ImageStreamIO.c</a>
-, <a class="el" href="ImageStreamIO_8h.html#a5d9fdb844a8ac77653d7cfba9dbf528a">ImageStreamIO.h</a>
+<li>ImageStreamIO_createsem()
+: <a class="el" href="ImageStreamIO_8c.html#a9e3731c2f1dbaee42302fc2c625065c6">ImageStreamIO.c</a>
+, <a class="el" href="ImageStreamIO_8h.html#a9e3731c2f1dbaee42302fc2c625065c6">ImageStreamIO.h</a>
 </li>
 <li>ImageStreamIO_printERROR()
 : <a class="el" href="ImageStreamIO_8c.html#a624307f4589e1b05a4c8d53a4235de14">ImageStreamIO.c</a>
@@ -416,6 +416,24 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 <li>ImageStreamIO_read_sharedmem_image_toIMAGE()
 : <a class="el" href="ImageStreamIO_8c.html#af64adde8baff4fbdba23ac51192f9882">ImageStreamIO.c</a>
 , <a class="el" href="ImageStreamIO_8h.html#af64adde8baff4fbdba23ac51192f9882">ImageStreamIO.h</a>
+</li>
+<li>ImageStreamIO_semflush()
+: <a class="el" href="ImageStreamIO_8h.html#ac098250629526bf2d4cc16d3a16d91f7">ImageStreamIO.h</a>
+</li>
+<li>ImageStreamIO_sempost()
+: <a class="el" href="ImageStreamIO_8c.html#a38798c712af6126e31dcd0eda930d9a1">ImageStreamIO.c</a>
+, <a class="el" href="ImageStreamIO_8h.html#a38798c712af6126e31dcd0eda930d9a1">ImageStreamIO.h</a>
+</li>
+<li>ImageStreamIO_sempost_excl()
+: <a class="el" href="ImageStreamIO_8c.html#a9a613b61cdeb72e83385b0f1cfbb7a87">ImageStreamIO.c</a>
+, <a class="el" href="ImageStreamIO_8h.html#a9a613b61cdeb72e83385b0f1cfbb7a87">ImageStreamIO.h</a>
+</li>
+<li>ImageStreamIO_sempost_loop()
+: <a class="el" href="ImageStreamIO_8c.html#af2f7c60e00c3c37f7bd281f39fcd19aa">ImageStreamIO.c</a>
+, <a class="el" href="ImageStreamIO_8h.html#af2f7c60e00c3c37f7bd281f39fcd19aa">ImageStreamIO.h</a>
+</li>
+<li>ImageStreamIO_semwait()
+: <a class="el" href="ImageStreamIO_8h.html#af3dd8f11402f52b1bb3f3418958621de">ImageStreamIO.h</a>
 </li>
 <li>img_histoc()
 : <a class="el" href="info_8h.html#aee841252488f94e44a90f2c82c8a1606">info.h</a>
@@ -548,8 +566,8 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 </li>
 <li>init_AOsystSim()
 : <a class="el" href="AOsystSim_8c.html#ad63110c83cfc65f22a044cb57709d6f6">AOsystSim.c</a>
-, <a class="el" href="AOsystSim_8h.html#ad63110c83cfc65f22a044cb57709d6f6">AOsystSim.h</a>
 , <a class="el" href="SCExAO__DM_8h.html#ad63110c83cfc65f22a044cb57709d6f6">SCExAO_DM.h</a>
+, <a class="el" href="AOsystSim_8h.html#ad63110c83cfc65f22a044cb57709d6f6">AOsystSim.h</a>
 </li>
 <li>init_AtmosphereModel()
 : <a class="el" href="AtmosphereModel_8c.html#a6f0b7163d044558fba4a62e02ad06f98">AtmosphereModel.c</a>
@@ -564,28 +582,28 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 , <a class="el" href="COREMOD__arith_8h.html#ad706f48989cfc1124c5ab2394569951a">COREMOD_arith.h</a>
 </li>
 <li>init_COREMOD_iofits()
-: <a class="el" href="COREMOD__iofits_8h.html#a696b781a8d79abb184b25bfdad25b57f">COREMOD_iofits.h</a>
-, <a class="el" href="COREMOD__iofits_8c.html#a696b781a8d79abb184b25bfdad25b57f">COREMOD_iofits.c</a>
+: <a class="el" href="COREMOD__iofits_8c.html#a696b781a8d79abb184b25bfdad25b57f">COREMOD_iofits.c</a>
+, <a class="el" href="COREMOD__iofits_8h.html#a696b781a8d79abb184b25bfdad25b57f">COREMOD_iofits.h</a>
 </li>
 <li>init_COREMOD_memory()
 : <a class="el" href="COREMOD__memory_8c.html#aca8bfb0090f916df7c5966890ad83e55">COREMOD_memory.c</a>
 , <a class="el" href="COREMOD__memory_8h.html#aca8bfb0090f916df7c5966890ad83e55">COREMOD_memory.h</a>
 </li>
 <li>init_COREMOD_tools()
-: <a class="el" href="COREMOD__tools_8h.html#a9383571be0026fd23ec4464fa50aba26">COREMOD_tools.h</a>
-, <a class="el" href="COREMOD__tools_8c.html#a9383571be0026fd23ec4464fa50aba26">COREMOD_tools.c</a>
+: <a class="el" href="COREMOD__tools_8c.html#a9383571be0026fd23ec4464fa50aba26">COREMOD_tools.c</a>
+, <a class="el" href="COREMOD__tools_8h.html#a9383571be0026fd23ec4464fa50aba26">COREMOD_tools.h</a>
 </li>
 <li>init_coronagraphs()
-: <a class="el" href="coronagraphs_8c.html#aaf49bbcd9901bb89df61e1d8dde48f78">coronagraphs.c</a>
-, <a class="el" href="coronagraphs_8h.html#aaf49bbcd9901bb89df61e1d8dde48f78">coronagraphs.h</a>
+: <a class="el" href="coronagraphs_8h.html#aaf49bbcd9901bb89df61e1d8dde48f78">coronagraphs.h</a>
+, <a class="el" href="coronagraphs_8c.html#aaf49bbcd9901bb89df61e1d8dde48f78">coronagraphs.c</a>
 </li>
 <li>init_cudacomp()
 : <a class="el" href="cudacomp_8c.html#aead9dadc577cf10ed989b89b8360c802">cudacomp.c</a>
 , <a class="el" href="cudacomp_8h.html#aead9dadc577cf10ed989b89b8360c802">cudacomp.h</a>
 </li>
 <li>init_fft()
-: <a class="el" href="fft_8h.html#a6a2d5a49fa05c8b3ba72c312d32944a5">fft.h</a>
-, <a class="el" href="fft_8c.html#a6a2d5a49fa05c8b3ba72c312d32944a5">fft.c</a>
+: <a class="el" href="fft_8c.html#a6a2d5a49fa05c8b3ba72c312d32944a5">fft.c</a>
+, <a class="el" href="fft_8h.html#a6a2d5a49fa05c8b3ba72c312d32944a5">fft.h</a>
 </li>
 <li>init_fftw_plans()
 : <a class="el" href="fft_8c.html#afc8e520b2e3397a2d1b19c48aa1accd0">fft.c</a>
@@ -608,24 +626,24 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 , <a class="el" href="image__basic_8h.html#a369b2617616d0e846652eb9e0ebf91c8">image_basic.h</a>
 </li>
 <li>init_image_filter()
-: <a class="el" href="image__filter_8c.html#a13ca00099d3f16386c1bd78337c12bc0">image_filter.c</a>
-, <a class="el" href="image__filter_8h.html#a13ca00099d3f16386c1bd78337c12bc0">image_filter.h</a>
+: <a class="el" href="image__filter_8h.html#a13ca00099d3f16386c1bd78337c12bc0">image_filter.h</a>
+, <a class="el" href="image__filter_8c.html#a13ca00099d3f16386c1bd78337c12bc0">image_filter.c</a>
 </li>
 <li>init_image_format()
 : <a class="el" href="image__format_8c.html#a04a60c344899c8e54c2caef2153351a5">image_format.c</a>
 , <a class="el" href="image__format_8h.html#a04a60c344899c8e54c2caef2153351a5">image_format.h</a>
 </li>
 <li>init_image_gen()
-: <a class="el" href="image__gen_8h.html#a60f76578e538645d611141894e7f9864">image_gen.h</a>
-, <a class="el" href="image__gen_8c.html#a60f76578e538645d611141894e7f9864">image_gen.c</a>
+: <a class="el" href="image__gen_8c.html#a60f76578e538645d611141894e7f9864">image_gen.c</a>
+, <a class="el" href="image__gen_8h.html#a60f76578e538645d611141894e7f9864">image_gen.h</a>
 </li>
 <li>init_ImageStreamIO()
 : <a class="el" href="ImageStreamIO_8c.html#a6996ee2254bfcc9b0b31759259975202">ImageStreamIO.c</a>
 , <a class="el" href="ImageStreamIO_8h.html#a6996ee2254bfcc9b0b31759259975202">ImageStreamIO.h</a>
 </li>
 <li>init_img_reduce()
-: <a class="el" href="img__reduce_8h.html#af3d15b471345b3248a1f0e1366bdbea9">img_reduce.h</a>
-, <a class="el" href="img__reduce_8c.html#af3d15b471345b3248a1f0e1366bdbea9">img_reduce.c</a>
+: <a class="el" href="img__reduce_8c.html#af3d15b471345b3248a1f0e1366bdbea9">img_reduce.c</a>
+, <a class="el" href="img__reduce_8h.html#af3d15b471345b3248a1f0e1366bdbea9">img_reduce.h</a>
 </li>
 <li>init_info()
 : <a class="el" href="info_8h.html#a5d7396f5ecc59232d638504c96aeb2ce">info.h</a>
@@ -663,12 +681,12 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 , <a class="el" href="OptSystProp_8h.html#a92625d19a196cdfcef6a7ec976e4f873">OptSystProp.h</a>
 </li>
 <li>init_PIAACMCsimul()
-: <a class="el" href="PIAACMCsimul_8c.html#afbe4dce014fddfe2292d9128df375bed">PIAACMCsimul.c</a>
-, <a class="el" href="PIAACMCsimul_8h.html#afbe4dce014fddfe2292d9128df375bed">PIAACMCsimul.h</a>
+: <a class="el" href="PIAACMCsimul_8h.html#afbe4dce014fddfe2292d9128df375bed">PIAACMCsimul.h</a>
+, <a class="el" href="PIAACMCsimul_8c.html#afbe4dce014fddfe2292d9128df375bed">PIAACMCsimul.c</a>
 </li>
 <li>init_psf()
-: <a class="el" href="psf_8h.html#ad28b90e75ad1ccab94b67671e4d595f7">psf.h</a>
-, <a class="el" href="psf_8c.html#ad28b90e75ad1ccab94b67671e4d595f7">psf.c</a>
+: <a class="el" href="psf_8c.html#ad28b90e75ad1ccab94b67671e4d595f7">psf.c</a>
+, <a class="el" href="psf_8h.html#ad28b90e75ad1ccab94b67671e4d595f7">psf.h</a>
 </li>
 <li>init_SCExAO_control()
 : <a class="el" href="SCExAO__control_8h.html#a3af9419031a4448173147094397ed2a7">SCExAO_control.h</a>
@@ -682,16 +700,16 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 , <a class="el" href="statistic_8h.html#a9c83a0d35322da145d178da2f9ec4889">statistic.h</a>
 </li>
 <li>init_templatemodule()
-: <a class="el" href="templatemodule_8c.html#a1bef27d4d77b64ee13094f18ef05e963">templatemodule.c</a>
-, <a class="el" href="templatemodule_8h.html#a1bef27d4d77b64ee13094f18ef05e963">templatemodule.h</a>
+: <a class="el" href="templatemodule_8h.html#a1bef27d4d77b64ee13094f18ef05e963">templatemodule.h</a>
+, <a class="el" href="templatemodule_8c.html#a1bef27d4d77b64ee13094f18ef05e963">templatemodule.c</a>
 </li>
 <li>init_TransitLC()
 : <a class="el" href="TransitLC_8c.html#a710c029d7952cca597e698b17ca42e09">TransitLC.c</a>
 , <a class="el" href="TransitLC_8h.html#a710c029d7952cca597e698b17ca42e09">TransitLC.h</a>
 </li>
 <li>init_WFpropagate()
-: <a class="el" href="WFpropagate_8h.html#a45daf42bdb93216c1d7951ae2d3caa0d">WFpropagate.h</a>
-, <a class="el" href="WFpropagate_8c.html#a45daf42bdb93216c1d7951ae2d3caa0d">WFpropagate.c</a>
+: <a class="el" href="WFpropagate_8c.html#a45daf42bdb93216c1d7951ae2d3caa0d">WFpropagate.c</a>
+, <a class="el" href="WFpropagate_8h.html#a45daf42bdb93216c1d7951ae2d3caa0d">WFpropagate.h</a>
 </li>
 <li>init_ZernikePolyn()
 : <a class="el" href="ZernikePolyn_8c.html#a1fe2ce39f9bc2169cb9978832ef64fb8">ZernikePolyn.c</a>
@@ -779,7 +797,7 @@ $(document).ready(function(){initNavTree('globals_i.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Oct 1 2017 12:40:39 for cfitsTK by
+    <li class="footer">Generated on Thu Oct 5 2017 11:40:24 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

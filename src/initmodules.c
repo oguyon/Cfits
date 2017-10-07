@@ -34,7 +34,7 @@
 #include "AtmosphericTurbulence/AtmosphericTurbulence.h"
 #include "cudacomp/cudacomp.h"
 #include "SCExAO_control/SCExAO_control.h"
-#include "TransitLC/TransitLC.h"
+//#include "TransitLC/TransitLC.h"
 #include "linARfilterPred/linARfilterPred.h"
 
 

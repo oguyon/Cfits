@@ -11735,7 +11735,6 @@ $as_echo "$ac_cv_prog_c_openmp" >&6; }
 
 
 
-
 # Support for Bison and Flex
 for ac_prog in 'bison -y' byacc
 do
@@ -12026,6 +12025,56 @@ else
 		  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "\"FATAL...Cannot find required library:math\"
+See \`config.log' for more details" "$LINENO" 5; };
+		  exit 0;
+
+fi
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -ldl" >&5
+$as_echo_n "checking for main in -ldl... " >&6; }
+if ${ac_cv_lib_dl_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dl_main=yes
+else
+  ac_cv_lib_dl_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_main" >&5
+$as_echo "$ac_cv_lib_dl_main" >&6; }
+if test "x$ac_cv_lib_dl_main" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBDL 1
+_ACEOF
+
+  LIBS="-ldl $LIBS"
+
+else
+   echo "Cannot find required library:dl";
+		  cat doc/configure.howto;
+		  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "\"FATAL...Cannot find required library:dl\"
 See \`config.log' for more details" "$LINENO" 5; };
 		  exit 0;
 

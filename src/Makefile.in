@@ -392,7 +392,7 @@ cfitsTK_SOURCES = CLIcore.c CLIcore.h initmodules.c initmodules.h calc_bison.y c
 cfitsTK_CPPFLAGS = -I@abs_top_srcdir@/src \
 	-DCONFIGDIR=\"@abs_top_srcdir@/config\" \
 	-DSOURCEDIR=\"@abs_top_srcdir@/src\" \
-	-DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp \
+	-DABSSRCTOPDIR=\"@abs_top_srcdir@\" -fopenmp -ldl \
 	-I@abs_top_srcdir@/src/linARfilterPred \
 	-I@abs_top_srcdir@/src/TransitLC \
 	-I@abs_top_srcdir@/src/SCExAO_control \

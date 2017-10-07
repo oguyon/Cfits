@@ -40,8 +40,10 @@
 #include <unistd.h> // for close
 #include <errno.h>
 
-#include "ImageStruct.h"
 
+
+#include "ImageStruct.h"
+#include "ImageStreamIO/ImageStreamIO.h"
 
 
 
@@ -109,73 +111,14 @@ int ImageStreamIO_printERROR(const char *file, const char *func, int line, char 
 
 
 
-
-
-
-
-int ImageStreamIO_createSem(IMAGE *image, long NBsem)
-{
-    long s;
-    int r;
-    char command[200];
-    int semfile[100];
-
-	
-	printf("Creating %ld semaphores\n", NBsem);
-	
-	// Remove pre-existing semaphores if any
-    if(image->md[0].sem != NBsem)
-    {
-        // Close existing semaphores ...
-        for(s=0; s < image->md[0].sem; s++)
-            sem_close(image->semptr[s]);
-        image->md[0].sem = 0;
-
-		// ... and remove associated files
-		long s1;
-        for(s1=NBsem; s1<100; s1++)
-        {
-			char fname[200];
-            sprintf(fname, "/dev/shm/sem.%s_sem%02ld", image->md[0].name, s1);
-            remove(fname);
-        }
-        free(image->semptr);
-        image->semptr = NULL;
-    }
-
-   
-    if(image->md[0].sem == 0)
-    {
-        if(image->semptr != NULL)
-            free(image->semptr);
-
-        image->md[0].sem = NBsem;
-        printf("malloc semptr %d entries\n", image->md[0].sem);
-        image->semptr = (sem_t**) malloc(sizeof(sem_t**)*image->md[0].sem);
-
-
-        for(s=0; s<NBsem; s++)
-        {
-			char sname[200];
-            sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
-            if ((image->semptr[s] = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
-                if ((image->semptr[s] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
-                    perror("semaphore initilization");
-                }
-                else
-                    sem_init(image->semptr[s], 1, 0);
-            }
-        }
-    }
-    
-    printf("image->md[0].sem = %ld\n", (long) image->md[0].sem);
-    
-    return(0);
-}
-
-
-
-
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 1. READ / WRITE STREAM
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
 
 
 
@@ -701,7 +644,7 @@ int ImageStreamIO_createIm(IMAGE *image, const char *name, long naxis, uint32_t 
     image->md[0].nelement = nelement;
 
     if(shared==1)
-        ImageStreamIO_createSem(image, 10); // by default, create 10 semaphores
+        ImageStreamIO_createsem(image, 10); // by default, create 10 semaphores
     else
 		image->md[0].sem = 0; // no semaphores
      
@@ -979,14 +922,326 @@ long ImageStreamIO_read_sharedmem_image_toIMAGE(const char *name, IMAGE *image)
 
 
 
+/* =============================================================================================== */
+/* =============================================================================================== */
+/** @name 2. MANAGE SEMAPHORES
+ *  
+ */
+///@{                                                                                         
+/* =============================================================================================== */
+/* =============================================================================================== */
+
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Create semaphore of a shmim
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * image	IMAGE*
+ * 			pointer to shmim
+ * 
+ * @param[in]
+ * NBsem    number of semaphores to be created
+ */
+
+int ImageStreamIO_createsem(IMAGE *image, long NBsem)
+{
+    long s;
+    int r;
+    char command[200];
+    int semfile[100];
+
+	
+	printf("Creating %ld semaphores\n", NBsem);
+	
+	// Remove pre-existing semaphores if any
+    if(image->md[0].sem != NBsem)
+    {
+        // Close existing semaphores ...
+        for(s=0; s < image->md[0].sem; s++)
+            sem_close(image->semptr[s]);
+        image->md[0].sem = 0;
+
+		// ... and remove associated files
+		long s1;
+        for(s1=NBsem; s1<100; s1++)
+        {
+			char fname[200];
+            sprintf(fname, "/dev/shm/sem.%s_sem%02ld", image->md[0].name, s1);
+            remove(fname);
+        }
+        free(image->semptr);
+        image->semptr = NULL;
+    }
+
+   
+    if(image->md[0].sem == 0)
+    {
+        if(image->semptr != NULL)
+            free(image->semptr);
+
+        image->md[0].sem = NBsem;
+        printf("malloc semptr %d entries\n", image->md[0].sem);
+        image->semptr = (sem_t**) malloc(sizeof(sem_t**)*image->md[0].sem);
+
+
+        for(s=0; s<NBsem; s++)
+        {
+			char sname[200];
+            sprintf(sname, "%s_sem%02ld", image->md[0].name, s);
+            if ((image->semptr[s] = sem_open(sname, 0, 0644, 0))== SEM_FAILED) {
+                if ((image->semptr[s] = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
+                    perror("semaphore initilization");
+                }
+                else
+                    sem_init(image->semptr[s], 1, 0);
+            }
+        }
+    }
+    
+    printf("image->md[0].sem = %ld\n", (long) image->md[0].sem);
+    
+    return(0);
+}
 
 
 
 
 
 
+/**
+ * ## Purpose
+ * 
+ * Posts semaphore of a shmim
+ * if index < 0, post all semaphores
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * image	IMAGE*
+ * 			pointer to shmim
+ * 
+ * @param[in]
+ * index    semaphore index
+ * 			index of semaphore to be posted
+ *          if index=-1, post all semaphores
+ */
+ 
+long ImageStreamIO_sempost(IMAGE *image, long index)
+{
+    if(index<0)
+    {
+		long s;
+		
+        for(s=0; s<image->md[0].sem; s++)
+        {
+			int semval;
+			
+            sem_getvalue(image->semptr[s], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(image->semptr[s]);
+        }
+    }
+    else
+    {
+        if(index>image->md[0].sem-1)
+            printf("ERROR: image %s semaphore # %ld does no exist\n", image->md[0].name, index);
+        else
+        {
+			int semval;
+			
+            sem_getvalue(image->semptr[index], &semval);
+            if(semval<SEMAPHORE_MAXVAL)
+                sem_post(image->semptr[index]);
+        }
+    }
+
+    return(1);
+}
 
 
 
 
+/**
+ * ## Purpose
+ * 
+ * Posts all semaphores of a shmim except one
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * image	IMAGE*
+ * 			pointer to shmim
+ * 
+ * @param[in]
+ * index    semaphore index
+ * 			index of semaphore to be excluded
+ */
+long ImageStreamIO_sempost_excl(IMAGE *image, long index)
+{
+    long s;
+
+    for(s=0; s<image->md[0].sem; s++)
+        {
+			if(s!=index)
+			{
+			    int semval;
+
+				sem_getvalue(image->semptr[s], &semval);
+				if(semval<SEMAPHORE_MAXVAL)
+					sem_post(image->semptr[s]);
+			}
+        }
+        
+   if(image->semlog!=NULL)
+    {
+		int semval;
+    
+        sem_getvalue(image->semlog, &semval);
+        if(semval<SEMAPHORE_MAXVAL)
+            sem_post(image->semlog);
+    }
+
+    return(1);
+}
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Posts all semaphores of a shmim at regular time intervals
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * image	IMAGE*
+ * 			pointer to shmim
+ * 
+ * @param[in]
+ * index    semaphore index
+ * 			is =-1, post all semaphores
+ * 
+ * @param[in]
+ * dtus     time interval [us]
+ * 
+ */
+long ImageStreamIO_sempost_loop(IMAGE *image, long index, long dtus)
+{
+    while(1)
+    {
+        if(index<0)
+        {
+			long s;
+			
+            for(s=0; s<image->md[0].sem; s++)
+            {
+				int semval;
+				
+                sem_getvalue(image->semptr[s], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(image->semptr[s]);
+            }
+        }
+        else
+        {
+            if(index>image->md[0].sem-1)
+                printf("ERROR: image %s semaphore # %ld does no exist\n", image->md[0].name, index);
+            else
+            {
+				int semval;
+				
+                sem_getvalue(image->semptr[index], &semval);
+                if(semval<SEMAPHORE_MAXVAL)
+                    sem_post(image->semptr[index]);
+            }
+        }
+        sleep(dtus);
+    }
+
+    return(1);
+}
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Wait on a shmim semaphore
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * image	IMAGE*
+ * 			pointer to shmim
+ * 
+ * @param[in]
+ * index    semaphore index
+ * 
+ */
+long ImageStreamIO_semwait(IMAGE *image, long index)
+{
+    if(index>image->md[0].sem-1)
+            printf("ERROR: image %s semaphore # %ld does no exist\n", image->md[0].name, index);
+    else
+            sem_wait(image->semptr[index]);
+}
+
+
+
+/**
+ * ## Purpose
+ * 
+ * Flush shmim semaphore
+ * 
+ * ## Arguments
+ * 
+ * @param[in]
+ * image	IMAGE*
+ * 			pointer to shmim
+ * 
+ * @param[in]
+ * index    semaphore index
+ * 			flush all semaphores if index<0
+ * 
+ */
+long ImageStreamIO_semflush(IMAGE *image, long index)
+{
+    if(index<0)
+    {
+		long s;
+		
+        for(s=0; s<image->md[0].sem; s++)
+        {
+			int semval;
+			int i;
+			
+            sem_getvalue(image->semptr[s], &semval);
+            for(i=0; i<semval; i++)
+                sem_trywait(image->semptr[s]);
+        }
+    }
+    else
+    {
+        if(index>image->md[0].sem-1)
+            printf("ERROR: image %s semaphore # %ld does not exist\n", image->md[0].name, index);
+        else
+        {
+			long s;
+			int semval;
+			int i;
+			
+            s = index;
+            sem_getvalue(image->semptr[s], &semval);
+            for(i=0; i<semval; i++)
+                sem_trywait(image->semptr[s]);
+
+        }
+    }
+}
 

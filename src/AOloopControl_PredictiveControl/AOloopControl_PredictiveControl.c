@@ -120,9 +120,6 @@ extern AOLOOPCONTROL_CONF *AOconf; // declared in AOloopControl.c
 
 
 
-
-
-
 /* =============================================================================================== */
 /* =============================================================================================== */
 /** @name AOloopControl_PredictiveControl - 1. PREDICTIVE CONTROL
@@ -180,7 +177,6 @@ int_fast8_t AOloopControl_PredictiveControl_setPFsimpleAve_cli() {
 
 int_fast8_t init_AOloopControl_PredictiveControl()
 {
-
     strcpy(data.module[data.NBmodule].name, __FILE__);
     strcpy(data.module[data.NBmodule].info, "AO loop control predictive control");
     data.NBmodule++;

@@ -31,7 +31,6 @@ AM_PROG_CC_C_O
 # check for openMP
 AC_OPENMP
 
-
 # Support for Bison and Flex
 AC_PROG_YACC
 AM_PROG_LEX
@@ -79,6 +78,15 @@ AC_CHECK_LIB([m],[main],
 		[ echo "Cannot find required library:math";
 		  cat doc/configure.howto;
 		  AC_MSG_FAILURE(["FATAL...Cannot find required library:math"]);
+		  exit 0;
+		])
+
+
+AC_CHECK_LIB([dl],[main],
+		[],
+		[ echo "Cannot find required library:dl";
+		  cat doc/configure.howto;
+		  AC_MSG_FAILURE(["FATAL...Cannot find required library:dl"]);
 		  exit 0;
 		])
 

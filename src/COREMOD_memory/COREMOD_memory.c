@@ -4178,7 +4178,9 @@ long COREMOD_MEMORY_image_set_cnt1(const char *IDname, int cnt1)
 
 
 
-
+/**
+ * @see ImageStreamIO_createsem
+ */ 
 
 long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)
 {
@@ -4193,7 +4195,7 @@ long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)
     ID = image_ID(IDname);
 
 	if(ID != -1)
-		ImageStreamIO_createSem(&data.image[ID], NBsem);
+		ImageStreamIO_createsem(&data.image[ID], NBsem);
 
     return(ID);
 }
@@ -4201,108 +4203,43 @@ long COREMOD_MEMORY_image_set_createsem(const char *IDname, long NBsem)
 
 
 
-// if index < 0, post all semaphores
+/**
+ * @see ImageStreamIO_sempost
+ */
+
 long COREMOD_MEMORY_image_set_sempost(const char *IDname, long index)
 {
     long ID;
-    long s;
-    int semval;
-
 
     ID = image_ID(IDname);
-
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
 
-    if(index<0)
-    {
-        for(s=0; s<data.image[ID].md[0].sem; s++)
-        {
-            sem_getvalue(data.image[ID].semptr[s], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[ID].semptr[s]);
-        }
-    }
-    else
-    {
-        if(index>data.image[ID].md[0].sem-1)
-            printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
-        else
-        {
-            sem_getvalue(data.image[ID].semptr[index], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[ID].semptr[index]);
-        }
-    }
+	ImageStreamIO_sempost(&data.image[ID], index);
 
     return(ID);
 }
 
-//
-// if index = -1, post all semaphores
-//
+
+
+/**
+ * @see ImageStreamIO_sempost
+ */ 
 long COREMOD_MEMORY_image_set_sempost_byID(long ID, long index)
 {
-    long s;
-    int semval;
-
-    if(index<0)
-    {
-        for(s=0; s<data.image[ID].md[0].sem; s++)
-        {
-            sem_getvalue(data.image[ID].semptr[s], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[ID].semptr[s]);
-        }
-    }
-    else
-    {
-        if(index>data.image[ID].md[0].sem-1)
-            printf("ERROR: image ID %ld semaphore # %ld does no exist\n", ID, index);
-        else
-        {
-            sem_getvalue(data.image[ID].semptr[index], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[ID].semptr[index]);
-        }
-    }
-    
-   if(data.image[ID].semlog!=NULL)
-    {
-        sem_getvalue(data.image[ID].semlog, &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[ID].semlog);
-    }  
+	ImageStreamIO_sempost(&data.image[ID], index);
 
     return(ID);
 }
 
 
-//
-// post all semaphores except one
-//
+
+/**
+ * @see ImageStreamIO_sempost_excl
+ */ 
 long COREMOD_MEMORY_image_set_sempost_excl_byID(long ID, long index)
 {
-    long s;
-    int semval;
-
-
-    for(s=0; s<data.image[ID].md[0].sem; s++)
-        {
-			if(s!=index)
-			{
-				sem_getvalue(data.image[ID].semptr[s], &semval);
-				if(semval<SEMAPHORE_MAXVAL)
-					sem_post(data.image[ID].semptr[s]);
-			}
-        }
-        
-   if(data.image[ID].semlog!=NULL)
-    {
-        sem_getvalue(data.image[ID].semlog, &semval);
-        if(semval<SEMAPHORE_MAXVAL)
-            sem_post(data.image[ID].semlog);
-    }
+	ImageStreamIO_sempost_excl(&data.image[ID], index);
 
     return(ID);
 }
@@ -4310,68 +4247,42 @@ long COREMOD_MEMORY_image_set_sempost_excl_byID(long ID, long index)
 
 
 
-
-// if index < 0, post all semaphores
+/**
+ * @see ImageStreamIO_sempost_loop
+ */ 
 
 long COREMOD_MEMORY_image_set_sempost_loop(const char *IDname, long index, long dtus)
 {
     long ID;
-    long s;
-    int semval;
-
 
     ID = image_ID(IDname);
-
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
 
+	ImageStreamIO_sempost_loop(&data.image[ID], index, dtus);
 
-	while(1)
-	{
-    if(index<0)
-    {
-        for(s=0; s<data.image[ID].md[0].sem; s++)
-        {
-            sem_getvalue(data.image[ID].semptr[s], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[ID].semptr[s]);
-        }
-    }
-    else
-    {
-        if(index>data.image[ID].md[0].sem-1)
-            printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
-        else
-        {
-            sem_getvalue(data.image[ID].semptr[index], &semval);
-            if(semval<SEMAPHORE_MAXVAL)
-                sem_post(data.image[ID].semptr[index]);
-        }
-    }
-    sleep(dtus);
-	}
     return(ID);
 }
 
 
 
+/**
+ * @see ImageStreamIO_semwait
+ */ 
 long COREMOD_MEMORY_image_set_semwait(const char *IDname, long index)
 {
     long ID;
-    int semval;
 
     ID = image_ID(IDname);
-
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
 
-    if(index>data.image[ID].md[0].sem-1)
-            printf("ERROR: image %s semaphore # %ld does no exist\n", IDname, index);
-    else
-            sem_wait(data.image[ID].semptr[index]);
-        
+	ImageStreamIO_semwait(&data.image[ID], index);
+
     return(ID);
 }
+
+
 
 
 
@@ -4386,7 +4297,6 @@ void *waitforsemID(void *ID)
     
     s = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     tid = pthread_self();
-
 
 //    sem_getvalue(data.image[(long) ID].semptr, &semval);
 //    printf("tid %u waiting for sem ID %ld   sem = %d   (%s)\n", (unsigned int) tid, (long) ID, semval, data.image[(long) ID].name);
@@ -4411,7 +4321,7 @@ void *waitforsemID(void *ID)
 
 
 
-/// \brief Wait for multiple images semaphores [OR], only works for sem0 only
+/// \brief Wait for multiple images semaphores [OR], only works for sem0
 long COREMOD_MEMORY_image_set_semwait_OR_IDarray(long *IDarray, long NB_ID)
 {
     int t;
@@ -4477,36 +4387,13 @@ long COREMOD_MEMORY_image_set_semflush_IDarray(long *IDarray, long NB_ID)
 long COREMOD_MEMORY_image_set_semflush(const char *IDname, long index)
 {
     long ID;
-    int semval;
-    long i;
-    long s;
 
     ID = image_ID(IDname);
     if(ID==-1)
         ID = read_sharedmem_image(IDname);
 
-    if(index<0)
-    {
-        for(s=0; s<data.image[ID].md[0].sem; s++)
-        {
-            sem_getvalue(data.image[ID].semptr[s], &semval);
-            for(i=0; i<semval; i++)
-                sem_trywait(data.image[ID].semptr[s]);
-        }
-    }
-    else
-    {
-        if(index>data.image[ID].md[0].sem-1)
-            printf("ERROR: image %s semaphore # %ld does not exist\n", IDname, index);
-        else
-        {
-            s = index;
-            sem_getvalue(data.image[ID].semptr[s], &semval);
-            for(i=0; i<semval; i++)
-                sem_trywait(data.image[ID].semptr[s]);
+	ImageStreamIO_semflush(&data.image[ID], index);
 
-        }
-    }
 
     return(ID);
 }
