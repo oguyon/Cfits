@@ -40,13 +40,13 @@ On OS X you need to use gcc-mp-5 for opemMP:
 
 ## Reporting bugs, issues
 
-Report bugs and issues on [this page]( https://github.com/oguyon/Cfits/issues )
+Report bugs and issues on [this page]( https://github.com/adaptiveoptics-org/Cfits/issues )
 
 
 ## Contributing to project
 
 
-See [coding standards]( http://oguyon.github.io/Cfits/html/page_coding_standards.html ) 
+See [coding standards]( http://adaptiveoptics-org.github.io/Cfits/html/page_coding_standards.html ) 
 
 
 
@@ -54,7 +54,7 @@ See [coding standards]( http://oguyon.github.io/Cfits/html/page_coding_standards
 
 ## Documentation
 
-[Full online documentation]( http://oguyon.github.io/Cfits/ ) 
+[Online documentation]( http://adaptiveoptics-org.github.io/Cfits/ ) 
 
 
 ## Libraries
@@ -86,4 +86,4 @@ All functions are accessible from the command line interface (CLI). Enter the CL
 ## LICENCE
 
 
-[GNU General Public License v3.0]( https://github.com/oguyon/Cfits/blob/master/LICENCE.txt )
+[GNU General Public License v3.0]( https://github.com/adaptiveoptics-org/Cfits/blob/master/LICENCE.txt )
