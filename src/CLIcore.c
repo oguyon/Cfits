@@ -1820,8 +1820,6 @@ static int_fast8_t load_module_shared(char *modulename)
 
 	(*libinitfunc)();
 
-    //dlclose(DLib_handle);
-
 	// increment number of libs dynamically loaded
 	DLib_index ++;
 
