@@ -279,7 +279,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a201263a8498c7557ab392a4cdcc13488"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a201263a8498c7557ab392a4cdcc13488">waitforsemID</a> (void *ID)</td></tr>
 <tr class="separator:a201263a8498c7557ab392a4cdcc13488"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b4b8135f1a24212048a83d6153b2d39"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a1b4b8135f1a24212048a83d6153b2d39">COREMOD_MEMORY_image_set_semwait_OR_IDarray</a> (long *IDarray, long NB_ID)</td></tr>
-<tr class="memdesc:a1b4b8135f1a24212048a83d6153b2d39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for multiple images semaphores [OR], only works for sem0 only.  <a href="#a1b4b8135f1a24212048a83d6153b2d39">More...</a><br /></td></tr>
+<tr class="memdesc:a1b4b8135f1a24212048a83d6153b2d39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for multiple images semaphores [OR], only works for sem0.  <a href="#a1b4b8135f1a24212048a83d6153b2d39">More...</a><br /></td></tr>
 <tr class="separator:a1b4b8135f1a24212048a83d6153b2d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fdbf9d15c38ab7e17cba7491027299e"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="COREMOD__memory_8h.html#a6fdbf9d15c38ab7e17cba7491027299e">COREMOD_MEMORY_image_set_semflush_IDarray</a> (long *IDarray, long NB_ID)</td></tr>
 <tr class="memdesc:a6fdbf9d15c38ab7e17cba7491027299e"><td class="mdescLeft">&#160;</td><td class="mdescRight">flush multiple semaphores  <a href="#a6fdbf9d15c38ab7e17cba7491027299e">More...</a><br /></td></tr>
@@ -329,7 +329,7 @@ Functions</h2></td></tr>
 <p>Functions to handle images and streams</p>
 <dl class="section author"><dt>Author</dt><dd>O. Guyon </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>18 Jun 2017</dd></dl>
-<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000026">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
+<dl class="bug"><dt><b><a class="el" href="bug.html#_bug000050">Bug:</a></b></dt><dd>No known bugs.</dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="ae33095c38f0d8d55e3e98fc846f8d3c4"></a>
 <div class="memitem">
@@ -799,6 +799,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="ImageStreamIO_8h.html#a9e3731c2f1dbaee42302fc2c625065c6" title="Create shmim semaphores. ">ImageStreamIO_createsem</a> </dd></dl>
 
 </div>
 </div>
@@ -881,6 +882,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="ImageStreamIO_8h.html#a38798c712af6126e31dcd0eda930d9a1" title="Post all shmim semaphores. ">ImageStreamIO_sempost</a> </dd></dl>
 
 </div>
 </div>
@@ -907,6 +909,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="ImageStreamIO_8h.html#a38798c712af6126e31dcd0eda930d9a1" title="Post all shmim semaphores. ">ImageStreamIO_sempost</a> </dd></dl>
 
 </div>
 </div>
@@ -966,7 +969,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="ImageStreamIO_8h.html#af2f7c60e00c3c37f7bd281f39fcd19aa">ImageStreamIO_sempost_loop</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="ImageStreamIO_8h.html#af2f7c60e00c3c37f7bd281f39fcd19aa" title="Post shmim semaphores at regular time interval. ">ImageStreamIO_sempost_loop</a> </dd></dl>
 
 </div>
 </div>
@@ -993,6 +996,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="ImageStreamIO_8h.html#af3dd8f11402f52b1bb3f3418958621de" title="Wait for semaphore. ">ImageStreamIO_semwait</a> </dd></dl>
 
 </div>
 </div>
@@ -1020,7 +1024,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Wait for multiple images semaphores [OR], only works for sem0 only. </p>
+<p>Wait for multiple images semaphores [OR], only works for sem0. </p>
 
 </div>
 </div>
@@ -2855,7 +2859,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3263a6acd0ffe1d4fb8f1f8557ae17b7.html">COREMOD_memory</a></li><li class="navelem"><a class="el" href="COREMOD__memory_8h.html">COREMOD_memory.h</a></li>
-    <li class="footer">Generated on Thu Oct 5 2017 11:40:23 for cfitsTK by
+    <li class="footer">Generated on Sat Oct 7 2017 12:01:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

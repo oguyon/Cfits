@@ -1,6 +1,7 @@
 var TransitLC_8c =
 [
     [ "init_TransitLC", "TransitLC_8c.html#a710c029d7952cca597e698b17ca42e09", null ],
+    [ "initlib_transitlc", "TransitLC_8c.html#a6ec80b074ba5d69b113dcd04948ac6c7", null ],
     [ "TransitLC_EdgeDetect", "TransitLC_8c.html#a3b567cf5b8a607f60dd304073fe2584d", null ],
     [ "TransitLC_mkLC", "TransitLC_8c.html#a3499e660dac9cd7842416be9e1e90da5", null ],
     [ "TransitLC_run", "TransitLC_8c.html#a88eb355bc36bfd17098fefc94dff531f", null ],

@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('page_module_AOloopControl.html','');})
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This module allows control of adaptive optics (AO) control loops.</p>
-<p>Source code in <a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a> and <a class="el" href="AOloopControl_8h.html" title="Function prototypes for Adaptive Optics Control loop engine. ">AOloopControl.h</a></p>
+<p>Source code in AOloopControl.c and AOloopControl.h</p>
 <p>Main features:</p><ul>
 <li>uses shared memory to communicate between processes and link to wavefront sensor camera/data and deformable mirrors</li>
 <li>multiple loops can run simultaneously, independantly or together</li>
@@ -207,7 +207,7 @@ AOLCAMDARK=100.0
 <p>For purely Fourier Modes: </p><pre class="fragment">./mkModes &lt;confindex&gt; &lt;CPAmax&gt;
 </pre><p>confindex: index for the configuration, for example, 002 will save modes in conf002 directory CPAmax: maximum spatial frequency in the basis of modes, in unit of Cycle Per Aperture.</p>
 <p>The mode file name is ./conf&lt;confindex&gt;/fmodes.fits.</p>
-<p>This script calls the function AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1) in <a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a>.</p>
+<p>This script calls the function AOloopControl_mkModes(char *ID_name, long msize, float CPAmax, float deltaCPA, double xc, double yx, double r0, double r1) in AOloopControl.c.</p>
 <p>Optional input:</p><ul>
 <li>TPmask.fits : telescope pupil mask. If this file is present in the configuration directory, it will be used as a multiplicative mask (with convolotion to avoid sharp transitions) to the modes</li>
 <li>TPind.fits : modes to be excluded from the control</li>
@@ -259,7 +259,7 @@ EOF
 <h3>(4) ACQUIRE RESPONSE MATRIX</h3>
 <pre class="fragment">./acquRespM 000
 </pre><p>Edit script to change modulation amplitude, number of images per DM state, etc...</p>
-<p>This script calls function Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter) in module <a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a>.</p>
+<p>This script calls function Measure_Resp_Matrix(long loop, long NbAve, float amp, long nbloop, long fDelay, long NBiter) in module AOloopControl.c.</p>
 <p>The response matrix acquision will go for a large number of iterations, and data is progressively averaged to improve SNR. The last parameter of the acquRespM command in the script is the number of matrixes averaged. You can either wait for all iterations to complete or CTRL-C the process. If you CTRL-C the process, load the result in the configuration directory: </p><pre class="fragment">cp respm.fits ./conf&lt;xxx&gt;/
 cp refwfs.fits ./conf&lt;xxx&gt;/
 </pre><p>output: respm.fits, refwfs.fits</p>
@@ -309,7 +309,7 @@ mv evecM.fits ./conf$1/
 mv eigenv.dat ./conf$1/
 mv eigenmodesM*.fits ./conf$1/
 mv eigenmodesrespM*.fits ./conf$1/
-</pre><p>The script calls compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta) in module <a class="el" href="AOloopControl_8c.html" title="Adaptive Optics Control loop engine. ">AOloopControl.c</a>.</p>
+</pre><p>The script calls compute_ControlMatrix(long loop, long NB_MODE_REMOVED, char *ID_Rmatrix_name, char *ID_Cmatrix_name, char *ID_VTmatrix_name, double Beta) in module AOloopControl.c.</p>
 <hr/>
 <h2>RUNNING THE LOOP</h2>
 <h3>(6) SET UP / LOAD CONFIGURATION</h3>
@@ -337,7 +337,7 @@ mv eigenmodesrespM*.fits ./conf$1/
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="index.html">cfitsTK user&#39;s Guide</a></li><li class="navelem"><a class="el" href="page_modules.html">Modules</a></li>
-    <li class="footer">Generated on Thu Oct 5 2017 11:40:24 for cfitsTK by
+    <li class="footer">Generated on Sat Oct 7 2017 12:01:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

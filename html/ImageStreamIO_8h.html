@@ -135,10 +135,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9a613b61cdeb72e83385b0f1cfbb7a87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Post all shmim semaphores except one.  <a href="#a9a613b61cdeb72e83385b0f1cfbb7a87">More...</a><br /></td></tr>
 <tr class="separator:a9a613b61cdeb72e83385b0f1cfbb7a87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2f7c60e00c3c37f7bd281f39fcd19aa"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8h.html#af2f7c60e00c3c37f7bd281f39fcd19aa">ImageStreamIO_sempost_loop</a> (IMAGE *image, long index, long dtus)</td></tr>
+<tr class="memdesc:af2f7c60e00c3c37f7bd281f39fcd19aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Post shmim semaphores at regular time interval.  <a href="#af2f7c60e00c3c37f7bd281f39fcd19aa">More...</a><br /></td></tr>
 <tr class="separator:af2f7c60e00c3c37f7bd281f39fcd19aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3dd8f11402f52b1bb3f3418958621de"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8h.html#af3dd8f11402f52b1bb3f3418958621de">ImageStreamIO_semwait</a> (IMAGE *image, long index)</td></tr>
+<tr class="memdesc:af3dd8f11402f52b1bb3f3418958621de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for semaphore.  <a href="#af3dd8f11402f52b1bb3f3418958621de">More...</a><br /></td></tr>
 <tr class="separator:af3dd8f11402f52b1bb3f3418958621de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac098250629526bf2d4cc16d3a16d91f7"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageStreamIO_8h.html#ac098250629526bf2d4cc16d3a16d91f7">ImageStreamIO_semflush</a> (IMAGE *image, long index)</td></tr>
+<tr class="memdesc:ac098250629526bf2d4cc16d3a16d91f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush all semaphores of a shmim.  <a href="#ac098250629526bf2d4cc16d3a16d91f7">More...</a><br /></td></tr>
 <tr class="separator:ac098250629526bf2d4cc16d3a16d91f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -290,6 +293,18 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Flush all semaphores of a shmim. </p>
+<h2>Purpose</h2>
+<p>Flush shmim semaphore</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">image</td><td>IMAGE* pointer to shmim</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>semaphore index flush all semaphores if index&lt;0 </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a class="anchor" id="a38798c712af6126e31dcd0eda930d9a1"></a>
@@ -397,6 +412,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Post shmim semaphores at regular time interval. </p>
 <h2>Purpose</h2>
 <p>Posts all semaphores of a shmim at regular time intervals</p>
 <h2>Arguments</h2>
@@ -435,6 +452,18 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Wait for semaphore. </p>
+<h2>Purpose</h2>
+<p>Wait on a shmim semaphore</p>
+<h2>Arguments</h2>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">image</td><td>IMAGE* pointer to shmim</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>semaphore index </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a class="anchor" id="a6996ee2254bfcc9b0b31759259975202"></a>
@@ -458,7 +487,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_f9bfd6d7838ce96d8ef51017747ec480.html">ImageStreamIO</a></li><li class="navelem"><a class="el" href="ImageStreamIO_8h.html">ImageStreamIO.h</a></li>
-    <li class="footer">Generated on Thu Oct 5 2017 11:40:24 for cfitsTK by
+    <li class="footer">Generated on Sat Oct 7 2017 12:01:33 for cfitsTK by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
